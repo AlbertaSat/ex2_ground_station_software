@@ -56,6 +56,15 @@ if __name__ == "__main__":
     print("Ping: %d mS" % libcsp.ping(options.server_address))
 
     # transaction
+    while True:
+        data = input("toSend:")
+        b = bytearray()
+        b.extend(map(ord, data))
+        data.encode("ascii")
+        toSend = libcsp.buffer_get(32)
+        libcsp.packet_set_data(toSend, b)
+        libcsp.sendto(0, options.server_address, 3, 1, libcsp.CSP_O_NONE, toSend, 1000)
+        libcsp.buffer_free(toSend)
     outbuf = bytearray().fromhex('01')
     inbuf = bytearray(1)
     print ("Exchange data with server using csp_transaction ...")
