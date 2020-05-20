@@ -23,7 +23,7 @@ apps = vals.APP_DICT
 services = vals.SERVICES
 
 
-class CSP(object):
+class Csp(object):
     def __init__(self, opts):
         self.myAddr = apps["GND"]
         libcsp.init(self.myAddr, "host", "model", "1.2.3", 10, 300)
@@ -67,7 +67,7 @@ def getOptions():
 
 if __name__ == "__main__":
     opts = getOptions()
-    csp = CSP(opts)
+    csp = Csp(opts)
 
     while True:
         toSend, server, port = csp.getInput("to send:")
