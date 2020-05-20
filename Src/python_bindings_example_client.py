@@ -10,64 +10,45 @@
 # $ LD_LIBRARY_PATH=build PYTHONPATH=build python3 examples/python_bindings_example_client.py -z localhost
 #
 
-import os
+import os, re
 import time
 import sys
 import argparse
-
+from system import SystemValues
 import libcsp_py3 as libcsp
 
+sys = SystemValues()
+apps = sys.APP_DICT
 
-def getOptions():
-    parser = argparse.ArgumentParser(description="Parses command.")
-    parser.add_argument("-a", "--address", type=int, default=10, help="Local CSP address")
-    # parser.add_argument("-c", "--can", help="Add CAN interface")
-    parser.add_argument("-z", "--zmq", help="Add ZMQ interface")
-    parser.add_argument("-s", "--server-address", type=int, default=20, help="Server address")
-    parser.add_argument("-R", "--routing-table", help="Routing table")
-    return parser.parse_args(sys.argv[1:])
-
-
-if __name__ == "__main__":
-
-    options = getOptions()
-
-    libcsp.init(options.address, "host", "model", "1.2.3", 10, 300)
-
-    # if options.can:
-        # libcsp.can_socketcan_init(options.can)
-    if options.zmq:
-        libcsp.zmqhub_init(options.address, options.zmq)
+class CSP(object):
+    def __init__(self):
+        libcsp.init(apps["GND"], "host", "model", "1.2.3", 10, 300)
+        libcsp.zmqhub_init(apps["GND"], 'localhost')
         libcsp.rtable_load("0/0 ZMQHUB")
-    if options.routing_table:
-        libcsp.rtable_load(options.routing_table)
+        libcsp.route_start_task()
+        time.sleep(0.2)  # allow router task startup
+        print("CMP ident:", libcsp.cmp_ident(apps["DEMO"]))
+        print("Ping: %d mS" % libcsp.ping(apps["DEMO"]))
 
-    libcsp.route_start_task()
-    time.sleep(0.2)  # allow router task startup
+    def getInput(self, prompt):
+        inStr = input(prompt)
 
-    print("Connections:")
-    libcsp.print_connections()
+        cmdVec = re.split("\.|\(", inStr)
+        server = apps[cmdVec[0]]
+        data = cmdVec[-1]
 
-    print("Routes:")
-    libcsp.print_routes()
-
-    print("CMP ident:", libcsp.cmp_ident(options.server_address))
-
-    print("Ping: %d mS" % libcsp.ping(options.server_address))
-
-    # transaction
-    while True:
-        data = input("toSend:")
         b = bytearray()
         b.extend(map(ord, data))
-        data.encode("ascii")
         toSend = libcsp.buffer_get(32)
         libcsp.packet_set_data(toSend, b)
-        libcsp.sendto(0, options.server_address, 3, 1, libcsp.CSP_O_NONE, toSend, 1000)
-        libcsp.buffer_free(toSend)
-    outbuf = bytearray().fromhex('01')
-    inbuf = bytearray(1)
-    print ("Exchange data with server using csp_transaction ...")
-    libcsp.transaction(0, options.server_address, 3, 10000, outbuf, inbuf) # sends packet to HK application
-    libcsp.transaction(0, options.server_address, 3, 10000, outbuf, inbuf) # sends packet to the test app
-    print ("  got reply from server [%s]" % (''.join('{:02x}'.format(x) for x in inbuf)))
+        return toSend, server, 3
+
+    def send(self, server, port, buf):
+        libcsp.sendto(0, server, port, 1, libcsp.CSP_O_NONE, buf, 1000)
+        libcsp.buffer_free(buf)
+
+if __name__ == "__main__":
+    csp = CSP()
+    while True:
+        toSend, server, port = csp.getInput("to send:")
+        csp.send(server, port, toSend);
