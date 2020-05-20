@@ -11,3 +11,15 @@ class SystemValues(object):
             "DEMO"  :8,
             "LAST"  :9
         }
+        self.SERVICES = {
+            "VERIFICATION"       :1,
+            "HK"                 :3,
+            "EVENT"              :5,
+            "FUNCTION_MANAGEMENT":8,
+            "TIME_MANAGEMENT"    :9,
+            "SCHEDULING"         :11,
+            "LARGE_DATA"         :13,
+            "MASS_STORAGE"       :15,
+            "TEST"               :17,
+            "SU_MNLP"            :18,
+        }

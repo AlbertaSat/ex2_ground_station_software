@@ -17,38 +17,58 @@ import argparse
 from system import SystemValues
 import libcsp_py3 as libcsp
 
-sys = SystemValues()
-apps = sys.APP_DICT
+
+vals = SystemValues()
+apps = vals.APP_DICT
+services = vals.SERVICES
+
 
 class CSP(object):
-    def __init__(self):
-        libcsp.init(apps["GND"], "host", "model", "1.2.3", 10, 300)
-        libcsp.zmqhub_init(apps["GND"], 'localhost')
-        libcsp.rtable_load("0/0 ZMQHUB")
+    def __init__(self, opts):
+        self.myAddr = apps["GND"]
+        libcsp.init(self.myAddr, "host", "model", "1.2.3", 10, 300)
+        if opts.interface == "zmq":
+            self.__zmq__(self.myAddr)
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         print("CMP ident:", libcsp.cmp_ident(apps["DEMO"]))
         print("Ping: %d mS" % libcsp.ping(apps["DEMO"]))
 
-    def getInput(self, prompt):
-        inStr = input(prompt)
+    def __zmq__(self, addr):
+        libcsp.zmqhub_init(addr, 'localhost')
+        libcsp.rtable_load("0/0 ZMQHUB")
 
+    def getInput(self, prompt):
+        sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
+        inStr = input(prompt)
         cmdVec = re.split("\.|\(", inStr)
-        server = apps[cmdVec[0]]
-        data = cmdVec[-1]
+
+        app, service, arg = [x for x in cmdVec]
+        server = apps[app]
+        port = services[service]
+        data = [x for x in (p for p in arg if not sanitizeRegex.match(p))]
 
         b = bytearray()
         b.extend(map(ord, data))
         toSend = libcsp.buffer_get(32)
         libcsp.packet_set_data(toSend, b)
-        return toSend, server, 3
+        return toSend, server, port
 
     def send(self, server, port, buf):
         libcsp.sendto(0, server, port, 1, libcsp.CSP_O_NONE, buf, 1000)
         libcsp.buffer_free(buf)
 
+
+def getOptions():
+    parser = argparse.ArgumentParser(description="Parses command.")
+    parser.add_argument("-I", "--interface", type=str, default="zmq", help="CSP interface to use")
+    return parser.parse_args(sys.argv[1:])
+
+
 if __name__ == "__main__":
-    csp = CSP()
+    opts = getOptions()
+    csp = CSP(opts)
+
     while True:
         toSend, server, port = csp.getInput("to send:")
         csp.send(server, port, toSend);
