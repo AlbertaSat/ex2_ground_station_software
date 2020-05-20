@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
-# Build required code:
-# $ ./examples/buildall.py
-#
+# Build required code from satelliteSim/libcsp:
 # Start zmqproxy (only one instance)
 # $ ./build/zmqproxy
 #
@@ -43,12 +41,13 @@ class Csp(object):
         inStr = input(prompt)
         cmdVec = re.split("\.|\(", inStr)
 
+        # command format: <service_provider>.<service>.(<args>)
         app, service, arg = [x for x in cmdVec]
         server = apps[app]
         port = services[service]
         data = [x for x in (p for p in arg if not sanitizeRegex.match(p))]
 
-        b = bytearray()
+        b = bytearray() # convert it to something CSP can read
         b.extend(map(ord, data))
         toSend = libcsp.buffer_get(32)
         libcsp.packet_set_data(toSend, b)
