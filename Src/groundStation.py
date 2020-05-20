@@ -7,8 +7,8 @@
 # $ ./build/zmqproxy
 #
 # Run client against server using ZMQ:
-# $ LD_LIBRARY_PATH=build PYTHONPATH=build python3 examples/python_bindings_example_client.py -z localhost
-#
+# LD_LIBRARY_PATH=../ex2_on_board_computer/libcsp/build PYTHONPATH=../ex2_on_board_computer/libcsp/build python3 Src/groundStation.py -I zmq
+
 
 import os, re
 import time
