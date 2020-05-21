@@ -42,13 +42,15 @@ class Csp(object):
         cmdVec = re.split("\.|\(", inStr)
 
         # command format: <service_provider>.<service>.(<args>)
-        app, service, arg = [x for x in cmdVec]
+        app, service, sub, arg = [x for x in cmdVec]
         server = apps[app]
-        port = services[service]
-        data = [x for x in (p for p in arg if not sanitizeRegex.match(p))]
-
-        b = bytearray() # convert it to something CSP can read
-        b.extend(map(ord, data))
+        port = services[service]['port']
+        subservice = services[service]['subservice'][sub]
+        args =  [x for x in (p for p in arg if not sanitizeRegex.match(p))]
+        data = map(ord, args)
+        b = bytearray([subservice]) # convert it to something CSP can read
+        b.extend(data)
+        print(b)
         toSend = libcsp.buffer_get(32)
         libcsp.packet_set_data(toSend, b)
         return toSend, server, port

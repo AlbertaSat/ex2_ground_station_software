@@ -12,14 +12,19 @@ class SystemValues(object):
             "LAST"  :9
         }
         self.SERVICES = {
-            "VERIFICATION"       :1,
-            "HK"                 :3,
-            "EVENT"              :5,
-            "FUNCTION_MANAGEMENT":8,
-            "TIME_MANAGEMENT"    :9,
-            "SCHEDULING"         :11,
-            "LARGE_DATA"         :13,
-            "MASS_STORAGE"       :15,
-            "TEST"               :17,
-            "SU_MNLP"            :18,
+            "VERIFICATION": {"port": 1},
+            "HK": {"port": 3},
+            "EVENT": {"port": 5},
+            "FUNCTION_MANAGEMENT": {"port": 8},
+            "TIME_MANAGEMENT": {
+                "port": 9,
+                "subservice": {
+                    "TIME_SET": 1
+                }
+            },
+            "SCHEDULING": {"port": 11},
+            "LARGE_DATA": {"port": 13},
+            "MASS_STORAGE": {"port": 15},
+            "TEST": {"port": 17},
+            "SU_MNLP": {"port": 18},
         }
