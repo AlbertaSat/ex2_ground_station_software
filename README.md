@@ -24,3 +24,5 @@
 
     In this directory, run
     ```LD_LIBRARY_PATH=<relative_path_to_libcsp>/libcsp/build PYTHONPATH=<relative_path_to_libcsp>/libcsp/build python3 Src/groundStation.py -I zmq```
+
+    NOTE: nothing will happen if either there is no xmqproxy running or if your CSP server is running!
