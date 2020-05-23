@@ -5,7 +5,7 @@
 # $ ./build/zmqproxy
 #
 # Run client against server using ZMQ:
-# LD_LIBRARY_PATH=../ex2_on_board_computer/libcsp/build PYTHONPATH=../ex2_on_board_computer/libcsp/build python3 Src/groundStation.py -I zmq
+# LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 Src/groundStation.py -I zmq
 
 
 import os, re

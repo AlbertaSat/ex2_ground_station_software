@@ -1,0 +1,24 @@
+## Build intructions
+* Dependencies:
+    you must have cloned the [satelliteSim](https://github.com/AlbertaSat/SatelliteSim/) (or at least the [libcsp](https://github.com/AlbertaSat/SatelliteSim/) repo) and initialized the submodules
+
+* Building libcsp:
+    Go to libcsp root directory and configure the project as follows,
+    ```./waf configure --with-os=posix --enable-rdp --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-if-zmqhub --enable-examples```
+
+    And then build csp,
+    ```./waf build```
+
+    Note that this is built as a 64 bit program, and so you must remove the '-m32' CFLAG from the SatelliteSim makefile
+
+* Now check that you have,
+    a. a file called 'zmqproxy' in libcsp/build/. This executable will translate ZMQ requests to CSP on your local machine for development, and maybe for inter-ground station communication in the future.
+
+    b. a file called libcsp_py3.so. This is the compiled version of libcsp/src/bindings/python/pycsp.c, and gives access to the CSP functions VIA a python class
+
+* Running this ground groundStation code
+    Run the ZMQ proxy by executing
+    ```./build/zmqproxy``` from the libcsp directory
+
+    In this directory, run
+    ```LD_LIBRARY_PATH=<relative_path_to_libcsp>/libcsp/build PYTHONPATH=<relative_path_to_libcsp>/libcsp/build python3 Src/groundStation.py -I zmq```
