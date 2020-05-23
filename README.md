@@ -9,6 +9,8 @@
     And then build csp,
     ```./waf build```
 
+    NOTE: If your build fails due to socketcan calls, either try building with the ```--enable-can-socketcan``` option, or go comment out the 'pycsp_can_socketcan_init' function along with the line ```{"can_socketcan_init",  pycsp_can_socketcan_init,  METH_VARARGS, ""}``` from pycsp.c
+
     Note that this is built as a 64 bit program, and so you must remove the '-m32' CFLAG from the SatelliteSim makefile
 
 * Now check that you have,

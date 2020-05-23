@@ -29,8 +29,6 @@ class Csp(object):
             self.__zmq__(self.myAddr)
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
-        print("CMP ident:", libcsp.cmp_ident(apps["DEMO"]))
-        print("Ping: %d mS" % libcsp.ping(apps["DEMO"]))
 
     def __zmq__(self, addr):
         libcsp.zmqhub_init(addr, 'localhost')
@@ -56,6 +54,9 @@ class Csp(object):
         b = bytearray([subservice, *args]) # convert it to something CSP can read
         # b.extend(data)
         print(b)
+
+        print("CMP ident:", libcsp.cmp_ident(server))
+        print("Ping: %d mS" % libcsp.ping(server))
         toSend = libcsp.buffer_get(32)
         libcsp.packet_set_data(toSend, b)
         return toSend, server, port
