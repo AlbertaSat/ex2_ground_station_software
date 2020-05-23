@@ -19,7 +19,7 @@ class SystemValues(object):
             "TIME_MANAGEMENT": {
                 "port": 9,
                 "subservice": {
-                    "TIME_SET": 1
+                    "SET_TIME": 1
                 }
             },
             "SCHEDULING": {"port": 11},
