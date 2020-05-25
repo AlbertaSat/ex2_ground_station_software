@@ -17,8 +17,8 @@ static uint8_t reg29 = 0, reg30 = 0, reg31 = 0, reg32 = 0;
 static uint8_t reg33 = 0, reg34 = 0, reg35 = 0, reg36 = 0;
 static uint8_t reg37 = 0, reg38 = 0, reg39 = 0, reg40 = 0, reg41 = 0;
 
-//* Simulated buffer functions
-int add_vBuffer(int n_bytes) // Replace with spi_writeData eventually
+//* Simulated buffer function for adding 
+int add_vBuffer(int n_bytes)// Replace with spi_writeData eventually
 {
 	spi_writeData_Expect();
 	spi_writeData();
@@ -26,7 +26,7 @@ int add_vBuffer(int n_bytes) // Replace with spi_writeData eventually
 	for(int j = 0; j < n_bytes; j++){ 
 		
 		// Time Delay
-		sleep(0.000002);
+		sleep(S_DATA_TIME);
 
 		// Overrun?
 		if(reg25 == 0 && reg24 == 80){
@@ -61,7 +61,7 @@ int transmit_vBuffer(int n_bytes) // No such function will actually need to be c
 	for(int k = 0; k < n_bytes; k++){
 		
 		// Time Delay
-		sleep(0.000002);	
+		sleep(S_DATA_TIME);
 		// Underrun?
 		if(reg25 == 0 && reg24 == 0){
 			if(reg21 == 255){

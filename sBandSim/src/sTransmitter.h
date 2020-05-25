@@ -6,6 +6,7 @@
 #define STRANSMITTER_H
 
 #include <stdint.h>
+#define S_DATA_TIME 0.000002
 
 //* Simulated buffer functions
 int add_vBuffer(int);
@@ -68,4 +69,4 @@ int get_S_paCurrent(float * cur);
 int get_S_paVoltage(float * volt);
 
 
-#endif // STRANSMITTER_H
+#endif /* STRANSMITTER_H */
