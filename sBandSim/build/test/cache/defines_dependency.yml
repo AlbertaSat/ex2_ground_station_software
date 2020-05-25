@@ -1,0 +1,7 @@
+---
+build/test/mocks/mock_i2c.c:
+- TEST
+src/sTransmitter.c:
+- TEST
+build/test/mocks/mock_spi.c:
+- TEST
