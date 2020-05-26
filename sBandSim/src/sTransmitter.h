@@ -8,6 +8,14 @@
 #include <stdint.h>
 #define S_DATA_TIME 0.000002
 
+typedef enum{
+	FUNC_PASS  = 0,
+	BAD_READ   = 1,
+	BAD_WRITE  = 1,
+	BAD_PARAM  = 2,
+}ret_state;
+
+
 //* Simulated buffer functions
 int add_vBuffer(int);
 int transmit_vBuffer(int);

@@ -53,7 +53,7 @@ int add_vBuffer(int n_bytes)// Replace with spi_writeData eventually
 			}
 		}
 	}
-	return 0;
+	return FUNC_PASS;
 }
 
 int transmit_vBuffer(int n_bytes) // No such function will actually need to be called
@@ -87,7 +87,7 @@ int transmit_vBuffer(int n_bytes) // No such function will actually need to be c
 			}
 		}
 	}
-	return 0;
+	return FUNC_PASS;
 }
 void empty_vBuffer(void)
 {
@@ -130,13 +130,13 @@ int read_reg(uint8_t address, uint8_t * ptr)
         case 39: exp = reg39; break;//*
         case 40: exp = reg40; break;//*
         case 41: exp = reg41; break;//*
-	default: return 1;//*
+	default: return BAD_PARAM;//*
 	}
 
 	i2c_readRegister_ExpectAndReturn(address, exp);//*
 	*ptr = i2c_readRegister(address);
-	resetTest(); //*
-	return 0;
+	resetTest(); //* Clears ExpectAndReturn memory
+	return FUNC_PASS;
 }
 // Function to write to a register, called in other functions
 int write_reg(uint8_t address, uint8_t val)
@@ -175,9 +175,9 @@ int write_reg(uint8_t address, uint8_t val)
 	case 39: reg39 = val; break;//*
 	case 40: reg40 = val; break;//*
 	case 41: reg41 = val; break;//*
-	default: return 1; //*
+	default: return BAD_PARAM; //*
 	}
-	return 0;
+	return FUNC_PASS;
 }
 // Function to combine readings from two registers 
 uint16_t append_bytes(uint8_t b1, uint8_t b2)
@@ -199,17 +199,16 @@ float b_Temp(uint8_t b1, uint8_t b2)
 	return temperature;
 }
 
-
 // REGISTER 0x00:
 // Get the value of the control register
 int get_S_control(uint8_t * ctrl)
 {
 	uint8_t rawValue = 0;
 	if(read_reg(0x0, &rawValue)){
-		return 1;	
+		return BAD_READ;	
 	}else{
 		*ctrl = rawValue;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -217,9 +216,9 @@ int get_S_control(uint8_t * ctrl)
 int set_S_control(uint8_t new_control)
 {
 	if(write_reg(0x0, new_control)){
-		return 1;
+		return BAD_WRITE;
 	}else{
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -230,10 +229,10 @@ int get_S_encoder(uint8_t * enc)
 {
 	uint8_t rawValue = 0;
        	if(read_reg(0x01, &rawValue)){
-		return 1;
+		return BAD_READ;
 	}else{
 		*enc = rawValue;
-		return 0;
+		return FUNC_PASS;
 	}
 
 }
@@ -244,14 +243,17 @@ int set_S_encoder(uint8_t new_encoder)
 	uint8_t control = 0;
 	if(!get_S_control(&control)){
 		if(control == 0){
-			write_reg(0x01, new_encoder);
-			return 0;
+			if(write_reg(0x01, new_encoder)){
+				return BAD_WRITE;
+			}else{
+				return FUNC_PASS;
+			}
 		}else{
-			return 1;
+			return BAD_PARAM;
 		}
 	
 	}else{
-		return 1;
+		return BAD_READ;
 	}
 }
 
@@ -262,16 +264,16 @@ int get_S_paPower(uint8_t * power)
 	uint8_t rawValue = 0;
        	
 	if(read_reg(0x03, &rawValue)){
-		return 1;
+		return BAD_READ;
 	}else{
 		switch (rawValue){
 		case 0: *power = 24; break;
 		case 1: *power = 26; break;
 		case 2: *power = 28; break;
 		case 3: *power = 30; break;
-		default: return 1;
+		default: return BAD_PARAM;
 		}
-		return 0;
+		return FUNC_PASS;
 	}
 }
 // Set the Power Amplifier power
@@ -284,13 +286,13 @@ int set_S_paPower(uint8_t new_paPower)
 	case 26: rawValue = 1; break;
 	case 28: rawValue = 2; break;
 	case 30: rawValue = 3; break;
-	default: return 1;
+	default: return BAD_PARAM;
 	}
 
 	if(write_reg(0x03, rawValue)){
-		return 1;
+		return BAD_WRITE;
 	}else{
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -301,10 +303,10 @@ int get_S_frequency(float * freq)
 {
 	uint8_t offset = 0;
 	if(read_reg(0x04, &offset)){
-		return 1;
+		return BAD_READ;
 	}else{
 		*freq = (float)offset/2 + 2200.0f;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -314,12 +316,12 @@ int set_S_frequency(float new_frequency)
 	if(new_frequency >= 2200.0f && new_frequency <= 2300.0f){
 		uint8_t offset = (uint8_t)((new_frequency - 2200.0f)*2);
 		if(write_reg(0x04, offset)){
-			return 1;
+			return BAD_WRITE;
 		}else{
-			return 0; // Successful Write
+			return FUNC_PASS; // Successful Write
 		}
 	}else{
-		return 1;
+		return BAD_PARAM;
 	}
 }
 
@@ -328,9 +330,9 @@ int set_S_frequency(float new_frequency)
 int softResetFPGA(void)
 {
 	if(write_reg(0x05, 0x0)){
-		return 1;
+		return BAD_WRITE;
 	}else{
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -340,13 +342,13 @@ int get_S_firmwareVersion(float * version)
 {
 	uint8_t rawValue = 0;
 	if(read_reg(0x11, &rawValue)){
-		return 1;
+		return BAD_READ;
 	}else{
 		float major = (float)(rawValue >> 4);
         	float minor = (float)(rawValue & 15);
 		minor /= 100.0f;
 		*version = (major+minor);
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -356,10 +358,10 @@ int get_S_status(uint8_t * stat)
 {
 	uint8_t rawValue = 0;
 	if(read_reg(0x12, &rawValue)){
-		return 1;
+		return BAD_READ;
 	}else{
 		*stat = rawValue;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -369,10 +371,10 @@ int get_S_TR(int * transmit)
 {
 	uint8_t rawValue = 0;
        	if(read_reg(0x13, &rawValue)){
-		return 1;
+		return BAD_READ;
 	}else{
 		*transmit = rawValue;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -383,10 +385,10 @@ int get_S_bufferUnderrun(uint16_t * underrun)
 	uint8_t rawValue1 = 0;
 	uint8_t rawValue2 = 0;
 	if(read_reg(0x14, &rawValue1) || read_reg(0x15, &rawValue2)){
-		return 1;
+		return BAD_READ;
 	}else{
 		*underrun = append_bytes(rawValue1, rawValue2);
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -397,10 +399,10 @@ int get_S_bufferOverrun(uint16_t * overrun)
         uint8_t rawValue1 = 0;
         uint8_t rawValue2 = 0;
         if(read_reg(0x16, &rawValue1) || read_reg(0x17, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 *overrun = append_bytes(rawValue1, rawValue2);
-                return 0;
+                return FUNC_PASS;
         }
 }
 
@@ -412,10 +414,10 @@ int get_S_bufferCount(uint16_t * count)
         uint8_t rawValue1 = 0;
         uint8_t rawValue2 = 0;
         if(read_reg(0x18, &rawValue1) || read_reg(0x19, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 *count = append_bytes(rawValue1, rawValue2);
-                return 0;
+                return FUNC_PASS;
         }
 }
 
@@ -427,11 +429,11 @@ int get_S_RFpwr(float * pwr)
         uint8_t rawValue1 = 0;
         uint8_t rawValue2 = 0;
         if(read_reg(0x14, &rawValue1) || read_reg(0x15, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 uint16_t value = append_bytes(rawValue1, rawValue2);
                 *pwr =  ((float)value*(7.0f/6144.0f));
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -442,11 +444,11 @@ int get_S_paTemp(float * temp)
 	uint8_t rawValue1 = 0;
 	uint8_t rawValue2 = 0;
 	if(read_reg(0x1C, &rawValue1) || read_reg(0x1D, &rawValue2)){
-		return 1;
+		return BAD_READ;
 	}else{
 		uint16_t value = append_bytes(rawValue1, rawValue2);
 		*temp = (((float)value*3.0f/4096.0f)-0.5f)*100.0f;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -457,10 +459,10 @@ int get_S_topTemp(float * temp)
         uint8_t rawValue1 = 0;
         uint8_t rawValue2 = 0;
         if(read_reg(0x1E, &rawValue1) || read_reg(0x1F, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 *temp = b_Temp(rawValue1, rawValue2);
-                return 0;
+                return FUNC_PASS;
         }
 }
 
@@ -471,10 +473,10 @@ int get_S_bottomTemp(float * temp)
         uint8_t rawValue1 = 0;
         uint8_t rawValue2 = 0;
         if(read_reg(0x20, &rawValue1) || read_reg(0x21, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 *temp = b_Temp(rawValue1, rawValue2);
-                return 0;
+                return FUNC_PASS;
         }
 }
 	
@@ -485,12 +487,12 @@ int get_S_batCurrent(float * cur)
 	uint8_t rawValue1 = 0;
 	uint8_t rawValue2 = 0;
 	if(read_reg(0x22, &rawValue1) || read_reg(0x23, &rawValue2)){
-		return 1;
+		return BAD_READ;
 	}else{
 		uint16_t value = append_bytes(rawValue1, rawValue2);
 		int16_t temp = (int16_t)value;
 		*cur = (float)temp*0.00004f;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -502,12 +504,12 @@ int get_S_batVoltage(float * volt)
 	uint8_t rawValue2 = 0;
 	
 	if(read_reg(0x24, &rawValue1) || read_reg(0x25, &rawValue2)){
-		return 1;
+		return BAD_READ;
 	}else{
 		uint16_t value = append_bytes(rawValue1, rawValue2);
 		value &= 8191;
 		*volt = (float)value*0.004f;
-		return 0;
+		return FUNC_PASS;
 	}
 }
 
@@ -518,12 +520,12 @@ int get_S_paCurrent(float * cur)
         uint8_t rawValue1 = 0;
         uint8_t rawValue2 = 0;
         if(read_reg(0x26, &rawValue1) || read_reg(0x27, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 uint16_t value = append_bytes(rawValue1, rawValue2);
                 int16_t temp = (int16_t)value;
                 *cur = (float)temp*0.00004f;
-                return 0;
+                return FUNC_PASS;
         }
 }
 
@@ -536,11 +538,11 @@ int get_S_paVoltage(float * volt)
         uint8_t rawValue2 = 0;
 
         if(read_reg(0x28, &rawValue1) || read_reg(0x29, &rawValue2)){
-                return 1;
+                return BAD_READ;
         }else{
                 uint16_t value = append_bytes(rawValue1, rawValue2);
                 value &= 8191;
                 *volt = (float)value*0.004f;
-                return 0;
+                return FUNC_PASS;
         }
 }
