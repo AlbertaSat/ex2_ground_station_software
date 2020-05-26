@@ -15,7 +15,6 @@ typedef enum{
 	BAD_PARAM  = 2,
 }ret_state;
 
-
 //* Simulated buffer functions
 int add_vBuffer(int);
 int transmit_vBuffer(int);
@@ -26,17 +25,17 @@ int write_reg(uint8_t, uint8_t);
 
 // Internal bit manipulation functions
 uint16_t append_bytes(uint8_t, uint8_t);
-float b_Temp(uint8_t, uint8_t);
+float b_Temp(uint16_t);
 
 // External access/control functions
 
-int get_S_control(uint8_t * ctrl);
+int get_S_control(uint8_t * pa, uint8_t * mode);
 
-int set_S_control(uint8_t new_control);
+int set_S_control(uint8_t new_pa, uint8_t new_mode);
 
-int get_S_encoder(uint8_t * enc);
+int get_S_encoder(uint8_t * scrambler, uint8_t * filter, uint8_t * mod, uint8_t * rate);
 
-int set_S_encoder(uint8_t new_encoder);
+int set_S_encoder(uint8_t new_scrambler, uint8_t new_filter, uint8_t new_mod, uint8_t new_rate);
 
 int get_S_paPower(uint8_t * power);
 
@@ -60,21 +59,6 @@ int get_S_bufferOverrun(uint16_t * overrun);
 
 int get_S_bufferCount(uint16_t * count);
 
-int get_S_RFpwr(float * pwr);
-
-int get_S_paTemp(float * temp);
-
-int get_S_topTemp(float * temp);
-
-int get_S_bottomTemp(float * temp);
-
-int get_S_batCurrent(float * cur);
-
-int get_S_batVoltage(float * volt);
-
-int get_S_paCurrent(float * cur);
-
-int get_S_paVoltage(float * volt);
-
+int get_S_hk(float * arr);
 
 #endif /* STRANSMITTER_H */

@@ -17,28 +17,30 @@ void tearDown(void)
 {
 }
 
-void test_setControl130_getControl130(void)
+void test_setControl_getControl(void)
 {
-	uint8_t new_control = 130; // Data Mode
-	set_S_control(new_control);
+	set_S_control(1,2);
 	
-	uint8_t control = 0;
-	get_S_control(&control);
+	uint8_t pa = 0, mode = 0;
+	get_S_control(&pa, &mode);
 
-	TEST_ASSERT_EQUAL_UINT8(new_control, control);
+	TEST_ASSERT_EQUAL_UINT8(2, mode);
+	TEST_ASSERT_EQUAL_UINT8(1, pa);
 	resetTest();
 }
 
-void test_setEncoder4_getEncoder4(void)
+void test_setEncoder_getEncoder(void)
 {
-	uint8_t new_encoder = 4;
-	set_S_control(0); // Must be in Configuration Mode
-	set_S_encoder(new_encoder);
+	set_S_control(0,0); // Must be in Configuration Mode
+	set_S_encoder(1,0,1,0);
 	
-	uint8_t encoder = 0;
-       	get_S_encoder(&encoder);
+	uint8_t scrambler = 0, filter = 0, mod = 0, rate = 0;
+       	get_S_encoder(&scrambler, &filter, &mod, &rate);
 
-	TEST_ASSERT_EQUAL_UINT8(new_encoder, encoder);
+	TEST_ASSERT_EQUAL_UINT8(1, scrambler);
+	TEST_ASSERT_EQUAL_UINT8(0, filter);
+	TEST_ASSERT_EQUAL_UINT8(1, mod);
+	TEST_ASSERT_EQUAL_UINT8(0, rate);
 }
 
 void test_setPAPower26_getPAPower26(void)
@@ -81,7 +83,7 @@ void test_putAmountBytesInBuffer(void)
 void test_sendAmountBytesInBuffer(void)
 {
 	int amount = 10000;
-	set_S_control(130);
+	set_S_control(1,2);
 	transmit_vBuffer(amount);
 	uint16_t count = 0;
 	get_S_bufferCount(&count);
