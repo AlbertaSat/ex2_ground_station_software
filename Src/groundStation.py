@@ -34,25 +34,31 @@ class Csp(object):
         libcsp.zmqhub_init(addr, 'localhost')
         libcsp.rtable_load("0/0 ZMQHUB")
 
-    def getInput(self, prompt):
+    def getInput(self, prompt=None, inVal=None):
         sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
-        inStr = input(prompt)
-        cmdVec = re.split("\.|\(", inStr)
+        inStr = ""
+        if inVal is not None:
+            instr = inVal
+        elif prompt is not None:
+            inStr = input(prompt)
+        else:
+            raise Exception("invalid call to getInput")
+        cmdVec = re.split("\.|\(|\)", inStr)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
             app, service, sub, arg = [x.upper() for x in cmdVec]
         except:
-            print("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
-            return 0
+            raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
+
         server = apps[app]
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
-        args =  [int(x) for x in (p for p in arg if not sanitizeRegex.match(p))]
+        arg = int(arg).to_bytes(4, 'little')
         # data = map(ord, args)
-        print([subservice, *args])
-        b = bytearray([subservice, *args]) # convert it to something CSP can read
-        # b.extend(data)
+        print([subservice, arg])
+        b = bytearray([subservice]) # convert it to something CSP can read
+        b.extend(arg)
         print(b)
 
         print("CMP ident:", libcsp.cmp_ident(server))
@@ -77,8 +83,8 @@ if __name__ == "__main__":
     csp = Csp(opts)
 
     while True:
-        # try:
-        toSend, server, port = csp.getInput("to send:")
-        csp.send(server, port, toSend);
-        # except:
-        #     print("Could not send")
+        try:
+            toSend, server, port = csp.getInput(prompt="to send: ")
+            csp.send(server, port, toSend);
+        except Exception as e:
+            print(e)
