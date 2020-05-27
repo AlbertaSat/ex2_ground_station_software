@@ -65,19 +65,39 @@ void test_setFrequency_getFrequency(void)
 	TEST_ASSERT_FLOAT_WITHIN(0.1, new_frequency, frequency);
 }
 
-void test_PAtemp(void)
+void test_resetFPGA(void)
 {
-	float exp_temp = -50;
-	float temperature = 0;
-	get_S_paTemp(&temperature);
-	TEST_ASSERT_FLOAT_WITHIN(0.1, exp_temp, temperature);
+	softResetFPGA();
+	uint8_t reg = 1;
+	read_reg(0x05, &reg);
+
+	TEST_ASSERT_EQUAL_UINT8(0, reg);
 }
+
+void test_getFirmwareVersion(void)
+{
+	float version = 0;
+	get_S_firmwareVersion(&version);
+
+	TEST_ASSERT_EQUAL_FLOAT(1.14, version);
+}
+
+void test_getStatus(void)
+{
+	uint8_t pwrgd = 0, txl = 0;
+
+	get_S_status(&pwrgd, &txl);
+
+	TEST_ASSERT_EQUAL_UINT8(1, pwrgd);
+	TEST_ASSERT_EQUAL_UINT8(1, txl);
+}
+
 void test_putAmountBytesInBuffer(void)
 {
 	int amount = 10000;
 	add_vBuffer(amount);
 	uint16_t count = 0;
-	get_S_bufferCount(&count);
+	get_S_buffer(0, &count);
 	TEST_ASSERT_EQUAL_UINT16(amount, count);
 }
 void test_sendAmountBytesInBuffer(void)
@@ -86,8 +106,25 @@ void test_sendAmountBytesInBuffer(void)
 	set_S_control(1,2);
 	transmit_vBuffer(amount);
 	uint16_t count = 0;
-	get_S_bufferCount(&count);
+	get_S_buffer(0, &count);
 	TEST_ASSERT_EQUAL_UINT16(0, count);
+}
+
+void test_get_TR(void)
+{
+        empty_vBuffer();
+
+        int transmit = 0;
+
+        add_vBuffer(1);
+        get_S_TR(&transmit);
+        TEST_ASSERT_EQUAL_INT(1, transmit);
+
+        add_vBuffer(2560);
+        get_S_TR(&transmit);
+        TEST_ASSERT_EQUAL_INT(0,transmit);
+
+        empty_vBuffer();
 }
 
 void test_bufferOverrun(void)
@@ -96,7 +133,7 @@ void test_bufferOverrun(void)
 	int amount = 20481;
 	add_vBuffer(amount);
 	uint16_t overrun = 0;
-	get_S_bufferOverrun(&overrun);
+	get_S_buffer(2, &overrun);
 
 	TEST_ASSERT_EQUAL_UINT16(1, overrun);
 }
@@ -106,7 +143,24 @@ void test_bufferUnderrun()
 	int amount = 1;
 	transmit_vBuffer(amount);
 	uint16_t underrun = 0;
-	get_S_bufferUnderrun(&underrun);
+	get_S_buffer(1, &underrun);
 
 	TEST_ASSERT_EQUAL_UINT16(1, underrun);
+}
+
+void test_housekeeping()
+{
+	float sHouse[8] = {0};
+	if(get_S_hk(sHouse) == FUNC_PASS){
+		TEST_ASSERT_FLOAT_WITHIN(0.05, 2.34, sHouse[0]);
+		TEST_ASSERT_FLOAT_WITHIN(0.05, 100.6, sHouse[1]);
+		TEST_ASSERT_FLOAT_WITHIN(0.05, 50, sHouse[2]);
+		TEST_ASSERT_FLOAT_WITHIN(0.05, -0.25, sHouse[3]);
+		TEST_ASSERT_FLOAT_WITHIN(0.005, 0.08224, sHouse[4]);
+		TEST_ASSERT_FLOAT_WITHIN(0.005, 16.448, sHouse[5]);
+		TEST_ASSERT_FLOAT_WITHIN(0.005, -0.6528, sHouse[6]);
+		TEST_ASSERT_FLOAT_WITHIN(0.005, 0.036, sHouse[7]);
+	}else{
+		TEST_FAIL();
+	}
 }
