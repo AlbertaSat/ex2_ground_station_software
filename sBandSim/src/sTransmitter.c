@@ -1,6 +1,7 @@
 // sTransmitter.c
 // Author: Thomas Ganley
 // May 13, 2020
+// "*" indicates code that should be removed once i2c & spi are implemented with the actual hardware
 
 #include "sTransmitter.h"
 #include "mock_i2c.h" //*
@@ -9,16 +10,16 @@
 #include <unistd.h> //*
 	
 //* Simulated registers so that we can "store" values
-static uint8_t reg0 = 0, reg1 = 0, reg3 = 0, reg4 = 0, reg5 = 0;
-static uint8_t reg17 = 0, reg18 = 0, reg19 = 1, reg20 = 0;
+static uint8_t reg0 = 0, reg1 = 0, reg3 = 0, reg4 = 0, reg5 = 1;
+static uint8_t reg17 = 30, reg18 = 3, reg19 = 1, reg20 = 0;
 static uint8_t reg21 = 0, reg22 = 0, reg23 = 0, reg24 = 0;
-static uint8_t reg25 = 0, reg26 = 0, reg27 = 0, reg28 = 0;
-static uint8_t reg29 = 0, reg30 = 0, reg31 = 0, reg32 = 0;
-static uint8_t reg33 = 0, reg34 = 0, reg35 = 0, reg36 = 0;
-static uint8_t reg37 = 0, reg38 = 0, reg39 = 0, reg40 = 0, reg41 = 0;
+static uint8_t reg25 = 0, reg26 = 8, reg27 = 8, reg28 = 8;
+static uint8_t reg29 = 8, reg30 = 50, reg31 = 0, reg32 = 255;
+static uint8_t reg33 = 192, reg34 = 8, reg35 = 8, reg36 = 16;
+static uint8_t reg37 = 16, reg38 = 192, reg39 = 64, reg40 = 0, reg41 = 9;
 
 //* Simulated buffer function for adding 
-int add_vBuffer(int n_bytes)// Replace with spi_writeData eventually
+ret_state add_vBuffer(int n_bytes)// Replace with spi_writeData eventually
 {
 	spi_writeData_Expect();
 	spi_writeData();
@@ -47,7 +48,7 @@ int add_vBuffer(int n_bytes)// Replace with spi_writeData eventually
 		}else{
 			reg25++;
 			uint16_t b_count = 0;
-			get_S_bufferCount(&b_count);			
+			get_S_buffer(0, &b_count);			
 			if(b_count > 2560){
 				reg19 = 0;
 			}
@@ -56,7 +57,7 @@ int add_vBuffer(int n_bytes)// Replace with spi_writeData eventually
 	return FUNC_PASS;
 }
 
-int transmit_vBuffer(int n_bytes) // No such function will actually need to be called
+ret_state transmit_vBuffer(int n_bytes) // No such function will actually need to be called
 {	
 	for(int k = 0; k < n_bytes; k++){
 		
@@ -81,7 +82,7 @@ int transmit_vBuffer(int n_bytes) // No such function will actually need to be c
 			reg25--;
 			
 			uint16_t b_count = 0;
-			get_S_bufferCount(&b_count);
+			get_S_buffer(0, &b_count);
 			if(b_count <= 2560){
 				reg19 = 1;
 			}
@@ -96,7 +97,7 @@ void empty_vBuffer(void)
 }
 
 //* Function to read a register, called in other functions (replace with i2c_readRegister eventually)
-int read_reg(uint8_t address, uint8_t * ptr)
+ret_state read_reg(uint8_t address, uint8_t * ptr)
 {
 	uint8_t exp = 0x0; //*
 	switch (address){
@@ -139,7 +140,7 @@ int read_reg(uint8_t address, uint8_t * ptr)
 	return FUNC_PASS;
 }
 // Function to write to a register, called in other functions
-int write_reg(uint8_t address, uint8_t val)
+ret_state write_reg(uint8_t address, uint8_t val)
 {
 	i2c_writeRegister_Expect(address, val); //*
 	i2c_writeRegister(address, val);
@@ -186,12 +187,12 @@ uint16_t append_bytes(uint8_t b1, uint8_t b2)
 	return b;
 }
 
-// Calculates the board temperature (called in get_topTemp & get_bottomTemp)
-float b_Temp(uint8_t b1, uint8_t b2)
+// Calculates the board temperature (called in get_S_hk)
+float b_Temp(uint16_t b)
 {
 	float temperature = 0;
-	uint16_t b = (b1 << 4) | (b2 >> 4);
-	if (b1 & 128){
+	b = b >> 4;
+	if (b & 2048){
 		temperature = -0.0625f*(float)((~b & 4095) + 1);
 	}else{
 		temperature = 0.0625f*(float)(b);
@@ -201,49 +202,65 @@ float b_Temp(uint8_t b1, uint8_t b2)
 
 // REGISTER 0x00:
 // Get the value of the control register
-int get_S_control(uint8_t * ctrl)
+ret_state get_S_control(uint8_t * pa, uint8_t * mode)
 {
 	uint8_t rawValue = 0;
-	if(read_reg(0x0, &rawValue)){
+	if(read_reg(0x0, &rawValue) != FUNC_PASS){
 		return BAD_READ;	
 	}else{
-		*ctrl = rawValue;
+		*pa = rawValue >> 7;
+		*mode = rawValue & 3;
 		return FUNC_PASS;
 	}
 }
 
 // Set a new control on the transmitter
-int set_S_control(uint8_t new_control)
+ret_state set_S_control(uint8_t new_pa, uint8_t new_mode)
 {
-	if(write_reg(0x0, new_control)){
+	
+	if(new_mode > 3 || new_pa > 1){
+		return BAD_PARAM;
+	}
+	
+	new_mode |= (new_pa << 7);
+
+	if(write_reg(0x0, new_mode) != FUNC_PASS){
 		return BAD_WRITE;
 	}else{
 		return FUNC_PASS;
 	}
 }
 
-
 // REGISTER 0x01:
 // Get the value of the encoder register
-int get_S_encoder(uint8_t * enc)
+ret_state get_S_encoder(uint8_t * scrambler, uint8_t * filter, uint8_t * mod, uint8_t * rate)
 {
 	uint8_t rawValue = 0;
-       	if(read_reg(0x01, &rawValue)){
+       	if(read_reg(0x01, &rawValue) != FUNC_PASS){
 		return BAD_READ;
 	}else{
-		*enc = rawValue;
+		*rate = rawValue & 3;
+		*mod = 1 & (rawValue >> 2);
+		*filter = 1 & (rawValue >> 3);
+		*scrambler = 1 & (rawValue >> 4);
 		return FUNC_PASS;
 	}
 
 }
 
 // Set a new encoder value
-int set_S_encoder(uint8_t new_encoder)
+ret_state set_S_encoder(uint8_t new_scrambler, uint8_t new_filter, uint8_t new_mod, uint8_t new_rate)
 {
-	uint8_t control = 0;
-	if(!get_S_control(&control)){
-		if(control == 0){
-			if(write_reg(0x01, new_encoder)){
+	if(new_rate > 1 || new_mod > 1 || new_filter > 1 || new_scrambler > 1){
+		return BAD_PARAM;
+	}
+	
+	new_rate = (new_rate) | (new_mod << 2) | (new_filter << 3) | (new_scrambler << 4);
+
+	uint8_t mode = 0, pa = 0;
+	if(get_S_control(&pa, &mode) == FUNC_PASS){
+		if(mode == 0){
+			if(write_reg(0x01, new_rate)){
 				return BAD_WRITE;
 			}else{
 				return FUNC_PASS;
@@ -259,11 +276,11 @@ int set_S_encoder(uint8_t new_encoder)
 
 // REGISTER 0x03:
 // Get the Power Amplifier power
-int get_S_paPower(uint8_t * power)
+ret_state get_S_paPower(uint8_t * power)
 {
 	uint8_t rawValue = 0;
        	
-	if(read_reg(0x03, &rawValue)){
+	if(read_reg(0x03, &rawValue) != FUNC_PASS){
 		return BAD_READ;
 	}else{
 		switch (rawValue){
@@ -277,7 +294,7 @@ int get_S_paPower(uint8_t * power)
 	}
 }
 // Set the Power Amplifier power
-int set_S_paPower(uint8_t new_paPower)
+ret_state set_S_paPower(uint8_t new_paPower)
 {
 	uint8_t rawValue = 0;
 
@@ -289,7 +306,7 @@ int set_S_paPower(uint8_t new_paPower)
 	default: return BAD_PARAM;
 	}
 
-	if(write_reg(0x03, rawValue)){
+	if(write_reg(0x03, rawValue) != FUNC_PASS){
 		return BAD_WRITE;
 	}else{
 		return FUNC_PASS;
@@ -299,10 +316,10 @@ int set_S_paPower(uint8_t new_paPower)
 
 // Register 0x04:
 // Get the frequency
-int get_S_frequency(float * freq)
+ret_state get_S_frequency(float * freq)
 {
 	uint8_t offset = 0;
-	if(read_reg(0x04, &offset)){
+	if(read_reg(0x04, &offset) != FUNC_PASS){
 		return BAD_READ;
 	}else{
 		*freq = (float)offset/2 + 2200.0f;
@@ -311,11 +328,12 @@ int get_S_frequency(float * freq)
 }
 
 // Set a new frequency
-int set_S_frequency(float new_frequency)
+ret_state set_S_frequency(float new_frequency)
 {
 	if(new_frequency >= 2200.0f && new_frequency <= 2300.0f){
 		uint8_t offset = (uint8_t)((new_frequency - 2200.0f)*2);
-		if(write_reg(0x04, offset)){
+		
+		if(write_reg(0x04, offset) != FUNC_PASS){
 			return BAD_WRITE;
 		}else{
 			return FUNC_PASS; // Successful Write
@@ -327,9 +345,9 @@ int set_S_frequency(float new_frequency)
 
 // REGISTER 0x05:
 // Reset the FPGA logic
-int softResetFPGA(void)
+ret_state softResetFPGA(void)
 {
-	if(write_reg(0x05, 0x0)){
+	if(write_reg(0x05, 0x0) != FUNC_PASS){
 		return BAD_WRITE;
 	}else{
 		return FUNC_PASS;
@@ -338,10 +356,10 @@ int softResetFPGA(void)
 
 // REGISTER 0x11:
 // Get the firmware version
-int get_S_firmwareVersion(float * version)
+ret_state get_S_firmwareVersion(float * version)
 {
 	uint8_t rawValue = 0;
-	if(read_reg(0x11, &rawValue)){
+	if(read_reg(0x11, &rawValue) != FUNC_PASS){
 		return BAD_READ;
 	}else{
 		float major = (float)(rawValue >> 4);
@@ -354,195 +372,114 @@ int get_S_firmwareVersion(float * version)
 
 // REGISTER 0x12:
 // Get the status of the lock and the PA
-int get_S_status(uint8_t * stat)
+ret_state get_S_status(uint8_t * pwrgd, uint8_t * txl)
 {
 	uint8_t rawValue = 0;
-	if(read_reg(0x12, &rawValue)){
+	if(read_reg(0x12, &rawValue) != FUNC_PASS){
 		return BAD_READ;
 	}else{
-		*stat = rawValue;
+		*pwrgd = (rawValue & 2) >> 1;
+		*txl = rawValue & 1;
 		return FUNC_PASS;
 	}
 }
 
 // REGISTER 0x13:
 // Check if Transmit Ready
-int get_S_TR(int * transmit)
+ret_state get_S_TR(int * transmit)
 {
 	uint8_t rawValue = 0;
-       	if(read_reg(0x13, &rawValue)){
+       	if(read_reg(0x13, &rawValue) != FUNC_PASS){
 		return BAD_READ;
 	}else{
-		*transmit = rawValue;
+		*transmit = rawValue & 1;
 		return FUNC_PASS;
 	}
 }
 
-// REGISTERS 0x14 & 0x15:
-// Get the buffer underrun
-int get_S_bufferUnderrun(uint16_t * underrun)
+// REGISTERS 0x14 through 0x19: (Buffer Registers)
+// The following function will read the desired buffer quantity
+ret_state get_S_buffer(int quantity, uint16_t * ptr)
 {
 	uint8_t rawValue1 = 0;
 	uint8_t rawValue2 = 0;
-	if(read_reg(0x14, &rawValue1) || read_reg(0x15, &rawValue2)){
+	uint8_t address = 0;
+
+	switch(quantity){
+		case 0: // Buffer Count
+			address = 0x18;
+			break;
+		case 1: // Buffer Underrun
+			address = 0x14;
+			break;
+		case 2: // Buffer Overrun
+			address = 0x16;
+			break;
+		default: return BAD_PARAM;
+		}
+
+	if(read_reg(address, &rawValue1) != FUNC_PASS){
+		return BAD_READ;
+	}else if(read_reg(address + 1, &rawValue2) != FUNC_PASS){
 		return BAD_READ;
 	}else{
-		*underrun = append_bytes(rawValue1, rawValue2);
+		*ptr = append_bytes(rawValue1, rawValue2);
 		return FUNC_PASS;
 	}
 }
 
-// REGISTERS 0x16 & 0x17:
-// Get the buffer overrun
-int get_S_bufferOverrun(uint16_t * overrun)
+// REGISTERS 0x1A through 0x29
+// The following function collects housekeeping data for the s-band transmitter in an array
+ret_state get_S_hk(float * array) // Array should contain 8 floats
 {
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-        if(read_reg(0x16, &rawValue1) || read_reg(0x17, &rawValue2)){
-                return BAD_READ;
-        }else{
-                *overrun = append_bytes(rawValue1, rawValue2);
-                return FUNC_PASS;
-        }
-}
+	uint16_t val = 0;
+	int16_t temp = 0;
 
+	for(uint8_t address = 0x1A; address < 0x29; address = address + 2){
+		uint8_t val1 = 0, val2 = 0;
 
-// REGISTERS 0x18 & 0x19:
-// Get the buffer count
-int get_S_bufferCount(uint16_t * count)
-{
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-        if(read_reg(0x18, &rawValue1) || read_reg(0x19, &rawValue2)){
-                return BAD_READ;
-        }else{
-                *count = append_bytes(rawValue1, rawValue2);
-                return FUNC_PASS;
-        }
-}
+		if(read_reg(address, &val1) != FUNC_PASS){
+			printf("bad read %d\n", address);
+			return BAD_READ;
+		}else if(read_reg(1 + address, &val2) != FUNC_PASS){
+			printf("bad second read %d\n", address);
+			return BAD_READ;
+		}else{
+			val = append_bytes(val1, val2);		
+			switch(address){
+				case 0x1A:
+					val &= 4095;
+					array[0] = ((float)val*(7.0f/6144.0f));
+					break;
+				case 0x1C:
+					val &= 4095;
+					array[1] = (((float)val*3.0f/4096.0f)-0.5f)*100.0f;
+					break;
+				case 0x1E:
+					array[2] = b_Temp(val);
+					break;
+				case 0x20:
+					array[3] = b_Temp(val);
+					break;
+				case 0x22:
+					temp = (int16_t)val;
+			                array[4] = (float)temp*0.00004f; 
+					break;
+				case 0x24:
+					val &= 8191;
+               				array[5] = (float)val*0.004f;
+					break;
+				case 0x26:
+					temp = (int16_t)val;
+			                array[6] = (float)temp*0.00004f;
+					break;
+				case 0x28:
+					val &= 8191;
+			                array[7] = (float)val*0.004f;
+					break;
+			}
+		}
 
-
-// REGISTERS 0x1A & 0x1B:
-// Get RF Power
-int get_S_RFpwr(float * pwr)
-{
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-        if(read_reg(0x14, &rawValue1) || read_reg(0x15, &rawValue2)){
-                return BAD_READ;
-        }else{
-                uint16_t value = append_bytes(rawValue1, rawValue2);
-                *pwr =  ((float)value*(7.0f/6144.0f));
-		return FUNC_PASS;
 	}
-}
-
-// REGISTERS 0x1C & 0x1D:
-// Get PA temperature
-int get_S_paTemp(float * temp)
-{
-	uint8_t rawValue1 = 0;
-	uint8_t rawValue2 = 0;
-	if(read_reg(0x1C, &rawValue1) || read_reg(0x1D, &rawValue2)){
-		return BAD_READ;
-	}else{
-		uint16_t value = append_bytes(rawValue1, rawValue2);
-		*temp = (((float)value*3.0f/4096.0f)-0.5f)*100.0f;
-		return FUNC_PASS;
-	}
-}
-
-// REGISTERS 0x1E & 0x1F:
-// Get temperature of the top of the board
-int get_S_topTemp(float * temp)
-{
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-        if(read_reg(0x1E, &rawValue1) || read_reg(0x1F, &rawValue2)){
-                return BAD_READ;
-        }else{
-                *temp = b_Temp(rawValue1, rawValue2);
-                return FUNC_PASS;
-        }
-}
-
-// REGISTERS 0x20 & 0x21:
-// Get temperature of the bottom of the board
-int get_S_bottomTemp(float * temp)
-{
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-        if(read_reg(0x20, &rawValue1) || read_reg(0x21, &rawValue2)){
-                return BAD_READ;
-        }else{
-                *temp = b_Temp(rawValue1, rawValue2);
-                return FUNC_PASS;
-        }
-}
-	
-// REGISTERS 0x22 & 0x23:
-// Get battery bus current reading
-int get_S_batCurrent(float * cur)
-{
-	uint8_t rawValue1 = 0;
-	uint8_t rawValue2 = 0;
-	if(read_reg(0x22, &rawValue1) || read_reg(0x23, &rawValue2)){
-		return BAD_READ;
-	}else{
-		uint16_t value = append_bytes(rawValue1, rawValue2);
-		int16_t temp = (int16_t)value;
-		*cur = (float)temp*0.00004f;
-		return FUNC_PASS;
-	}
-}
-
-// REGISTERS 0x24 & 0x25:
-// Get battery bus voltage reading
-int get_S_batVoltage(float * volt)
-{
-	uint8_t rawValue1 = 0;
-	uint8_t rawValue2 = 0;
-	
-	if(read_reg(0x24, &rawValue1) || read_reg(0x25, &rawValue2)){
-		return BAD_READ;
-	}else{
-		uint16_t value = append_bytes(rawValue1, rawValue2);
-		value &= 8191;
-		*volt = (float)value*0.004f;
-		return FUNC_PASS;
-	}
-}
-
-// REGISTERS 0x26 & 0x27:
-// Get the Power Amplifier Current
-int get_S_paCurrent(float * cur)
-{
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-        if(read_reg(0x26, &rawValue1) || read_reg(0x27, &rawValue2)){
-                return BAD_READ;
-        }else{
-                uint16_t value = append_bytes(rawValue1, rawValue2);
-                int16_t temp = (int16_t)value;
-                *cur = (float)temp*0.00004f;
-                return FUNC_PASS;
-        }
-}
-
-
-// REGISTERS 0x28 & 0x29:
-// Get the Power Amplifier Voltage
-int get_S_paVoltage(float * volt)
-{
-        uint8_t rawValue1 = 0;
-        uint8_t rawValue2 = 0;
-
-        if(read_reg(0x28, &rawValue1) || read_reg(0x29, &rawValue2)){
-                return BAD_READ;
-        }else{
-                uint16_t value = append_bytes(rawValue1, rawValue2);
-                value &= 8191;
-                *volt = (float)value*0.004f;
-                return FUNC_PASS;
-        }
+	return FUNC_PASS;
 }
