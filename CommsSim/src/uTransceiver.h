@@ -11,7 +11,10 @@
 
 // Converts hex values to their ASCII characters
 int convHexToASCII(int length, uint8_t * arr);
-uint32_t crc32_calc(size_t length, const void *);
+int crc32_calc(size_t length, char * cmd);
+int find_blankSpace(char * string);
+int check_crc32(int length, char * ans)
+
 int set_U_control(uint8_t * array);
 int get_U_control(uint8_t * array);
 #endif // UTRANSCEIVER_H
