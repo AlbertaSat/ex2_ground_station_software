@@ -16,7 +16,7 @@ int convHexToASCII(int length, uint8_t * arr)
         }
 }
 
-// Convests ASCII characters to their hex values
+// Converts ASCII characters to their hex values
 int convHexFromASCII(int length, uint8_t * arr)
 {
 	for(int i = 0; i < length; i++){
@@ -79,75 +79,118 @@ int check_crc32(int len, char * ans)
 	
 	crc32_calc(find_blankSpace(answer), expected);
 
-	if(!strcmp(expected, answer)){
-		return 0;
-	}else{
-		return 1;
+	if(strcmp(expected, answer)) return 1;
+}
+
+int generic_U_write(uint8_t code, void * param)
+{
+	uint8_t cmd[30] = {0};
+
+	switch(code){
+		case 0: {// Set the status control word
+			uint8_t * array = (uint8_t *)param;
+			uint8_t hex[8] = {0};
+	
+		        // Grouping params into 4 bits (hex values)
+		        hex[0] = (*(array) << 2) | *(array+1);
+	        	hex[1] = (*(array+2) << 3) | *(array+3);
+		        hex[2] = (*(array+4) << 3) | (*(array+5) << 2) | (*(array+6) << 1) | (*(array+7));
+		        hex[3] = (*(array+8) << 3) | (*(array+9) << 2) | (*(array+10) << 1) | (*(array+11));
+		
+		        convHexToASCII(4, hex);
+			
+		        // Building the command
+		        uint8_t command[30] = {'E','S','+','W','2','2','0','0',hex[0],hex[1],hex[2],hex[3],' ','C','C','C','C','C','C','C','C','\r'};
+			strcpy(cmd, command);
+			break;
+			}	
+
+		case 1: {// Set the frequency (Unsure if correct)
+			uint32_t * new_freq = (uint32_t *)param;
+			if(*new_freq < 435000000 || *new_freq > 438000000) return 1;
+			
+			float temp = *new_freq/6500000.0f;
+			uint8_t val1 = (uint8_t)temp - 1; //Integer term
+			uint8_t val2 = (uint32_t)((temp - val1)*524288); // Fractional term
+			uint8_t hex[8] = {(val2>>16)&15, (val2>>12)&15, (val2>>8)&15, (val2>>4)&15, (val2)&15, 15, (val1>>4)&15, (val1)&15};
+			convHexToASCII(8, hex);
+			
+			// Building the command
+			uint8_t command[30] = {'E','S','+','W','2','2','0','1',hex[0],hex[1],hex[2],hex[3],hex[4],hex[5],hex[6],hex[7],' ','C','C','C','C','C','C','C','C','\r'};
+			strcpy(cmd, command);
+			break;
+			}
+
+		case 2:
+
+			break;
+
+		default: return 1;
+	}
+	
+	// Calculate crc32 & send command
+	crc32_calc(find_blankSpace(cmd), cmd);
+        uint8_t ans[30] = {0};
+        i2c_sendCommand(strlen(cmd), cmd, ans);
+	printf("cmd: %s\n",cmd);
+	printf("ans: %s\n",ans);
+        // Checking the answer
+        if(ans[0] == 0x4F){
+                if(!check_crc32(strlen(ans), ans)){
+                        return 0;
+                }else{
+                        return 2;
+                }
+        }else{
+                return 1;
 	}
 }
 
-int set_U_control(uint8_t * array)
+int generic_U_read(uint8_t code, void * param)
 {
-        uint8_t hex[8] = {0};
+	uint8_t c1 = (code >> 4) & 15;
+	uint8_t c2 = code & 15;
+	convHexToASCII(1, &c1);
+	convHexToASCII(1, &c2);
 
-        // Grouping params into 4 bits (hex values)
-        hex[0] = (array[0] << 2) | (array[1]);
-        hex[1] = (array[2] << 3) | (array[3]);
-        hex[2] = (array[4] << 3) | (array[5] << 2) | (array[6] << 1) | (array[7]);
-        hex[3] = (array[8] << 3) | (array[9] << 2) | (array[10] << 1) | (array[11]);
-
-        convHexToASCII(4, hex);
-
-	// Building the command
-        uint8_t command[23] = {'E','S','+','W','2','2','0','0', hex[0], hex[1], hex[2], hex[3],' ','C','C','C','C','C','C','C','C','\r','\0'};
-        crc32_calc(find_blankSpace(command), command);
-	uint8_t ans[20] = {0};
-	i2c_sendCommand(strlen(command), command, ans);
-
-	// Checking the answer
-	if(ans[0] == 0x4F){
-		if(!check_crc32(strlen(ans), ans)){
-			return 0;
-		}else{
-			return 2;
-		}
-	}else{
-		return 1;
-	}
-
-}
-
-
-int get_U_control(uint8_t * array)
-{
-	uint8_t command[19] = {'E','S','+','R','2','2','0','0',' ','C','C','C','C','C','C','C','C','\r','\0'};
+	uint8_t command[20] = {'E','S','+','R','2','2',c1,c2,' ','C','C','C','C','C','C','C','C','\r'};
 	crc32_calc(find_blankSpace(command), command);
 
-	uint8_t ans[30] = {0};
-	i2c_sendCommand(strlen(command), command, ans);
+        uint8_t ans[30] = {0};
+        i2c_sendCommand(strlen(command), command, ans);
 
-	if(!check_crc32(strlen(ans), ans)){
+        if(check_crc32(strlen(ans), ans)) return 2;
 
-	}else{
-		return 2;
+	switch(code){
+		case 0:{// Get the status control word
+			uint8_t * array = (uint8_t *)param;
+
+			int b_index = find_blankSpace(ans);
+		        uint8_t hex[4] = {ans[b_index - 4], ans[b_index - 3], ans[b_index - 2], ans[b_index - 1]};
+		        convHexFromASCII(4, hex);
+		
+		        // Storing the original parameters in the array
+		        *array = hex[0] >> 2;
+		        *(array + 1) = hex[0] & 3;
+		        *(array + 2) = hex[1] >> 3;
+		        *(array + 3) = hex[1] & 7;
+		        *(array + 4) = hex[2] >> 3;
+		        *(array + 5) = (hex[2] >> 2) & 1;
+		        *(array + 6) = (hex[2] >> 1) & 1;
+		        *(array + 7) = hex[2] & 1;
+		        *(array + 8) = (hex[3] >> 3);
+		        *(array + 9) = (hex[3] >> 2) & 1;
+		        *(array + 10) = (hex[3] >> 1) & 1;
+		        *(array + 11) = hex[3] & 1;
+
+			break;
+			}
+		case 1:{// Get the frequency
+
+
+			break;
+			}
+		default:
+			return 1;
 	}
-
-	int b_index = find_blankSpace(ans);
-	uint8_t hex[4] = {ans[b_index - 4], ans[b_index - 3], ans[b_index - 2], ans[b_index - 1]};
-	convHexFromASCII(4, hex);
-	
-	*array = hex[0] >> 2;
-	*(array + 1) = hex[0] & 3;
-	*(array + 2) = hex[1] >> 3;
-	*(array + 3) = hex[1] & 7;
-	*(array + 4) = hex[2] >> 3;
-	*(array + 5) = (hex[2] >> 2) & 1;
-	*(array + 6) = (hex[2] >> 1) & 1;
-	*(array + 7) = hex[2] & 1;
-	*(array + 8) = (hex[3] >> 3);
-	*(array + 9) = (hex[3] >> 2) & 1;
-	*(array + 10) = (hex[3] >> 1) & 1;
-	*(array + 11) = hex[3] & 1;
-
-	return 0;
 }

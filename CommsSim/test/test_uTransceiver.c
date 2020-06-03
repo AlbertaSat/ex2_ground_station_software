@@ -2,9 +2,9 @@
 // Author: Thomas Ganley
 // May 28, 2020
 
+#include "mock_i2c.h"
 #include "unity.h"
 #include "uTransceiver.h"
-#include "mock_i2c.h"
 
 void setUp(void)
 {
@@ -23,14 +23,24 @@ void test_setControl_getControl(void)
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer,strlen(answer));
 
-	set_U_control(array);
+	generic_U_write(0, array);
 	
 	uint8_t array2[12] ={0};
 	char answer2[30] = "OK+03220133FE 0A8340A4\r"; // Assuming successful read
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer2,strlen(answer2));
 
-	get_U_control(array2);	
+	generic_U_read(0, array2);	
 
 	TEST_ASSERT_EQUAL_UINT8_ARRAY(array, array2, 12);
+}
+
+void test_setFrequency_getFrequency(void)
+{
+	uint32_t new_freq = 435000000;
+	char answer3[20] = "OK D736D92D\r";
+
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer3, strlen(answer3));
+	generic_U_write(1, &new_freq);
 }
