@@ -115,3 +115,56 @@ void test_readInternalTempSensor(void)
         
 	TEST_ASSERT_FLOAT_WITHIN(0.01, -1.8f, temp);	
 }
+
+void test_setLowPowerMode_getLowPowerMode(void)
+{
+	uint8_t val = 1;
+        uint8_t read_val = 0;
+
+        uint8_t answer13[30] = "OK D736D92D\r";
+        i2c_sendCommand_ExpectAnyArgs();
+        i2c_sendCommand_ReturnArrayThruPtr_response(answer13, strlen(answer13));
+        generic_U_write(244, &val);
+
+        uint8_t answer14[30] = "OK+01 EA147871\r";
+        i2c_sendCommand_ExpectAnyArgs();
+        i2c_sendCommand_ReturnArrayThruPtr_response(answer14, strlen(answer14));
+        generic_U_read(244, &read_val);
+
+        TEST_ASSERT_EQUAL_UINT8(val, read_val);
+
+}
+
+void test_setCallsign_getCallsign(void)
+{
+	uint8_t callsign[6] = "VA6AZA";
+	uint8_t answer15[20] = "OK D736D92D\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer15, strlen(answer15));
+	generic_U_write(246, callsign);
+	
+	uint8_t read_callsign[6] = {0};
+	uint8_t answer16[20] = "OK+VA6AZA 04BC75E4\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer16, strlen(answer16));
+	generic_U_read(246, read_callsign);
+
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(callsign, read_callsign, 6);
+}
+
+void test_setMorseCodeCallSign_getMorseCodeCallSign(void)
+{
+	uint8_t morse_code[15] = {14,'.','-','-',' ','-','.','.','-','-','-',' ','.',' ','.'};
+	uint8_t answer17[20] = "OK D736D92D\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer17, strlen(answer17));
+	generic_U_write(247, morse_code);
+
+	uint8_t read_code[15] = {0};
+	uint8_t answer18[30] = "OK+14.-- -..--- . . 083E3C38\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer18, strlen(answer18));
+	generic_U_read(247, read_code);
+
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(morse_code, read_code, 15);
+}

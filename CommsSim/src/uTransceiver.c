@@ -82,9 +82,15 @@ int check_crc32(int len, char * ans)
 	if(strcmp(expected, answer)) return 1;
 }
 
+
+
 int generic_U_write(uint8_t code, void * param)
 {
-	uint8_t cmd[30] = {0};
+	uint8_t cmd[60] = {0};
+	
+	/* The following switch statement depends on the command code to:    *
+	 * 	- Calculate necessary ASCII characters from input parameters *
+	 * 	- Build the command to be sent                               */
 
 	switch(code){
 
@@ -124,13 +130,16 @@ int generic_U_write(uint8_t code, void * param)
 			}
 
 
-		case 6: {// Set PIPE mode Timeout Period
-			uint8_t * time = (uint8_t *)param;
+		case 6: // Set PIPE mode Timeout Period
+		case 7: // Set Beacon Transmission Period
+		case 8:	// Set Audio Beacon Transmission Period
+			{
+			uint16_t * time = (uint16_t *)param;
 
-			uint8_t hex[2] = {(*time) >> 4, (*time) & 15};
-			convHexToASCII(2, hex);
+			uint8_t hex[4]= {(*time >> 12)&15, (*time >> 8)&15, (*time >> 4)&15, (*time) & 15};
+			convHexToASCII(4, hex);
 
-			uint8_t command[30] = {'E','S','+','W','2','2','0','6','0','0','0','0','0','0',hex[0],hex[1],' ','C','C','C','C','C','C','C','C','\r'};
+			uint8_t command[30] = {'E','S','+','W','2','2','0','6','0','0','0','0',hex[0],hex[1],hex[2],hex[3],' ','C','C','C','C','C','C','C','C','\r'};
 			strcpy(cmd, command);
 			break;
 			}
@@ -145,22 +154,57 @@ int generic_U_write(uint8_t code, void * param)
 			}
 		
 
-		case 241:{// Generic write and/or read from an i2c device
-			uint8_t command[30];
+		case 244:{// Enter low power mode
+			uint8_t * confirm = (uint8_t *)param;
+			if(*confirm != 1) return 1;
+			uint8_t command[30] = {'E','S','+','W','2','2','F','4',' ','C','C','C','C','C','C','C','C','\r'};
 			strcpy(cmd, command);
+			break;
 			}
 
+		case 245: // Set Destination Call Sign
+		case 246: // Set Source Call Sign
+			 {
+			uint8_t * ptr = (uint8_t *)param;
+			uint8_t command[30] = {'E','S','+','W','2','2','F',(uint8_t)code-192,*ptr,*(ptr+1),*(ptr+2),*(ptr+3),*(ptr+4),*(ptr+5),' ','C','C','C','C','C','C','C','C','\r'};
+			strcpy(cmd, command);
+			break;
+			} 
+		
+
+		case 247:{ // Set Morse Code Call Sign
+			uint8_t * ptr = (uint8_t *)param;
+			uint8_t len[2] = {(*ptr - (*ptr % 10))/10, *ptr % 10};
+			convHexToASCII(2,len);
+			uint8_t command[60] = {'E','S','+','W','2','2','F','7',len[0],len[1]};
+			int i = 0;
+			for(i; i < *ptr; i++){
+				uint8_t sym = *(ptr+i+1);
+				if(sym != 0x2D && sym != 0x2E && sym != 0x20) return 1;
+				command[10+i] = sym;
+			}
+			command[10+i] = 0x20;
+			command[11+i]=command[12+i]=command[13+i]=command[14+i]=command[15+i]=command[16+i]=command[17+i]=command[18+i] = 'C';
+			command[19+i] = 0x0D;
+			strcpy(cmd, command);
+			break;
+			}
 
 		default: return 1;
 	}
-	
-	// Calculate crc32 & send command
+
+
+	/* The following is necessary for all write commands: *
+	 * 	- Calculate the crc32                         *
+	 * 	- Send the command and receive the answer     * 
+	 * 	- Checking the crc32 of the answer            * 
+	 * 	- Checking for an answer indicating an error  */
+
 	crc32_calc(find_blankSpace(cmd, strlen(cmd)), cmd);
         uint8_t ans[30] = {0};
         i2c_sendCommand(strlen(cmd), cmd, ans);
 	printf("write %d cmd: %s\n", code, cmd);
 	printf("write %d ans: %s\n", code, ans);
-        // Checking the answer
         if(ans[0] == 0x4F){
                 if(!check_crc32(strlen(ans), ans)){
                         return 0;
@@ -172,8 +216,17 @@ int generic_U_write(uint8_t code, void * param)
 	}
 }
 
+
+
 int generic_U_read(uint8_t code, void * param)
-{
+{                                                                 
+	/* The following is necessary for all read commands:                 *   
+	 * 	- Determining ASCII characters representing the command code *
+	 * 	- Calculating the crc32                                      *
+	 * 	- Sending the command and receiving the answer               *  
+	 * 	- Checking the crc32 of the answer                           * 
+	 * 	- Checking for an answer indicating an error                 */
+	
 	uint8_t c1 = (code >> 4) & 15;
 	uint8_t c2 = code & 15;
 	convHexToASCII(1, &c1);
@@ -184,11 +237,18 @@ int generic_U_read(uint8_t code, void * param)
 		
         uint8_t ans[30] = {0};
         i2c_sendCommand(strlen(command), command, ans);
+	
 	int b = find_blankSpace(ans,strlen(ans));
 
 	printf("read  %d cmd: %s\n", code, command);
 	printf("read  %d ans: %s\n", code, ans);
-        if(check_crc32(strlen(ans), ans)) return 2;
+        if(check_crc32(strlen(ans), ans)) printf("Bad crc\n");
+
+
+	/* This switch statement depends on the command code to: *
+	 * 	- Interpret the answer                           *
+	 * 	- Calculate relevant parameters                  *
+	 * 	- Save these in *param and subsequent pointers   */
 
 	switch(code){
 		case 0:{// Get the status control word
@@ -258,7 +318,8 @@ int generic_U_read(uint8_t code, void * param)
 			break;
 			}
 			
-		case 10:{
+
+		case 10:{ // Get the internal temperature
 			float * value = (float*)param;
 
 			uint8_t dec[4] = {ans[3],ans[4],ans[5],ans[6]};
@@ -266,6 +327,43 @@ int generic_U_read(uint8_t code, void * param)
 			
 			*value = (dec[1]*10.0f) + (dec[2]) + (dec[3]/10.0f);
 			if(dec[0] == 0x2D) *value *= -1.0f;
+			break;
+			}
+
+
+		case 244:{ // Get Low Power Mode Status
+			uint8_t * status = (uint8_t *)param;
+
+			uint8_t hex[2] = {ans[b-2], ans[b-1]};
+			convHexFromASCII(2, hex);
+			*status = (hex[0] << 4) | hex[1];
+			break;
+			}
+
+
+		case 245: // Get Destination Call Sign
+		case 246:{// Get Source Call Sign
+			uint8_t * callsign = (uint8_t *)param;	
+			for(int j = 0 ; j<6;j++){
+				*(callsign+j) = ans[b + j -6];
+			}
+			break;
+			}
+
+		case 247:{// Get Morse Code Call Sign
+			uint8_t * morse_code = (uint8_t *)param;
+			uint8_t dec[2] = {ans[3],ans[4]};
+			convHexFromASCII(2, dec);
+
+			*morse_code = dec[0] * 10 + dec[1];
+
+			for(int i = 0; i < *morse_code; i++){
+				uint8_t sym = ans[5+i];
+				if(sym != 0x2D && sym != 0x2E && sym != 0x20) break;
+				
+				*(morse_code + i + 1) = sym;
+			}
+			break;
 			}
 		default:
 			return 1;
