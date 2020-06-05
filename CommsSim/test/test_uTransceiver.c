@@ -168,3 +168,44 @@ void test_setMorseCodeCallSign_getMorseCodeCallSign(void)
 
 	TEST_ASSERT_EQUAL_UINT8_ARRAY(morse_code, read_code, 15);
 }
+
+void test_setMidiAudioBeacon_getMidiAudioBeacon(void)
+{
+	uint8_t beacon[17] = {8,42,'w',42,'w',23,'q',41,'Q',86,'H',87,'H',20,'W',20,'X'};
+	uint8_t answer19[20] = "OK D736D92D\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer19, strlen(answer19));
+	generic_U_write(248, beacon);
+
+	uint8_t read_beacon[20] = {0};
+	uint8_t answer20[40] = "OK+0842w42w23q41Q86H87H20W20X F304942B\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer20, strlen(answer20));
+	generic_U_read(248, read_beacon);
+
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(beacon, read_beacon, 17);
+}
+
+void test_getSoftwareVersion(void)
+{
+	uint8_t exp_version[4] = "2.06";
+	uint8_t version[4] = {0};
+	uint8_t answer21[40] = "OK+2.0612/11/2020,22:04 06AC1779\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer21, strlen(answer21));
+	generic_U_read(249, version);
+
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_version, version, 4);
+}
+
+void test_getDevicePayloadSize(void)
+{
+	uint8_t size = 0;
+	uint8_t answer22[20] = "OK+0064 804946A5\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer22, strlen(answer22));
+	generic_U_read(250, &size);
+
+	TEST_ASSERT_EQUAL_UINT8(100, size);
+}
+

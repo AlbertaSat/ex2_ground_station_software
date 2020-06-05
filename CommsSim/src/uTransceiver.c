@@ -56,7 +56,7 @@ int crc32_calc(size_t length, char * cmd)
 
 }
 
-// Returns the index of the first blank space character
+// Returns the index of the last blank space character
 int find_blankSpace(char * string, int len)
 {
 	for(int k = len; k>0; k--){
@@ -69,12 +69,12 @@ int find_blankSpace(char * string, int len)
 // Recalculate the crc32 of the answer
 int check_crc32(int len, char * ans)
 {
-	uint8_t answer[30] = {0};
+	uint8_t answer[120] = {0};
 	for(int i = 0; i < len; i++){
 		answer[i] = *(ans+i);
 	}
 
-	uint8_t expected[30] = {0};
+	uint8_t expected[120] = {0};
 	strcpy(expected, answer);
 	
 	crc32_calc(find_blankSpace(answer, strlen(answer)), expected);
@@ -86,8 +86,8 @@ int check_crc32(int len, char * ans)
 
 int generic_U_write(uint8_t code, void * param)
 {
-	uint8_t cmd[60] = {0};
-	
+	uint8_t cmd[120] = {0};
+
 	/* The following switch statement depends on the command code to:    *
 	 * 	- Calculate necessary ASCII characters from input parameters *
 	 * 	- Build the command to be sent                               */
@@ -175,7 +175,7 @@ int generic_U_write(uint8_t code, void * param)
 		case 247:{ // Set Morse Code Call Sign
 			uint8_t * ptr = (uint8_t *)param;
 			uint8_t len[2] = {(*ptr - (*ptr % 10))/10, *ptr % 10};
-			convHexToASCII(2,len);
+			convHexToASCII(2, len);
 			uint8_t command[60] = {'E','S','+','W','2','2','F','7',len[0],len[1]};
 			int i = 0;
 			for(i; i < *ptr; i++){
@@ -189,6 +189,33 @@ int generic_U_write(uint8_t code, void * param)
 			strcpy(cmd, command);
 			break;
 			}
+
+
+		case 248:{ // Set the MIDI Audio Beacon
+			uint8_t * ptr = (uint8_t *)param;
+			uint8_t len[2] = {(*ptr - (*ptr % 10))/10, *ptr % 10};
+			convHexToASCII(2, len);
+			uint8_t command[120] = {'E','S','+','W','2','2','F','8',len[0],len[1]};
+			uint8_t j = 0;
+			uint8_t count = 0;
+			for(j; j < (2 * (*ptr)); j = j+2){
+				uint8_t midi = *(ptr+j+1);
+				uint8_t sym = *(ptr+j+2);
+				
+				if(midi < 12 || midi > 99) return 1;
+				uint8_t len_chars[2] = {(midi - (midi % 10))/10, midi % 10};
+				convHexToASCII(2, len_chars);
+				command[10+j+count] = len_chars[0];
+				command[11+j+count] = len_chars[1];
+				command[12+j+count] = sym;
+				count++;
+			}
+			command[10+j+count] = 0x20;
+			command[19+j+count] = 0x0D;
+			strcpy(cmd, command);
+			break;
+			}
+			
 
 		default: return 1;
 	}
@@ -205,8 +232,13 @@ int generic_U_write(uint8_t code, void * param)
         i2c_sendCommand(strlen(cmd), cmd, ans);
 	printf("write %d cmd: %s\n", code, cmd);
 	printf("write %d ans: %s\n", code, ans);
+
+	uint8_t expected[120] = {0};
+        strcpy(expected, ans);
+        crc32_calc(find_blankSpace(expected, strlen(expected)), expected);
+
         if(ans[0] == 0x4F){
-                if(!check_crc32(strlen(ans), ans)){
+                if(!strcmp(expected, ans)){
                         return 0;
                 }else{
                         return 2;
@@ -235,14 +267,24 @@ int generic_U_read(uint8_t code, void * param)
 	uint8_t command[20] = {'E','S','+','R','2','2',c1,c2,' ','C','C','C','C','C','C','C','C','\r'};
 	crc32_calc(find_blankSpace(command, strlen(command)), command);
 		
-        uint8_t ans[30] = {0};
+        uint8_t ans[120] = {0};
         i2c_sendCommand(strlen(command), command, ans);
 	
 	int b = find_blankSpace(ans,strlen(ans));
 
 	printf("read  %d cmd: %s\n", code, command);
 	printf("read  %d ans: %s\n", code, ans);
-        if(check_crc32(strlen(ans), ans)) printf("Bad crc\n");
+        
+	uint8_t expected[120] = {0};
+        strcpy(expected, ans);
+        crc32_calc(find_blankSpace(expected, strlen(expected)), expected);
+
+        if(ans[0] == 0x4F){
+                if(strcmp(expected, ans)){            
+			printf("Bad crc: %s\n",expected);
+                        return 2;
+                }
+        }
 
 
 	/* This switch statement depends on the command code to: *
@@ -363,6 +405,48 @@ int generic_U_read(uint8_t code, void * param)
 				
 				*(morse_code + i + 1) = sym;
 			}
+			break;
+			}
+		case 248:{ // Get the MIDI Audio Beacon
+			uint8_t * beacon = (uint8_t *)param;
+			uint8_t dec[2] = {ans[3],ans[4]};
+			convHexFromASCII(2, dec);
+			
+			*beacon = dec[0] * 10 + dec[1];
+			uint8_t count = 0;
+			
+			for(int j = 0; j < (3 * (*beacon)); j = j+3){
+				uint8_t chars[2] = {ans[5+j], ans[6+j]};
+				convHexFromASCII(2, chars);
+
+				uint8_t sym = ans[7+j];
+				
+				*(beacon + 1+j - count) = chars[0] * 10 + chars[1];
+				*(beacon + 2+j - count) = sym;
+				count++;
+			}
+			break;
+			}
+
+
+		case 249:{ // Get Software Version build
+			uint8_t * version = (uint8_t *)param;
+
+			*version = ans[3];
+			*(version + 1) = ans[4];
+			*(version + 2) = ans[5];
+			*(version + 3) = ans[6];
+			break;
+			}
+
+			 
+		case 250:{ // Get Device Payload Size
+			uint16_t * p_size = (uint16_t *)param;
+			
+			uint8_t hex[4] = {ans[b-4], ans[b-3], ans[b-2], ans[b-1]};
+			convHexFromASCII(4, hex);
+
+			*p_size = (hex[0] << 12) | (hex[1] << 8) | (hex[2] << 4) | hex[3];
 			break;
 			}
 		default:
