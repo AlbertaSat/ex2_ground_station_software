@@ -1,4 +1,18 @@
 ## Build intructions
+
+# If you like Docker, install docker, start it running in the backgrount, and run the following commands:
+```
+docker build --tag ground_station:latest .
+```
+To build - on the first go, this will take a few minutes. Then run:
+
+```
+docker run --rm -it --network=host ground_station:latest
+```
+To start the ground code!
+
+# If you don't like docker:
+
 * Dependencies:
     you must have cloned the [satelliteSim](https://github.com/AlbertaSat/SatelliteSim/) (or at least the [libcsp](https://github.com/AlbertaSat/SatelliteSim/) repo) and initialized the submodules
 
