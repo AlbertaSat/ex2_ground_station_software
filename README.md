@@ -19,8 +19,6 @@
     b. a file called libcsp_py3.so. This is the compiled version of libcsp/src/bindings/python/pycsp.c, and gives access to the CSP functions VIA a python class
 
 * Running this ground groundStation code
-    Run the ZMQ proxy by executing
-    ```./build/zmqproxy``` from the libcsp directory
 
     In this directory, run
     ```LD_LIBRARY_PATH=<relative_path_to_libcsp>/libcsp/build PYTHONPATH=<relative_path_to_libcsp>/libcsp/build python3 Src/groundStation.py -I zmq```
