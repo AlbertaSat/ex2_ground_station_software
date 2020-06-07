@@ -1,30 +1,23 @@
 class SystemValues(object):
     def __init__(self):
         self.APP_DICT = {
-            "OBC"   :1,
-            "EPS"   :2,
-            "ADCS"  :3,
-            "COMMS" :4,
-            "IAC"   :5,
-            "GND"   :6,
-            "DBG"   :7,
-            "DEMO"  :8,
-            "LAST"  :9
+            "OBC"   :0,
+            "EPS"   :1,
+            "ADCS"  :2,
+            "COMMS" :3,
+            "GND"   :16,
+            "DEMO"  :30,
+            "LAST"  :31
         }
         self.SERVICES = {
-            "VERIFICATION": {"port": 1},
-            "HK": {"port": 3},
-            "EVENT": {"port": 5},
-            "FUNCTION_MANAGEMENT": {"port": 8},
+            "VERIFICATION":         {"port": 8},
+            "HK":                   {"port": 9},
+            "EVENT":                {"port": 10},
+            "FUNCTION_MANAGEMENT":  {"port": 11},
             "TIME_MANAGEMENT": {
-                "port": 9,
+                "port": 12,
                 "subservice": {
-                    "SET_TIME": 1
+                    "SET_TIME": 0
                 }
-            },
-            "SCHEDULING": {"port": 11},
-            "LARGE_DATA": {"port": 13},
-            "MASS_STORAGE": {"port": 15},
-            "TEST": {"port": 17},
-            "SU_MNLP": {"port": 18},
+            }
         }
