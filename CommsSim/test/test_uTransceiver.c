@@ -209,3 +209,27 @@ void test_getDevicePayloadSize(void)
 	TEST_ASSERT_EQUAL_UINT8(100, size);
 }
 
+void test_setBeaconMessageContent_getBeaconMessageContent(void)
+{
+	uint8_t content[455555] = {39,'M','y',' ','b','a','t','t','e','r','y',' ','i','s',' ','l','o','w',' ','a','n','d',' ','i','t',39,'s',' ','g','e','t','t','i','n','g',' ','d','a','r','k'};
+	uint8_t answer23[20] = "OK D736D92D\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer23, strlen(answer23));
+	generic_U_write(251, content);
+
+	uint8_t read_content[45] = {0};
+	uint8_t answer24[150] = "OK+277E7E7E7E7E7E7E7E7E00564136415A41E045583132303137E103F04D792062617474657279206973206C6F7720616E6420697427732067657474696E67206461726B B834A831\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer24, strlen(answer24));
+	generic_U_read(251, read_content);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(content, read_content, 40);	
+}
+
+void test_deviceAddressConfiguration(void)
+{
+	uint8_t answer25[20] = "OK+23 144056B1\r";
+	uint8_t new_add = 0x23;
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer25, strlen(answer25));
+	generic_U_write(252, &new_add);
+}

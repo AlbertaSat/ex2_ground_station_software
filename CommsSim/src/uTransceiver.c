@@ -4,6 +4,8 @@
 
 #include "uTransceiver.h"
 
+static uint8_t sm_add = '2';
+
 // Converts hex values to their ASCII characters
 int convHexToASCII(int length, uint8_t * arr)
 {
@@ -66,24 +68,6 @@ int find_blankSpace(char * string, int len)
 	}
 }
 
-// Recalculate the crc32 of the answer
-int check_crc32(int len, char * ans)
-{
-	uint8_t answer[120] = {0};
-	for(int i = 0; i < len; i++){
-		answer[i] = *(ans+i);
-	}
-
-	uint8_t expected[120] = {0};
-	strcpy(expected, answer);
-	
-	crc32_calc(find_blankSpace(answer, strlen(answer)), expected);
-
-	if(strcmp(expected, answer)) return 1;
-}
-
-
-
 int generic_U_write(uint8_t code, void * param)
 {
 	uint8_t cmd[120] = {0};
@@ -96,16 +80,15 @@ int generic_U_write(uint8_t code, void * param)
 
 		case 0: {// Set the status control word
 			uint8_t * array = (uint8_t *)param;
-			uint8_t hex[8] = {0};
+			uint8_t hex[4] = {0};
 	
 		        // Grouping params into 4 bits (hex values)
 		        hex[0] = (*(array) << 2) | *(array+1);
 	        	hex[1] = (*(array+2) << 3) | *(array+3);
 		        hex[2] = (*(array+4) << 3) | (*(array+5) << 2) | (*(array+6) << 1) | (*(array+7));
 		        hex[3] = (*(array+8) << 3) | (*(array+9) << 2) | (*(array+10) << 1) | (*(array+11));
-		
-		        convHexToASCII(4, hex);
 			
+			convHexToASCII(4, hex);
 		        // Building the command
 		        uint8_t command[30] = {'E','S','+','W','2','2','0','0',hex[0],hex[1],hex[2],hex[3],' ','C','C','C','C','C','C','C','C','\r'};
 			strcpy(cmd, command);
@@ -195,7 +178,7 @@ int generic_U_write(uint8_t code, void * param)
 			uint8_t * ptr = (uint8_t *)param;
 			uint8_t len[2] = {(*ptr - (*ptr % 10))/10, *ptr % 10};
 			convHexToASCII(2, len);
-			uint8_t command[120] = {'E','S','+','W','2','2','F','8',len[0],len[1]};
+			uint8_t command[120] = {'E','S','+','W','2',sm_add,'F','8',len[0],len[1]};
 			uint8_t j = 0;
 			uint8_t count = 0;
 			for(j; j < (2 * (*ptr)); j = j+2){
@@ -215,7 +198,36 @@ int generic_U_write(uint8_t code, void * param)
 			strcpy(cmd, command);
 			break;
 			}
-			
+
+
+		case 251:{ // Set the Beacon Message contents
+			uint8_t * ptr = (uint8_t *)param;
+			uint8_t len[2] = {(*ptr - (*ptr % 10))/10, *ptr % 10};
+			convHexToASCII(2, len);
+
+			uint8_t command[120] = {'E','S','+','W','2',sm_add,'F','B',len[0],len[1]};
+			int k = 0;
+
+			for(k; k < *ptr; k++){
+				command[10+k] = *(ptr + 1 + k);
+			}
+			command[10+k] = 0x20;
+			command[19+k] = 0x0D;
+			strcpy(cmd, command);
+			break;			
+			}
+			 
+
+		case 252:{ // Set the device address
+			uint8_t * add = (uint8_t *)param;
+
+			if(*add != 0x22 && *add != 0x23) return 1;
+			uint8_t small = *add % 10;
+			convHexToASCII(1, &small);
+			uint8_t command[20] = {'E','S','+','W','2',sm_add,'F','C','2',small,' ','C','C','C','C','C','C','C','C','\r'};
+			strcpy(cmd, command);
+			break;
+			}			 
 
 		default: return 1;
 	}
@@ -230,14 +242,16 @@ int generic_U_write(uint8_t code, void * param)
 	crc32_calc(find_blankSpace(cmd, strlen(cmd)), cmd);
         uint8_t ans[30] = {0};
         i2c_sendCommand(strlen(cmd), cmd, ans);
-	printf("write %d cmd: %s\n", code, cmd);
-	printf("write %d ans: %s\n", code, ans);
 
 	uint8_t expected[120] = {0};
         strcpy(expected, ans);
         crc32_calc(find_blankSpace(expected, strlen(expected)), expected);
+	
+	printf("write %d cmd: %s\n", code, cmd);
+	printf("write %d ans: %s\n", code, ans);
 
         if(ans[0] == 0x4F){
+		if(code == 252) sm_add = ans[4];
                 if(!strcmp(expected, ans)){
                         return 0;
                 }else{
@@ -267,7 +281,7 @@ int generic_U_read(uint8_t code, void * param)
 	uint8_t command[20] = {'E','S','+','R','2','2',c1,c2,' ','C','C','C','C','C','C','C','C','\r'};
 	crc32_calc(find_blankSpace(command, strlen(command)), command);
 		
-        uint8_t ans[120] = {0};
+        uint8_t ans[150] = {0};
         i2c_sendCommand(strlen(command), command, ans);
 	
 	int b = find_blankSpace(ans,strlen(ans));
@@ -275,7 +289,7 @@ int generic_U_read(uint8_t code, void * param)
 	printf("read  %d cmd: %s\n", code, command);
 	printf("read  %d ans: %s\n", code, ans);
         
-	uint8_t expected[120] = {0};
+	uint8_t expected[150] = {0};
         strcpy(expected, ans);
         crc32_calc(find_blankSpace(expected, strlen(expected)), expected);
 
@@ -447,6 +461,22 @@ int generic_U_read(uint8_t code, void * param)
 			convHexFromASCII(4, hex);
 
 			*p_size = (hex[0] << 12) | (hex[1] << 8) | (hex[2] << 4) | hex[3];
+			break;
+			}
+
+		case 251:{ // Get the beacon message content
+			uint8_t * message = (uint8_t *)param;
+			uint8_t len[2] = {ans[3], ans[4]};
+			convHexFromASCII(2, len);
+			
+			*message = (len[0] << 4) | len[1];
+			
+			for(int i = 0; i < *message; i++){
+				uint8_t temp[2] = {ans[59 + 2*i], ans[60 + 2*i]};
+				convHexFromASCII(2, temp);
+				uint8_t val = (temp[0] << 4) | temp[1];
+				*(message + 1 + i) = val;
+			}
 			break;
 			}
 		default:
