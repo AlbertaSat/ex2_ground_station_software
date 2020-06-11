@@ -4,7 +4,7 @@
 
 #include "uTransceiver.h"
 
-static uint8_t sm_add = '2';
+static uint8_t sm_add = '2'; // Stores the second digit of the address
 
 // Converts hex values to their ASCII characters
 int convHexToASCII(int length, uint8_t * arr)
@@ -227,7 +227,44 @@ int generic_U_write(uint8_t code, void * param)
 			uint8_t command[20] = {'E','S','+','W','2',sm_add,'F','C','2',small,' ','C','C','C','C','C','C','C','C','\r'};
 			strcpy(cmd, command);
 			break;
-			}			 
+			}
+
+
+		case 253:{ // FRAM memory write
+			struct U_fram * fram_w = (struct U_fram *)param;
+
+			uint32_t add = fram_w->add;
+			if(add >= 0x8000 && add <= 0x83A4) return 1;
+			if(add >= 0x83FE && add <= 0x24000) return 1;
+			
+			uint8_t chadd[8] = {add >> 28, (add >> 24) & 15, (add >> 20) & 15, (add >> 16) & 15, (add >> 12) & 15, (add >> 8) & 15, (add >> 4) & 15, add & 15};
+			convHexToASCII(8, chadd);
+
+			uint8_t command[60] = {'E','S','+','W','2',sm_add,'F','D',chadd[0],chadd[1],chadd[2],chadd[3],chadd[4],chadd[5],chadd[6],chadd[7], [48] = ' ', [57] = 0x0D};
+			uint8_t hex[2] = {0};
+			for(int i = 0; i < 16; i++){
+				hex[0] = fram_w->data[i] >> 4;
+				hex[1] = fram_w->data[i] & 15;
+				convHexToASCII(2, hex);
+				
+				command[16 + 2*i] = hex[0];
+				command[16 + 2*i + 1] = hex[1];
+			}
+			
+			strcpy(cmd, command);
+			break;
+			}
+
+
+		case 255:{ // Secure Mode write
+			uint8_t * confirm = (uint8_t *)param;
+			if(*confirm != 1) return 1;
+
+			uint8_t command[20] = {'E','S','+','W','2',sm_add,'F','F',' ','C','C','C','C','C','C','C','C', 0x0D};
+			strcpy(cmd, command);
+			break;
+			}
+
 
 		default: return 1;
 	}
@@ -277,8 +314,23 @@ int generic_U_read(uint8_t code, void * param)
 	uint8_t c2 = code & 15;
 	convHexToASCII(1, &c1);
 	convHexToASCII(1, &c2);
+	
+	uint8_t command[30] = {'E','S','+','R','2',sm_add,c1,c2,' ','C','C','C','C','C','C','C','C','\r'};
+	
+	if(code == 253){
+		struct U_fram * fram_struct = (struct U_fram *)param;
 
-	uint8_t command[20] = {'E','S','+','R','2','2',c1,c2,' ','C','C','C','C','C','C','C','C','\r'};
+                uint32_t add = fram_struct->add;
+                if(add >= 0x8000 && add <= 0x83A4) return 1;
+                if(add >= 0x83FE && add <= 0x24000) return 1;
+
+                uint8_t chadd[8] = {add >> 28, (add >> 24) & 15, (add >> 20) & 15, (add >> 16) & 15, (add >> 12) & 15, (add >> 8) & 15, (add >> 4) & 15, add & 15};
+                convHexToASCII(8, chadd);
+
+		uint8_t fram_command[30] = {'E','S','+','R','2',sm_add,chadd[0],chadd[1],chadd[2],chadd[3],chadd[4],chadd[5],chadd[6],chadd[7],' ',[25]=0x0D};
+		strcpy(command, fram_command);
+	}
+
 	crc32_calc(find_blankSpace(command, strlen(command)), command);
 		
         uint8_t ans[150] = {0};
@@ -479,6 +531,32 @@ int generic_U_read(uint8_t code, void * param)
 			}
 			break;
 			}
+
+
+		case 253:{ // FRAM memory read
+			struct U_fram * fram_r = (struct U_fram *)param;
+			uint8_t hex[32] = {0};
+			
+			for(int i = 0; i < 16; i++){
+				uint8_t temp[2] = {ans[3+2*i], ans[4+2*i]};
+				convHexFromASCII(2, temp);
+				fram_r->data[i] = (temp[0] << 4) | temp[1];
+			}
+			break;
+			}
+
+
+		case 255:{ // Secure Mode read
+			uint32_t * key = (uint32_t *)param;
+	       		
+			uint8_t hex[8] = {ans[3],ans[4],ans[5],ans[6],ans[7],ans[8],ans[9], ans[10]};
+			convHexFromASCII(8, hex);
+			*key = (hex[0]<<28) | (hex[1]<<24) | (hex[2]<<20) | (hex[3]<<16) | (hex[4]<<12) | (hex[5]<<8) | (hex[6]<<4) | hex[7];
+		
+			break;		
+			}
+
+
 		default:
 			return 1;
 	}

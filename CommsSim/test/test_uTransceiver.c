@@ -233,3 +233,38 @@ void test_deviceAddressConfiguration(void)
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer25, strlen(answer25));
 	generic_U_write(252, &new_add);
 }
+
+void test_setFRAM_getFRAM(void)
+{
+	struct U_fram new_write = {0x65, "ABCD"};
+	uint8_t answer26[20] = "OK D736D92D\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer26, strlen(answer26));
+	generic_U_write(253, &new_write);
+
+	struct U_fram read;
+	uint8_t answer27[50] = "OK+41424344000000000000000000000000 EA37A956\r";
+	read.add = 0x65;
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer27, strlen(answer27));
+	generic_U_read(253, &read);
+
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(new_write.data, read.data, 16);
+}
+
+void test_setSecureMode_getSecureMode(void)
+{
+	uint8_t answer28[20] = "OK D736D92D\r";
+	uint8_t confirm = 1;
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer28, strlen(answer28));
+	generic_U_write(255, &confirm);
+       
+	uint32_t key = 0;
+	uint8_t answer29[25] = "OK+ABBACDDC DC9B88B5\r";
+	i2c_sendCommand_ExpectAnyArgs();
+	i2c_sendCommand_ReturnArrayThruPtr_response(answer29, strlen(answer29));
+	generic_U_read(255, &key);
+
+	TEST_ASSERT_EQUAL_UINT32(0xABBACDDC, key);	
+}

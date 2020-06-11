@@ -9,6 +9,18 @@
 #include <stdint.h>
 #include <string.h>
 
+#define MAX_M_LEN 120
+
+struct U_config {
+	uint8_t len;
+	char message[MAX_M_LEN];
+};
+
+struct U_fram {
+	uint32_t add;
+	uint8_t data[16];
+};
+
 // Converts hex values to their ASCII characters
 int convHexToASCII(int length, uint8_t * arr);
 int crc32_calc(size_t length, char * cmd);
