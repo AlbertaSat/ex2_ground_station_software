@@ -11,9 +11,23 @@
 
 #define MAX_M_LEN 120
 
+typedef enum{
+	U_GOOD_CONFIG =  0,
+	U_BAD_CONFIG  = -1,
+	U_BAD_PARAM   = -2,
+	U_BAD_ANS_CRC = -3,
+
+	U_BAD_CMD_CRC = -4,
+	U_BAD_CMD_LEN = -5,
+	U_CMD_SPEC_2  =  2,
+	U_CMD_SPEC_3  =  3,
+
+	U_UNK_ERR     = -10,
+}U_ret;
+
 struct U_config {
 	uint8_t len;
-	char message[MAX_M_LEN];
+	uint8_t message[MAX_M_LEN];
 };
 
 struct U_fram {
@@ -22,10 +36,10 @@ struct U_fram {
 };
 
 // Converts hex values to their ASCII characters
-int convHexToASCII(int length, uint8_t * arr);
-int crc32_calc(size_t length, char * cmd);
+void convHexToASCII(int length, uint8_t * arr);
+void convHexFromASCII(int length, uint8_t * arr);
+uint32_t crc32_calc(size_t length, char * cmd);
 int find_blankSpace(char * string, int len);
-int check_crc32(int length, char * ans);
 
 int generic_U_write(uint8_t code, void * param);
 int generic_U_read(uint8_t code, void * param);

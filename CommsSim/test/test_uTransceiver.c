@@ -137,53 +137,53 @@ void test_setLowPowerMode_getLowPowerMode(void)
 
 void test_setCallsign_getCallsign(void)
 {
-	uint8_t callsign[6] = "VA6AZA";
+	struct U_config callsign = {6, "VA6AZA"};
 	uint8_t answer15[20] = "OK D736D92D\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer15, strlen(answer15));
-	generic_U_write(246, callsign);
+	generic_U_write(246, &callsign);
 	
-	uint8_t read_callsign[6] = {0};
+	struct U_config read_callsign;
 	uint8_t answer16[20] = "OK+VA6AZA 04BC75E4\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer16, strlen(answer16));
-	generic_U_read(246, read_callsign);
+	generic_U_read(246, &read_callsign);
 
-	TEST_ASSERT_EQUAL_UINT8_ARRAY(callsign, read_callsign, 6);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(callsign.message, read_callsign.message, 6);
 }
 
 void test_setMorseCodeCallSign_getMorseCodeCallSign(void)
 {
-	uint8_t morse_code[15] = {14,'.','-','-',' ','-','.','.','-','-','-',' ','.',' ','.'};
+	struct U_config callsign = {14,".-- -..--- . ."};
 	uint8_t answer17[20] = "OK D736D92D\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer17, strlen(answer17));
-	generic_U_write(247, morse_code);
+	generic_U_write(247, &callsign);
 
-	uint8_t read_code[15] = {0};
+	struct U_config read_callsign;
 	uint8_t answer18[30] = "OK+14.-- -..--- . . 083E3C38\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer18, strlen(answer18));
-	generic_U_read(247, read_code);
+	generic_U_read(247, &read_callsign);
 
-	TEST_ASSERT_EQUAL_UINT8_ARRAY(morse_code, read_code, 15);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(callsign.message, read_callsign.message, 14);
 }
 
 void test_setMidiAudioBeacon_getMidiAudioBeacon(void)
 {
-	uint8_t beacon[17] = {8,42,'w',42,'w',23,'q',41,'Q',86,'H',87,'H',20,'W',20,'X'};
+	struct U_config beacon = {8,{42,'w',42,'w',23,'q',41,'Q',86,'H',87,'H',20,'W',20,'X'}};
 	uint8_t answer19[20] = "OK D736D92D\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer19, strlen(answer19));
-	generic_U_write(248, beacon);
+	generic_U_write(248, &beacon);
 
-	uint8_t read_beacon[20] = {0};
+	struct U_config read_beacon;
 	uint8_t answer20[40] = "OK+0842w42w23q41Q86H87H20W20X F304942B\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer20, strlen(answer20));
-	generic_U_read(248, read_beacon);
+	generic_U_read(248, &read_beacon);
 
-	TEST_ASSERT_EQUAL_UINT8_ARRAY(beacon, read_beacon, 17);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(beacon.message, read_beacon.message, 16);
 }
 
 void test_getSoftwareVersion(void)
@@ -211,18 +211,18 @@ void test_getDevicePayloadSize(void)
 
 void test_setBeaconMessageContent_getBeaconMessageContent(void)
 {
-	uint8_t content[455555] = {39,'M','y',' ','b','a','t','t','e','r','y',' ','i','s',' ','l','o','w',' ','a','n','d',' ','i','t',39,'s',' ','g','e','t','t','i','n','g',' ','d','a','r','k'};
+	struct U_config content = {39,{'M','y',' ','b','a','t','t','e','r','y',' ','i','s',' ','l','o','w',' ','a','n','d',' ','i','t',39,'s',' ','g','e','t','t','i','n','g',' ','d','a','r','k'}};
 	uint8_t answer23[20] = "OK D736D92D\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer23, strlen(answer23));
-	generic_U_write(251, content);
+	generic_U_write(251, &content);
 
-	uint8_t read_content[45] = {0};
+	struct U_config read_content;
 	uint8_t answer24[150] = "OK+277E7E7E7E7E7E7E7E7E00564136415A41E045583132303137E103F04D792062617474657279206973206C6F7720616E6420697427732067657474696E67206461726B B834A831\r";
 	i2c_sendCommand_ExpectAnyArgs();
 	i2c_sendCommand_ReturnArrayThruPtr_response(answer24, strlen(answer24));
-	generic_U_read(251, read_content);
-	TEST_ASSERT_EQUAL_UINT8_ARRAY(content, read_content, 40);	
+	generic_U_read(251, &read_content);
+	TEST_ASSERT_EQUAL_UINT8_ARRAY(content.message, read_content.message, 39);	
 }
 
 void test_deviceAddressConfiguration(void)
