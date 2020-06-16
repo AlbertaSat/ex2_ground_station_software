@@ -12,8 +12,14 @@ import os, re
 import time
 import sys
 import argparse
-from ex2_ground_station_software.Src.system import SystemValues
-import libcsp.build.libcsp_py3 as libcsp
+if __name__ == "__main__":
+    # We're running this file directly, not as a module.
+    from system import SystemValues
+    import libcsp_py3 as libcsp
+else:
+    # We're importing this file as a module to use in the website
+    from ex2_ground_station_software.Src.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
 
 
 vals = SystemValues()
@@ -43,7 +49,9 @@ class Csp(object):
             inStr = input(prompt)
         else:
             raise Exception("invalid call to getInput")
+        inStr = inStr.replace(")", "") # Trim the trailing bracket
         cmdVec = re.split("\.|\(|\)", inStr)
+        print("cmdVec:",cmdVec)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
