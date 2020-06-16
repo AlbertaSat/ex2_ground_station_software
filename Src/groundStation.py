@@ -12,8 +12,8 @@ import os, re
 import time
 import sys
 import argparse
-from system import SystemValues
-import libcsp_py3 as libcsp
+from ex2_ground_station_software.Src.system import SystemValues
+import libcsp.build.libcsp_py3 as libcsp
 
 
 vals = SystemValues()
@@ -38,7 +38,7 @@ class Csp(object):
         sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
         inStr = ""
         if inVal is not None:
-            instr = inVal
+            inStr = inVal
         elif prompt is not None:
             inStr = input(prompt)
         else:
