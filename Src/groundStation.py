@@ -47,7 +47,7 @@ class Csp(object):
 
         # command format: <service_provider>.<service>.(<args>)
         try:
-            app, service, sub, arg, NULLvar = [x.upper() for x in cmdVec]   
+            app, service, sub, arg, NULLvar = [x.upper() for x in cmdVec]
         except:
             raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
 
@@ -57,6 +57,10 @@ class Csp(object):
             raise Exception("Invalid Service")
         if sub not in services[service]['subservice']:
             raise Exception("Invalid Subservice")
+
+        if service == "HK":
+            if arg not in apps:
+                raise Exception("Invalid HK Argument")
 
         server = apps[app]
         port = services[service]['port']
