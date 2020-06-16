@@ -13,7 +13,11 @@ class SystemValues(object):
         }
         self.SERVICES = {
             "VERIFICATION": {"port": 1},
-            "HK": {"port": 3},
+            "HK": {"port": 3,
+                    "subservice": {
+                        "HK_PARAMETERS_REPORT": 25
+                    }
+            },
             "EVENT": {"port": 5},
             "FUNCTION_MANAGEMENT": {"port": 8},
             "TIME_MANAGEMENT": {
@@ -28,3 +32,5 @@ class SystemValues(object):
             "TEST": {"port": 17},
             "SU_MNLP": {"port": 18},
         }
+
+      

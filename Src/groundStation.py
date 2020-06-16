@@ -38,18 +38,25 @@ class Csp(object):
         sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
         inStr = ""
         if inVal is not None:
-            instr = inVal
+            inStr = inVal
         elif prompt is not None:
             inStr = input(prompt)
         else:
             raise Exception("invalid call to getInput")
-        cmdVec = re.split("\.|\(|\)", inStr)
+        cmdVec = re.split("\.|\(|\)", inStr)        #GND.TIME_MANAGEMENT.SET_TIME(159....)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
-            app, service, sub, arg = [x.upper() for x in cmdVec]
+            app, service, sub, arg, NULLvar = [x.upper() for x in cmdVec]   
         except:
             raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
+
+        if app not in apps:
+            raise Exception("Invalid Application")
+        if service not in services:
+            raise Exception("Invalid Service")
+        if sub not in services[service]['subservice']:
+            raise Exception("Invalid Subservice")
 
         server = apps[app]
         port = services[service]['port']
