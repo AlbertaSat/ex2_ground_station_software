@@ -18,7 +18,7 @@ if __name__ == "__main__":
     import libcsp_py3 as libcsp
 else:
     # We're importing this file as a module to use in the website
-    from ex2_ground_station_software.Src.system import SystemValues
+    from ex2_ground_station_software.src.system import SystemValues
     import libcsp.build.libcsp_py3 as libcsp
 
 
