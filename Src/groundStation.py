@@ -61,10 +61,12 @@ class Csp(object):
         if service == "HK":
             if arg not in apps:
                 raise Exception("Invalid HK Argument")
+            arg = apps[arg]
 
         server = apps[app]
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
+
         arg = int(arg).to_bytes(4, 'little')
         # data = map(ord, args)
         print([subservice, arg])
@@ -81,6 +83,8 @@ class Csp(object):
     def send(self, server, port, buf):
         libcsp.sendto(0, server, port, 1, libcsp.CSP_O_NONE, buf, 1000)
         libcsp.buffer_free(buf)
+
+    #def receive(self,buf):
 
 
 def getOptions():
