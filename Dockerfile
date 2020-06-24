@@ -35,5 +35,5 @@ RUN python3 waf build
 
 WORKDIR /home/gs
 COPY . .
-CMD LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 Src/groundStation.py -I zmq
+CMD LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/groundstation.py -I zmq
 
