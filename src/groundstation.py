@@ -12,8 +12,14 @@ import os, re
 import time
 import sys
 import argparse
-from system import SystemValues
-import libcsp_py3 as libcsp
+if __name__ == "__main__":
+    # We're running this file directly, not as a module.
+    from system import SystemValues
+    import libcsp_py3 as libcsp
+else:
+    # We're importing this file as a module to use in the website
+    from ex2_ground_station_software.src.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
 
 
 vals = SystemValues()
@@ -43,11 +49,15 @@ class Csp(object):
             inStr = input(prompt)
         else:
             raise Exception("invalid call to getInput")
-        cmdVec = re.split("\.|\(|\)", inStr)        #GND.TIME_MANAGEMENT.SET_TIME(159....)
+        cmdVec = re.split("\.|\(|\)", inStr)
+        for cmd in cmdVec: # Trim any trailing strings from the regex
+            if cmd == '':
+                cmdVec.remove(cmd)
+        print("cmdVec:",cmdVec)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
-            app, service, sub, arg, NULLvar = [x.upper() for x in cmdVec]
+            app, service, sub, arg = [x.upper() for x in cmdVec]
         except:
             raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
 

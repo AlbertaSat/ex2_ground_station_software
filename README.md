@@ -1,4 +1,18 @@
 ## Build intructions
+
+### If you like Docker, install docker, start it running in the backgrount, and run the following commands:
+```
+docker build --tag ground_station:latest .
+```
+To build - on the first go, this will take a few minutes. You may have to run this after updating the code. Now run:
+
+```
+docker run --rm -it --network=host ground_station:latest
+```
+To start the ground code!
+
+# If you don't like docker:
+
 * Dependencies:
     you must have cloned the [satelliteSim](https://github.com/AlbertaSat/SatelliteSim/) (or at least the [libcsp](https://github.com/AlbertaSat/SatelliteSim/) repo) and initialized the submodules
 
@@ -19,10 +33,8 @@
     b. a file called libcsp_py3.so. This is the compiled version of libcsp/src/bindings/python/pycsp.c, and gives access to the CSP functions VIA a python class
 
 * Running this ground groundStation code
-    Run the ZMQ proxy by executing
-    ```./build/zmqproxy``` from the libcsp directory
 
-    In this directory, run
+    In the root directory of this project, run
     ```LD_LIBRARY_PATH=<relative_path_to_libcsp>/libcsp/build PYTHONPATH=<relative_path_to_libcsp>/libcsp/build python3 Src/groundStation.py -I zmq```
 
     NOTE: nothing will happen if either there is no xmqproxy running or if your CSP server is running!
