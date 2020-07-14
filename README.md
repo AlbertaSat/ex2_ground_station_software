@@ -2,12 +2,12 @@
 
 ### If you like Docker, install docker, start it running in the backgrount, and run the following commands:
 ```
-docker build --tag ground_station:latest .
+sudo docker build --tag ground_station:latest .
 ```
 To build - on the first go, this will take a few minutes. You may have to run this after updating the code. Now run:
 
 ```
-docker run --rm -it --network=host ground_station:latest
+sudo docker run --rm -it --network=host ground_station:latest
 ```
 To start the ground code!
 

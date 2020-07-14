@@ -11,7 +11,12 @@ class SystemValues(object):
         }
         self.SERVICES = {
             "VERIFICATION":         {"port": 8},
-            "HK":                   {"port": 9},
+            "HK": {
+                "port": 9,
+                "subservice": {
+                    "HK_PARAMETERS_REPORT": 25
+                    }
+                },
             "EVENT":                {"port": 10},
             "FUNCTION_MANAGEMENT":  {"port": 11},
             "TIME_MANAGEMENT": {

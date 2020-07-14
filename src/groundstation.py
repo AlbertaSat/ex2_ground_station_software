@@ -59,6 +59,17 @@ class Csp(object):
         except:
             raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
 
+        if app not in apps:
+            raise Exception("Invalid Application")
+        if service not in services:
+            raise Exception("Invalid Service")
+        if sub not in services[service]['subservice']:
+                raise Exception("Invalid Subservice")
+        if service == "HK":
+            if arg not in apps:
+                raise Exception("Invalid HK Argument")
+            arg = apps[arg]
+
         server = apps[app]
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
@@ -78,7 +89,41 @@ class Csp(object):
     def send(self, server, port, buf):
         libcsp.sendto(0, server, port, 1, libcsp.CSP_O_NONE, buf, 1000)
         libcsp.buffer_free(buf)
+        print("THE PACKET HAS BEEN SENT")
 
+    def receive(self):
+        sock = libcsp.socket()
+        libcsp.bind(sock, libcsp.CSP_ANY)
+        libcsp.listen(sock, 5)
+        while True:
+            # wait for incoming connection
+            print("WAIT FOR CONNECTION ...")
+            conn = libcsp.accept(sock, libcsp.CSP_MAX_TIMEOUT)
+            if not conn:
+                continue
+
+            print ("connection: source=%i:%i, dest=%i:%i" % (libcsp.conn_src(conn),
+                                                             libcsp.conn_sport(conn),
+                                                             libcsp.conn_dst(conn),
+                                                             libcsp.conn_dport(conn)))
+            while True:
+                # Read all packets on the connection
+                packet = libcsp.read(conn, 100)
+                if packet is None:
+                    break
+
+                if libcsp.conn_dport(conn) == 1:
+                    # print request
+                    print("CONN DPORT: ")
+                    print(libcsp.conn_dport(conn))
+                    data = bytearray(libcsp.packet_get_data(packet))
+                    length = libcsp.packet_get_length(packet)
+                    print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
+                    break;
+                else:
+                    # pass request on to service handler
+                    libcsp.service_handler(conn, packet)
+                break
 
 def getOptions():
     parser = argparse.ArgumentParser(description="Parses command.")
