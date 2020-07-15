@@ -50,14 +50,17 @@ class Csp(object):
         else:
             raise Exception("invalid call to getInput")
         cmdVec = re.split("\.|\(|\)", inStr)
-        for cmd in cmdVec: # Trim any trailing strings from the regex
-            if cmd == '':
-                cmdVec.remove(cmd)
+        # Use a python slicing notation to edit out the empty strings from the regex
+        cmdVec[:] = [cmd for cmd in cmdVec if cmd!='']
         print("cmdVec:",cmdVec)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
-            app, service, sub, arg = [x.upper() for x in cmdVec]
+            if len(cmdVec) < 4: # no arguments
+                app, service, sub = [x.upper() for x in cmdVec]
+                arg = None
+            else:
+                app, service, sub, arg = [x.upper() for x in cmdVec]
         except:
             raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
 
@@ -69,7 +72,7 @@ class Csp(object):
             raise Exception("Invalid Subservice")
 
         if service == "HK":
-            if arg not in apps:
+            if arg not in apps or not arg:
                 raise Exception("Invalid HK Argument")
             arg = apps[arg]
 
@@ -77,11 +80,15 @@ class Csp(object):
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
 
-        arg = int(arg).to_bytes(4, 'little')
+        if arg:
+            arg = int(arg).to_bytes(4, 'little')
+        else:
+            print("No arguments entered")
         # data = map(ord, args)
         print([subservice, arg])
         b = bytearray([subservice]) # convert it to something CSP can read
-        b.extend(arg)
+        if arg:
+            b.extend(arg)
         print(b)
 
         print("CMP ident:", libcsp.cmp_ident(server))
