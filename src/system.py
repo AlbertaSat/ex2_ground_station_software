@@ -8,7 +8,7 @@ class SystemValues(object):
             "IAC"   :5,
             "GND"   :6,
             "DBG"   :7,
-            "DEMO"  :8,
+            "DEMO"  :30,
             "LAST"  :9
         }
         self.SERVICES = {
@@ -21,7 +21,7 @@ class SystemValues(object):
             "EVENT": {"port": 5},
             "FUNCTION_MANAGEMENT": {"port": 8},
             "TIME_MANAGEMENT": {
-                "port": 9,
+                "port": 12,
                 "subservice": {
                     "SET_TIME": 1,
                     "GET_TIME": 2
