@@ -19,7 +19,6 @@
  */
 
 #include "uTransceiver.h"
-
 #include <stdlib.h>  //*
 #include <time.h>    //*
 
@@ -47,7 +46,7 @@ U_ret send_U_data(uint8_t *data) {
  * @brief
  * 		Receives randomly generated data from the transmitter
  * @attention
- * 		Replace with UART function eventually
+ * 		No such function will be needed
  * @param data
  * 		Pointer to first element of 128 byte array where data will be
  * stored
@@ -166,6 +165,8 @@ U_ret generic_U_write(uint8_t code, void * param)
     case 8:  // Set Audio Beacon Transmission Period
     {
       uint16_t *time = (uint16_t *)param;
+
+      if(code == 6){if(*time < 1 || *time > 255) return U_BAD_PARAM;}
 
       uint8_t hex[4] = {(*time >> 12) & 15, (*time >> 8) & 15,
                         (*time >> 4) & 15, (*time) & 15};
