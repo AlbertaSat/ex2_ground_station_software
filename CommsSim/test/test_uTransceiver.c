@@ -303,3 +303,11 @@ void test_setSecureMode_getSecureMode(void)
 
         TEST_ASSERT_EQUAL_UINT32(0xABBACDDC, key);
 }
+
+void test_genericI2C_action_no_return(void)
+{
+  uint8_t answer30[20] = "OK+SENT 51B42655\r";
+  // TODO: UART mock
+  uint8_t data[25] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
+  generic_i2c_action('D', 0x41, 25, data, 0);
+}

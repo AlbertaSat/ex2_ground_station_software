@@ -72,6 +72,9 @@ void convHexFromASCII(int length, uint8_t * arr);
 uint32_t crc32_calc(size_t length, char * cmd);
 int find_blankSpace(int length, char* string);
 
-int generic_U_write(uint8_t code, void * param);
-int generic_U_read(uint8_t code, void * param);
+U_ret generic_U_write(uint8_t code, void * param);
+U_ret generic_U_read(uint8_t code, void * param);
+
+U_ret generic_i2c_action(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes);
+
 #endif // UTRANSCEIVER_H
