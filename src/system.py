@@ -1,15 +1,15 @@
 class SystemValues(object):
     def __init__(self):
         self.APP_DICT = {
-            "OBC"   :1,
-            "EPS"   :2,
-            "ADCS"  :3,
-            "COMMS" :4,
+            "OBC"   :0,
+            "EPS"   :1,
+            "ADCS"  :2,
+            "COMMS" :3,
             "IAC"   :5,
-            "GND"   :6,
+            "GND"   :16,
             "DBG"   :7,
             "DEMO"  :30,
-            "LAST"  :9
+            "LAST"  :31
         }
         self.SERVICES = {
             "VERIFICATION": {"port": 1},
