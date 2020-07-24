@@ -33,12 +33,18 @@ class Csp(object):
         libcsp.init(self.myAddr, "host", "model", "1.2.3", 10, 300)
         if opts.interface == "zmq":
             self.__zmq__(self.myAddr)
+        elif opts.interface == "uart":
+            self.__uart__()
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
 
     def __zmq__(self, addr):
         libcsp.zmqhub_init(addr, 'localhost')
         libcsp.rtable_load("0/0 ZMQHUB")
+
+    def __uart__(self):
+        libcsp.kiss_init("/dev/ttyUSB0", 9600, 512, "uart")
+        libcsp.rtable_set(1, 0, "uart", libcsp.CSP_NO_VIA_ADDRESS)
 
     def getInput(self, prompt=None, inVal=None):
         sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
