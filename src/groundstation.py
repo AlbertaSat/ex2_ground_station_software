@@ -55,8 +55,10 @@ class Csp(object):
             inStr = input(prompt)
         else:
             raise Exception("invalid call to getInput")
-        inStr = inStr.replace(")", "") # Trim the trailing bracket
         cmdVec = re.split("\.|\(|\)", inStr)
+        for cmd in cmdVec: # Trim any trailing strings from the regex
+            if cmd == '':
+                cmdVec.remove(cmd)
         print("cmdVec:",cmdVec)
 
         # command format: <service_provider>.<service>.(<args>)
@@ -65,9 +67,22 @@ class Csp(object):
         except:
             raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
 
+        if app not in apps:
+            raise Exception("Invalid Application")
+        if service not in services:
+            raise Exception("Invalid Service")
+        if sub not in services[service]['subservice']:
+            raise Exception("Invalid Subservice")
+
+        if service == "HK":
+            if arg not in apps:
+                raise Exception("Invalid HK Argument")
+            arg = apps[arg]
+
         server = apps[app]
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
+
         arg = int(arg).to_bytes(4, 'little')
         # data = map(ord, args)
         print([subservice, arg])
@@ -82,8 +97,46 @@ class Csp(object):
         return toSend, server, port
 
     def send(self, server, port, buf):
+        print("SENDING THE PACKET\n")
         libcsp.sendto(0, server, port, 1, libcsp.CSP_O_NONE, buf, 1000)
         libcsp.buffer_free(buf)
+
+    def receive(self):
+        sock = libcsp.socket()
+        libcsp.bind(sock, libcsp.CSP_ANY)
+        libcsp.listen(sock, 5)
+        while True:
+            # wait for incoming connection
+            print("WAIT FOR CONNECTION ...")
+            conn = libcsp.accept(sock, libcsp.CSP_MAX_TIMEOUT)
+            if not conn:
+                continue
+
+            print ("connection: source=%i:%i, dest=%i:%i" % (libcsp.conn_src(conn),
+                                                             libcsp.conn_sport(conn),
+                                                             libcsp.conn_dst(conn),
+                                                             libcsp.conn_dport(conn)))
+
+            while True:
+                # Read all packets on the connection
+                packet = libcsp.read(conn, 100)
+                if packet is None:
+                    break
+
+                if libcsp.conn_dport(conn) == 10:
+                    # print request
+                    data = bytearray(libcsp.packet_get_data(packet))
+                    length = libcsp.packet_get_length(packet)
+                    print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
+                    # send reply
+                    # data[0] = data[0] + 1
+                    # reply = libcsp.buffer_get(1)
+                    # libcsp.packet_set_data(reply, data)
+                    # libcsp.sendto_reply(packet, reply, libcsp.CSP_O_NONE)
+
+                else:
+                    # pass request on to service handler
+                    libcsp.service_handler(conn, packet)
 
 
 def getOptions():
@@ -99,6 +152,8 @@ if __name__ == "__main__":
     while True:
         try:
             toSend, server, port = csp.getInput(prompt="to send: ")
-            csp.send(server, port, toSend);
+            #csp.send(server, port, toSend);
+            #time.sleep(1)
+            csp.receive()
         except Exception as e:
             print(e)
