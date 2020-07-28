@@ -105,17 +105,16 @@ class Csp(object):
         libcsp.buffer_free(buf)
 
     def receive(self):
-        sock = libcsp.socket()
-        libcsp.bind(sock, libcsp.CSP_ANY)
         libcsp.listen(sock, 5)
         while True:
             # Exit the loop gracefully (ie. CTRL+C)
             if flag.exit():
                 print("Exiting receiving loop")
+                flag.reset()
                 return
             
             # wait for incoming connection
-            print("WAIT FOR CONNECTION ...")
+            print("WAIT FOR CONNECTION ... (CTRL+C to stop)")
             #conn = libcsp.accept(sock, libcsp.CSP_MAX_TIMEOUT)
             conn = libcsp.accept(sock, 1000)
             if not conn:
@@ -139,6 +138,7 @@ class Csp(object):
                 data = bytearray(libcsp.packet_get_data(packet))
                 length = libcsp.packet_get_length(packet)
                 print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
+                print("data:", data)
                     # send reply
                     # data[0] = data[0] + 1
                     # reply = libcsp.buffer_get(1)
@@ -152,16 +152,18 @@ class Csp(object):
 
 class GracefulExiter():
     """
-    Allows us to exit while loops w/ CTRL+C.
+    Allows us to exit while loops with CTRL+C.
     By Esben Folger Thomas https://stackoverflow.com/a/57649638
     """
     def __init__(self):
         self.state = False
-        signal.signal(signal.SIGINT, self.change_state)
-    def change_state(self, signum, frame):
+        signal.signal(signal.SIGINT, self.flip_true)
+    def flip_true(self, signum, frame):
         print("exit flag set to True (repeat to exit now)")
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         self.state = True
+    def reset(self):
+        self.state = False
     def exit(self):
         return self.state
 
@@ -176,6 +178,9 @@ if __name__ == "__main__":
     opts = getOptions()
     csp = Csp(opts)
     flag = GracefulExiter()
+
+    sock = libcsp.socket()
+    libcsp.bind(sock, libcsp.CSP_ANY)
     
     while True:
         try:
