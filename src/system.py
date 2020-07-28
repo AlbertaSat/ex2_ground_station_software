@@ -6,20 +6,21 @@ class SystemValues(object):
             "ADCS"  :2,
             "COMMS" :3,
             "IAC"   :5,
-            "GND"   :16,
             "DBG"   :7,
+            "GND"   :16,
             "DEMO"  :30,
             "LAST"  :31
         }
         self.SERVICES = {
-            "VERIFICATION": {"port": 1},
-            "HK": {"port": 3,
-                    "subservice": {
-                        "HK_PARAMETERS_REPORT": 25
-                    }
+            "VERIFICATION": {"port": 8},
+            "HK": {
+                "port": 9,
+                "subservice": {
+                    "HK_PARAMETERS_REPORT": 0
+                }
             },
-            "EVENT": {"port": 5},
-            "FUNCTION_MANAGEMENT": {"port": 8},
+            "EVENT": {"port": 10},
+            "FUNCTION_MANAGEMENT": {"port": 11},
             "TIME_MANAGEMENT": {
                 "port": 12,
                 "subservice": {
