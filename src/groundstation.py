@@ -26,6 +26,7 @@ vals = SystemValues()
 apps = vals.APP_DICT
 services = vals.SERVICES
 global flag
+
 class Csp(object):
     def __init__(self, opts):
         self.myAddr = apps["GND"]
