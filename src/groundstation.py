@@ -25,8 +25,7 @@ else:
 vals = SystemValues()
 apps = vals.APP_DICT
 services = vals.SERVICES
-
-
+global flag
 class Csp(object):
     def __init__(self, opts):
         self.myAddr = apps["GND"]
@@ -39,6 +38,10 @@ class Csp(object):
     def __zmq__(self, addr):
         libcsp.zmqhub_init(addr, 'localhost')
         libcsp.rtable_load("0/0 ZMQHUB")
+    
+    def __uart__(self):
+        libcsp.kiss_init("/dev/ttyUSB0", 9600, 512, "uart")
+        libcsp.rtable_set(1, 0, "uart", libcsp.CSP_NO_VIA_ADDRESS)
 
     def getInput(self, prompt=None, inVal=None):
         sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
@@ -64,11 +67,7 @@ class Csp(object):
         if service not in services:
             raise Exception("Invalid Service")
         if sub not in services[service]['subservice']:
-                raise Exception("Invalid Subservice")
-        if service == "HK":
-            if arg not in apps:
-                raise Exception("Invalid HK Argument")
-            arg = apps[arg]
+            raise Exception("Invalid Subservice")
 
         server = apps[app]
         port = services[service]['port']
@@ -96,6 +95,8 @@ class Csp(object):
         libcsp.bind(sock, libcsp.CSP_ANY)
         libcsp.listen(sock, 5)
         while True:
+            if flag == 1:
+                break
             # wait for incoming connection
             print("WAIT FOR CONNECTION ...")
             conn = libcsp.accept(sock, libcsp.CSP_MAX_TIMEOUT)
@@ -118,8 +119,9 @@ class Csp(object):
                     print(libcsp.conn_dport(conn))
                     data = bytearray(libcsp.packet_get_data(packet))
                     length = libcsp.packet_get_length(packet)
-                    print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
-                    break;
+                    print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02xf}'.format(x) for x in data))
+                    flag = 1
+                    break
                 else:
                     # pass request on to service handler
                     libcsp.service_handler(conn, packet)
@@ -138,6 +140,7 @@ if __name__ == "__main__":
     while True:
         try:
             toSend, server, port = csp.getInput(prompt="to send: ")
-            csp.send(server, port, toSend);
+            csp.send(server, port, toSend)
+            csp.receive()
         except Exception as e:
             print(e)
