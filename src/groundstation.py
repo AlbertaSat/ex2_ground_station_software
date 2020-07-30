@@ -133,21 +133,18 @@ class Csp(object):
                     print("packet is None")
                     break
 
-                #if libcsp.conn_dport(conn) == 10:
-                    # print request
+                # print request
                 data = bytearray(libcsp.packet_get_data(packet))
                 length = libcsp.packet_get_length(packet)
                 print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
                 print("data:", data)
-                    # send reply
-                    # data[0] = data[0] + 1
-                    # reply = libcsp.buffer_get(1)
-                    # libcsp.packet_set_data(reply, data)
-                    # libcsp.sendto_reply(packet, reply, libcsp.CSP_O_NONE)
-
-                #else:
-                    # pass request on to service handler
-                libcsp.service_handler(conn, packet)
+                print("libcsp.packet_get_data(packet)=", libcsp.packet_get_data(packet))
+                # send reply
+                # data[0] = data[0] + 1
+                # reply = libcsp.buffer_get(1)
+                # libcsp.packet_set_data(reply, data)
+                # libcsp.sendto_reply(packet, reply, libcsp.CSP_O_NONE)
+                # libcsp.service_handler(conn, packet)
 
 
 class GracefulExiter():
@@ -164,6 +161,7 @@ class GracefulExiter():
         self.state = True
     def reset(self):
         self.state = False
+        signal.signal(signal.SIGINT, self.flip_true)
     def exit(self):
         return self.state
 
