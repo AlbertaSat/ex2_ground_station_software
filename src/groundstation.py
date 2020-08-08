@@ -74,11 +74,6 @@ class Csp(object):
         if sub not in services[service]['subservice']:
             raise Exception("Invalid Subservice")
 
-        if service == "HK":
-            if arg not in apps:
-                raise Exception("Invalid HK Argument")
-            arg = apps[arg]
-
         server = apps[app]
         print(server)
         port = services[service]['port']
