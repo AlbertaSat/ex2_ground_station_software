@@ -80,6 +80,7 @@ class Csp(object):
             arg = apps[arg]
 
         server = apps[app]
+        print(server)
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
 
@@ -152,8 +153,8 @@ if __name__ == "__main__":
     while True:
         try:
             toSend, server, port = csp.getInput(prompt="to send: ")
-            #csp.send(server, port, toSend);
+            csp.send(server, port, toSend);
             #time.sleep(1)
-            csp.receive()
+            # csp.receive()
         except Exception as e:
             print(e)
