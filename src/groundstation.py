@@ -13,7 +13,6 @@ import signal
 import time
 import sys
 import argparse
-import struct
 if __name__ == "__main__":
     # We're running this file directly, not as a module.
     from system import SystemValues
