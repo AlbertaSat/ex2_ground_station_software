@@ -13,6 +13,7 @@ import signal
 import time
 import sys
 import argparse
+import struct
 if __name__ == "__main__":
     # We're running this file directly, not as a module.
     from system import SystemValues
@@ -54,7 +55,7 @@ class Csp(object):
         # Use a python slicing notation to edit out the empty strings from the regex
         # (In case no arguments were entered)
         cmdVec[:] = [cmd for cmd in cmdVec if cmd!='']
-        print("cmdVec:",cmdVec)
+        print("cmdVec:", cmdVec)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
@@ -115,8 +116,7 @@ class Csp(object):
             
             # wait for incoming connection
             print("WAIT FOR CONNECTION ... (CTRL+C to stop)")
-            #conn = libcsp.accept(sock, libcsp.CSP_MAX_TIMEOUT)
-            conn = libcsp.accept(sock, 1000)
+            conn = libcsp.accept(sock, 1000) # or libcsp.CSP_MAX_TIMEOUT
             if not conn:
                 continue
             
@@ -124,32 +124,25 @@ class Csp(object):
                                                              libcsp.conn_sport(conn),
                                                              libcsp.conn_dst(conn),
                                                              libcsp.conn_dport(conn)))
-
-            # TODO: clean up how the packet is taken apart
             while True:
                 # Read all packets on the connection
                 packet = libcsp.read(conn, 100)
                 if packet is None:
-                    print("packet is None")
+                    print("packet is None; no more packets")
                     break
-
-                # print request
+                # print the packet's data
                 data = bytearray(libcsp.packet_get_data(packet))
                 length = libcsp.packet_get_length(packet)
                 print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
                 print("data:", data)
-                print("libcsp.packet_get_data(packet)=", libcsp.packet_get_data(packet))
-                # send reply
-                # data[0] = data[0] + 1
-                # reply = libcsp.buffer_get(1)
-                # libcsp.packet_set_data(reply, data)
-                # libcsp.sendto_reply(packet, reply, libcsp.CSP_O_NONE)
-                # libcsp.service_handler(conn, packet)
+                converted_data = int.from_bytes(data, byteorder='little', signed=False)
+                print(converted_data)
 
 
 class GracefulExiter():
     """
     Allows us to exit while loops with CTRL+C.
+    (When we cannot get a connection for some reason.)
     By Esben Folger Thomas https://stackoverflow.com/a/57649638
     """
     def __init__(self):
