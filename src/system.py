@@ -27,12 +27,5 @@ class SystemValues(object):
                     "SET_TIME": 1,
                     "GET_TIME": 2
                 }
-            },
-            "SCHEDULING": {"port": 11},
-            "LARGE_DATA": {"port": 13},
-            "MASS_STORAGE": {"port": 15},
-            "TEST": {"port": 17},
-            "SU_MNLP": {"port": 18},
+            }
         }
-
-      
