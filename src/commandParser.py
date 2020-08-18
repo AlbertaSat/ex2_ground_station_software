@@ -57,6 +57,7 @@ class CommandParser(object):
         
         return self._command
 
+    def parseReturnValue(self, )
 
     ''' PRIVATE METHODS '''
     def __argCheck(self, args, inoutInfo, subservice=None):

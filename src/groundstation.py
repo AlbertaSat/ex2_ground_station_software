@@ -15,7 +15,7 @@ import sys
 import argparse
 if __name__ == "__main__":
     # We're running this file directly, not as a module.
-    from system import SystemValues
+    from commandParser import CommandParser
     import libcsp_py3 as libcsp
 else:
     # We're importing this file as a module to use in the website
@@ -23,14 +23,11 @@ else:
     import libcsp.build.libcsp_py3 as libcsp
 
 
-vals = SystemValues()
-apps = vals.APP_DICT
-services = vals.SERVICES
-
-
 class Csp(object):
     def __init__(self, opts):
         self.myAddr = apps["GND"]
+        self.parser = CommandParser()
+
         libcsp.init(self.myAddr, "host", "model", "1.2.3", 10, 300)
         if opts.interface == "zmq":
             self.__zmq__(self.myAddr)
@@ -48,63 +45,21 @@ class Csp(object):
         libcsp.rtable_set(1, 0, "uart", libcsp.CSP_NO_VIA_ADDRESS)
 
     def getInput(self, prompt=None, inVal=None):
-        sanitizeRegex = re.compile("^[\)]") # Maybe change this to do more input sanitization
-        inStr = ""
         if inVal is not None:
-            inStr = inVal
+            command = self.parser(inVal)
         elif prompt is not None:
             inStr = input(prompt)
+            command = self.parser(inStr)
         else:
             raise Exception("invalid call to getInput")
-        cmdVec = re.split("\.|\(|\)", inStr)
-        # Use a python slicing notation to edit out the empty strings from the regex
-        # (In case no arguments were entered)
-        cmdVec[:] = [cmd for cmd in cmdVec if cmd!='']
-        print("cmdVec:", cmdVec)
-
-        # command format: <service_provider>.<service>.(<args>)
-        try:
-            if len(cmdVec) < 4: # no arguments
-                app, service, sub = [x.upper() for x in cmdVec]
-                arg = None
-            else:
-                app, service, sub, arg = [x.upper() for x in cmdVec]
-        except:
-            raise Exception("BAD FORMAT\n<service_provider>.<service>.<subservice>(<args>)")
-
-        if app not in apps:
-            raise Exception("Invalid Application")
-        if service not in services:
-            raise Exception("Invalid Service")
-        if sub not in services[service]['subservice']:
-            raise Exception("Invalid Subservice")
-
-        if service == "HK":
-            if arg not in apps or not arg:
-                raise Exception("Invalid HK Argument")
-            arg = apps[arg]
-
-        server = apps[app]
-        print(server)
-        port = services[service]['port']
-        subservice = services[service]['subservice'][sub]
-
-        if arg:
-            arg = socket.htonl(int(arg)).to_bytes(4, 'little ')
-        else:
-            print("No arguments entered")
-        # data = map(ord, args)
-        print([subservice, arg])
-        b = bytearray([subservice]) # convert it to something CSP can read
-        if arg:
-            b.extend(arg)
-        print(b)
-
-        print("CMP ident:", libcsp.cmp_ident(server))
-        print("Ping: %d mS" % libcsp.ping(server))
-        toSend = libcsp.buffer_get(32)
-        libcsp.packet_set_data(toSend, b)
-        return toSend, server, port
+        if not (command['dst'] and command['dport'] and command['args']):
+            raise Exception('Error parsing command')
+            
+        print("CMP ident:", libcsp.cmp_ident(command.dst))
+        print("Ping: %d mS" % libcsp.ping(command.dst))
+        toSend = libcsp.buffer_get(len(command['args']))
+        libcsp.packet_set_data(toSend, command['args'])
+        return toSend, command['dst'], command['dport']
 
     def send(self, server, port, buf):
         print("SENDING THE PACKET\n")
