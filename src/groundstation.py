@@ -7,8 +7,8 @@
 # Run client against server using ZMQ:
 # LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 Src/groundStation.py -I zmq
 
-
 import os, re
+import socket
 import signal
 import time
 import sys
@@ -90,7 +90,7 @@ class Csp(object):
         subservice = services[service]['subservice'][sub]
 
         if arg:
-            arg = int(arg).to_bytes(4, 'little')
+            arg = socket.htonl(int(arg)).to_bytes(4, 'little ')
         else:
             print("No arguments entered")
         # data = map(ord, args)
@@ -119,13 +119,13 @@ class Csp(object):
                 print("Exiting receiving loop")
                 flag.reset()
                 return
-            
+
             # wait for incoming connection
             print("WAIT FOR CONNECTION ... (CTRL+C to stop)")
             conn = libcsp.accept(sock, 1000) # or libcsp.CSP_MAX_TIMEOUT
             if not conn:
                 continue
-            
+
             print ("connection: source=%i:%i, dest=%i:%i" % (libcsp.conn_src(conn),
                                                              libcsp.conn_sport(conn),
                                                              libcsp.conn_dst(conn),
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
     sock = libcsp.socket()
     libcsp.bind(sock, libcsp.CSP_ANY)
-    
+
     while True:
         try:
             toSend, server, port = csp.getInput(prompt="to send: ")
