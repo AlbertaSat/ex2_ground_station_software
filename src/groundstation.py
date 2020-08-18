@@ -61,7 +61,7 @@ class Csp(object):
         # Use a python slicing notation to edit out the empty strings from the regex
         # (In case no arguments were entered)
         cmdVec[:] = [cmd for cmd in cmdVec if cmd!='']
-        print("cmdVec:", cmdVec)
+        print("\ncommand:", cmdVec)
 
         # command format: <service_provider>.<service>.(<args>)
         try:
@@ -86,20 +86,17 @@ class Csp(object):
             arg = apps[arg]
 
         server = apps[app]
-        print(server)
         port = services[service]['port']
         subservice = services[service]['subservice'][sub]
 
         if arg:
             arg = socket.htonl(int(arg)).to_bytes(4, 'little')
+            print([subservice, arg])
         else:
             print("No arguments entered")
-        # data = map(ord, args)
-        print([subservice, arg])
         b = bytearray([subservice]) # convert it to something CSP can read
         if arg:
             b.extend(arg)
-        print(b)
 
         print("CMP ident:", libcsp.cmp_ident(server))
         print("Ping: %d mS" % libcsp.ping(server))
@@ -122,7 +119,7 @@ class Csp(object):
                 return
 
             # wait for incoming connection
-            print("WAIT FOR CONNECTION ... (CTRL+C to stop)")
+            print("Waiting for a reply ... (CTRL+C to stop)")
             conn = libcsp.accept(sock, 1000) # or libcsp.CSP_MAX_TIMEOUT
             if not conn:
                 continue
@@ -135,15 +132,15 @@ class Csp(object):
                 # Read all packets on the connection
                 packet = libcsp.read(conn, 100)
                 if packet is None:
-                    print("packet is None; no more packets")
-                    break
+                    print("No more packets (packet is None)\n")
+                    return # return to getting input
                 # print the packet's data
                 data = bytearray(libcsp.packet_get_data(packet))
                 length = libcsp.packet_get_length(packet)
                 print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
-                print("data:", data)
-                converted_data = int.from_bytes(data, byteorder='little', signed=False)
-                print(converted_data)
+                data_hex = data.hex()
+                print("\thex:", data_hex[0:2], data_hex[2:])
+                print("\thex payload converted to int:", int(data_hex[2:], 16))
 
 
 class GracefulExiter():
