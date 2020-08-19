@@ -58,6 +58,22 @@ class CommandParser(object):
         return self._command
 
 
+    def parseReturnValue(self, src, dst, dport, data, length):
+        sender = self.vals.APP_DICT[src]
+        dest = self.vals.APP_DICT[dst]
+        serviceResponse = None
+        if not sender:
+            # Unknown sender (technically this is ok)
+            return None
+        for service in services:
+            if service.port == dport:
+                serviceResponse = service
+        if not serviceResponse:
+            # Unknown service
+            return None
+
+
+
     ''' PRIVATE METHODS '''
     def __argCheck(self, args, inoutInfo, subservice=None):
         outArgs = bytearray()
@@ -66,7 +82,9 @@ class CommandParser(object):
             # Command has no arguments
             if subservice:
                 # Commands has no args, but has subservice
-                self._command['args'] = outArgs.extend([subservice])
+                outArgs.extend([subservice])
+                self._command['args'] = outArgs
+                return True
             # Otherwise just put an empty byte in there
             self._command['args'] = bytearray([0])
             return True

@@ -99,6 +99,7 @@ class Csp(object):
                 # print the packet's data
                 data = bytearray(libcsp.packet_get_data(packet))
                 length = libcsp.packet_get_length(packet)
+                self.parser.parseReturnValue(libcsp.conn_src(conn), libcsp.conn_dst(conn), libcsp.conn_dport(conn), data, length)
                 print ("got packet, len=" + str(length) + ", data=" + ''.join('{:02x}'.format(x) for x in data))
                 print("data:", data)
                 converted_data = int.from_bytes(data, byteorder='little', signed=False)
