@@ -16,12 +16,15 @@ import argparse
 if __name__ == "__main__":
     # We're running this file directly, not as a module.
     from commandParser import CommandParser
+    from system import SystemValues
     import libcsp_py3 as libcsp
 else:
     # We're importing this file as a module to use in the website
     from ex2_ground_station_software.src.system import SystemValues
     import libcsp.build.libcsp_py3 as libcsp
 
+vals = SystemValues()
+apps = vals.APP_DICT
 
 class Csp(object):
     def __init__(self, opts):
@@ -49,20 +52,22 @@ class Csp(object):
             command = self.parser(inVal)
         elif prompt is not None:
             inStr = input(prompt)
-            command = self.parser(inStr)
+            command = self.parser.parseInputValue(inStr)
         else:
             raise Exception("invalid call to getInput")
         if not (command['dst'] and command['dport'] and command['args']):
             raise Exception('Error parsing command')
-            
-        print("CMP ident:", libcsp.cmp_ident(command.dst))
-        print("Ping: %d mS" % libcsp.ping(command.dst))
+
+        print("CMP ident:", libcsp.cmp_ident(command['dst']))
+        print("Ping: %d mS" % libcsp.ping(command['dst']))
         toSend = libcsp.buffer_get(len(command['args']))
         libcsp.packet_set_data(toSend, command['args'])
         return toSend, command['dst'], command['dport']
 
     def send(self, server, port, buf):
         print("SENDING THE PACKET\n")
+        print(server)
+        print(port)
         libcsp.sendto(0, server, port, 1, libcsp.CSP_O_NONE, buf, 1000)
         libcsp.buffer_free(buf)
 

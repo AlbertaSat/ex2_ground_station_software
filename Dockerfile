@@ -14,7 +14,8 @@ RUN apt-get update \
   && apt-get install -y python3-pip python3-dev \
   && cd /usr/local/bin \
   && ln -s /usr/bin/python3 python \
-  && pip3 install --upgrade pip
+  && pip3 install --upgrade pip \
+  && pip3 install numpy
 
 # install zmq
 RUN wget https://github.com/zeromq/libzmq/releases/download/v4.2.2/zeromq-4.2.2.tar.gz
@@ -36,4 +37,3 @@ RUN python3 waf build
 WORKDIR /home/gs
 COPY . .
 CMD LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 Src/groundstation.py -I zmq
-

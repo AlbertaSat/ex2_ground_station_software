@@ -54,16 +54,20 @@ class CommandParser(object):
         else:
             print("No such subservice")
             return None
-        
+
         return self._command
 
-    def parseReturnValue(self, )
 
     ''' PRIVATE METHODS '''
     def __argCheck(self, args, inoutInfo, subservice=None):
         outArgs = bytearray()
 
         if not inoutInfo['args']:
+            # Command has no arguments
+            if subservice:
+                # Commands has no args, but has subservice
+                self._command['args'] = outArgs.extend([subservice])
+            # Otherwise just put an empty byte in there
             self._command['args'] = bytearray([0])
             return True
 

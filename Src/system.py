@@ -33,7 +33,7 @@ class SystemValues(object):
                     "SET_TIME": {
                         "subPort": 1,
                         "inoutInfo": {
-                            "args": [">u4"],
+                            "args": [">u4"], # Big endian (>), unsigned, 4 bytes
                             "returns": {
                                 "time": np.uint32
                             }
