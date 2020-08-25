@@ -59,19 +59,26 @@ class CommandParser(object):
 
 
     def parseReturnValue(self, src, dst, dport, data, length):
-        sender = self.vals.APP_DICT[src]
-        dest = self.vals.APP_DICT[dst]
-        serviceResponse = None
-        if not sender:
-            # Unknown sender (technically this is ok)
-            return None
-        for service in services:
-            if service.port == dport:
-                serviceResponse = service
-        if not serviceResponse:
-            # Unknown service
+        sender = [x for x in self.vals.APP_DICT if self.vals.APP_DICT[x] == src][0]
+        dest = [x for x in self.vals.APP_DICT if self.vals.APP_DICT[x] == dst][0]
+        service = [x for x in self.vals.SERVICES if self.vals.SERVICES[x]['port'] == dport][0]
+        idx = 0
+        outputObj = {}
+        subservice = {}
+
+        if service and ('subservice' in self.vals.SERVICES[service]) and length > 0:
+            subservice = [self.vals.SERVICES[service]['subservice'][x] for x in self.vals.SERVICES[service]['subservice'] if self.vals.SERVICES[service]['subservice'][x]['subPort'] == data[idx]][0]
+            idx += 1
+
+        if "inoutInfo" not in subservice:
+            # error: check system SystemValues
             return None
 
+        returns = subservice["inoutInfo"]["returns"]
+        for retVal in returns:
+            outputObj[retVal] = np.frombuffer(data, dtype=returns[retVal], count=1, offset=idx)[0]
+            idx += np.dtype(returns[retVal]).itemsize
+        print(outputObj)
 
 
     ''' PRIVATE METHODS '''
@@ -117,8 +124,9 @@ class CommandParser(object):
 
 if __name__ == "__main__":
     parser = CommandParser()
-    cmd = parser.parseInputValue("OBC.TIME_MANAGEMENT.SET_TIME(1234)")
-    print(cmd)
-    print(len(cmd['args']))
-    cmd = parser.parseInputValue("OBC.TIME_MANAgemENT.GET_TIME")
-    print(cmd)
+    cmd1 = parser.parseInputValue("OBC.TIME_MANAGEMENT.SET_TIME(1598385718)")
+    print(cmd1)
+    cmd2 = parser.parseInputValue("OBC.TIME_MANAgemENT.GET_TIME")
+    print(cmd2)
+    cmd1["args"][0] = 0x02 # change this to 'getTime'
+    parser.parseReturnValue(0, 4, 12, cmd1['args'], 5)

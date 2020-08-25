@@ -8,7 +8,7 @@ class SystemValues(object):
 
         self.APP_DICT = {
             "OBC"   :0,
-            "EPS"   :1,
+            "EPS"   :4, # hard coded by manufacturer
             "ADCS"  :2,
             "COMMS" :3,
             "IAC"   :5,
@@ -35,7 +35,7 @@ class SystemValues(object):
                         "inoutInfo": {
                             "args": [">u4"], # Big endian (>), unsigned, 4 bytes
                             "returns": {
-                                "time": np.uint32
+                                "time": ">u4"
                             }
                         }
                     },
@@ -44,7 +44,7 @@ class SystemValues(object):
                         "inoutInfo": {
                             "args": None,
                             "returns": {
-                                "time": np.uint32
+                                "time": ">u4"
                             }
                         }
                     }
