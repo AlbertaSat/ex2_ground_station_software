@@ -42,8 +42,7 @@ class SystemValues(object):
                 }
             },
 
-            'EPS_CLI':
+            'EPS_CLI': {
                 'port': 13, # EPS remote CLI uses port 13 unless Otherwise specified
-
             }
         }

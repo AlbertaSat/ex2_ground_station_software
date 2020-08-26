@@ -15,9 +15,18 @@ import sys
 import argparse
 
 
+if __name__ == '__main__':
+    # We're running this file directly, not as a module.
+    from commandParser import CommandParser
+    from system import SystemValues
+    import libcsp_py3 as libcsp
+else:
+    # We're importing this file as a module to use in the website
+    from ex2_ground_station_software.src.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
+
 vals = SystemValues()
 apps = vals.APP_DICT
-
 
 class Csp(object):
     def __init__(self, opts):
@@ -101,6 +110,7 @@ class Csp(object):
                 print(rxData)
 
 
+
 class GracefulExiter():
     '''
     Allows us to exit while loops with CTRL+C.
@@ -142,14 +152,3 @@ if __name__ == '__main__':
             csp.receive()
         except Exception as e:
             print(e)
-
-
-if __name__ == '__main__':
-    # We're running this file directly, not as a module.
-    from commandParser import CommandParser
-    from system import SystemValues
-    import libcsp_py3 as libcsp
-else:
-    # We're importing this file as a module to use in the website
-    from ex2_ground_station_software.src.system import SystemValues
-    import libcsp.build.libcsp_py3 as libcsp
