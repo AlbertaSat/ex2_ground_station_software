@@ -151,7 +151,7 @@ class SystemValues(object):
                 'subservice': {
                     # ALL the EPS CLI commands:
                     'SET_TELEMETERY_PERIOD': {
-                        'what': 'Set telemetery collection period on EPS'
+                        'what': 'Set telemetery collection period on EPS',
                         'subPort': 255,
                         'inoutInfo': {
                             'args': ['>u4', '>B', '>u4', '>u4'], # magicWord (refer to docs), telem. ID, period (ms), duration (s)
@@ -169,7 +169,7 @@ class SystemValues(object):
                 'subservice': {
                     'SINGLE_OUTPUT_CONTROL': {
                         'subPort': 0,
-                        'inoutInfo'{
+                        'inoutInfo': {
                             'args': ['>B', '>B', '>u2'], # output num., state, delay (s)
                             'returns': {
                                 'err': '>b'
@@ -186,7 +186,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_HEATER_MODE': {
-                        'what': 'Manual, or automatic'
+                        'what': 'Manual, or automatic',
                         'subPort': 6,
                         'inoutInfo': {
                             'args': ['>B'], # Mode (see docs)
