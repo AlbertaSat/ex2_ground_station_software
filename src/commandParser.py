@@ -1,3 +1,22 @@
+'''
+ * Copyright (C) 2020  University of Alberta
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+'''
+'''
+ * @file commandParser.py
+ * @author Andrew Rooney
+ * @date 2020-08-26
+'''
+
 import numpy as np
 import re
 from system import SystemValues
@@ -32,6 +51,7 @@ class CommandParser(object):
                 if 'inoutInfo' not in service:
                     print('No in/out info for service')
                     return None
+                print("SDFasdf")
                 if not self.__argCheck(tokens[(self.vals.serviceIdx + 1)::], service['inoutInfo']):
                     return None
             elif tokens[self.vals.serviceIdx + 1] != '.':
@@ -94,13 +114,13 @@ class CommandParser(object):
 
         if not inoutInfo['args']:
             # Command has no arguments
-            if subservice:
+            if subservice != None:
                 # Commands has no args, but has subservice
                 outArgs.extend([subservice])
                 self._command['args'] = outArgs
                 return True
             # Otherwise just put an empty byte in there
-            self._command['args'] = bytearray([0])
+            self._command['args'] = []
             return True
 
         if args[0] != '(' and args[-1] != ')':
