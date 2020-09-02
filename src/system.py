@@ -167,6 +167,8 @@ class SystemValues(object):
                 # EPS SPECIFIC
                 'port': 14,
                 'subservice': {
+
+                    ''' POWER OUTPUTS '''
                     'SINGLE_OUTPUT_CONTROL': {
                         'subPort': 0,
                         'inoutInfo': {
@@ -185,6 +187,46 @@ class SystemValues(object):
                             }
                         }
                     },
+
+                    ''' SOLAR PANEL INPUTS & MPPT '''
+                    'SET_SINGLE_MPPT_CONV_V': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': ['>B', '>u2'], # channel, voltage (mv)
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'SET_ALL_MPPT_CONV_V': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': ['>u2', '>u2', '>u2', '>u2'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'SET_MODE_MPPT': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['>B'], # Hw, manual, auto, auto w/ timeout
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'SET_AUTO_TIMEOUT_MPPT': {
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': ['>u4'], # timeout
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+
+                    ''' BATTERY HEATER '''
                     'SET_HEATER_MODE': {
                         'what': 'Manual, or automatic',
                         'subPort': 6,
