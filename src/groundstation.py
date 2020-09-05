@@ -1,11 +1,30 @@
-#!/usr/bin/python3
+'''
+ * Copyright (C) 2020  University of Alberta
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+'''
+'''
+ * @file groundStation.py
+ * @author Andrew Rooney, Hugh Bagan, Haoran Qi
+ * @date 2020-08-26
+'''
 
-# Build required code from satelliteSim/libcsp:
-# Start zmqproxy (only one instance)
-# $ ./build/zmqproxy
-#
-# Run client against server using ZMQ:
-# LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 Src/groundStation.py -I zmq
+'''
+Build required code from satelliteSim/libcsp:
+Start zmqproxy (only one instance)
+$ ./build/zmqproxy
+
+Run client against server using:
+LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 src/groundStation.py -I <zmq|uart>
+'''
 
 import os, re
 import socket
@@ -60,11 +79,15 @@ class Csp(object):
 
         if command == None:
             raise Exception('Error parsing command')
-
+        print('here')
+        print(command)
         print('CMP ident:', libcsp.cmp_ident(command['dst']))
         print('Ping: %d mS' % libcsp.ping(command['dst']))
         toSend = libcsp.buffer_get(len(command['args']))
-        libcsp.packet_set_data(toSend, command['args'])
+
+        if len(command['args']) > 0:
+            print(command['args'])
+            libcsp.packet_set_data(toSend, command['args'])
         return toSend, command['dst'], command['dport']
 
     def send(self, server, port, buf):
