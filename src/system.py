@@ -74,6 +74,7 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None, # SID
                             'returns': {
+                                'err': '>b',
                                 'timestamp': '>u4'
                             }
                         }
