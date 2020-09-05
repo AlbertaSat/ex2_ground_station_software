@@ -79,11 +79,14 @@ class Csp(object):
 
         if command == None:
             raise Exception('Error parsing command')
-
+        print('here')
+        print(command)
         print('CMP ident:', libcsp.cmp_ident(command['dst']))
         print('Ping: %d mS' % libcsp.ping(command['dst']))
         toSend = libcsp.buffer_get(len(command['args']))
+
         if len(command['args']) > 0:
+            print(command['args'])
             libcsp.packet_set_data(toSend, command['args'])
         return toSend, command['dst'], command['dport']
 

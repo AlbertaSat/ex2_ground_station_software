@@ -132,7 +132,7 @@ class CommandParser(object):
         if len(args) != len(inoutInfo['args']):
             print('Wrong # of args')
             return None
-        if subservice:
+        if subservice != None:
             outArgs.extend([subservice])
 
         for i in range(0, len(args)):

@@ -72,7 +72,7 @@ class SystemValues(object):
                     'GET_TIME': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': None,
+                            'args': None, # SID
                             'returns': {
                                 'timestamp': '>u4'
                             }
@@ -114,6 +114,22 @@ class SystemValues(object):
                                 'transmitSecondFraction': '>u4',
                                 'receptionTimeInS': '>u4',
                                 'receptionSecondFraction': '>u4'
+                            }
+                        }
+                    }
+                }
+            },
+
+            'HOUSEKEEPING': {
+                'port': 9,
+                'subservice': {
+                    'PARAMETER_REPORT': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>B'],
+                            'returns': {
+                                'structureID': '>B',
+                                'temp': '>f4',
                             }
                         }
                     }
@@ -299,7 +315,7 @@ class SystemValues(object):
                                 'battHeaterState': '>B'
                             }
                         }
-                    }
+                    },
                     # ALL the EPS CLI commands:
                     'SET_TELEMETERY_PERIOD': {
                         'what': 'Set telemetery collection period on EPS',
