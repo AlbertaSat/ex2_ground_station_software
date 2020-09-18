@@ -3,7 +3,7 @@ The EnduroSat UHF Transceiver type II is a half-duplex transceiver we will be us
 UHF Functions List" spreadsheet](https://docs.google.com/spreadsheets/d/1zNhxhs0KJCp1187Vm3-zAzQHCY31f77l-0nlQmfXu1w/edit#gid=565953736) on the drive. Refer to that for details about input/output.
 
 ## Ceedling Build Instructions
-First, [install Ceedling](https://github.com/ThrowTheSwitch/Ceedling)
+First, [install Ceedling](https://github.com/ThrowTheSwitch/Ceedling). Then run:
 ```
 git clone https://github.com/AlbertaSat/ex2_uhf_software
 cd ex2_uhf_software/CommsSim
