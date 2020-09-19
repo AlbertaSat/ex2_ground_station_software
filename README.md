@@ -18,7 +18,7 @@ To start the ground code!
 
 * Building libcsp:
     Go to libcsp root directory and configure the project as follows,
-    ```./waf configure --with-os=posix --enable-rdp --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-if-zmqhub --enable-examples```
+    ```./waf configure --with-os=posix --enable-rdp --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-examples```
 
     And then build csp,
     ```./waf build```
