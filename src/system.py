@@ -120,6 +120,21 @@ class SystemValues(object):
                     }
                 }
             },
+	    'COMMUNICATION': {
+		'port': 10,
+		'subservice': {
+		    'GET_TEMP': {
+			'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'temperature': '>u4',
+                            }
+                        }
+                    }
+		}
+	    },
 
             'HOUSEKEEPING': {
                 'port': 9,
