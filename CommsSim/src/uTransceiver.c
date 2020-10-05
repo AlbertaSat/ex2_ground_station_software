@@ -32,10 +32,10 @@ static uint8_t sm_add = '2';  // Stores the second digit of the (hex) address
  * eventually
  * @param data
  * 		Pointer to first element of 128 byte array to be transmitted
- * @return U_ret
+ * @return UHF_return
  * 		Outcome of function (defined in uTransceiver.h)
  */
-U_ret send_U_data(uint8_t *data) {
+UHF_return send_U_data(uint8_t *data) {
   for (int i = 0; i < 128; i++) {
     *(data + i) = 0;
   }
@@ -50,10 +50,10 @@ U_ret send_U_data(uint8_t *data) {
  * @param data
  * 		Pointer to first element of 128 byte array where data will be
  * stored
- * @return U_ret
+ * @return UHF_return
  * 		Outcome of function (defined in uTransceiver.h)
  */
-U_ret receive_U_data(uint8_t *data) {
+UHF_return receive_U_data(uint8_t *data) {
   srand(time(NULL));
   for (int i = 0; i < 128; i++) {
     *(data + i) = (rand() % 256);
@@ -107,7 +107,7 @@ U_ret receive_U_data(uint8_t *data) {
  * @return
  * 		Outcome of the function (defined in uTransceiver.h)
  */
-U_ret generic_U_write(uint8_t code, void * param)
+UHF_return UHF_genericWrite(uint8_t code, void * param)
 {
   uint8_t cmd[MAX_W_CMDLEN] = {0};
 
@@ -485,7 +485,7 @@ U_ret generic_U_write(uint8_t code, void * param)
  * @return
  * 		Outcome of the function (defined in uTransceiver.h)
  */
-U_ret generic_U_read(uint8_t code, void *param) {
+UHF_return UHF_genericRead(uint8_t code, void *param) {
   /* The following is necessary for all read commands:             *
    * 	- Determining ASCII characters representing the command code *
    * 	- Calculating the crc32                                      *
@@ -854,4 +854,44 @@ int find_blankSpace(int length, char *cmd) {
       return k;
     }
   }
+}
+
+/**
+ * @brief
+ * 		Allows access via UHF to i2c devices
+ * @details
+ *    Command must be sent over UART or Radio
+ * @param format
+ * 		The way the data is sent ('S', 'C', or 'D')
+ * @param s_address
+ * 		I2C slave device address
+ * @param len
+ *    length of the data field
+ * @param data
+ *    Pointer to data to be sent over I2C bus
+ * @return UHF_return
+ *		Outcome of the function (defined in uTransceiver.h)
+ */
+UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes)
+{
+  uint8_t params[4] = {s_address >> 4, s_address & 15, len >> 4, len & 15};
+  convHexToASCII(4, params);
+  uint8_t cmd[MAX_W_CMDLEN] = {'E','S','+','W','2',sm_add,'F','1',format,params[0],params[1],params[2],params[3]};
+  int i = 0;
+
+  for(i; i < len; i++){
+    cmd[13 + 2*i] = data[i] >> 4;
+    cmd[13 + 2*i + 1] = data[i] & 15;
+    convHexToASCII(2, &cmd[13 + 2*i]);
+  }
+  uint8_t hex_bytes[2] = {n_read_bytes >> 4, n_read_bytes & 15};
+  convHexToASCII(2, hex_bytes);
+  cmd[13 + 2*i] = hex_bytes[0];
+  cmd[13 + 2*i + 1] = hex_bytes[1];
+  cmd[13 + 2*i + 2] = BLANK_SPACE;
+  cmd[13 + 2*i + 11] = CARRIAGE_R;
+
+  crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
+
+  printf("write 241 cmd: %s\n", cmd);
 }
