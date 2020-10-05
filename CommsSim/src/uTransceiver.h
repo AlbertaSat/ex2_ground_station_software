@@ -50,7 +50,7 @@ typedef enum{
 	U_CMD_SPEC_3  =  3,
 
 	U_UNK_ERR     = -10,
-}U_ret;
+}UHF_return;
 
 typedef struct {
   uint8_t len;
@@ -63,8 +63,8 @@ typedef struct {
 } uhf_framStruct;
 
 //* Functions for moving data to/from the UHF transceiver in 128 byte chunks
-U_ret send_U_data(uint8_t* arr);
-U_ret receive_U_data(uint8_t* arr);
+UHF_return send_U_data(uint8_t* arr);
+UHF_return receive_U_data(uint8_t* arr);
 
 // Converts hex values to their ASCII characters
 void convHexToASCII(int length, uint8_t * arr);
@@ -72,9 +72,9 @@ void convHexFromASCII(int length, uint8_t * arr);
 uint32_t crc32_calc(size_t length, char * cmd);
 int find_blankSpace(int length, char* string);
 
-U_ret generic_U_write(uint8_t code, void * param);
-U_ret generic_U_read(uint8_t code, void * param);
+UHF_return UHF_genericWrite(uint8_t code, void * param);
+UHF_return UHF_genericRead(uint8_t code, void * param);
 
-U_ret generic_i2c_action(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes);
+UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes);
 
 #endif // UTRANSCEIVER_H

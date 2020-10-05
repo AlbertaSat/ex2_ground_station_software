@@ -32,10 +32,10 @@ static uint8_t sm_add = '2';  // Stores the second digit of the (hex) address
  * eventually
  * @param data
  * 		Pointer to first element of 128 byte array to be transmitted
- * @return U_ret
+ * @return UHF_return
  * 		Outcome of function (defined in uTransceiver.h)
  */
-U_ret send_U_data(uint8_t *data) {
+UHF_return send_U_data(uint8_t *data) {
   for (int i = 0; i < 128; i++) {
     *(data + i) = 0;
   }
@@ -50,10 +50,10 @@ U_ret send_U_data(uint8_t *data) {
  * @param data
  * 		Pointer to first element of 128 byte array where data will be
  * stored
- * @return U_ret
+ * @return UHF_return
  * 		Outcome of function (defined in uTransceiver.h)
  */
-U_ret receive_U_data(uint8_t *data) {
+UHF_return receive_U_data(uint8_t *data) {
   srand(time(NULL));
   for (int i = 0; i < 128; i++) {
     *(data + i) = (rand() % 256);
@@ -107,7 +107,7 @@ U_ret receive_U_data(uint8_t *data) {
  * @return
  * 		Outcome of the function (defined in uTransceiver.h)
  */
-U_ret generic_U_write(uint8_t code, void * param)
+UHF_return UHF_genericWrite(uint8_t code, void * param)
 {
   uint8_t cmd[MAX_W_CMDLEN] = {0};
 
@@ -485,7 +485,7 @@ U_ret generic_U_write(uint8_t code, void * param)
  * @return
  * 		Outcome of the function (defined in uTransceiver.h)
  */
-U_ret generic_U_read(uint8_t code, void *param) {
+UHF_return UHF_genericRead(uint8_t code, void *param) {
   /* The following is necessary for all read commands:             *
    * 	- Determining ASCII characters representing the command code *
    * 	- Calculating the crc32                                      *
@@ -869,10 +869,10 @@ int find_blankSpace(int length, char *cmd) {
  *    length of the data field
  * @param data
  *    Pointer to data to be sent over I2C bus
- * @return U_ret
+ * @return UHF_return
  *		Outcome of the function (defined in uTransceiver.h)
  */
-U_ret generic_i2c_action(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes)
+UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes)
 {
   uint8_t params[4] = {s_address >> 4, s_address & 15, len >> 4, len & 15};
   convHexToASCII(4, params);
