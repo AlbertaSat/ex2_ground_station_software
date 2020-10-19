@@ -132,7 +132,194 @@ class SystemValues(object):
                                 'temperature': '>u4',
                             }
                         }
-                    }
+		    },
+		    'GET_FREQ': {
+			'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'frequency': '>f',
+                            }
+                        }
+		    },
+		    'GET_CONTROL': {
+			'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'status': '>u1',
+				'mode': '>u1',
+                            }
+                        }
+                    },
+		    'GET_ENCODER': {
+			'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'scrambler': '>u1',
+				'filter': '>u1',
+				'modulation': '>u1',
+				'rate': '>u1',
+                            }
+                        }
+                    },
+		    'GET_PAPOWER': {
+			'subPort': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Power Amplifier Power': '>u1',
+                            }
+                        }
+		    },
+		    'GET_STATUS': {
+			'subPort': 5,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+				'PWRGD': '>u1',
+				'TXL': '>u1',
+                            }
+                        }
+                    },
+		    'GET_TR': {
+			'subPort': 6,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Transmit Ready': '>i4',
+                            }
+                        }
+                    },
+		    'GET_BUFFER': {
+			'subPort': 7,
+                        'inoutInfo': {
+                            'args': ['>B'],
+                            'returns': {
+                                'err': '>b',
+				'pointer': '>u2',
+                            }
+                        }
+                    },
+		    'GET_HK': {
+			'subPort': 8,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Output Power': '>f',
+				'Power Amplifier Temperature': '>f',
+				'Top Temperature': '>f',
+				'Bottom Temperature': '>f',
+				'Battery Current': '>f',
+				'Battery Voltage': '>f',
+				'Power Amplifier Current': '>f',
+				'Power Amplifier Voltage': '>f',
+                            }
+                        }
+                    },
+		    'SOFT_RESET': {
+			'subPort': 9,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+		    'GET_FULL_STATUS': {
+			'subPort': 10,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+				'PWRGD': '>u1',
+				'TXL': '>u1',
+				'Transmit Ready': '>i4',
+				'Buffer Count': '>u2',
+				'Buffer Underrun': '>u2',
+				'Buffer Overrun': '>u2',
+                                'Output Power': '>f',
+				'Power Amplifier Temperature': '>f',
+				'Top Temperature': '>f',
+				'Bottom Temperature': '>f',
+				'Battery Current': '>f',
+				'Battery Voltage': '>f',
+				'Power Amplifier Current': '>f',
+				'Power Amplifier Voltage': '>f',
+				'Firmware Version': '>f',
+                            }
+                        }
+                    },
+		    'SET_FREQ': {
+                        'subPort': 11,
+                        'inoutInfo': {
+                            'args': ['>f'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+		    'SET_CONTROL': {
+                        'subPort': 12,
+                        'inoutInfo': {
+                            'args': ['>u1','>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+		    'SET_ENCODER': {
+                        'subPort': 13,
+                        'inoutInfo': {
+                            'args': ['>u1','>u1','>u1','>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+		    'SET_PAPOWER': {
+                        'subPort': 14,
+                        'inoutInfo': {
+                            'args': ['>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+		    'GET_CONFIG': {
+			'subPort': 15,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+				'Frequency': '>f',
+				'Power Amplifier Power' : '>u1',
+                                'Power Amplifier status': '>u1',
+				'Power Amplifier mode': '>u1',
+                                'Encoder scrambler': '>u1',
+				'Encoder filter': '>u1',
+				'Encoder modulation': '>u1',
+				'Encoder rate': '>u1',
+                            }
+                        }
+                    },
+		    'SET_CONFIG': {
+                        'subPort': 16,
+                        'inoutInfo': {
+                            'args': ['f','>u1','>u1','>u1','>u1','>u1','>u1','>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
 		}
 	    },
 
