@@ -53,14 +53,14 @@ class Csp(object):
         self.parser = CommandParser()
 
         libcsp.init(self.myAddr, 'host', 'model', '1.2.3', 10, 300)
-        if opts.interface == 'zmq':
-            self.__zmq__(self.myAddr)
+        if opts.interface == 'fifo':
+            self.__fifo__(self.myAddr)
         elif opts.interface == 'uart':
             self.__uart__()
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
 
-    def __zmq__(self, addr):
+    def __fifo__(self, addr):
         libcsp.fifo_init()
 
     def __uart__(self):
@@ -78,7 +78,6 @@ class Csp(object):
 
         if command == None:
             raise Exception('Error parsing command')
-        print('here')
         print(command)
         print('CMP ident:', libcsp.cmp_ident(command['dst']))
         print('Ping: %d mS' % libcsp.ping(command['dst']))
@@ -155,7 +154,7 @@ class GracefulExiter():
 
 def getOptions():
     parser = argparse.ArgumentParser(description='Parses command.')
-    parser.add_argument('-I', '--interface', type=str, default='zmq', help='CSP interface to use')
+    parser.add_argument('-I', '--interface', type=str, default='fifo', help='CSP interface to use')
     return parser.parse_args(sys.argv[1:])
 
 
