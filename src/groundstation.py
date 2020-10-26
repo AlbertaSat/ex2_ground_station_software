@@ -61,8 +61,7 @@ class Csp(object):
         time.sleep(0.2)  # allow router task startup
 
     def __zmq__(self, addr):
-        libcsp.zmqhub_init(addr, 'localhost')
-        libcsp.rtable_load('0/0 ZMQHUB')
+        libcsp.fifo_init()
 
     def __uart__(self):
         libcsp.kiss_init('/dev/ttyUSB0', 9600, 512, 'uart')
