@@ -17,19 +17,20 @@
  * @date 2020-08-26
 '''
 
+
+
+
 import numpy as np
 import re
 from system import SystemValues
-
-
 class CommandParser(object):
 
     def __init__(self):
         # Contructor
         self.vals = SystemValues()
 
-
     ''' PUBLIC METHODS '''
+
     def parseInputValue(self, input):
         tokens = self.__lexer(input)
         self._command = {}
@@ -52,7 +53,8 @@ class CommandParser(object):
                     print('No in/out info for service')
                     return None
                 print("SDFasdf")
-                if not self.__argCheck(tokens[(self.vals.serviceIdx + 1)::], service['inoutInfo']):
+                if not self.__argCheck(
+                        tokens[(self.vals.serviceIdx + 1)::], service['inoutInfo']):
                     return None
             elif tokens[self.vals.serviceIdx + 1] != '.':
                 # If there is a subservice, next token must be a '.'
@@ -70,7 +72,8 @@ class CommandParser(object):
             if 'inoutInfo' not in subservice:
                 print('No in/out info for subservice')
                 return None
-            if not self.__argCheck(tokens[(self.vals.subserviceIdx + 1)::], subservice['inoutInfo'], subservice['subPort']):
+            if not self.__argCheck(tokens[(
+                    self.vals.subserviceIdx + 1)::], subservice['inoutInfo'], subservice['subPort']):
                 return None
         else:
             print('No such subservice')
@@ -78,12 +81,14 @@ class CommandParser(object):
 
         return self._command
 
-
     def parseReturnValue(self, src, dst, dport, data, length):
         try:
-            sender = [x for x in self.vals.APP_DICT if self.vals.APP_DICT[x] == src][0]
-            dest = [x for x in self.vals.APP_DICT if self.vals.APP_DICT[x] == dst][0]
-            service = [x for x in self.vals.SERVICES if self.vals.SERVICES[x]['port'] == dport][0]
+            sender = [
+                x for x in self.vals.APP_DICT if self.vals.APP_DICT[x] == src][0]
+            dest = [
+                x for x in self.vals.APP_DICT if self.vals.APP_DICT[x] == dst][0]
+            service = [
+                x for x in self.vals.SERVICES if self.vals.SERVICES[x]['port'] == dport][0]
         except IndexError as e:
             print("ERROR: bad header information")
             return None
@@ -92,8 +97,10 @@ class CommandParser(object):
         outputObj = {}
         subservice = {}
 
-        if service and ('subservice' in self.vals.SERVICES[service]) and length > 0:
-            subservice = [self.vals.SERVICES[service]['subservice'][x] for x in self.vals.SERVICES[service]['subservice'] if self.vals.SERVICES[service]['subservice'][x]['subPort'] == data[idx]][0]
+        if service and (
+                'subservice' in self.vals.SERVICES[service]) and length > 0:
+            subservice = [self.vals.SERVICES[service]['subservice'][x] for x in self.vals.SERVICES[service]
+                          ['subservice'] if self.vals.SERVICES[service]['subservice'][x]['subPort'] == data[idx]][0]
             idx += 1
 
         if 'inoutInfo' not in subservice:
@@ -102,19 +109,20 @@ class CommandParser(object):
 
         returns = subservice['inoutInfo']['returns']
         for retVal in returns:
-            outputObj[retVal] = np.frombuffer(data, dtype=returns[retVal], count=1, offset=idx)[0]
+            outputObj[retVal] = np.frombuffer(
+                data, dtype=returns[retVal], count=1, offset=idx)[0]
             idx += np.dtype(returns[retVal]).itemsize
 
         return outputObj
 
-
     ''' PRIVATE METHODS '''
+
     def __argCheck(self, args, inoutInfo, subservice=None):
         outArgs = bytearray()
 
         if not inoutInfo['args']:
             # Command has no arguments
-            if subservice != None:
+            if subservice is not None:
                 # Commands has no args, but has subservice
                 outArgs.extend([subservice])
                 self._command['args'] = outArgs
@@ -132,7 +140,7 @@ class CommandParser(object):
         if len(args) != len(inoutInfo['args']):
             print('Wrong # of args')
             return None
-        if subservice != None:
+        if subservice is not None:
             outArgs.extend([subservice])
 
         for i in range(0, len(args)):
@@ -144,7 +152,7 @@ class CommandParser(object):
 
     def __lexer(self, input):
         tokenList = []
-        tmp = re.split('([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)', input)
+        tmp = re.split(r'([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)', input)
         [tokenList.append(x.upper()) for x in tmp if not str(x).strip() == '']
         return tokenList
 
@@ -155,5 +163,5 @@ if __name__ == '__main__':
     print(cmd1)
     cmd2 = parser.parseInputValue('OBC.TIME_MANAgemENT.GET_TIME')
     print(cmd2)
-    cmd1['args'][0] = 0x02 # change this to 'getTime'
+    cmd1['args'][0] = 0x02  # change this to 'getTime'
     parser.parseReturnValue(0, 4, 12, cmd1['args'], 5)
