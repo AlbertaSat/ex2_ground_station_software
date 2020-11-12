@@ -137,7 +137,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_FREQ': {
+                    'S_GET_FREQ': {
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -147,7 +147,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_CONTROL': {
+                    'S_GET_CONTROL': {
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -158,7 +158,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_ENCODER': {
+                    'S_GET_ENCODER': {
                         'subPort': 3,
                         'inoutInfo': {
                             'args': None,
@@ -171,7 +171,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_PAPOWER': {
+                    'S_GET_PAPOWER': {
                         'subPort': 4,
                         'inoutInfo': {
                             'args': None,
@@ -181,7 +181,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_STATUS': {
+                    'S_GET_STATUS': {
                         'subPort': 5,
                         'inoutInfo': {
                             'args': None,
@@ -192,7 +192,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_TR': {
+                    'S_GET_TR': {
                         'subPort': 6,
                         'inoutInfo': {
                             'args': None,
@@ -202,7 +202,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_BUFFER': {
+                    'S_GET_BUFFER': {
                         'subPort': 7,
                         'inoutInfo': {
                             'args': ['>B'],
@@ -212,7 +212,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_HK': {
+                    'S_GET_HK': {
                         'subPort': 8,
                         'inoutInfo': {
                             'args': None,
@@ -229,7 +229,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SOFT_RESET': {
+                    'S_SOFT_RESET': {
                         'subPort': 9,
                         'inoutInfo': {
                             'args': None,
@@ -238,7 +238,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_FULL_STATUS': {
+                    'S_GET_FULL_STATUS': {
                         'subPort': 10,
                         'inoutInfo': {
                             'args': None,
@@ -262,7 +262,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_FREQ': {
+                    'S_SET_FREQ': {
                         'subPort': 11,
                         'inoutInfo': {
                             'args': ['>f'],
@@ -271,7 +271,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_CONTROL': {
+                    'S_SET_CONTROL': {
                         'subPort': 12,
                         'inoutInfo': {
                             'args': ['>u1', '>u1'],
@@ -280,7 +280,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_ENCODER': {
+                    'S_SET_ENCODER': {
                         'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1'],
@@ -289,7 +289,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_PAPOWER': {
+                    'S_SET_PAPOWER': {
                         'subPort': 14,
                         'inoutInfo': {
                             'args': ['>u1'],
@@ -298,7 +298,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_CONFIG': {
+                    'S_GET_CONFIG': {
                         'subPort': 15,
                         'inoutInfo': {
                             'args': None,
@@ -315,18 +315,249 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_CONFIG': {
+                    'S_SET_CONFIG': {
                         'subPort': 16,
                         'inoutInfo': {
-                            'args': ['f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                            'args': ['>f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                             'returns': {
                                 'err': '>b',
                             }
                         }
                     },
+                    'UHF_SET_STATUS_CTRL': {
+                        'subPort': 20,
+                        'inoutInfo': {
+                            'args': ['>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_FREQ': {
+                        'subPort': 21,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_PIPE_T': {
+                        'subPort': 22,
+                        'inoutInfo': {
+                            'args': ['>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_BEACON_T': {
+                        'subPort': 23,
+                        'inoutInfo': {
+                            'args': ['>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_AUDIO_T': {
+                        'subPort': 24,
+                        'inoutInfo': {
+                            'args': ['>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_PARAMS': {
+                        'subPort': 25,
+                        'inoutInfo': {
+                            'args': ['>u4', '>u2', '>u2', '>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_RESTORE': {
+                        'subPort': 26,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Confirm': '>u1',
+                            }
+                        }
+                    },
+                    'UHF_LOW_PWR': {
+                        'subPort': 27,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Status': '>u1',
+                            }
+                        }
+                    },
+                    'UHF_SET_DESTINATION': {
+                        'subPort': 28,
+                        'inoutInfo': {
+                            'args': ['>U6'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_SOURCE': {
+                        'subPort': 29,
+                        'inoutInfo': {
+                            'args': ['>U6'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_MORSE': {
+                        'subPort': 30,
+                        'inoutInfo': {
+                            'args': ['>U36'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_MIDI': {
+                        'subPort': 31,
+                        'inoutInfo': {
+                            'args': ['>U36'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_BEACON_MSG': {
+                        'subPort': 32,
+                        'inoutInfo': {
+                            'args': ['>u1', '>U36'],  # 120 too large
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_I2C': {
+                        'subPort': 33,
+                        'inoutInfo': {
+                            'args': ['>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_WRITE_FRAM': {
+                        'subPort': 34,
+                        'inoutInfo': {
+                            'args': ['>u4', '>U16'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SECURE': {
+                        'subPort': 35,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Status': '>u1',
+                            }
+                        }
+                    },
+                    'UHF_GET_FULL_STAT': {
+                        'subPort': 36,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'RFTS': '>u1',
+                                'FRAM': '>u1',
+                                'SEC': '>u1',
+                                'CTS': '>u1',
+                                'Boot': '>u1',
+                                'Pipe': '>u1',
+                                'BCN': '>u1',
+                                'Echo': '>u1',
+                                'RF Mode1': '>u1',  # Use table 9 to improve
+                                'RF Mode2': '>u1',
+                                'RF Mode3': '>u1',
+                                'Reset': '>u1',
+                                'Frequency': '>u4',
+                                'PIPE timeout': '>u2',
+                                'Beacon period': '>u2',
+                                'Audio trans. period': '>u2',
+                                'Uptime': '>u4',
+                                'Packets out': '>u4',
+                                'Packets in': '>u4',
+                                'Packets in CRC16': '>u4',
+                                'Temperature': '>f',
+                                'Low power status': '>u1',
+                                'Firmware Version': '>u1',
+                                'Payload Size': '>u2',
+                                'Secure key': '>u4',
+                            }
+                        }
+                    },
+                    'UHF_GET_CALLSIGN': {
+                        'subPort': 37,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Destination': '>U6',
+                                'Source': '>U6',
+                            }
+                        }
+                    },
+                    'UHF_GET_MORSE': {
+                        'subPort': 38,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Morse': '>U36',
+                            }
+                        }
+                    },
+                    'UHF_GET_MIDI': {
+                        'subPort': 39,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'MIDI': '>U36',
+                            }
+                        }
+                    },
+                    'UHF_GET_BEACON_MSG': {
+                        'subPort': 40,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Beacon Message': '>U36',  # 120 too large
+                            }
+                        }
+                    },
+                    'UHF_GET_FRAM': {
+                        'subPort': 41,
+                        'inoutInfo': {
+                            'args': None,  # no address?
+                            'returns': {
+                                'err': '>b',
+                                'Morse': '>U16',
+                            }
+                        }
+                    },
                 }
             },
-
             'HOUSEKEEPING': {
                 'port': 9,
                 'subservice': {
