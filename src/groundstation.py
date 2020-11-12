@@ -26,14 +26,14 @@ Run client against server using:
 LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 src/groundStation.py -I <zmq|uart>
 '''
 
-import os, re
-import socket
-import signal
-import time
-import sys
+
 import argparse
-
-
+import sys
+import time
+import signal
+import socket
+import os
+import re
 if __name__ == '__main__':
     # We're running this file directly, not as a module.
     from commandParser import CommandParser
@@ -46,6 +46,7 @@ else:
 
 vals = SystemValues()
 apps = vals.APP_DICT
+
 
 class Csp(object):
     def __init__(self, opts):
@@ -77,7 +78,7 @@ class Csp(object):
         else:
             raise Exception('invalid call to getInput')
 
-        if command == None:
+        if command is None:
             raise Exception('Error parsing command')
         print('here')
         print(command)
@@ -108,14 +109,16 @@ class Csp(object):
 
             # wait for incoming connection
             print('WAIT FOR CONNECTION ... (CTRL+C to stop)')
-            conn = libcsp.accept(sock, 1000) # or libcsp.CSP_MAX_TIMEOUT
+            conn = libcsp.accept(sock, 1000)  # or libcsp.CSP_MAX_TIMEOUT
             if not conn:
                 continue
 
-            print ('connection: source=%i:%i, dest=%i:%i' % (libcsp.conn_src(conn),
-                                                             libcsp.conn_sport(conn),
-                                                             libcsp.conn_dst(conn),
-                                                             libcsp.conn_dport(conn)))
+            print(
+                'connection: source=%i:%i, dest=%i:%i' %
+                (libcsp.conn_src(conn),
+                 libcsp.conn_sport(conn),
+                 libcsp.conn_dst(conn),
+                 libcsp.conn_dport(conn)))
             while True:
                 # Read all packets on the connection
                 packet = libcsp.read(conn, 100)
@@ -127,11 +130,15 @@ class Csp(object):
                 length = libcsp.packet_get_length(packet)
                 print(length)
                 print(data)
-                rxData = self.parser.parseReturnValue(libcsp.conn_src(conn), libcsp.conn_dst(conn), libcsp.conn_dport(conn), data, length)
-                if rxData == None:
+                rxData = self.parser.parseReturnValue(
+                    libcsp.conn_src(conn),
+                    libcsp.conn_dst(conn),
+                    libcsp.conn_dport(conn),
+                    data,
+                    length)
+                if rxData is None:
                     print('ERROR: bad response data')
                 print(rxData)
-
 
 
 class GracefulExiter():
@@ -140,23 +147,32 @@ class GracefulExiter():
     (When we cannot get a connection for some reason.)
     By Esben Folger Thomas https://stackoverflow.com/a/57649638
     '''
+
     def __init__(self):
         self.state = False
         signal.signal(signal.SIGINT, self.flip_true)
+
     def flip_true(self, signum, frame):
         print('exit flag set to True (repeat to exit now)')
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         self.state = True
+
     def reset(self):
         self.state = False
         signal.signal(signal.SIGINT, self.flip_true)
+
     def exit(self):
         return self.state
 
 
 def getOptions():
     parser = argparse.ArgumentParser(description='Parses command.')
-    parser.add_argument('-I', '--interface', type=str, default='zmq', help='CSP interface to use')
+    parser.add_argument(
+        '-I',
+        '--interface',
+        type=str,
+        default='zmq',
+        help='CSP interface to use')
     return parser.parse_args(sys.argv[1:])
 
 
@@ -171,7 +187,7 @@ if __name__ == '__main__':
     while True:
         try:
             toSend, server, port = csp.getInput(prompt='to send: ')
-            csp.send(server, port, toSend);
+            csp.send(server, port, toSend)
             csp.receive()
         except Exception as e:
             print(e)
