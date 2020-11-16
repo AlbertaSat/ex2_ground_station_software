@@ -66,7 +66,7 @@ class Csp(object):
         libcsp.rtable_load('0/0 ZMQHUB')
 
     def __uart__(self):
-        libcsp.kiss_init('/dev/ttyUSB0', 9600, 512, 'uart')
+        libcsp.kiss_init('/dev/ttyUSB15', 9600, 512, 'uart')
         libcsp.rtable_set(1, 0, 'uart', libcsp.CSP_NO_VIA_ADDRESS)
 
     def getInput(self, prompt=None, inVal=None):
