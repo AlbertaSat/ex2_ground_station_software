@@ -38,7 +38,7 @@ COMMUNICATION.S_GET_FREQ:
 
 
 COMMUNICATION.S_GET_CONTROL:
-		About: Gets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}
+		About: Gets the S-band`s power amplifier write status and its mode = {0:configuration, 1: synchronization, 2:data, 3:test data}
 		Arguments: [None]
 		return values: {'err': '>b', 'status': '>u1', 'mode': '>u1'}
 		port: 10		subport: 2
@@ -292,7 +292,7 @@ COMMUNICATION.UHF_GET_BEACON_MSG:
 COMMUNICATION.UHF_GET_FRAM:
 		About: Reads the FRAM data
 		Arguments: [None]
-		return values: {'err': '>b', 'Morse': '>U16'}
+		return values: {'err': '>b', 'FRAM': '>U16'}
 		port: 10		subport: 41
 
 

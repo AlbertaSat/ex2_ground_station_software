@@ -139,7 +139,7 @@ class SystemValues(object):
                         }
                     },
                     'S_GET_CONTROL': {
-			'what': 'Gets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}',
+			'what': 'Gets the S-band`s power amplifier write status and its mode = {0:configuration, 1: synchronization, 2:data, 3:test data}',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -569,7 +569,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Beacon Message': '>U36',  # Switch to 12 after configuration
+                                'Beacon Message': '>U36',  # Switch to 120 after configuration
                             }
                         }
                     },
@@ -580,7 +580,7 @@ class SystemValues(object):
                             'args': None,  # no address?
                             'returns': {
                                 'err': '>b',
-                                'Morse': '>U16',
+                                'FRAM': '>U16',
                             }
                         }
                     },
