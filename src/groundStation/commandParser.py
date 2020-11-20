@@ -22,7 +22,7 @@
 
 import numpy as np
 import re
-from system import SystemValues
+from groundStation.system import SystemValues
 class CommandParser(object):
 
     def __init__(self):
