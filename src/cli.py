@@ -19,34 +19,11 @@
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
 import time
-from groundStation.groundStation import *
+from groundStation import *
 
-opts = options()
-csp = groundStation(opts.getOptions())
-flag = GracefulExiter()
-
-class GracefulExiter():
-    '''
-    Allows us to exit while loops with CTRL+C.
-    (When we cannot get a connection for some reason.)
-    By Esben Folger Thomas https://stackoverflow.com/a/57649638
-    '''
-
-    def __init__(self):
-        self.state = False
-        signal.signal(signal.SIGINT, self.flip_true)
-
-    def flip_true(self, signum, frame):
-        print('exit flag set to True (repeat to exit now)')
-        signal.signal(signal.SIGINT, signal.SIG_DFL)
-        self.state = True
-
-    def reset(self):
-        self.state = False
-        signal.signal(signal.SIGINT, self.flip_true)
-
-    def exit(self):
-        return self.state
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
+flag = groundStation.GracefulExiter()
 
 def cli():
     while True:
@@ -55,8 +32,8 @@ def cli():
             flag.reset()
             return
         try:
-            server, port, toSend = csp.getInput(prompt='to send: ')
-            resp = csp.transaction(server, port, toSend)
+            server, port, toSend = gs.getInput(prompt='to send: ')
+            resp = gs.transaction(server, port, toSend)
             print(resp)
         except Exception as e:
             print(e)

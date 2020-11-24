@@ -19,15 +19,15 @@
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/test.py -I uart -d /dev/ttyUSB1  '''
 import time
-from groundStation.groundStation import *
+from groundStation import *
 import numpy as np
 
-opts = options()
-csp = groundStation(opts.getOptions())
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 def sendAndExpect(send, expect):
-    server, port, toSend = csp.getInput(inVal = send)
-    response = csp.transaction(server, port, toSend)
+    server, port, toSend = gs.getInput(inVal = send)
+    response = gs.transaction(server, port, toSend)
     testpassed = 'Pass' if response == expect else 'Fail'
     print(' - TEST CASE ' + testpassed + ' -\n\tSent: ' + send +
         '\n\tRecieved: ' + str(response) +

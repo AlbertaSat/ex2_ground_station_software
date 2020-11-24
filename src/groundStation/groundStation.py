@@ -51,6 +51,7 @@ apps = vals.APP_DICT
 
 
 class groundStation(object):
+    ''' Constructor '''
     def __init__(self, opts):
         self.myAddr = apps['GND']
         self.parser = CommandParser()
@@ -64,6 +65,8 @@ class groundStation(object):
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = 5000  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
+
+    ''' Private Methods '''
 
     def __zmq__(self, addr):
         libcsp.zmqhub_init(addr, 'localhost')
@@ -95,6 +98,8 @@ class groundStation(object):
             }
 
         return self.server_connection[server][port]['conn']
+
+    ''' Public Methods '''
 
     def getInput(self, prompt=None, inVal=None):
         if inVal is not None:
