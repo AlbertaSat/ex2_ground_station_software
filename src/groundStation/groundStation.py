@@ -37,7 +37,7 @@ import re
 from collections import defaultdict
 
 # if __name__ == '__main__':
-    # We're running this file directly, not as a module.
+# We're running this file directly, not as a module.
 from groundStation.commandParser import CommandParser
 from groundStation.system import SystemValues
 import libcsp_py3 as libcsp
@@ -62,7 +62,7 @@ class groundStation(object):
             self.__uart__(opts.device)
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
-        self.rdp_timeout = 5000 # 10 seconds
+        self.rdp_timeout = 5000  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
 
     def __zmq__(self, addr):
@@ -76,23 +76,25 @@ class groundStation(object):
     def __connectionManager__(self, server, port):
         current = time.time()
         timeout = self.rdp_timeout / 1000
-        if server not in self.server_connection or port not in self.server_connection[server] or self.server_connection[server][port]['time of birth'] + timeout <= current:
-            if server in self.server_connection and port in self.server_connection[server] and self.server_connection[server][port]['time of birth'] + timeout <= current:
+        if server not in self.server_connection or port not in self.server_connection[
+                server] or self.server_connection[server][port]['time of birth'] + timeout <= current:
+            if server in self.server_connection and port in self.server_connection[
+                    server] and self.server_connection[server][port]['time of birth'] + timeout <= current:
                 libcsp.close(self.server_connection[server][port]['conn'])
 
             try:
-                conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                conn = libcsp.connect(
+                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
             except Exception as e:
                 print(e)
                 return None
 
             self.server_connection[server][port] = {
-                'conn' :  conn,
-                'time of birth' : time.time()
+                'conn': conn,
+                'time of birth': time.time()
             }
 
         return self.server_connection[server][port]['conn']
-
 
     def getInput(self, prompt=None, inVal=None):
         if inVal is not None:

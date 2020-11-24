@@ -18,11 +18,11 @@
 '''
 
 
-
-
 import numpy as np
 import re
 from groundStation.system import SystemValues
+
+
 class CommandParser(object):
 
     def __init__(self):
@@ -152,7 +152,7 @@ class CommandParser(object):
 
     def __lexer(self, input):
         tokenList = []
-        tmp = re.split(r'([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)', input)
+        tmp = re.split('([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)', input)
         [tokenList.append(x.upper()) for x in tmp if not str(x).strip() == '']
         return tokenList
 

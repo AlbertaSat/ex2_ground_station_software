@@ -47,9 +47,9 @@ Numpy types (> for BE)
 '''
 
 
-
-
 import numpy as np
+
+
 class SystemValues(object):
     def __init__(self):
         self.appIdx = 0
