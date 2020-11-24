@@ -20,6 +20,7 @@
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/test.py -I uart -d /dev/ttyUSB1  '''
 import time
 from groundStation.groundStation import *
+import numpy as np
 
 opts = options()
 csp = groundStation(opts.getOptions())
@@ -37,7 +38,13 @@ def testAllCommandsToOBC():
     current = int(time.time())
     sendAndExpect('obc.TIME_MANAGEMENT.SET_TIME(' + str(current) + ')', {'err':0})
     sendAndExpect('obc.TIME_MANAGEMENT.get_time', {'err':0, 'timestamp': current})
+    sendAndExpect('obc.housekeeping.parameter_report(0)', {'structureID': 0, 'temp': np.float32(5.34)})
+    sendAndExpect('obc.communication.set_freq(1010.101)', {'err':0})
+    sendAndExpect('obc.communication.get_freq', {'err':0, 'frequency': np.float32(1010.101)})
 
 if __name__ == '__main__':
-    for i in range(1, 5000):
+    start = time.time()
+    for i in range(0, 10):
         testAllCommandsToOBC()
+    delta = time.time() - start
+    print("Tests took: " + str(int(delta)))

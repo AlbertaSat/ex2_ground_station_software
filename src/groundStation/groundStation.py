@@ -62,7 +62,7 @@ class groundStation(object):
             self.__uart__(opts.device)
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
-        self.rdp_timeout = 10000 # 10 seconds
+        self.rdp_timeout = 5000 # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
 
     def __zmq__(self, addr):
@@ -77,10 +77,15 @@ class groundStation(object):
         current = time.time()
         timeout = self.rdp_timeout / 1000
         if server not in self.server_connection or port not in self.server_connection[server] or self.server_connection[server][port]['time of birth'] + timeout <= current:
-            print("\n\nCONNECTING\n\n")
-            conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
             if server in self.server_connection and port in self.server_connection[server] and self.server_connection[server][port]['time of birth'] + timeout <= current:
                 libcsp.close(self.server_connection[server][port]['conn'])
+
+            try:
+                conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+            except Exception as e:
+                print(e)
+                return None
+
             self.server_connection[server][port] = {
                 'conn' :  conn,
                 'time of birth' : time.time()
@@ -91,15 +96,25 @@ class groundStation(object):
 
     def getInput(self, prompt=None, inVal=None):
         if inVal is not None:
-            command = self.parser.parseInputValue(inVal)
+            try:
+                command = self.parser.parseInputValue(inVal)
+            except Exception as e:
+                print(e + '\n')
+                return
         elif prompt is not None:
             inStr = input(prompt)
-            command = self.parser.parseInputValue(inStr)
+            try:
+                command = self.parser.parseInputValue(inStr)
+            except Exception as e:
+                print(e + '\n')
+                return
         else:
-            raise Exception('invalid call to getInput')
+            print('invalid call to getInput')
+            return
 
         if command is None:
-            raise Exception('Error parsing command')
+            print('Error: Command was not parsed')
+            return
 
         toSend = libcsp.buffer_get(len(command['args']))
         if len(command['args']) > 0:
@@ -109,8 +124,8 @@ class groundStation(object):
     def transaction(self, server, port, buf):
         conn = self.__connectionManager__(server, port)
         if conn is None:
-            print('Error with connection')
-            return
+            print('Error: Could not connection')
+            return {}
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
         packet = libcsp.read(conn, 10000)

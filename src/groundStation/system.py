@@ -143,7 +143,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'frequency': '>f',
+                                'frequency': '>f4',
                             }
                         }
                     },
