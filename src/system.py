@@ -45,8 +45,11 @@ Numpy types (> for BE)
 
 'V' raw data (void)
 '''
-import numpy as np
 
+
+
+
+import numpy as np
 class SystemValues(object):
     def __init__(self):
         self.appIdx = 0
@@ -54,25 +57,25 @@ class SystemValues(object):
         self.subserviceIdx = 4
 
         self.APP_DICT = {
-            'OBC'   :0,
-            'EPS'   :4, # hard coded by manufacturer
-            'ADCS'  :2,
-            'COMMS' :3,
-            'IAC'   :5,
-            'DBG'   :7,
-            'GND'   :16,
-            'DEMO'  :30,
-            'LAST'  :31
+            'OBC': 0,
+            'EPS': 4,  # hard coded by manufacturer
+            'ADCS': 2,
+            'COMMS': 3,
+            'IAC': 5,
+            'DBG': 7,
+            'GND': 16,
+            'DEMO': 30,
+            'LAST': 31
         }
         self.SERVICES = {
             'TIME_MANAGEMENT': {
-                'port': 8, # share a port with EPS time service
+                'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value
                 'subservice': {
                     'GET_TIME': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': None, # SID
+                            'args': None,  # SID
                             'returns': {
                                 'err': '>b',
                                 'timestamp': '>u4'
@@ -82,9 +85,9 @@ class SystemValues(object):
                     'SET_TIME': {
                         'subPort': 1,
                         'inoutInfo': {
-                            'args': ['>u4'], # timestamp
+                            'args': ['>u4'],  # timestamp
                             'returns': {
-                                'err': '>b' # err
+                                'err': '>b'  # err
                             }
                         }
                     },
@@ -104,7 +107,8 @@ class SystemValues(object):
                         'what': 'A command to get precise time (NTP-like format)',
                         'subPort': 3,
                         'inoutInfo': {
-                            'args': ['>B', '>u4', '>u4', '>u4', '>u4', '>u4', '>u4', '>u4', '>u4'], # Same as return (just reserving space)
+                            # Same as return (just reserving space)
+                            'args': ['>B', '>u4', '>u4', '>u4', '>u4', '>u4', '>u4', '>u4', '>u4'],
                             'returns': {
                                 'err': '>B',
                                 'requestTimeInS': '>u4',
@@ -118,6 +122,208 @@ class SystemValues(object):
                             }
                         }
                     }
+                }
+            },
+            'COMMUNICATION': {
+                'port': 10,
+                'subservice': {
+                    'GET_TEMP': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'temperature': '>u4',
+                            }
+                        }
+                    },
+                    'GET_FREQ': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'frequency': '>f',
+                            }
+                        }
+                    },
+                    'GET_CONTROL': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'status': '>u1',
+                                'mode': '>u1',
+                            }
+                        }
+                    },
+                    'GET_ENCODER': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'scrambler': '>u1',
+                                'filter': '>u1',
+                                'modulation': '>u1',
+                                'rate': '>u1',
+                            }
+                        }
+                    },
+                    'GET_PAPOWER': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Power Amplifier Power': '>u1',
+                            }
+                        }
+                    },
+                    'GET_STATUS': {
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'PWRGD': '>u1',
+                                'TXL': '>u1',
+                            }
+                        }
+                    },
+                    'GET_TR': {
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Transmit Ready': '>i4',
+                            }
+                        }
+                    },
+                    'GET_BUFFER': {
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': ['>B'],
+                            'returns': {
+                                'err': '>b',
+                                'pointer': '>u2',
+                            }
+                        }
+                    },
+                    'GET_HK': {
+                        'subPort': 8,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Output Power': '>f',
+                                'Power Amplifier Temperature': '>f',
+                                'Top Temperature': '>f',
+                                'Bottom Temperature': '>f',
+                                'Battery Current': '>f',
+                                'Battery Voltage': '>f',
+                                'Power Amplifier Current': '>f',
+                                'Power Amplifier Voltage': '>f',
+                            }
+                        }
+                    },
+                    'SOFT_RESET': {
+                        'subPort': 9,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'GET_FULL_STATUS': {
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'PWRGD': '>u1',
+                                'TXL': '>u1',
+                                'Transmit Ready': '>i4',
+                                'Buffer Count': '>u2',
+                                'Buffer Underrun': '>u2',
+                                'Buffer Overrun': '>u2',
+                                'Output Power': '>f',
+                                'Power Amplifier Temperature': '>f',
+                                'Top Temperature': '>f',
+                                'Bottom Temperature': '>f',
+                                'Battery Current': '>f',
+                                'Battery Voltage': '>f',
+                                'Power Amplifier Current': '>f',
+                                'Power Amplifier Voltage': '>f',
+                                'Firmware Version': '>f',
+                            }
+                        }
+                    },
+                    'SET_FREQ': {
+                        'subPort': 11,
+                        'inoutInfo': {
+                            'args': ['>f'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'SET_CONTROL': {
+                        'subPort': 12,
+                        'inoutInfo': {
+                            'args': ['>u1', '>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'SET_ENCODER': {
+                        'subPort': 13,
+                        'inoutInfo': {
+                            'args': ['>u1', '>u1', '>u1', '>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'SET_PAPOWER': {
+                        'subPort': 14,
+                        'inoutInfo': {
+                            'args': ['>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'GET_CONFIG': {
+                        'subPort': 15,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Frequency': '>f',
+                                'Power Amplifier Power': '>u1',
+                                'Power Amplifier status': '>u1',
+                                'Power Amplifier mode': '>u1',
+                                'Encoder scrambler': '>u1',
+                                'Encoder filter': '>u1',
+                                'Encoder modulation': '>u1',
+                                'Encoder rate': '>u1',
+                            }
+                        }
+                    },
+                    'SET_CONFIG': {
+                        'subPort': 16,
+                        'inoutInfo': {
+                            'args': ['f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
                 }
             },
 
@@ -138,12 +344,12 @@ class SystemValues(object):
             },
 
             'GROUND_STATION_WDT': {
-                'port': 16, # As per EPS docs
+                'port': 16,  # As per EPS docs
                 'subservice': {
                     'RESET_WDT': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': ['>u2'], # key (see docs)
+                            'args': ['>u2'],  # key (see docs)
                             'returns': {
                                 'err': '>B'
                             }
@@ -162,7 +368,7 @@ class SystemValues(object):
                     'EPS_HARD_RESET': {
                         'subPort': 2,
                         'inoutInfo': {
-                            'args': ['>u2'], # 17767
+                            'args': ['>u2'],  # 17767
                             'returns': {
                                 'err': '>b'
                             }
@@ -172,7 +378,7 @@ class SystemValues(object):
                     'PAUSE_EPS_DEPLOYMENT_ACTION': {
                         'subPort': 8,
                         'inoutInfo': {
-                            'args': ['>B', '>u4'], # group, time
+                            'args': ['>B', '>u4'],  # group, time
                             'returns': {
                                 'err': '>b'
                             }
@@ -183,7 +389,7 @@ class SystemValues(object):
 
             'CLI': {
                 # EPS SPECIFIC
-                'port': 13, # EPS remote CLI uses port 13 unless Otherwise specified
+                'port': 13,  # EPS remote CLI uses port 13 unless Otherwise specified
                 'subservice': {
                     'GENERAL_TELEMETERY': {
                         'subPort': 0,
@@ -239,7 +445,7 @@ class SystemValues(object):
                                 'outputConverterVoltage5': '>u2',
                                 'outputConverterVoltage6': '>u2',
                                 'outputConverterVoltage7': '>u2',
-                                'outputConverterState': '>B', # 4 bits!
+                                'outputConverterState': '>B',  # 4 bits!
                                 'outputStatus': '>u4',
                                 'outputFaultStatus': '>u4',
                                 'outputOnDelta0': '>u2',
@@ -322,7 +528,9 @@ class SystemValues(object):
                         'what': 'Set telemetery collection period on EPS',
                         'subPort': 255,
                         'inoutInfo': {
-                            'args': ['>u4', '>B', '>u4', '>u4'], # magicWord (refer to docs), telem. ID, period (ms), duration (s)
+                            # magicWord (refer to docs), telem. ID, period
+                            # (ms), duration (s)
+                            'args': ['>u4', '>B', '>u4', '>u4'],
                             'returns': {
                                 'err': '>b'
                             }
@@ -340,7 +548,8 @@ class SystemValues(object):
                     'SINGLE_OUTPUT_CONTROL': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': ['>B', '>B', '>u2'], # output num., state, delay (s)
+                            # output num., state, delay (s)
+                            'args': ['>B', '>B', '>u2'],
                             'returns': {
                                 'err': '>b'
                             }
@@ -349,7 +558,7 @@ class SystemValues(object):
                     'ALL_OUTPUT_CONTROL': {
                         'subPort': 1,
                         'inoutInfo': {
-                            'args': ['>u4'], # binary 10-bit
+                            'args': ['>u4'],  # binary 10-bit
                             'returns': {
                                 'err': '>b'
                             }
@@ -360,7 +569,7 @@ class SystemValues(object):
                     'SET_SINGLE_MPPT_CONV_V': {
                         'subPort': 2,
                         'inoutInfo': {
-                            'args': ['>B', '>u2'], # channel, voltage (mv)
+                            'args': ['>B', '>u2'],  # channel, voltage (mv)
                             'returns': {
                                 'err': '>b'
                             }
@@ -378,7 +587,8 @@ class SystemValues(object):
                     'SET_MODE_MPPT': {
                         'subPort': 4,
                         'inoutInfo': {
-                            'args': ['>B'], # Hw, manual, auto, auto w/ timeout
+                            # Hw, manual, auto, auto w/ timeout
+                            'args': ['>B'],
                             'returns': {
                                 'err': '>b'
                             }
@@ -387,7 +597,7 @@ class SystemValues(object):
                     'SET_AUTO_TIMEOUT_MPPT': {
                         'subPort': 5,
                         'inoutInfo': {
-                            'args': ['>u4'], # timeout
+                            'args': ['>u4'],  # timeout
                             'returns': {
                                 'err': '>b'
                             }
@@ -399,9 +609,9 @@ class SystemValues(object):
                         'what': 'Manual, or automatic',
                         'subPort': 6,
                         'inoutInfo': {
-                            'args': ['>B'], # Mode (see docs)
+                            'args': ['>B'],  # Mode (see docs)
                             'returns': {
-                                'status': '>b' # 0 = success
+                                'status': '>b'  # 0 = success
                             }
                         }
                     },
@@ -409,7 +619,7 @@ class SystemValues(object):
                         'what': 'On, or off',
                         'subPort': 7,
                         'inoutInfo': {
-                            'args': ['>B', '>u2'], # state, duration (s)
+                            'args': ['>B', '>u2'],  # state, duration (s)
                             'returns': {
                                 'err': '>b'
                             }
