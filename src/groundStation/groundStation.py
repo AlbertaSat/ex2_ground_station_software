@@ -1,4 +1,4 @@
-'''
+"""
  * Copyright (C) 2020  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,21 +10,21 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-'''
-'''
+"""
+"""
  * @file groundStation.py
  * @author Andrew Rooney, Hugh Bagan, Haoran Qi
  * @date 2020-08-26
-'''
+"""
 
-'''
+"""
 Build required code from satelliteSim/libcsp:
 Start zmqproxy (only one instance)
 $ ./build/zmqproxy
 
 Run client against server using:
 LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 src/groundStation.py -I <zmq|uart>
-'''
+"""
 
 
 import argparse
@@ -51,6 +51,7 @@ apps = vals.APP_DICT
 
 
 class groundStation(object):
+    """ Constructor """
     def __init__(self, opts):
         self.myAddr = apps['GND']
         self.parser = CommandParser()
@@ -65,15 +66,21 @@ class groundStation(object):
         self.rdp_timeout = 5000  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
 
+    """ Private Methods """
+
     def __zmq__(self, addr):
+        """ initialize ZMQ interface """
         libcsp.zmqhub_init(addr, 'localhost')
         libcsp.rtable_load('0/0 ZMQHUB')
 
     def __uart__(self, device):
+        """ initialize uart interface """
         libcsp.kiss_init(device, 9600, 512, 'uart')
         libcsp.rtable_set(1, 0, 'uart', libcsp.CSP_NO_VIA_ADDRESS)
 
     def __connectionManager__(self, server, port):
+        """ Get currently open conneciton if it exists, and has not expired,
+            Otherwise close the old one and make a new connection """
         current = time.time()
         timeout = self.rdp_timeout / 1000
         if server not in self.server_connection or port not in self.server_connection[
@@ -96,7 +103,11 @@ class groundStation(object):
 
         return self.server_connection[server][port]['conn']
 
+    """ Public Methods """
+
     def getInput(self, prompt=None, inVal=None):
+        """ Take input (either prompt user or take input from funtion call)
+        and parse the input to CSP packet information """
         if inVal is not None:
             try:
                 command = self.parser.parseInputValue(inVal)
@@ -124,6 +135,8 @@ class groundStation(object):
         return command['dst'], command['dport'], toSend
 
     def transaction(self, server, port, buf):
+        """ Execute CSP transaction - send and receive on one RDP connection and
+        return parsed packet """
         conn = self.__connectionManager__(server, port)
         if conn is None:
             print('Error: Could not connection')
@@ -198,11 +211,11 @@ class groundStation(object):
 
 
 class GracefulExiter():
-    '''
+    """
     Allows us to exit while loops with CTRL+C.
     (When we cannot get a connection for some reason.)
     By Esben Folger Thomas https://stackoverflow.com/a/57649638
-    '''
+    """
 
     def __init__(self):
         self.state = False
@@ -210,7 +223,6 @@ class GracefulExiter():
 
     def flip_true(self, signum, frame):
         print('exit flag set to True (repeat to exit now)')
-        p.terminate()
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         self.state = True
 
