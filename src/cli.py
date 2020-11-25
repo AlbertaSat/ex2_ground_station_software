@@ -19,7 +19,7 @@
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
 import time
-from groundStation import *
+from groundStation import groundStation
 
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
@@ -39,5 +39,5 @@ def cli():
             print(e)
 
 if __name__ == '__main__':
-    flag = GracefulExiter()
+    flag = groundStation.GracefulExiter()
     cli()

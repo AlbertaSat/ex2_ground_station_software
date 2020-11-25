@@ -19,7 +19,7 @@
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/test.py -I uart -d /dev/ttyUSB1  '''
 import time
-from groundStation import *
+from groundStation import groundStation
 import numpy as np
 
 opts = groundStation.options()
