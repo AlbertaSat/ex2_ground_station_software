@@ -37,7 +37,7 @@ RUN python3 waf build
 
 WORKDIR /home/gs
 COPY . .
-CMD LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/groundstation.py -I fifo
+CMD LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I fifo
 
 # FROM ubuntu:latest
 
