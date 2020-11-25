@@ -61,12 +61,17 @@ class groundStation(object):
             self.__zmq__(self.myAddr)
         elif opts.interface == 'uart':
             self.__uart__(opts.device)
+        elif opts.interface == 'fifo':
+            self.__fifo__()
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = 5000  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
 
     """ Private Methods """
+
+    def __fifo__(self):
+        libcsp.fifo_init()
 
     def __zmq__(self, addr):
         """ initialize ZMQ interface """
