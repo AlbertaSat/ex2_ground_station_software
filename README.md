@@ -53,3 +53,24 @@ The ground station parses commands according to the following context free gramm
     <subservice name> := "GET_FREQUENCY" | "GET_SPINRATE" | ...
 
 
+Using this description, a parser has been constructed that will allow us to add new command structure objects which describe the valid combinations of services, subservices, and arguments, along with the return types in the TM response; the command structure objects also describe the mapping from the service and subservice names to the CSP ID and port numbers. Such a command description is shown for the housekeeping ‘parameter_report’ subservice.
+'HOUSEKEEPING': {
+    'port': 9,
+    'subservice': {
+        'PARAMETER_REPORT': {
+            'subPort': 0,
+            'inoutInfo': {
+                'args': ['>B'],
+                'returns': {
+                    'err': '>b',
+                    'structureID': '>B',
+                    'temp': '>f4',
+                }
+            }
+        }
+    }
+}
+Code Snippet 5: Command structure object
+Incoming TM responses are automatically parsed to the return types described in the command structure object. Note that all command responses shall have the first (signed) byte as the error code, which is ‘0’ upon success.
+
+
