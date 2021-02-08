@@ -127,17 +127,8 @@ class SystemValues(object):
             'COMMUNICATION': {
                 'port': 10,
                 'subservice': {
-                    'GET_TEMP': {
-                        'subPort': 0,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b',
-                                'temperature': '>u4',
-                            }
-                        }
-                    },
-                    'GET_FREQ': {
+                    'S_GET_FREQ': {
+			'what': 'Gets the S-band frequency (MHz)',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -147,7 +138,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_CONTROL': {
+                    'S_GET_CONTROL': {
+			'what': 'Gets the S-band`s power amplifier write status and its mode = {0:configuration, 1: synchronization, 2:data, 3:test data}',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -158,7 +150,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_ENCODER': {
+                    'S_GET_ENCODER': {
+			'what': 'Gets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}',
                         'subPort': 3,
                         'inoutInfo': {
                             'args': None,
@@ -171,7 +164,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_PAPOWER': {
+                    'S_GET_PAPOWER': {
+			'what': 'Gets the power value of S-band power amplifier',
                         'subPort': 4,
                         'inoutInfo': {
                             'args': None,
@@ -181,7 +175,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_STATUS': {
+                    'S_GET_STATUS': {
+			'what': 'Checks if the power of S-band power aamplifier is good and if the frequency lock is achieved',
                         'subPort': 5,
                         'inoutInfo': {
                             'args': None,
@@ -192,7 +187,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_TR': {
+                    'S_GET_TR': {
+			'what': 'S-band Transmit Ready Indicator = {0: >2560B in buffer}',
                         'subPort': 6,
                         'inoutInfo': {
                             'args': None,
@@ -202,7 +198,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_BUFFER': {
+                    'S_GET_BUFFER': {
+			'what': 'Gets the pointer to the buffer quantity in S-band. Input = {0:Count, 1:Underrun, 2:Overrun}',
                         'subPort': 7,
                         'inoutInfo': {
                             'args': ['>B'],
@@ -212,7 +209,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_HK': {
+                    'S_GET_HK': {
+			'what': 'Gets S-band housekeeping info',
                         'subPort': 8,
                         'inoutInfo': {
                             'args': None,
@@ -229,7 +227,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SOFT_RESET': {
+                    'S_SOFT_RESET': {
+			'what': 'Reset S-band FPGA registers to default',
                         'subPort': 9,
                         'inoutInfo': {
                             'args': None,
@@ -238,7 +237,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_FULL_STATUS': {
+                    'S_GET_FULL_STATUS': {
+			'what': 'A full status of S-band non-configurable parameters',
                         'subPort': 10,
                         'inoutInfo': {
                             'args': None,
@@ -262,7 +262,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_FREQ': {
+                    'S_SET_FREQ': {
+			'what': 'Sets the frequency of S-band (MHz)',
                         'subPort': 11,
                         'inoutInfo': {
                             'args': ['>f'],
@@ -271,7 +272,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_CONTROL': {
+                    'S_SET_CONTROL': {
+			'what': 'Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary',
                         'subPort': 12,
                         'inoutInfo': {
                             'args': ['>u1', '>u1'],
@@ -280,7 +282,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_ENCODER': {
+                    'S_SET_ENCODER': {
+			'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}. Input: 4 binary',
                         'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1'],
@@ -289,7 +292,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_PAPOWER': {
+                    'S_SET_PAPOWER': {
+			'what': 'Sets the power value of S-band power amplifier (24, 26, 28, 30 dBm)',
                         'subPort': 14,
                         'inoutInfo': {
                             'args': ['>u1'],
@@ -298,7 +302,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'GET_CONFIG': {
+                    'S_GET_CONFIG': {
+			'what': 'A full status of S-band configurable parameters (the ones with set functions)',
                         'subPort': 15,
                         'inoutInfo': {
                             'args': None,
@@ -315,18 +320,272 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_CONFIG': {
+                    'S_SET_CONFIG': {
+			'what': 'Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate)',
                         'subPort': 16,
                         'inoutInfo': {
-                            'args': ['f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                            'args': ['>f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                             'returns': {
                                 'err': '>b',
                             }
                         }
                     },
+                    'UHF_SET_STATUS_CTRL': {
+			'what': 'Sets UHF status control word (12 binary bits)',
+                        'subPort': 20,
+                        'inoutInfo': {
+                            'args': ['>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_FREQ': {
+			'what': 'Sets UHF frequency (MHz)',
+                        'subPort': 21,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_PIPE_T': {
+			'what': 'Sets UHF pipe timeout period',
+                        'subPort': 22,
+                        'inoutInfo': {
+                            'args': ['>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_BEACON_T': {
+			'what': 'Sets UHF beacon message transmission period',
+                        'subPort': 23,
+                        'inoutInfo': {
+                            'args': ['>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_AUDIO_T': {
+			'what': 'Sets UHF audio beacon period b/w transmissions',
+                        'subPort': 24,
+                        'inoutInfo': {
+                            'args': ['>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_PARAMS': {
+			'what': 'Sets UHF freq, pipe_t, beacon_t, audio_t parameters. Input:4',
+                        'subPort': 25,
+                        'inoutInfo': {
+                            'args': ['>u4', '>u2', '>u2', '>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_RESTORE': {
+			'what': 'Restore UHF default values',
+                        'subPort': 26,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Confirm': '>u1',
+                            }
+                        }
+                    },
+                    'UHF_LOW_PWR': {
+			'what': 'Puts UHF TRX into low power mode',
+                        'subPort': 27,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Status': '>u1',
+                            }
+                        }
+                    },
+                    'UHF_SET_DESTINATION': {
+			'what': 'Sets UHF destination callsign',
+                        'subPort': 28,
+                        'inoutInfo': {
+                            'args': ['>U6'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_SOURCE': {
+			'what': 'Sets UHF source callsign',
+                        'subPort': 29,
+                        'inoutInfo': {
+                            'args': ['>U6'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_MORSE': {
+			'what': 'Sets UHF morse code callsign (max 36)',
+                        'subPort': 30,
+                        'inoutInfo': {
+                            'args': ['>U36'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_MIDI': {
+			'what': 'Sets UHF MIDI audio beacon (max 36)',
+                        'subPort': 31,
+                        'inoutInfo': {
+                            'args': ['>U36'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_BEACON_MSG': {
+			'what': 'Sets UHF beacon message (max 120)',
+                        'subPort': 32,
+                        'inoutInfo': {
+                            'args': ['>u1', '>U36'],  # Switch to 120 after packet configuration
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_I2C': {
+			'what': 'Sets UHF I2C address (22 | 23)',
+                        'subPort': 33,
+                        'inoutInfo': {
+                            'args': ['>u1'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_WRITE_FRAM': {
+			'what': 'Sets UHF FRAM address and write 16-byte data',
+                        'subPort': 34,
+                        'inoutInfo': {
+                            'args': ['>u4', '>U16'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SECURE': {
+			'what': 'Puts UHF TRX into secure mode',
+                        'subPort': 35,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Status': '>u1',
+                            }
+                        }
+                    },
+                    'UHF_GET_FULL_STAT': {
+			'what': 'Returns the fulla status of all the UHF non-configurable parameters',
+                        'subPort': 36,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'RFTS': '>u1',
+                                'FRAM': '>u1',
+                                'SEC': '>u1',
+                                'CTS': '>u1',
+                                'Boot': '>u1',
+                                'Pipe': '>u1',
+                                'BCN': '>u1',
+                                'Echo': '>u1',
+                                'RF Mode1': '>u1',  # Use table 9 to improve
+                                'RF Mode2': '>u1',
+                                'RF Mode3': '>u1',
+                                'Reset': '>u1',
+                                'Frequency': '>u4',
+                                'PIPE timeout': '>u2',
+                                'Beacon period': '>u2',
+                                'Audio trans. period': '>u2',
+                                'Uptime': '>u4',
+                                'Packets out': '>u4',
+                                'Packets in': '>u4',
+                                'Packets in CRC16': '>u4',
+                                'Temperature': '>f',
+                                'Low power status': '>u1',
+                                'Firmware Version': '>u1',
+                                'Payload Size': '>u2',
+                                'Secure key': '>u4',
+                            }
+                        }
+                    },
+                    'UHF_GET_CALLSIGN': {
+			'what': 'Gets UHF destination and source callsign',
+                        'subPort': 37,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Destination': '>U6',
+                                'Source': '>U6',
+                            }
+                        }
+                    },
+                    'UHF_GET_MORSE': {
+			'what': 'Gets UHF morse callsign',
+                        'subPort': 38,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Morse': '>U36',
+                            }
+                        }
+                    },
+                    'UHF_GET_MIDI': {
+			'what': 'Gets UHF MIDI audio beacon',
+                        'subPort': 39,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'MIDI': '>U36',
+                            }
+                        }
+                    },
+                    'UHF_GET_BEACON_MSG': {
+			'what': 'Gets the beacon message',
+                        'subPort': 40,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Beacon Message': '>U36',  # Switch to 120 after configuration
+                            }
+                        }
+                    },
+                    'UHF_GET_FRAM': {
+			'what': 'Reads the FRAM data',
+                        'subPort': 41,
+                        'inoutInfo': {
+                            'args': None,  # no address?
+                            'returns': {
+                                'err': '>b',
+                                'FRAM': '>U16',
+                            }
+                        }
+                    },
                 }
             },
-
             'HOUSEKEEPING': {
                 'port': 9,
                 'subservice': {
