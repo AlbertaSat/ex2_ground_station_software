@@ -21,7 +21,7 @@
 #ifndef UTRANSCEIVER_H
 #define UTRANSCEIVER_H
 
-#include "mock_i2c.h"
+//#include "mock_i2c.h"
 #include <stdint.h>
 #include <string.h>
 

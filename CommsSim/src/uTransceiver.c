@@ -26,17 +26,18 @@ static uint8_t sm_add = '2';  // Stores the second digit of the (hex) address
 
 /**
  * @brief
- * 		Sends data to the transceiver and "transmits"
+ *      Sends data to the transceiver and "transmits"
  * @attention
- * 		Data provided is rewritten to 0. Replace with UART function
+ *      Data provided is rewritten to 0. Replace with UART function
  * eventually
  * @param data
- * 		Pointer to first element of 128 byte array to be transmitted
+ *      Pointer to first element of 128 byte array to be transmitted
  * @return UHF_return
- * 		Outcome of function (defined in uTransceiver.h)
+ *      Outcome of function (defined in uTransceiver.h)
  */
 UHF_return send_U_data(uint8_t *data) {
-  for (int i = 0; i < 128; i++) {
+    int i = 0;
+      for (i; i < 128; i++) {
     *(data + i) = 0;
   }
   return U_GOOD_CONFIG;
@@ -44,18 +45,19 @@ UHF_return send_U_data(uint8_t *data) {
 
 /**
  * @brief
- * 		Receives randomly generated data from the transmitter
+ *      Receives randomly generated data from the transmitter
  * @attention
- * 		No such function will be needed
+ *      No such function will be needed
  * @param data
- * 		Pointer to first element of 128 byte array where data will be
+ *      Pointer to first element of 128 byte array where data will be
  * stored
  * @return UHF_return
- * 		Outcome of function (defined in uTransceiver.h)
+ *      Outcome of function (defined in uTransceiver.h)
  */
 UHF_return receive_U_data(uint8_t *data) {
   srand(time(NULL));
-  for (int i = 0; i < 128; i++) {
+  int i = 0;
+  for (i; i < 128; i++) {
     *(data + i) = (rand() % 256);
   }
   return U_GOOD_CONFIG;
@@ -63,57 +65,57 @@ UHF_return receive_U_data(uint8_t *data) {
 
 /**
  * @brief
- * 		Generic function for write commands sent over i2c
+ *      Generic function for write commands sent over i2c
  * @details
- * 		This function will build a command dependant on command code and
+ *      This function will build a command dependant on command code and
  *input parameters, send the command, and interpret the answer
  * @attention
- * 		Only certain write command codes are valid. Be aware of input
+ *      Only certain write command codes are valid. Be aware of input
  *pointer type
  * @param code
- * 			The write command code as it appears in the UHF
- *Transceiver's manual CODE 	COMMAND DESCRIPTION 0   	Set the status
- *control word 1 	  Set the frequency 6 	  Set PIPE mode timeout period
- *			7 	  Set beacon transmission period
- *			8 		Set audio beacon transmission period
- *			9 		Restore default values
- *			244 	Enter low power mode
- *			245 	Set destination call sign
- *			246 	Set source call sign
- *			247 	Set morse code call sign
- *			248 	Set MIDI audio beacon message
- *			251 	Set the beacon message content
- *			252 	Set the device address
- *			253 	FRAM memory write
- *			255 	Put the transceiver into secure mode
+ *          The write command code as it appears in the UHF
+ *Transceiver's manual CODE     COMMAND DESCRIPTION 0       Set the status
+ *control word 1      Set the frequency 6     Set PIPE mode timeout period
+ *          7     Set beacon transmission period
+ *          8       Set audio beacon transmission period
+ *          9       Restore default values
+ *          244     Enter low power mode
+ *          245     Set destination call sign
+ *          246     Set source call sign
+ *          247     Set morse code call sign
+ *          248     Set MIDI audio beacon message
+ *          251     Set the beacon message content
+ *          252     Set the device address
+ *          253     FRAM memory write
+ *          255     Put the transceiver into secure mode
  * @param param
- * 		Pointer to required input. Code dictates required pointer type:
- *		CODE 	TYPE        PARAM DESCRIPTION
- *		0   	uint8_t* 		Array of 12 SCW values
- *    1 	  uint32_t*   Frequency in Hz
- *    6 	  uint16_t* 	Time in seconds (1-255)
- *		7 	  uint16_t* 	Time in seconds (1-65535)
- *    8 		uint16_t*   Time in seconds (30-65535)
- *    9 		uint8_t*    = 1 to confirm reset
- *    244   uint8_t*		= 1 to confirm change
+ *      Pointer to required input. Code dictates required pointer type:
+ *      CODE    TYPE        PARAM DESCRIPTION
+ *      0       uint8_t*        Array of 12 SCW values
+ *    1       uint32_t*   Frequency in Hz
+ *    6       uint16_t*     Time in seconds (1-255)
+ *      7     uint16_t*     Time in seconds (1-65535)
+ *    8         uint16_t*   Time in seconds (30-65535)
+ *    9         uint8_t*    = 1 to confirm reset
+ *    244   uint8_t*        = 1 to confirm change
  *    245   uhf_configStruct* Config struct
  *    246   uhf_configStruct* ''
- *    247 	uhf_configStruct* ''
+ *    247   uhf_configStruct* ''
  *    248   uhf_configStruct* ''
- *    251 	uhf_configStruct* ''
- *		252 	uint8_t* = 0x22 or 0x23
- *    253 	uhf_framStruct*  FRAM structure
- *    255 	uint8_t*   = 1 to confirm change
+ *    251   uhf_configStruct* ''
+ *      252     uint8_t* = 0x22 or 0x23
+ *    253   uhf_framStruct*  FRAM structure
+ *    255   uint8_t*   = 1 to confirm change
  * @return
- * 		Outcome of the function (defined in uTransceiver.h)
+ *      Outcome of the function (defined in uTransceiver.h)
  */
 UHF_return UHF_genericWrite(uint8_t code, void * param)
 {
   uint8_t cmd[MAX_W_CMDLEN] = {0};
 
   /* The following switch statement depends on the command code to:    *
-   * 	- Calculate necessary ASCII characters from input parameters *
-   * 	- Build the command to be sent                               */
+   *    - Calculate necessary ASCII characters from input parameters *
+   *    - Build the command to be sent                               */
 
   switch (code) {
     case 0: {  // Set the status control word
@@ -341,7 +343,8 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
                              [48] = BLANK_SPACE,
                              [57] = CARRIAGE_R};
       uint8_t hex[2] = {0};
-      for (int i = 0; i < 16; i++) {
+      int i = 0;
+        for (i; i < 16; i++) {
         hex[0] = fram_w->data[i] >> 4;
         hex[1] = fram_w->data[i] & 15;
         convHexToASCII(2, hex);
@@ -370,14 +373,14 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
   }
 
   /* The following is necessary for all write commands: *
-   * 	- Calculate the crc32                         *
-   * 	- Send the command and receive the answer     *
-   * 	- Checking the crc32 of the answer            *
-   * 	- Checking for an answer indicating an error  */
+   *    - Calculate the crc32                         *
+   *    - Send the command and receive the answer     *
+   *    - Checking the crc32 of the answer            *
+   *    - Checking for an answer indicating an error  */
 
   crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
   uint8_t ans[MAX_W_ANSLEN] = {0};
-  i2c_sendCommand(strlen(cmd), cmd, ans);
+  //i2c_sendCommand(strlen(cmd), cmd, ans);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format
@@ -428,70 +431,70 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
 
 /**
  * @brief
- * 		Generic function for read commands sent over i2c
+ *      Generic function for read commands sent over i2c
  * @details
- * 		This function will send a command dependant on command code,
+ *      This function will send a command dependant on command code,
  *send the command, interpret the answer and save read data
  * @attention
- * 		Only certain read command codes are valid. Be aware of input
+ *      Only certain read command codes are valid. Be aware of input
  *    pointer type
  * @param code
- * 		The write command code as it appears in the UHF
+ *      The write command code as it appears in the UHF
  *    Transceiver's manual:
- *    CODE 	COMMAND DESCRIPTION
- *    0   	Get the status control word
- *    1 	  Get the frequency
- *    2 	  Get uptime
- *    3 	  Get # of transmitted packets
- *    4 	  Get # of received packets
- *    5 	  Get # of received packets w CRC16 error
- *    6 	  Get PIPE mode timeout period
- *		7 	  Get beacon transmission period
- *		8 		Get audio beacon transmission period
- *		10 		Get the internal temperature of the board
- *    244 	Get low power mode status
- *    245 	Get destination call sign
+ *    CODE  COMMAND DESCRIPTION
+ *    0     Get the status control word
+ *    1       Get the frequency
+ *    2       Get uptime
+ *    3       Get # of transmitted packets
+ *    4       Get # of received packets
+ *    5       Get # of received packets w CRC16 error
+ *    6       Get PIPE mode timeout period
+ *      7     Get beacon transmission period
+ *      8       Get audio beacon transmission period
+ *      10      Get the internal temperature of the board
+ *    244   Get low power mode status
+ *    245   Get destination call sign
  *    246   Get source call sign
- *    247 	Get morse code call sign
- *    248 	Get MIDI audio beacon
- *    249 	Get software version build
- *    250 	Get device payload size
+ *    247   Get morse code call sign
+ *    248   Get MIDI audio beacon
+ *    249   Get software version build
+ *    250   Get device payload size
  *    251   Get the beacon message content
- *    253 	FRAM memory read
- *    255 	Get the secure mode key
+ *    253   FRAM memory read
+ *    255   Get the secure mode key
  * @param param
- * 		Pointer to required input. Code dictates required pointer type:
- *		CODE TYPE         PARAM DESCRIPTION
- *		0   uint8_t*  		Array of 12 status control word values
- *    1 	uint32_t*     Frequency in Hz
- *    2 	uint32_t* 		Time in seconds
+ *      Pointer to required input. Code dictates required pointer type:
+ *      CODE TYPE         PARAM DESCRIPTION
+ *      0   uint8_t*        Array of 12 status control word values
+ *    1     uint32_t*     Frequency in Hz
+ *    2     uint32_t*       Time in seconds
  *    3   uint32_t*     Value
- *    4   uint32_t* 		Value
- *		5	  uint32_t*			Value
- *		6	  uint32_t*			Time in seconds (1-255)
- *    7 	uint32_t* 	  Time in seconds (1-65535)
- *    8		uint32_t*     Time in seconds (30-65535)
- *    10 	float*        Value in degrees celsius
- *    244 uint8_t* 			= 1 for low power mode
- *    245	uhf_configStruct* Config struct
+ *    4   uint32_t*         Value
+ *      5     uint32_t*         Value
+ *      6     uint32_t*         Time in seconds (1-255)
+ *    7     uint32_t*     Time in seconds (1-65535)
+ *    8     uint32_t*     Time in seconds (30-65535)
+ *    10    float*        Value in degrees celsius
+ *    244 uint8_t*          = 1 for low power mode
+ *    245   uhf_configStruct* Config struct
  *    246 uhf_configStruct* ''
  *    247 uhf_configStruct* ''
  *    248 uhf_configStruct* ''
- *    249	uint8_t*      Char array (form "X.xx")
- *    250	uint16_t*     Value in # of bytes
+ *    249   uint8_t*      Char array (form "X.xx")
+ *    250   uint16_t*     Value in # of bytes
  *    251 uhf_configStruct* Config struct
  *    253 uhf_framStruct*   FRAM structure
- *    255	uint32_t*     Value of the secure key
+ *    255   uint32_t*     Value of the secure key
  * @return
- * 		Outcome of the function (defined in uTransceiver.h)
+ *      Outcome of the function (defined in uTransceiver.h)
  */
 UHF_return UHF_genericRead(uint8_t code, void *param) {
   /* The following is necessary for all read commands:             *
-   * 	- Determining ASCII characters representing the command code *
-   * 	- Calculating the crc32                                      *
-   * 	- Sending the command and receiving the answer               *
-   * 	- Checking the crc32 of the answer                           *
-   * 	- Checking for an answer indicating an error                 */
+   *    - Determining ASCII characters representing the command code *
+   *    - Calculating the crc32                                      *
+   *    - Sending the command and receiving the answer               *
+   *    - Checking the crc32 of the answer                           *
+   *    - Checking for an answer indicating an error                 */
 
   uint8_t code_chars[2] = {(code >> 4) & 15, code & 15};
   convHexToASCII(2, code_chars);
@@ -525,7 +528,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
   crc32_calc(find_blankSpace(strlen(command), command), command);
 
   uint8_t ans[MAX_R_ANSLEN] = {0};
-  i2c_sendCommand(strlen(command), command, ans);
+  //i2c_sendCommand(strlen(command), command, ans);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format of
@@ -539,9 +542,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
   int b = find_blankSpace(strlen(ans), ans);
 
-  printf("read  %d cmd: %s\n", code, command);  //*
-  printf("read  %d ans: %s\n", code, ans);      //*
-
   uint8_t expected[MAX_R_ANSLEN] = {0};
   strcpy(expected, ans);
   crc32_calc(find_blankSpace(strlen(expected), expected), expected);
@@ -554,9 +554,9 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
   }
 
   /* This switch statement depends on the command code to: *
-   * 	- Interpret the answer                           *
-   * 	- Calculate relevant parameters                  *
-   * 	- Save these in *param and subsequent pointers   */
+   *    - Interpret the answer                           *
+   *    - Calculate relevant parameters                  *
+   *    - Save these in *param and subsequent pointers   */
 
   switch (code) {
     case 0: {  // Get the status control word
@@ -653,7 +653,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     case 245:    // Get Destination Call Sign
     case 246: {  // Get Source Call Sign
       uhf_configStruct *callsign = (uhf_configStruct *)param;
-      for (int j = 0; j < 6; j++) {
+      int j = 0;
+        for (j; j < 6; j++) {
         callsign->message[j] = ans[b + j - 6];
       }
       break;
@@ -666,7 +667,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
       callsign->len = dec[0] * 10 + dec[1];
 
-      for (int i = 0; i < callsign->len; i++) {
+      int i = 0;
+        for (i; i < callsign->len; i++) {
         uint8_t sym = ans[5 + i];
         callsign->message[i] = sym;
       }
@@ -680,7 +682,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
       beacon->len = dec[0] * 10 + dec[1];
 
-      for (int j = 0; j < beacon->len; j++) {
+      int j = 0;
+        for (j; j < beacon->len; j++) {
         uint8_t chars[2] = {ans[5 + 3 * j], ans[6 + 3 * j]};
         convHexFromASCII(2, chars);
 
@@ -719,7 +722,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
       beacon->len = (len[0] << 4) | len[1];
 
-      for (int i = 0; i < beacon->len; i++) {
+      int i = 0;
+        for (i; i < beacon->len; i++) {
         uint8_t temp[2] = {ans[59 + 2 * i], ans[60 + 2 * i]};
         convHexFromASCII(2, temp);
         uint8_t val = (temp[0] << 4) | temp[1];
@@ -732,7 +736,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
       uhf_framStruct *fram_r = (uhf_framStruct *)param;
       uint8_t hex[32] = {0};
 
-      for (int i = 0; i < 16; i++) {
+      int i = 0;
+        for (i; i < 16; i++) {
         uint8_t temp[2] = {ans[3 + 2 * i], ans[4 + 2 * i]};
         convHexFromASCII(2, temp);
         fram_r->data[i] = (temp[0] << 4) | temp[1];
@@ -760,16 +765,17 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
 /**
  * @brief
- * 		Converts hex values to their ASCII characters
+ *      Converts hex values to their ASCII characters
  * @param length
- * 		Number of subsequent elements to convert
+ *      Number of subsequent elements to convert
  * @param arr
- * 		Pointer to start of char array
+ *      Pointer to start of char array
  */
 
 void convHexToASCII(int length, uint8_t * arr)
 {
-        for(int i = 0; i < length; i++){
+    int i = 0;
+      for (i; i < length; i++){
                 if(*(arr + i) < 10){
                         *(arr + i) += 48;
                 }else{
@@ -780,15 +786,16 @@ void convHexToASCII(int length, uint8_t * arr)
 
 /**
  * @brief
- * 		Converts ASCII characters to their hex values
+ *      Converts ASCII characters to their hex values
  * @param length
- * 		Number of subsequent elements to convert
+ *      Number of subsequent elements to convert
  * @param arr
- * 		Pointer to start of char array
+ *      Pointer to start of char array
  */
 void convHexFromASCII(int length, uint8_t * arr)
 {
-        for(int i = 0; i < length; i++){
+    int i = 0;
+      for (i; i < length; i++){
                 if(*(arr + i) >= 65){
                         *(arr + i) -= 55;
                 }else{
@@ -799,16 +806,16 @@ void convHexFromASCII(int length, uint8_t * arr)
 
 /**
  * @brief
- * 		Calculates the CRC32 for a command and appends to the end (as
+ *      Calculates the CRC32 for a command and appends to the end (as
  *ASCII)
  * @details
- *		Taken from: https://github.com/Michaelangel007/crc32
+ *      Taken from: https://github.com/Michaelangel007/crc32
  * @param length
- * 		# of bytes in input
+ *      # of bytes in input
  * @param cmd
- * 		Pointer to start of char array
+ *      Pointer to start of char array
  * @return uint32_t
- *		crc32 value (not used)
+ *      crc32 value (not used)
  */
 uint32_t crc32_calc(size_t length, char * cmd)
 {
@@ -819,7 +826,8 @@ uint32_t crc32_calc(size_t length, char * cmd)
 
         while(length--){
                 crc = crc ^ *buffer++;
-                for(int i = 0; i < 8; i++){
+                int i = 0;
+                  for (i; i < 8; i++){
                         if(crc & 1){ crc = (crc >> 1) ^ POLY;}
                         else{ crc = (crc >> 1);}
                 }
@@ -828,7 +836,8 @@ uint32_t crc32_calc(size_t length, char * cmd)
 
         // Converting the CRC32 into hex then ascii
         uint8_t chex[8] = {0};
-        for(int j = 7; j >= 0; j--){
+        int j = 0;
+          for (j; j >= 0; j--){
                 chex[j] = crc & 15;
                 crc = crc >> 4;
                 convHexToASCII(1, chex + j);
@@ -840,16 +849,17 @@ uint32_t crc32_calc(size_t length, char * cmd)
 
 /**
  * @brief
- * 		Returns the index of the last blank space character
+ *      Returns the index of the last blank space character
  * @param length
- * 		Number of subsequent elements to convert
+ *      Number of subsequent elements to convert
  * @param cmd
- * 		Pointer to start of char array
+ *      Pointer to start of char array
  * @return int
- *		Index
+ *      Index
  */
 int find_blankSpace(int length, char *cmd) {
-  for (int k = length; k > 0; k--) {
+    int k = length;
+      for (k; k > 0; k--) {
     if (cmd[k] == BLANK_SPACE) {
       return k;
     }
@@ -858,19 +868,19 @@ int find_blankSpace(int length, char *cmd) {
 
 /**
  * @brief
- * 		Allows access via UHF to i2c devices
+ *      Allows access via UHF to i2c devices
  * @details
  *    Command must be sent over UART or Radio
  * @param format
- * 		The way the data is sent ('S', 'C', or 'D')
+ *      The way the data is sent ('S', 'C', or 'D')
  * @param s_address
- * 		I2C slave device address
+ *      I2C slave device address
  * @param len
  *    length of the data field
  * @param data
  *    Pointer to data to be sent over I2C bus
  * @return UHF_return
- *		Outcome of the function (defined in uTransceiver.h)
+ *      Outcome of the function (defined in uTransceiver.h)
  */
 UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes)
 {
