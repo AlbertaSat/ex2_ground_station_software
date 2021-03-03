@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "uhf_hal.h"
+#include <uhf.h>
 
 #ifdef UHF_IS_STUBBED
     // Arbitrary values for testing
@@ -182,7 +182,7 @@ UHF_return HAL_UHF_getStatus (uint8_t * U_stat_ctrl){
     #else
         status = IS_STUBBED_U;
     #endif
-    memcpy(U_stat_ctrl,&U_status_reg.status_ctrl,12);
+    memcpy(U_stat_ctrl, &U_status_reg.status_ctrl, 12);
     return status;
 }
 
