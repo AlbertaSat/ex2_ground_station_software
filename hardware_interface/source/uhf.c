@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "uhf_hal.h"
+#include "uhf.h"
 
 #ifdef UHF_IS_STUBBED
     // Arbitrary values for testing
