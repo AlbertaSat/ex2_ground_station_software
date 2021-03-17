@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
+#define I2C_MAX_ANS_LENGTH 150
+
 // Mocked i2c functions
 
 uint8_t i2c_readRegister(uint8_t registerAddress);

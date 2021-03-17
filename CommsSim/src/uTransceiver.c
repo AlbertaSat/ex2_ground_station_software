@@ -26,45 +26,6 @@ static uint8_t sm_add = '2';  // Stores the second digit of the (hex) address
 
 /**
  * @brief
- *      Sends data to the transceiver and "transmits"
- * @attention
- *      Data provided is rewritten to 0. Replace with UART function
- * eventually
- * @param data
- *      Pointer to first element of 128 byte array to be transmitted
- * @return UHF_return
- *      Outcome of function (defined in uTransceiver.h)
- */
-UHF_return send_U_data(uint8_t *data) {
-    int i = 0;
-      for (i; i < 128; i++) {
-    *(data + i) = 0;
-  }
-  return U_GOOD_CONFIG;
-}
-
-/**
- * @brief
- *      Receives randomly generated data from the transmitter
- * @attention
- *      No such function will be needed
- * @param data
- *      Pointer to first element of 128 byte array where data will be
- * stored
- * @return UHF_return
- *      Outcome of function (defined in uTransceiver.h)
- */
-UHF_return receive_U_data(uint8_t *data) {
-  srand(time(NULL));
-  int i = 0;
-  for (i; i < 128; i++) {
-    *(data + i) = (rand() % 256);
-  }
-  return U_GOOD_CONFIG;
-}
-
-/**
- * @brief
  *      Generic function for write commands sent over i2c
  * @details
  *      This function will build a command dependant on command code and
@@ -380,12 +341,12 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
 
   crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
   uint8_t ans[MAX_W_ANSLEN] = {0};
-  //i2c_sendCommand(strlen(cmd), cmd, ans);
+  i2c_sendCommand(strlen(cmd), cmd, ans); //Command is sent to the board, and response is received
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format
     // of these)
-    if (!strcmp(ans, "E_CRC_ERR\r")) return U_BAD_CMD_CRC;
+    if (!strcmp(ans, "E_CRC_ER;'R\r")) return U_BAD_CMD_CRC; //TODO: these also have a CRC
     if (!strcmp(ans, "E_CRC_ERR_LEN\r")) return U_BAD_CMD_LEN;
 
     switch (code) {
@@ -413,9 +374,6 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
   uint8_t expected[MAX_W_ANSLEN] = {0};
   strcpy(expected, ans);
   crc32_calc(find_blankSpace(strlen(expected), expected), expected);
-
-  printf("write %d cmd: %s\n", code, cmd);
-  printf("write %d ans: %s\n", code, ans);
 
   if (ans[0] == LETTER_O) {
     if (code == 252) sm_add = ans[4];
@@ -521,14 +479,14 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
         'E',      'S',      '+',         'R',
         '2',      sm_add,   chadd[0],    chadd[1],
         chadd[2], chadd[3], chadd[4],    chadd[5],
-        chadd[6], chadd[7], BLANK_SPACE, [25] = CARRIAGE_R};
+        chadd[6], chadd[7], BLANK_SPACE, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',[23] = CARRIAGE_R};
     strcpy(command, fram_command);
   }
 
   crc32_calc(find_blankSpace(strlen(command), command), command);
 
   uint8_t ans[MAX_R_ANSLEN] = {0};
-  //i2c_sendCommand(strlen(command), command, ans);
+  i2c_sendCommand(strlen(command), command, ans);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format of
@@ -548,7 +506,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
   if (ans[0] == LETTER_O) {
     if (strcmp(expected, ans)) {
-      printf("Bad crc. Expected: %s\n", expected);
       return U_BAD_ANS_CRC;
     }
   }
@@ -836,7 +793,7 @@ uint32_t crc32_calc(size_t length, char * cmd)
 
         // Converting the CRC32 into hex then ascii
         uint8_t chex[8] = {0};
-        int j = 0;
+        int j = 7;
           for (j; j >= 0; j--){
                 chex[j] = crc & 15;
                 crc = crc >> 4;
@@ -849,9 +806,9 @@ uint32_t crc32_calc(size_t length, char * cmd)
 
 /**
  * @brief
- *      Returns the index of the last blank space character
+ *      For parsing: Returns the index of the last blank space character
  * @param length
- *      Number of subsequent elements to convert
+ *      Length of the string being checked
  * @param cmd
  *      Pointer to start of char array
  * @return int
@@ -860,10 +817,11 @@ uint32_t crc32_calc(size_t length, char * cmd)
 int find_blankSpace(int length, char *cmd) {
     int k = length;
       for (k; k > 0; k--) {
-    if (cmd[k] == BLANK_SPACE) {
-      return k;
-    }
-  }
+          if (cmd[k] == BLANK_SPACE) {
+                  return k;
+          }
+      }
+      return -2;
 }
 
 /**
@@ -903,5 +861,5 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_
 
   crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
 
-  printf("write 241 cmd: %s\n", cmd);
+  return 0;
 }
