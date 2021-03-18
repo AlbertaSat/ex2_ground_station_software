@@ -101,16 +101,17 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
       break;
     }
 
-    case 1: {  // Set the frequency (Unsure if correct-> index 5 of hex?)
+    case 1: {  // Set the frequency
       uint32_t *new_freq = (uint32_t *)param;
       if (*new_freq < MIN_U_FREQ || *new_freq > MAX_U_FREQ) return U_BAD_PARAM;
 
       float temp = (*new_freq) / 6500000.0f;
       uint8_t val1 = (uint8_t)temp - 1;                    // Integer term
       uint32_t val2 = (uint32_t)((temp - val1) * 524288);  // Fractional term
-      uint8_t hex[8] = {(val2 >> 16) & 15, (val2 >> 12) & 15, (val2 >> 8) & 15,
-                        (val2 >> 4) & 15,  (val2)&15,         15,
-                        (val1 >> 4) & 15,  (val1)&15};
+      uint8_t hex[8] = {(val2 >> 4) & 15, (val2) & 15, (val2 >> 12) & 15,
+                       (val2 >> 8) & 15,  (val2 >> 20) & 15, (val2 >> 16) & 15,
+                       (val1 >> 4) & 15,  (val1) & 15};
+
       convHexToASCII(8, hex);
 
       // Building the command
@@ -136,7 +137,7 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
       convHexToASCII(4, hex);
 
       uint8_t command[30] = {
-          'E', 'S', '+', 'W',    '2',    sm_add, '0',    '6',         '0',
+          'E', 'S', '+', 'W',    '2',    sm_add, '0',    code+48,         '0',
           '0', '0', '0', hex[0], hex[1], hex[2], hex[3], BLANK_SPACE, 'C',
           'C', 'C', 'C', 'C',    'C',    'C',    'C',    CARRIAGE_R};
       strcpy(cmd, command);
@@ -548,8 +549,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
       convHexFromASCII(8, hex);
 
       uint8_t val1 = (hex[6] << 4) | hex[7];
-      uint32_t val2 = (hex[0] << 16) | (hex[1] << 12) | (hex[2] << 8) |
-                      (hex[3] << 4) | hex[4];
+      uint32_t val2 =  (hex[4] << 20) | (hex[5] << 16) | (hex[2] << 12) | (hex[3] << 8) | (hex[0] << 4) | hex[1];
 
       *freq = (val1 + (val2 / 524288.0f)) * 6500000.0f;
 

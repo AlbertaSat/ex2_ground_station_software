@@ -38,7 +38,7 @@ void i2c_sendCommand(uint8_t length, char * start, char * response){
     i2cSetSlaveAdd(regset, addr);
     /* Set direction to receiver */
     i2cSetDirection(regset, I2C_RECEIVER);
-    i2cSetCount(regset, I2C_MAX_ANS_LENGTH);
+    i2cSetCount(regset, 100);
     /* Set mode as Master */
     i2cSetMode(regset, I2C_MASTER);
     i2cSetStop(regset);
@@ -46,7 +46,7 @@ void i2c_sendCommand(uint8_t length, char * start, char * response){
     i2cSetStart(regset);
 
     while(i2cIsBusBusy(regset) == true);
-    i2cReceive(regset, I2C_MAX_ANS_LENGTH, response);
+    i2cReceive(regset, 100, response);
 
     /* Wait until Bus Busy is cleared */
     while(i2cIsBusBusy(regset) == true);
@@ -56,7 +56,6 @@ void i2c_sendCommand(uint8_t length, char * start, char * response){
 
     /* Clear the Stop condition */
     i2cClearSCD(regset);
-
 }
 
 
