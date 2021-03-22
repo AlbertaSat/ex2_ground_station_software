@@ -8,8 +8,7 @@
 #include "HL_i2c.h"
 #include "i2c.h"
 
-void i2c_sendCommand(uint8_t length, char * start, char * response){
-    uint8_t addr = 0x22; // TODO: Make this a parameter
+void i2c_sendCommand(uint8_t length, char * start, char * response, uint8_t addr){
     i2cBASE_t * regset = i2cREG1;
 
     i2cSetSlaveAdd(regset, addr);

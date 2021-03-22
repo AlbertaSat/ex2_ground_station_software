@@ -211,6 +211,14 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
         command[10 + i] = sym;
       }
       command[10 + i] = BLANK_SPACE;
+      command[11 + i] = 'C';
+      command[12 + i] = 'C';
+      command[13 + i] = 'C';
+      command[14 + i] = 'C';
+      command[15 + i] = 'C';
+      command[16 + i] = 'C';
+      command[17 + i] = 'C';
+      command[18 + i] = 'C';
       command[19 + i] = CARRIAGE_R;
       strcpy(cmd, command);
       break;
@@ -224,28 +232,26 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
       uint8_t command[120] = {'E',    'S', '+', 'W',    '2',
                               sm_add, 'F', '8', len[0], len[1]};
       uint8_t j = 0;
-      uint8_t count = 0;
-      for (j; j < beacon->len; j++) {
-        uint8_t midi = beacon->message[2 * j];
-        uint8_t sym = beacon->message[2 * j + 1];
-
-        if (midi < 12 || midi > 99) return U_BAD_PARAM;
-        uint8_t len_chars[2] = {(midi - (midi % 10)) / 10, midi % 10};
-        convHexToASCII(2, len_chars);
-        command[10 + 3 * j] = len_chars[0];
-        command[11 + 3 * j] = len_chars[1];
-        command[12 + 3 * j] = sym;
+      for (j; j < (3*beacon->len); j++) {
+        command[10+j] = beacon->message[j];
       }
-      command[10 + j + count] = BLANK_SPACE;
-      command[19 + j + count] = CARRIAGE_R;
+      command[10 + j] = BLANK_SPACE;
+      command[11 + j] = 'C';
+      command[12 + j] = 'C';
+      command[13 + j] = 'C';
+      command[14 + j] = 'C';
+      command[15 + j] = 'C';
+      command[16 + j] = 'C';
+      command[17 + j] = 'C';
+      command[18 + j] = 'C';
+      command[19 + j] = CARRIAGE_R;
       strcpy(cmd, command);
       break;
     }
 
     case 251: {  // Set the Beacon Message contents
       uhf_configStruct *beacon = (uhf_configStruct *)param;
-      uint8_t len[2] = {(beacon->len - (beacon->len % 10)) / 10,
-                        beacon->len % 10};
+      uint8_t len[2] = {(beacon->len) >> 4, (beacon->len) & 15};
       convHexToASCII(2, len);
 
       uint8_t command[120] = {'E',    'S', '+', 'W',    '2',
@@ -256,6 +262,14 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
         command[10 + k] = beacon->message[k];
       }
       command[10 + k] = BLANK_SPACE;
+      command[11 + k] = 'C';
+      command[12 + k] = 'C';
+      command[13 + k] = 'C';
+      command[14 + k] = 'C';
+      command[15 + k] = 'C';
+      command[16 + k] = 'C';
+      command[17 + k] = 'C';
+      command[18 + k] = 'C';
       command[19 + k] = CARRIAGE_R;
       strcpy(cmd, command);
       break;
@@ -302,7 +316,7 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
                              chadd[5],
                              chadd[6],
                              chadd[7],
-                             [48] = BLANK_SPACE,
+                             [48] = BLANK_SPACE, 'C','C','C','C','C','C','C','C',
                              [57] = CARRIAGE_R};
       uint8_t hex[2] = {0};
       int i = 0;
@@ -342,7 +356,10 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
 
   crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
   uint8_t ans[MAX_W_ANSLEN] = {0};
-  i2c_sendCommand(strlen(cmd), cmd, ans); //Command is sent to the board, and response is received
+
+  //Command is sent to the board, and response is received
+  /* -48 to go from ASCII to hex, +32 since the address is 0x20 + sm_add */
+  i2c_sendCommand(strlen(cmd), cmd, ans, sm_add-16);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format
@@ -478,16 +495,18 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
     uint8_t fram_command[MAX_R_CMDLEN] = {
         'E',      'S',      '+',         'R',
-        '2',      sm_add,   chadd[0],    chadd[1],
+        '2',      sm_add,  'F','D', chadd[0],    chadd[1],
         chadd[2], chadd[3], chadd[4],    chadd[5],
-        chadd[6], chadd[7], BLANK_SPACE, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',[23] = CARRIAGE_R};
+        chadd[6], chadd[7], BLANK_SPACE, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',[25] = CARRIAGE_R};
     strcpy(command, fram_command);
   }
 
   crc32_calc(find_blankSpace(strlen(command), command), command);
 
+  // Command is sent to the board, and response is received
   uint8_t ans[MAX_R_ANSLEN] = {0};
-  i2c_sendCommand(strlen(command), command, ans);
+  /* -48 to go from ASCII to hex, +32 since the address is 0x20 + sm_add */
+  i2c_sendCommand(strlen(command), command, ans, sm_add-48+32);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format of
