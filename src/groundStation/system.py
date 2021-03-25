@@ -57,7 +57,7 @@ class SystemValues(object):
         self.subserviceIdx = 4
 
         self.APP_DICT = {
-            'OBC': 0,
+            'OBC': 1,
             'EPS': 4,  # hard coded by manufacturer
             'ADCS': 2,
             'COMMS': 3,
@@ -336,7 +336,9 @@ class SystemValues(object):
                             'args': ['>B'],
                             'returns': {
                                 'structureID': '>B',
-                                'temp': '>f4',
+                                'current': '>f4',
+                                'voltage': '>f4',
+                                'temperature': '>f4',
                             }
                         }
                     }

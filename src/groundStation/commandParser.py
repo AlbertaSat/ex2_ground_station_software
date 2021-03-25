@@ -107,8 +107,11 @@ class CommandParser(object):
             # error: check system SystemValues
             return None
 
+        print(length)
         returns = subservice['inoutInfo']['returns']
         for retVal in returns:
+            print(retVal)
+            print(returns[retVal])
             outputObj[retVal] = np.frombuffer(
                 data, dtype=returns[retVal], count=1, offset=idx)[0]
             idx += np.dtype(returns[retVal]).itemsize
@@ -161,7 +164,15 @@ if __name__ == '__main__':
     parser = CommandParser()
     cmd1 = parser.parseInputValue('OBC.TIME_MANAGEMENT.SET_TIME(1598385718)')
     print(cmd1)
+
     cmd2 = parser.parseInputValue('OBC.TIME_MANAgemENT.GET_TIME')
     print(cmd2)
-    cmd1['args'][0] = 0x02  # change this to 'getTime'
-    parser.parseReturnValue(0, 4, 12, cmd1['args'], 5)
+
+    returnval = parser.parseReturnValue(0, 16, 8, bytearray(b'\x01\x00'), 2) # ba[0] = 01 (set time)
+    print(returnval)
+
+    returnval = parser.parseReturnValue(0, 16, 8, bytearray(b'\x00\x00@\xaa\xe1H@\x06ffA\x90\x14{'), 5) # ba[0] = 00 (set time)
+    print(returnval)
+
+    returnval = parser.parseReturnValue(0, 16, 10, bytearray(b'\x01\x00D|\x86w'), 5)
+    print(returnval)

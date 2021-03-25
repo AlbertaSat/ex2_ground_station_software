@@ -44,7 +44,10 @@ def testAllCommandsToOBC():
 
 if __name__ == '__main__':
     start = time.time()
-    for i in range(0, 10):
+
+    for i in range(0, 1000):
         testAllCommandsToOBC()
+        # time.sleep(1)
+
     delta = time.time() - start
     print("Tests took: " + str(int(delta)))
