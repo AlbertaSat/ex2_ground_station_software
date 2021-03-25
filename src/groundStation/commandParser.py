@@ -52,7 +52,6 @@ class CommandParser(object):
                 if 'inoutInfo' not in service:
                     print('No in/out info for service')
                     return None
-                print("SDFasdf")
                 if not self.__argCheck(
                         tokens[(self.vals.serviceIdx + 1)::], service['inoutInfo']):
                     return None
