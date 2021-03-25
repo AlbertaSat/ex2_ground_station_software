@@ -30,123 +30,102 @@ TIME_MANAGEMENT.GET_PRECISE_TIME:
 		port: 8		subport: 3
 
 
-COMMUNICATION.GET_TEMP:
-		About: None
-		Arguments: [None]
-		return values: {'err': '>b', 'temperature': '>u4'}
-		port: 10		subport: 0
-
-
-COMMUNICATION.GET_FREQ:
-		About: None
+COMMUNICATION.S_GET_FREQ:
+		About: Gets the S-band frequency (MHz)
 		Arguments: [None]
 		return values: {'err': '>b', 'frequency': '>f'}
 		port: 10		subport: 1
 
 
-COMMUNICATION.GET_CONTROL:
-		About: None
+COMMUNICATION.S_GET_CONTROL:
+		About: Gets the S-band`s power amplifier write status and its mode = {0:configuration, 1: synchronization, 2:data, 3:test data}
 		Arguments: [None]
 		return values: {'err': '>b', 'status': '>u1', 'mode': '>u1'}
 		port: 10		subport: 2
 
 
-COMMUNICATION.GET_ENCODER:
-		About: None
-		Arguments: [None]
+COMMUNICATION.S_GET_ENCODER:
+		About: Gets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}
+rguments: [None]
 		return values: {'err': '>b', 'scrambler': '>u1', 'filter': '>u1', 'modulation': '>u1', 'rate': '>u1'}
 		port: 10		subport: 3
 
-
-COMMUNICATION.GET_PAPOWER:
-		About: None
+er
 		Arguments: [None]
 		return values: {'err': '>b', 'Power Amplifier Power': '>u1'}
 		port: 10		subport: 4
 
 
-COMMUNICATION.GET_STATUS:
-		About: None
-		Arguments: [None]
+COMMUNICATION.S_GET_STATUS:
+		About: Checks if the power of S-band power aamplifier is good and if the frequency lock is achieved
+guments: [None]
 		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1'}
 		port: 10		subport: 5
 
 
-COMMUNICATION.GET_TR:
-		About: None
+
 		Arguments: [None]
 		return values: {'err': '>b', 'Transmit Ready': '>i4'}
 		port: 10		subport: 6
 
 
-COMMUNICATION.GET_BUFFER:
-		About: None
 		Arguments: [>B]
 		return values: {'err': '>b', 'pointer': '>u2'}
 		port: 10		subport: 7
 
 
-COMMUNICATION.GET_HK:
-		About: None
+
 		Arguments: [None]
 		return values: {'err': '>b', 'Output Power': '>f', 'Power Amplifier Temperature': '>f', 'Top Temperature': '>f', 'Bottom Temperature': '>f', 'Battery Current': '>f', 'Battery Voltage': '>f', 'Power Amplifier Current': '>f', 'Power Amplifier Voltage': '>f'}
 		port: 10		subport: 8
 
-
-COMMUNICATION.SOFT_RESET:
-		About: None
+t
 		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 10		subport: 9
 
 
-COMMUNICATION.GET_FULL_STATUS:
-		About: None
-		Arguments: [None]
+COMMUNICATION.S_GET_FULL_STATUS:
+		About: A full status of S-band non-configurable parametersguments: [None]
 		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1', 'Transmit Ready': '>i4', 'Buffer Count': '>u2', 'Buffer Underrun': '>u2', 'Buffer Overrun': '>u2', 'Output Power': '>f', 'Power Amplifier Temperature': '>f', 'Top Temperature': '>f', 'Bottom Temperature': '>f', 'Battery Current': '>f', 'Battery Voltage': '>f', 'Power Amplifier Current': '>f', 'Power Amplifier Voltage': '>f', 'Firmware Version': '>f'}
 		port: 10		subport: 10
 
 
-COMMUNICATION.SET_FREQ:
-		About: None
 		Arguments: [>f]
 		return values: {'err': '>b'}
 		port: 10		subport: 11
 
 
-COMMUNICATION.SET_CONTROL:
-		About: None
-		Arguments: [>u1, >u1]
+COMMUNICATION.S_SET_CONTROL:
+		About: Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary
+guments: [>u1, >u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 12
 
 
-COMMUNICATION.SET_ENCODER:
-		About: None
+
 		Arguments: [>u1, >u1, >u1, >u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 13
 
 
-COMMUNICATION.SET_PAPOWER:
-		About: None
 		Arguments: [>u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 14
 
 
-COMMUNICATION.GET_CONFIG:
-		About: None
+
 		Arguments: [None]
 		return values: {'err': '>b', 'Frequency': '>f', 'Power Amplifier Power': '>u1', 'Power Amplifier status': '>u1', 'Power Amplifier mode': '>u1', 'Encoder scrambler': '>u1', 'Encoder filter': '>u1', 'Encoder modulation': '>u1', 'Encoder rate': '>u1'}
 		port: 10		subport: 15
 
 
-COMMUNICATION.SET_CONFIG:
-		About: None
-		Arguments: [f, >u1, >u1, >u1, >u1, >u1, >u1, >u1]
+COMMUNICATION.S_SET_CONFIG:
+		About: Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate)
+		Arguments: [>f, >u1, >u1, >u1, >u1, >u1, >u1, >u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 16
+
 
 
 HOUSEKEEPING.PARAMETER_REPORT:
@@ -252,5 +231,3 @@ CONTROL.SET_HEATER_STATE:
 		Arguments: [>B, >u2]
 		return values: {'err': '>b'}
 		port: 14		subport: 7
-
-
