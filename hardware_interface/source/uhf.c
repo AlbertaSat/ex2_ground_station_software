@@ -29,7 +29,7 @@
 
 #ifdef UHF_IS_STUBBED
     // Arbitrary values for testing
-    static UHF_Status U_status_reg = {.uptime = 12, .pckts_out = 100, .pckts_in = 70, .pckts_in_crc16 = 10, .temperature = 18.4, .firmware_ver = 2, .payload_size = 127, .secure_key = 32};
+    static UHF_Status U_status_reg = {.uptime = 12, .pckts_out = 100, .pckts_in = 70, .pckts_in_crc16 = 10, .temperature = 18.4, .payload_size = 127, .secure_key = 32};
 #else
     static UHF_Status U_status_reg;
 #endif
@@ -38,12 +38,12 @@ static UHF_Beacon U_beacon_reg;
 static UHF_framStruct U_FRAM_reg;
 
 
-UHF_return HAL_UHF_setStatus (uint8_t * U_stat_ctrl){
-    memcpy(&U_status_reg.status_ctrl, U_stat_ctrl, 12);
+UHF_return HAL_UHF_setSCW (uint8_t * U_scw){
+    memcpy(&U_status_reg.scw, U_scw, 12);
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(0, &U_status_reg.status_ctrl);
+        return UHF_genericWrite(0, &U_status_reg.scw);
     #endif
 }
 
@@ -56,52 +56,47 @@ UHF_return HAL_UHF_setFreq (uint32_t U_freq){
     #endif
 }
 
-UHF_return HAL_UHF_setPipeT (uint16_t U_pipe_t){
+UHF_return HAL_UHF_setPipeT (uint32_t U_pipe_t){
     U_status_reg.set.pipe_t = U_pipe_t;
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(6, &U_status_reg.set.pipe_t);
+        return UHF_genericWrite(6, (uint16_t*)&U_status_reg.set.pipe_t);
     #endif
 }
 
-UHF_return HAL_UHF_setBeaconT (uint16_t U_beacon_t){
+UHF_return HAL_UHF_setBeaconT (uint32_t U_beacon_t){
     U_status_reg.set.beacon_t = U_beacon_t;
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(7, &U_status_reg.set.beacon_t);
+        return UHF_genericWrite(7, (uint16_t*)&U_status_reg.set.beacon_t);
     #endif
 }
 
-UHF_return HAL_UHF_setAudioT (uint16_t U_audio_t){
+UHF_return HAL_UHF_setAudioT (uint32_t U_audio_t){
     U_status_reg.set.audio_t = U_audio_t;
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(8, &U_status_reg.set.audio_t);
+        return UHF_genericWrite(8, (uint16_t*)&U_status_reg.set.audio_t);
     #endif
 }
 
-UHF_return HAL_UHF_restore (UHF_Confirm * U_restore){
+UHF_return HAL_UHF_restore (uint8_t confirm){
     #ifdef UHF_IS_STUBBED
-        U_restore->confirm = 5;
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(9, &U_restore->confirm);//doublecheck
+        return UHF_genericWrite(9, &confirm);
     #endif
 }
 
-UHF_return HAL_UHF_lowPwr (uint8_t * U_low_pwr){
-    UHF_return status;
-    #ifndef UHF_IS_STUBBED
-        status = UHF_genericWrite(244, &U_status_reg.low_pwr_stat);
+UHF_return HAL_UHF_lowPwr (uint8_t confirm){
+    #ifdef UHF_IS_STUBBED
+        return IS_STUBBED_U;
     #else
-        U_status_reg.low_pwr_stat = 5;
-        status = IS_STUBBED_U;
+        return UHF_genericWrite(244, &confirm);
     #endif
-    *U_low_pwr = U_status_reg.low_pwr_stat;
-    return status;
 }
 
 UHF_return HAL_UHF_setDestination (UHF_configStruct U_dest){
@@ -166,23 +161,22 @@ UHF_return HAL_UHF_setFRAM (UHF_framStruct U_FRAM){
     #endif
 }
 
-UHF_return HAL_UHF_secure (UHF_Confirm * U_secure){
+UHF_return HAL_UHF_secure (uint8_t confirm){
     #ifdef UHF_IS_STUBBED
-        U_secure->confirm = 0;
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(255, U_secure);//doublecheck
+        return UHF_genericWrite(255, &U_secure);
     #endif
 }
 
-UHF_return HAL_UHF_getStatus (uint8_t * U_stat_ctrl){
+UHF_return HAL_UHF_getSCW (uint8_t * U_scw){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
-        status = UHF_genericRead(0, &U_status_reg.status_ctrl);
+        status = UHF_genericRead(0, U_status_reg.scw);
     #else
         status = IS_STUBBED_U;
     #endif
-    memcpy(U_stat_ctrl, &U_status_reg.status_ctrl, 12);
+    memcpy(U_scw, U_status_reg.scw, 12);
     return status;
 }
 
@@ -241,7 +235,7 @@ UHF_return HAL_UHF_getPcktsInCRC16 (uint32_t * U_pckts_in_crc16){
     return status;
 }
 
-UHF_return HAL_UHF_getPipeT (uint16_t * U_pipe_t){
+UHF_return HAL_UHF_getPipeT (uint32_t * U_pipe_t){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
         status = UHF_genericRead(6, &U_status_reg.set.pipe_t);
@@ -252,7 +246,7 @@ UHF_return HAL_UHF_getPipeT (uint16_t * U_pipe_t){
     return status;
 }
 
-UHF_return HAL_UHF_getBeaconT (uint16_t * U_beacon_t){
+UHF_return HAL_UHF_getBeaconT (uint32_t * U_beacon_t){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
         status = UHF_genericRead(7, &U_status_reg.set.beacon_t);
@@ -263,7 +257,7 @@ UHF_return HAL_UHF_getBeaconT (uint16_t * U_beacon_t){
     return status;
 }
 
-UHF_return HAL_UHF_getAudioT (uint16_t * U_audio_t){
+UHF_return HAL_UHF_getAudioT (uint32_t * U_audio_t){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
         status = UHF_genericRead(8, &U_status_reg.set.audio_t);
@@ -293,17 +287,6 @@ UHF_return HAL_UHF_getLowPwr (uint8_t * U_low_pwr){
         status = IS_STUBBED_U;
     #endif
     *U_low_pwr = U_status_reg.low_pwr_stat;
-    return status;
-}
-
-UHF_return HAL_UHF_getFV (uint8_t * U_firmware_ver){
-    UHF_return status;
-    #ifndef UHF_IS_STUBBED
-        status = UHF_genericRead(249, &U_status_reg.firmware_ver);
-    #else
-        status = IS_STUBBED_U;
-    #endif
-    *U_firmware_ver = U_status_reg.firmware_ver;
     return status;
 }
 
