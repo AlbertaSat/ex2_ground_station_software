@@ -22,15 +22,15 @@
 //#include "unity.h"
 //#include "uTransceiver.h"
 //
-//void setUp(void)
+// void setUp(void)
 //{
 //}
 //
-//void tearDown(void)
+// void tearDown(void)
 //{
 //}
 //
-//void test_receiveData_sendData(void) {
+// void test_receiveData_sendData(void) {
 //  uint8_t dummy_data[128] = {0};
 //  receive_U_data(dummy_data);
 //  printf("Received data: %d %d %d %d %d ...\n", dummy_data[0], dummy_data[1],
@@ -42,7 +42,7 @@
 //  TEST_IGNORE();
 //}
 //
-//void test_setControl_getControl(void)
+// void test_setControl_getControl(void)
 //{
 //	uint8_t array[12] = {0,3,0,3,1,1,1,1,1,1,1,0};
 //	char answer[20] = "OK+33FE 98876F4E\r"; // Assuming successful write
@@ -60,7 +60,7 @@
 //        TEST_ASSERT_EQUAL_UINT8_ARRAY(array, array2, 12);
 //}
 //
-//void test_setFrequency_getFrequency(void)
+// void test_setFrequency_getFrequency(void)
 //{
 //	uint32_t new_freq = 435000000;
 //	char answer3[20] = "OK D736D92D\r";
@@ -77,7 +77,7 @@
 //	TEST_ASSERT_UINT32_WITHIN(1000, new_freq, freq[0]);
 //}
 //
-//void test_readUptimeTransmittedReceivedError(void)
+// void test_readUptimeTransmittedReceivedError(void)
 //{
 //	uint32_t value = 0;
 //
@@ -106,7 +106,7 @@
 //	TEST_ASSERT_EQUAL_UINT32(0x3265D948, value);
 //}
 //
-//void test_setPIPEtimeout_getPIPEtimeout(void)
+// void test_setPIPEtimeout_getPIPEtimeout(void)
 //{
 //	uint8_t time = 45;
 //	uint8_t read_time = 0;
@@ -124,7 +124,7 @@
 //	TEST_ASSERT_EQUAL_UINT8(time, read_time);
 //}
 //
-//void test_setDefaultValues(void)
+// void test_setDefaultValues(void)
 //{
 //	uint8_t conf = 1;
 //	uint8_t answer11[20] = "OK D736D92D\r";
@@ -133,7 +133,7 @@
 //	UHF_genericWrite(9, &conf);
 //}
 //
-//void test_readInternalTempSensor(void) {
+// void test_readInternalTempSensor(void) {
 //  float temp = 0;
 //  uint8_t answer12[20] = "OK -018 131D221A\r";
 //  i2c_sendCommand_ExpectAnyArgs();
@@ -143,25 +143,25 @@
 //  TEST_ASSERT_FLOAT_WITHIN(0.01, -1.8f, temp);
 //}
 //
-//void test_setLowPowerMode_getLowPowerMode(void)
+// void test_setLowPowerMode_getLowPowerMode(void)
 //{
 //	uint8_t val = 1;
 //        uint8_t read_val = 0;
 //
 //        uint8_t answer13[30] = "OK D736D92D\r";
 //        i2c_sendCommand_ExpectAnyArgs();
-//        i2c_sendCommand_ReturnArrayThruPtr_response(answer13, strlen(answer13));
-//        UHF_genericWrite(244, &val);
+//        i2c_sendCommand_ReturnArrayThruPtr_response(answer13,
+//        strlen(answer13)); UHF_genericWrite(244, &val);
 //
 //        uint8_t answer14[30] = "OK+01 EA147871\r";
 //        i2c_sendCommand_ExpectAnyArgs();
-//        i2c_sendCommand_ReturnArrayThruPtr_response(answer14, strlen(answer14));
-//        UHF_genericRead(244, &read_val);
+//        i2c_sendCommand_ReturnArrayThruPtr_response(answer14,
+//        strlen(answer14)); UHF_genericRead(244, &read_val);
 //
 //        TEST_ASSERT_EQUAL_UINT8(val, read_val);
 //}
 //
-//void test_setCallsign_getCallsign(void)
+// void test_setCallsign_getCallsign(void)
 //{
 //  uhf_configStruct callsign = {6, "VA6AZA"};
 //  uint8_t answer15[20] = "OK D736D92D\r";
@@ -178,7 +178,7 @@
 //  TEST_ASSERT_EQUAL_UINT8_ARRAY(callsign.message, read_callsign.message, 6);
 //}
 //
-//void test_setMorseCodeCallSign_getMorseCodeCallSign(void)
+// void test_setMorseCodeCallSign_getMorseCodeCallSign(void)
 //{
 //  uhf_configStruct callsign = {14, ".-- -..--- . ."};
 //  uint8_t answer17[20] = "OK D736D92D\r";
@@ -195,11 +195,12 @@
 //  TEST_ASSERT_EQUAL_UINT8_ARRAY(callsign.message, read_callsign.message, 14);
 //}
 //
-//void test_setMidiAudioBeacon_getMidiAudioBeacon(void)
+// void test_setMidiAudioBeacon_getMidiAudioBeacon(void)
 //{
 //  uhf_configStruct beacon = {
 //      8,
-//      {42, 'w', 42, 'w', 23, 'q', 41, 'Q', 86, 'H', 87, 'H', 20, 'W', 20, 'X'}};
+//      {42, 'w', 42, 'w', 23, 'q', 41, 'Q', 86, 'H', 87, 'H', 20, 'W', 20,
+//      'X'}};
 //  uint8_t answer19[20] = "OK D736D92D\r";
 //  i2c_sendCommand_ExpectAnyArgs();
 //  i2c_sendCommand_ReturnArrayThruPtr_response(answer19, strlen(answer19));
@@ -214,7 +215,7 @@
 //  TEST_ASSERT_EQUAL_UINT8_ARRAY(beacon.message, read_beacon.message, 16);
 //}
 //
-//void test_getSoftwareVersion(void)
+// void test_getSoftwareVersion(void)
 //{
 //	uint8_t exp_version[4] = "2.06";
 //	uint8_t version[4] = {0};
@@ -226,7 +227,7 @@
 //	TEST_ASSERT_EQUAL_UINT8_ARRAY(exp_version, version, 4);
 //}
 //
-//void test_getDevicePayloadSize(void)
+// void test_getDevicePayloadSize(void)
 //{
 //	uint8_t size = 0;
 //	uint8_t answer22[20] = "OK+0064 804946A5\r";
@@ -237,7 +238,7 @@
 //	TEST_ASSERT_EQUAL_UINT8(100, size);
 //}
 //
-//void test_setBeaconMessageContent_getBeaconMessageContent(void)
+// void test_setBeaconMessageContent_getBeaconMessageContent(void)
 //{
 //  uhf_configStruct content = {
 //      39, {'M', 'y', ' ', 'b', 'a', 't', 't', 'e', 'r', 'y', ' ', 'i', 's',
@@ -260,7 +261,7 @@
 //  TEST_ASSERT_EQUAL_UINT8_ARRAY(content.message, read_content.message, 39);
 //}
 //
-//void test_deviceAddressConfiguration(void)
+// void test_deviceAddressConfiguration(void)
 //{
 //	uint8_t answer25[20] = "OK+23 144056B1\r";
 //	uint8_t new_add = 0x23;
@@ -269,7 +270,7 @@
 //	UHF_genericWrite(252, &new_add);
 //}
 //
-//void test_setFRAM_getFRAM(void)
+// void test_setFRAM_getFRAM(void)
 //{
 //  uhf_framStruct new_write = {0x65, "ABCD"};
 //  uint8_t answer26[20] = "OK D736D92D\r";
@@ -287,7 +288,7 @@
 //  TEST_ASSERT_EQUAL_UINT8_ARRAY(new_write.data, read.data, 16);
 //}
 //
-//void test_setSecureMode_getSecureMode(void)
+// void test_setSecureMode_getSecureMode(void)
 //{
 //	uint8_t answer28[20] = "OK D736D92D\r";
 //	uint8_t confirm = 1;
@@ -298,16 +299,17 @@
 //        uint32_t key = 0;
 //        uint8_t answer29[25] = "OK+ABBACDDC DC9B88B5\r";
 //        i2c_sendCommand_ExpectAnyArgs();
-//        i2c_sendCommand_ReturnArrayThruPtr_response(answer29, strlen(answer29));
-//        UHF_genericRead(255, &key);
+//        i2c_sendCommand_ReturnArrayThruPtr_response(answer29,
+//        strlen(answer29)); UHF_genericRead(255, &key);
 //
 //        TEST_ASSERT_EQUAL_UINT32(0xABBACDDC, key);
 //}
 //
-//void test_genericI2C_action_no_return(void)
+// void test_genericI2C_action_no_return(void)
 //{
 //  uint8_t answer30[20] = "OK+SENT 51B42655\r";
 //  // TODO: UART mock
-//  uint8_t data[25] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
+//  uint8_t data[25] =
+//  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
 //  UHF_genericI2C('D', 0x41, 25, data, 0);
 //}
