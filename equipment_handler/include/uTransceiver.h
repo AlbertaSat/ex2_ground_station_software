@@ -21,7 +21,7 @@
 #ifndef UTRANSCEIVER_H
 #define UTRANSCEIVER_H
 
-#include "mock_i2c.h"
+#include "i2c.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -62,19 +62,15 @@ typedef struct {
   uint8_t data[16];
 } uhf_framStruct;
 
-//* Functions for moving data to/from the UHF transceiver in 128 byte chunks
-UHF_return send_U_data(uint8_t* arr);
-UHF_return receive_U_data(uint8_t* arr);
-
 // Converts hex values to their ASCII characters
 void convHexToASCII(int length, uint8_t * arr);
 void convHexFromASCII(int length, uint8_t * arr);
 uint32_t crc32_calc(size_t length, char * cmd);
 int find_blankSpace(int length, char* string);
 
+// Read and Write command functions
 UHF_return UHF_genericWrite(uint8_t code, void * param);
 UHF_return UHF_genericRead(uint8_t code, void * param);
-
 UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t * data, uint8_t n_read_bytes);
 
 #endif // UTRANSCEIVER_H
