@@ -165,7 +165,7 @@ UHF_return HAL_UHF_secure (uint8_t confirm){
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(255, &U_secure);
+        return UHF_genericWrite(255, &confirm);
     #endif
 }
 
