@@ -12,6 +12,12 @@
  * GNU General Public License for more details.
  */
 
+/**
+ * @file uhf.h
+ * @author Unknown, Dustin Wagner
+ * @date Unknown
+ */
+
 #ifndef UHF_HAL_H
 #define UHF_HAL_H
 
@@ -50,6 +56,24 @@ typedef struct __attribute__((packed)) {
   uint16_t payload_size;
   uint32_t secure_key;
 } UHF_Status;
+
+/*slightly modified version of UHF_Status to be more compatible with hk service
+reformats nested struct*/
+typedef struct __attribute__((packed)) {
+  uint8_t scw[SCW_LEN];
+  uint32_t freq;
+  uint32_t pipe_t;
+  uint32_t beacon_t;
+  uint32_t audio_t;
+  uint32_t uptime;
+  uint32_t pckts_out;
+  uint32_t pckts_in;
+  uint32_t pckts_in_crc16;
+  float temperature;
+  uint8_t low_pwr_stat;
+  uint16_t payload_size;
+  uint32_t secure_key;
+} UHF_housekeeping;
 
 typedef struct __attribute__((packed)) {
   uint8_t addr;
@@ -111,5 +135,7 @@ UHF_return HAL_UHF_getPayload(uint16_t* U_payload_size);
 UHF_return HAL_UHF_getBeaconMsg(UHF_configStruct* U_beacon_msg);
 UHF_return HAL_UHF_getFRAM(UHF_framStruct* U_FRAM);
 UHF_return HAL_UHF_getSecureKey(uint32_t* U_secure);
+
+UHF_return UHF_getHK(UHF_housekeeping* uhf_hk);
 
 #endif /* UHF_HAL_H */
