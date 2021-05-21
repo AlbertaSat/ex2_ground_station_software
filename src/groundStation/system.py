@@ -124,6 +124,20 @@ class SystemValues(object):
                     }
                 }
             },
+            'GENERAL': {
+                'port' : 11,
+                'subservice' : {
+                    'REBOOT': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>B'],  # mode. Can be 'A', 'B', 'G'
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    }
+                }
+            },
             'COMMUNICATION': {
                 'port': 10,
                 'subservice': {
@@ -623,7 +637,9 @@ class SystemValues(object):
                             'args': ['>B'],
                             'returns': {
                                 'structureID': '>B',
-                                'temp': '>f4',
+                                'current': '>f4',
+                                'voltage': '>f4',
+                                'temperature': '>f4',
                             }
                         }
                     }
