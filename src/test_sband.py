@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test.py
- * @author Andrew Rooney
+ * @file test_sband.py
+ * @author Andrew Rooney, Arash Yazdani
  * @date 2020-11-20
 '''
 

@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test.py
- * @author Andrew Rooney
+ * @file test_uhf.py
+ * @author Andrew Rooney, Arash Yazdani
  * @date 2020-11-20
 '''
 
-'''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/test.py -I uart -d /dev/ttyUSB1  '''
+'''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/test_uhf.py -I uart -d /dev/ttyUSB1  '''
 import time
 from groundStation import groundStation
 import numpy as np
@@ -38,12 +38,6 @@ def sendAndExpect(send, expect):
 
 def testAllCommandsToOBC():
     current = int(time.time())
-    """sendAndExpect('obc.TIME_MANAGEMENT.SET_TIME(' + str(current) + ')', {'err':0})
-    sendAndExpect('obc.TIME_MANAGEMENT.get_time', {'err':0, 'timestamp': current})
-    sendAndExpect('obc.housekeeping.parameter_report(0)', {'structureID': 0, 'temp': np.float32(5.34)})
-    sendAndExpect('obc.communication.s_SET_control(1 1)', {'err':0})
-    sendAndExpect('obc.communication.s_set_freq(1010.101)', {'err':0})
-    sendAndExpect('obc.communication.s_get_freq', {'err':0, 'frequency': np.float32(1010.101)})"""
     sendAndExpect('obc.communication.UHF_SET_SCW(0 1 0 3 0 0 0 0 0 1 0 0)', {
                   'err': 0})  # sometimes it won't reach its subservice!
     sendAndExpect('obc.communication.UHF_SET_FREQ(436000000)', {'err': 0})
@@ -71,8 +65,6 @@ def testAllCommandsToOBC():
         'obc.communication.uhf_set_beacon_msg(HelloAlbertaSat)', {'err': 0})
     sendAndExpect('obc.communication.uhf_get_beacon_msg', {
                   'err': 0, 'Beacon Message': 'HELLOALBERTASAT'})
-    #sendAndExpect('obc.communication.uhf_set_beacon_msg(8,MyBeacon)', {'err':0})
-    #sendAndExpect('obc.communication.uhf_get_beacon_msg', {'err': 0, 'Beacon Message': 'MYBEACON'})
     sendAndExpect('obc.communication.uhf_set_pipe', {'err': 0})
     sendAndExpect('obc.communication.uhf_set_bcn', {'err': 0})
     sendAndExpect('obc.communication.uhf_set_echo', {'err': 0})
