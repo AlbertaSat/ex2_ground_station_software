@@ -38,7 +38,7 @@ COMMUNICATION.S_GET_FREQ:
 
 
 COMMUNICATION.S_GET_CONTROL:
-		About: Gets the S-band`s power amplifier write status and its mode = {0:configuration, 1: synchronization, 2:data, 3:test data}
+		About: Gets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}
 		Arguments: [None]
 		return values: {'err': '>b', 'status': '>u1', 'mode': '>u1'}
 		port: 10		subport: 2
@@ -46,11 +46,13 @@ COMMUNICATION.S_GET_CONTROL:
 
 COMMUNICATION.S_GET_ENCODER:
 		About: Gets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}
-rguments: [None]
+		Arguments: [None]
 		return values: {'err': '>b', 'scrambler': '>u1', 'filter': '>u1', 'modulation': '>u1', 'rate': '>u1'}
 		port: 10		subport: 3
 
-er
+
+COMMUNICATION.S_GET_PAPOWER:
+		About: Gets the power value of S-band power amplifier
 		Arguments: [None]
 		return values: {'err': '>b', 'Power Amplifier Power': '>u1'}
 		port: 10		subport: 4
@@ -58,39 +60,48 @@ er
 
 COMMUNICATION.S_GET_STATUS:
 		About: Checks if the power of S-band power aamplifier is good and if the frequency lock is achieved
-guments: [None]
+		Arguments: [None]
 		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1'}
 		port: 10		subport: 5
 
 
-
+COMMUNICATION.S_GET_TR:
+		About: S-band Transmit Ready Indicator = {0: >2560B in buffer}
 		Arguments: [None]
 		return values: {'err': '>b', 'Transmit Ready': '>i4'}
 		port: 10		subport: 6
 
 
+COMMUNICATION.S_GET_BUFFER:
+		About: Gets the pointer to the buffer quantity in S-band. Input = {0:Count, 1:Underrun, 2:Overrun}
 		Arguments: [>B]
 		return values: {'err': '>b', 'pointer': '>u2'}
 		port: 10		subport: 7
 
 
-
+COMMUNICATION.S_GET_HK:
+		About: Gets S-band housekeeping info
 		Arguments: [None]
 		return values: {'err': '>b', 'Output Power': '>f', 'Power Amplifier Temperature': '>f', 'Top Temperature': '>f', 'Bottom Temperature': '>f', 'Battery Current': '>f', 'Battery Voltage': '>f', 'Power Amplifier Current': '>f', 'Power Amplifier Voltage': '>f'}
 		port: 10		subport: 8
 
-t
+
+COMMUNICATION.S_SOFT_RESET:
+		About: Reset S-band FPGA registers to default
 		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 10		subport: 9
 
 
 COMMUNICATION.S_GET_FULL_STATUS:
-		About: A full status of S-band non-configurable parametersguments: [None]
+		About: A full status of S-band non-configurable parameters
+		Arguments: [None]
 		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1', 'Transmit Ready': '>i4', 'Buffer Count': '>u2', 'Buffer Underrun': '>u2', 'Buffer Overrun': '>u2', 'Output Power': '>f', 'Power Amplifier Temperature': '>f', 'Top Temperature': '>f', 'Bottom Temperature': '>f', 'Battery Current': '>f', 'Battery Voltage': '>f', 'Power Amplifier Current': '>f', 'Power Amplifier Voltage': '>f', 'Firmware Version': '>f'}
 		port: 10		subport: 10
 
 
+COMMUNICATION.S_SET_FREQ:
+		About: Sets the frequency of S-band (MHz)
 		Arguments: [>f]
 		return values: {'err': '>b'}
 		port: 10		subport: 11
@@ -98,23 +109,27 @@ COMMUNICATION.S_GET_FULL_STATUS:
 
 COMMUNICATION.S_SET_CONTROL:
 		About: Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary
-guments: [>u1, >u1]
+		Arguments: [>u1, >u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 12
 
 
-
+COMMUNICATION.S_SET_ENCODER:
+		About: Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}. Input: 4 binary
 		Arguments: [>u1, >u1, >u1, >u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 13
 
 
+COMMUNICATION.S_SET_PAPOWER:
+		About: Sets the power value of S-band power amplifier (24, 26, 28, 30 dBm)
 		Arguments: [>u1]
 		return values: {'err': '>b'}
 		port: 10		subport: 14
 
 
-
+COMMUNICATION.S_GET_CONFIG:
+		About: A full status of S-band configurable parameters (the ones with set functions)
 		Arguments: [None]
 		return values: {'err': '>b', 'Frequency': '>f', 'Power Amplifier Power': '>u1', 'Power Amplifier status': '>u1', 'Power Amplifier mode': '>u1', 'Encoder scrambler': '>u1', 'Encoder filter': '>u1', 'Encoder modulation': '>u1', 'Encoder rate': '>u1'}
 		port: 10		subport: 15
@@ -126,6 +141,180 @@ COMMUNICATION.S_SET_CONFIG:
 		return values: {'err': '>b'}
 		port: 10		subport: 16
 
+
+COMMUNICATION.UHF_SET_SCW:
+		About: Sets UHF status control word (12 binary bits)
+		Arguments: [>u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1]
+		return values: {'err': '>b'}
+		port: 10		subport: 20
+
+
+COMMUNICATION.UHF_SET_FREQ:
+		About: Sets UHF frequency (MHz)
+		Arguments: [>u4]
+		return values: {'err': '>b'}
+		port: 10		subport: 21
+
+
+COMMUNICATION.UHF_SET_PIPE_T:
+		About: Sets UHF pipe timeout period
+		Arguments: [>u2]
+		return values: {'err': '>b'}
+		port: 10		subport: 22
+
+
+COMMUNICATION.UHF_SET_BEACON_T:
+		About: Sets UHF beacon message transmission period
+		Arguments: [>u2]
+		return values: {'err': '>b'}
+		port: 10		subport: 23
+
+
+COMMUNICATION.UHF_SET_AUDIO_T:
+		About: Sets UHF audio beacon period b/w transmissions
+		Arguments: [>u2]
+		return values: {'err': '>b'}
+		port: 10		subport: 24
+
+
+COMMUNICATION.UHF_SET_PARAMS:
+		About: Sets UHF freq, pipe_t, beacon_t, audio_t parameters. Input:4
+		Arguments: [>u4, >u2, >u2, >u2]
+		return values: {'err': '>b'}
+		port: 10		subport: 25
+
+
+COMMUNICATION.UHF_RESTORE:
+		About: Restore UHF default values
+		Arguments: [None]
+		return values: {'err': '>b', 'Confirm': '>u1'}
+		port: 10		subport: 26
+
+
+COMMUNICATION.UHF_LOW_PWR:
+		About: Puts UHF TRX into low power mode
+		Arguments: [None]
+		return values: {'err': '>b', 'Status': '>u1'}
+		port: 10		subport: 27
+
+
+COMMUNICATION.UHF_SET_DESTINATION:
+		About: Sets UHF destination callsign
+		Arguments: [>U6]
+		return values: {'err': '>b'}
+		port: 10		subport: 28
+
+
+COMMUNICATION.UHF_SET_SOURCE:
+		About: Sets UHF source callsign
+		Arguments: [>U6]
+		return values: {'err': '>b'}
+		port: 10		subport: 29
+
+
+COMMUNICATION.UHF_SET_MORSE:
+		About: Sets UHF morse code callsign (max 36)
+		Arguments: [>U36]
+		return values: {'err': '>b'}
+		port: 10		subport: 30
+
+
+COMMUNICATION.UHF_SET_MIDI:
+		About: Sets UHF MIDI audio beacon (max 36)
+		Arguments: [>U60]
+		return values: {'err': '>b'}
+		port: 10		subport: 31
+
+
+COMMUNICATION.UHF_SET_BEACON_MSG:
+		About: Sets UHF beacon message (max 120)
+		Arguments: [>U60]
+		return values: {'err': '>b'}
+		port: 10		subport: 32
+
+
+COMMUNICATION.UHF_SET_I2C:
+		About: Sets UHF I2C address (22 | 23)
+		Arguments: [>u1]
+		return values: {'err': '>b'}
+		port: 10		subport: 33
+
+
+COMMUNICATION.UHF_WRITE_FRAM:
+		About: Sets UHF FRAM address and write 16-byte data
+		Arguments: [>u4, >U16]
+		return values: {'err': '>b'}
+		port: 10		subport: 34
+
+
+COMMUNICATION.UHF_SECURE:
+		About: Puts UHF TRX into secure mode
+		Arguments: [None]
+		return values: {'err': '>b', 'Status': '>u1'}
+		port: 10		subport: 35
+
+
+COMMUNICATION.UHF_GET_FULL_STAT:
+		About: Returns the full status of all the UHF non-configurable parameters
+		Arguments: [None]
+		return values: {'err': '>b', 'HFXT': '>u1', 'UartBaud': '>u1', 'Reset': '>u1', 'RF Mode': '>u1', 'Echo': '>u1', 'BCN': '>u1', 'PIPE': '>u1', 'Bootloader': '>u1', 'CTS': '>u1', 'SEC': '>u1', 'FRAM': '>u1', 'RFTS': '>u1', 'Frequency': '>u4', 'PIPE timeout': '>u2', 'Beacon period': '>u2', 'Audio trans. period': '>u2', 'Uptime': '>u4', 'Packets out': '>u4', 'Packets in': '>u4', 'Packets in CRC16': '>u4', 'Temperature': '>f', 'Low power status': '>u1', 'Payload Size': '>u2', 'Secure key': '>u4'}
+		port: 10		subport: 36
+
+
+COMMUNICATION.UHF_GET_CALLSIGN:
+		About: Gets UHF destination and source callsign
+		Arguments: [None]
+		return values: {'err': '>b', 'Destination': '>U6', 'Source': '>U6'}
+		port: 10		subport: 37
+
+
+COMMUNICATION.UHF_GET_MORSE:
+		About: Gets UHF morse callsign
+		Arguments: [None]
+		return values: {'err': '>b', 'Morse': '>U36'}
+		port: 10		subport: 38
+
+
+COMMUNICATION.UHF_GET_MIDI:
+		About: Gets UHF MIDI audio beacon
+		Arguments: [None]
+		return values: {'err': '>b', 'MIDI': '>U60'}
+		port: 10		subport: 39
+
+
+COMMUNICATION.UHF_GET_BEACON_MSG:
+		About: Gets the beacon message
+		Arguments: [None]
+		return values: {'err': '>b', 'Beacon Message': '>U60'}
+		port: 10		subport: 40
+
+
+COMMUNICATION.UHF_GET_FRAM:
+		About: Reads the FRAM data
+		Arguments: [None]
+		return values: {'err': '>b', 'Morse': '>U16'}
+		port: 10		subport: 41
+
+
+COMMUNICATION.UHF_SET_PIPE:
+		About: Sets the communication to PIPE(transparent) mode
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 10		subport: 42
+
+
+COMMUNICATION.UHF_SET_BCN:
+		About: Starts the periodic beacon transmission
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 10		subport: 43
+
+
+COMMUNICATION.UHF_SET_ECHO:
+		About: Starts echo over UART
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 10		subport: 44
 
 
 HOUSEKEEPING.PARAMETER_REPORT:

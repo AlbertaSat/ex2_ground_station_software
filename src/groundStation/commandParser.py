@@ -154,8 +154,10 @@ class CommandParser(object):
 
     def __lexer(self, input):
         tokenList = []
-        tmp = re.split('([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)', input)
-        [tokenList.append(x.upper()) for x in tmp if not str(x).strip() == '']
+        # If an old command is not parsed, use '([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)' and make an issue
+        tmp = re.split('([-.]+|[0-9.]+|[a-zA-Z0-9_-]+|[\(\)])', input)
+        [tokenList.append(x.upper()) for x in tmp if not (
+            str(x).strip() == '' or str(x).strip() == ',')]  # to accept ',' as delimiter
         return tokenList
 
 

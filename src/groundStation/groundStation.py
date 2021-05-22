@@ -52,6 +52,7 @@ apps = vals.APP_DICT
 
 class groundStation(object):
     """ Constructor """
+
     def __init__(self, opts):
         self.myAddr = apps['GND']
         self.parser = CommandParser()
