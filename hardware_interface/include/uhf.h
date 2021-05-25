@@ -13,9 +13,9 @@
  */
 
 /**
- * @file uhf.h
- * @author Unknown, Dustin Wagner
- * @date Unknown
+ * @file uhf.c
+ * @author Arash Yazdani, Dustin Wagner
+ * @date 2020-10-26
  */
 
 #ifndef UHF_HAL_H
