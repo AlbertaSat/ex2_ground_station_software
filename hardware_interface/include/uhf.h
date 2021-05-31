@@ -137,5 +137,6 @@ UHF_return HAL_UHF_getFRAM(UHF_framStruct* U_FRAM);
 UHF_return HAL_UHF_getSecureKey(uint32_t* U_secure);
 
 UHF_return UHF_getHK(UHF_housekeeping* uhf_hk);
+UHF_return UHF_convert_endianness(UHF_housekeeping* uhf_hk);
 
 #endif /* UHF_HAL_H */
