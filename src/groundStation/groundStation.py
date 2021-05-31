@@ -52,6 +52,7 @@ apps = vals.APP_DICT
 
 class groundStation(object):
     """ Constructor """
+
     def __init__(self, opts):
         self.myAddr = apps['GND']
         self.parser = CommandParser()
@@ -67,7 +68,7 @@ class groundStation(object):
             self.__fifo__()
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
-        self.rdp_timeout = 5000  # 10 seconds
+        self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
 
     """ Private Methods """
@@ -83,7 +84,7 @@ class groundStation(object):
     def __uart__(self, device):
         """ initialize uart interface """
         libcsp.kiss_init(device, 9600, 512, 'uart')
-        libcsp.rtable_set(1, 0, 'uart', libcsp.CSP_NO_VIA_ADDRESS)
+        libcsp.rtable_load('1 uart, 4 uart 1')
 
     def __connectionManager__(self, server, port):
         """ Get currently open conneciton if it exists, and has not expired,
@@ -91,9 +92,9 @@ class groundStation(object):
         current = time.time()
         timeout = self.rdp_timeout / 1000
         if server not in self.server_connection or port not in self.server_connection[
-                server] or self.server_connection[server][port]['time of birth'] + timeout <= current:
+                server] or self.server_connection[server][port]['time initialized'] + timeout <= current:
             if server in self.server_connection and port in self.server_connection[
-                    server] and self.server_connection[server][port]['time of birth'] + timeout <= current:
+                    server] and self.server_connection[server][port]['time initialized'] + timeout <= current:
                 libcsp.close(self.server_connection[server][port]['conn'])
 
             try:
@@ -105,7 +106,7 @@ class groundStation(object):
 
             self.server_connection[server][port] = {
                 'conn': conn,
-                'time of birth': time.time()
+                'time initialized': time.time()
             }
 
         return self.server_connection[server][port]['conn']
@@ -261,6 +262,13 @@ class options(object):
             type=str,
             default='/dev/ttyUSB0',
             help='External device file')
+
+        self.parser.add_argument(
+            '-t',
+            '--timeout',
+            type=int,
+            default='10000', # 10 seconds
+            help='RDP connection timeout')
         return self.parser.parse_args(sys.argv[1:])
 
 

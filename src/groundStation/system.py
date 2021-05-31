@@ -124,6 +124,20 @@ class SystemValues(object):
                     }
                 }
             },
+            'GENERAL': {
+                'port' : 11,
+                'subservice' : {
+                    'REBOOT': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>B'],  # mode. Can be 'A', 'B', 'G'
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    }
+                }
+            },
             'COMMUNICATION': {
                 'port': 10,
                 'subservice': {
@@ -205,7 +219,7 @@ class SystemValues(object):
                             'args': ['>B'],
                             'returns': {
                                 'err': '>b',
-                                'pointer': '>u2',
+                                'buffer': '>u2',
                             }
                         }
                     },
@@ -283,7 +297,11 @@ class SystemValues(object):
                         }
                     },
                     'S_SET_ENCODER': {
+<<<<<<< HEAD
                         'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}. Input: 4 binary',
+=======
+                        'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={1:half, 0:full}. Input: 4 binary',
+>>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1'],
@@ -330,8 +348,13 @@ class SystemValues(object):
                             }
                         }
                     },
+<<<<<<< HEAD
                     'UHF_SET_STATUS_CTRL': {
                         'what': 'Sets UHF status control word (12 binary bits)',
+=======
+                    'UHF_SET_SCW': {
+                        'what': 'Sets UHF status control word',
+>>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 20,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
@@ -341,7 +364,11 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_FREQ': {
+<<<<<<< HEAD
                         'what': 'Sets UHF frequency (MHz)',
+=======
+                        'what': 'Sets UHF frequency (Hz)',
+>>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 21,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -351,10 +378,14 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_PIPE_T': {
+<<<<<<< HEAD
                         'what': 'Sets UHF pipe timeout period',
+=======
+                        'what': 'Sets UHF PIPE timeout period',
+>>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 22,
                         'inoutInfo': {
-                            'args': ['>u2'],
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -364,7 +395,7 @@ class SystemValues(object):
                         'what': 'Sets UHF beacon message transmission period',
                         'subPort': 23,
                         'inoutInfo': {
-                            'args': ['>u2'],
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -374,7 +405,7 @@ class SystemValues(object):
                         'what': 'Sets UHF audio beacon period b/w transmissions',
                         'subPort': 24,
                         'inoutInfo': {
-                            'args': ['>u2'],
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -384,7 +415,7 @@ class SystemValues(object):
                         'what': 'Sets UHF freq, pipe_t, beacon_t, audio_t parameters. Input:4',
                         'subPort': 25,
                         'inoutInfo': {
-                            'args': ['>u4', '>u2', '>u2', '>u2'],
+                            'args': ['>u4', '>u4', '>u4', '>u4'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -394,10 +425,9 @@ class SystemValues(object):
                         'what': 'Restore UHF default values',
                         'subPort': 26,
                         'inoutInfo': {
-                            'args': None,
+                            'args': ['>u1'],
                             'returns': {
                                 'err': '>b',
-                                'Confirm': '>u1',
                             }
                         }
                     },
@@ -405,10 +435,9 @@ class SystemValues(object):
                         'what': 'Puts UHF TRX into low power mode',
                         'subPort': 27,
                         'inoutInfo': {
-                            'args': None,
+                            'args': ['>u1'],
                             'returns': {
                                 'err': '>b',
-                                'Status': '>u1',
                             }
                         }
                     },
@@ -443,21 +472,34 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_MIDI': {
+<<<<<<< HEAD
                         'what': 'Sets UHF MIDI audio beacon (max 36)',
+=======
+                        'what': 'Sets UHF MIDI audio beacon (max 36 notes)',
+>>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 31,
                         'inoutInfo': {
-                            'args': ['>U36'],
+                            # increase packet size and switch to >U108
+                            'args': ['>U60'],
                             'returns': {
                                 'err': '>b',
                             }
                         }
                     },
                     'UHF_SET_BEACON_MSG': {
+<<<<<<< HEAD
                         'what': 'Sets UHF beacon message (max 120)',
                         'subPort': 32,
                         'inoutInfo': {
                             # Switch to 120 after packet configuration
                             'args': ['>u1', '>U36'],
+=======
+                        'what': 'Sets UHF beacon message (max 98)',
+                        'subPort': 32,
+                        'inoutInfo': {
+                            # Switch to >U97 after packet configuration
+                            'args': ['>U60'],
+>>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                             'returns': {
                                 'err': '>b',
                             }
@@ -487,10 +529,9 @@ class SystemValues(object):
                         'what': 'Puts UHF TRX into secure mode',
                         'subPort': 35,
                         'inoutInfo': {
-                            'args': None,
+                            'args': ['>u1'],
                             'returns': {
                                 'err': '>b',
-                                'Status': '>u1',
                             }
                         }
                     },
@@ -501,29 +542,28 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'RFTS': '>u1',
-                                'FRAM': '>u1',
-                                'SEC': '>u1',
-                                'CTS': '>u1',
-                                'Boot': '>u1',
-                                'Pipe': '>u1',
-                                'BCN': '>u1',
-                                'Echo': '>u1',
-                                'RF Mode1': '>u1',  # Use table 9 to improve
-                                'RF Mode2': '>u1',
-                                'RF Mode3': '>u1',
+                                'HFXT': '>u1',
+                                'UartBaud': '>u1',
                                 'Reset': '>u1',
+                                'RF Mode': '>u1',
+                                'Echo': '>u1',
+                                'BCN': '>u1',
+                                'PIPE': '>u1',
+                                'Bootloader': '>u1',
+                                'CTS': '>u1',
+                                'SEC': '>u1',
+                                'FRAM': '>u1',
+                                'RFTS': '>u1',
                                 'Frequency': '>u4',
-                                'PIPE timeout': '>u2',
-                                'Beacon period': '>u2',
-                                'Audio trans. period': '>u2',
+                                'PIPE timeout': '>u4',
+                                'Beacon period': '>u4',
+                                'Audio trans. period': '>u4',
                                 'Uptime': '>u4',
                                 'Packets out': '>u4',
                                 'Packets in': '>u4',
                                 'Packets in CRC16': '>u4',
                                 'Temperature': '>f',
                                 'Low power status': '>u1',
-                                'Firmware Version': '>u1',
                                 'Payload Size': '>u2',
                                 'Secure key': '>u4',
                             }
@@ -559,7 +599,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'MIDI': '>U36',
+                                'MIDI': '>U60',
                             }
                         }
                     },
@@ -570,7 +610,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Beacon Message': '>U36',  # Switch to 120 after configuration
+                                'Beacon Message': '>U60',
                             }
                         }
                     },
@@ -578,10 +618,40 @@ class SystemValues(object):
                         'what': 'Reads the FRAM data',
                         'subPort': 41,
                         'inoutInfo': {
-                            'args': None,  # no address?
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',
                                 'FRAM': '>U16',
+                            }
+                        }
+                    },
+                    'UHF_SET_PIPE': {
+                        'what': 'Set the communication to the PIPE(transparent) mode',
+                        'subPort': 42,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_BCN': {
+                        'what': 'Set the communication to the beacon mode',
+                        'subPort': 43,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_SET_ECHO': {
+                        'what': 'Starts echo over UART',
+                        'subPort': 44,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
                             }
                         }
                     },
@@ -596,7 +666,9 @@ class SystemValues(object):
                             'args': ['>B'],
                             'returns': {
                                 'structureID': '>B',
-                                'temp': '>f4',
+                                'current': '>f4',
+                                'voltage': '>f4',
+                                'temperature': '>f4',
                             }
                         }
                     }
