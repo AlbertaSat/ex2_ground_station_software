@@ -98,7 +98,7 @@ class groundStation(object):
 
             try:
                 conn = libcsp.connect(
-                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
+                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
             except Exception as e:
                 print(e)
                 return None
