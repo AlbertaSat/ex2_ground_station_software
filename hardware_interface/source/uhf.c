@@ -398,33 +398,28 @@ UHF_return UHF_getHK(UHF_housekeeping* uhf_hk) {
     UHF_return temp;
     UHF_return return_code = 0;
     
-    #ifndef UHF_IS_STUBBED
-        //If any return code isn't U_GOOD_CONFIG it will get caught. multiple codes
-        //won't be caught. Maybe needs more robust solution
-        if (temp = HAL_UHF_getSCW(&uhf_hk->scw) != 0) return_code = temp;
-        if (temp = HAL_UHF_getFreq(&uhf_hk->freq != 0)) return_code = temp;
-        if (temp = HAL_UHF_getUptime(&uhf_hk->uptime) != 0) return_code = temp;
-        if (temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out) != 0) return_code = temp;
-        if (temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in) != 0) return_code = temp;
-        if (temp = HAL_UHF_getPcktsInCRC16(&uhf_hk->pckts_in_crc16) != 0) return_code = temp;
-        if (temp = HAL_UHF_getPipeT(&uhf_hk->pipe_t) != 0) return_code = temp;
-        if (temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t) != 0) return_code = temp;
-        if (temp = HAL_UHF_getAudioT(&uhf_hk->audio_t) != 0) return_code = temp;
-        if (temp = HAL_UHF_getTemp(&uhf_hk->temperature) != 0) return_code = temp;
-        if (temp = HAL_UHF_getLowPwr(&uhf_hk->low_pwr_stat) != 0) return_code = temp;
-        if (temp = HAL_UHF_getPayload(&uhf_hk->payload_size) != 0) return_code = temp;
-        if (temp = HAL_UHF_getSecureKey(&uhf_hk->secure_key) != 0) return_code = temp;
-
-    #else
-        return_code = IS_STUBBED_U;
-    #endif
+    
+    //If any return code isn't U_GOOD_CONFIG it will get caught. multiple codes
+    //won't be caught. Maybe needs more robust solution
+    if (temp = HAL_UHF_getSCW(&uhf_hk->scw) != 0) return_code = temp;
+    if (temp = HAL_UHF_getFreq(&uhf_hk->freq != 0)) return_code = temp;
+    if (temp = HAL_UHF_getUptime(&uhf_hk->uptime) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPcktsInCRC16(&uhf_hk->pckts_in_crc16) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPipeT(&uhf_hk->pipe_t) != 0) return_code = temp;
+    if (temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t) != 0) return_code = temp;
+    if (temp = HAL_UHF_getAudioT(&uhf_hk->audio_t) != 0) return_code = temp;
+    if (temp = HAL_UHF_getTemp(&uhf_hk->temperature) != 0) return_code = temp;
+    if (temp = HAL_UHF_getLowPwr(&uhf_hk->low_pwr_stat) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPayload(&uhf_hk->payload_size) != 0) return_code = temp;
+    if (temp = HAL_UHF_getSecureKey(&uhf_hk->secure_key) != 0) return_code = temp;
     
     return return_code;
 }
 
 UHF_return UHF_convert_endianness(UHF_housekeeping* uhf_hk) {
     //uhf_hk->scw[i]
-  
     uhf_hk->freq = csp_hton32(uhf_hk->freq);
     uhf_hk->pipe_t = csp_hton32(uhf_hk->pipe_t);
     uhf_hk->beacon_t = csp_hton32(uhf_hk->beacon_t);
