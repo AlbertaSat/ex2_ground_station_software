@@ -297,11 +297,7 @@ class SystemValues(object):
                         }
                     },
                     'S_SET_ENCODER': {
-<<<<<<< HEAD
-                        'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}. Input: 4 binary',
-=======
                         'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={1:half, 0:full}. Input: 4 binary',
->>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1'],
@@ -348,13 +344,8 @@ class SystemValues(object):
                             }
                         }
                     },
-<<<<<<< HEAD
-                    'UHF_SET_STATUS_CTRL': {
-                        'what': 'Sets UHF status control word (12 binary bits)',
-=======
                     'UHF_SET_SCW': {
                         'what': 'Sets UHF status control word',
->>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 20,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
@@ -364,11 +355,7 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_FREQ': {
-<<<<<<< HEAD
-                        'what': 'Sets UHF frequency (MHz)',
-=======
                         'what': 'Sets UHF frequency (Hz)',
->>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 21,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -378,11 +365,7 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_PIPE_T': {
-<<<<<<< HEAD
-                        'what': 'Sets UHF pipe timeout period',
-=======
                         'what': 'Sets UHF PIPE timeout period',
->>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 22,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -472,11 +455,7 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_MIDI': {
-<<<<<<< HEAD
-                        'what': 'Sets UHF MIDI audio beacon (max 36)',
-=======
                         'what': 'Sets UHF MIDI audio beacon (max 36 notes)',
->>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                         'subPort': 31,
                         'inoutInfo': {
                             # increase packet size and switch to >U108
@@ -487,19 +466,11 @@ class SystemValues(object):
                         }
                     },
                     'UHF_SET_BEACON_MSG': {
-<<<<<<< HEAD
-                        'what': 'Sets UHF beacon message (max 120)',
-                        'subPort': 32,
-                        'inoutInfo': {
-                            # Switch to 120 after packet configuration
-                            'args': ['>u1', '>U36'],
-=======
                         'what': 'Sets UHF beacon message (max 98)',
                         'subPort': 32,
                         'inoutInfo': {
                             # Switch to >U97 after packet configuration
                             'args': ['>U60'],
->>>>>>> 8de887de491dac6241a10a4ed9ec1b77f0d64060
                             'returns': {
                                 'err': '>b',
                             }
@@ -738,7 +709,7 @@ class SystemValues(object):
                 'subservice': {
                     'EPS_HARD_RESET': {  # Not recommended to use by the operator
                         'what': 'Does a hard reset on EPS (Resets the config)',
-                        'subPort': 2,
+                        'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u2'],  # 17767
                             'returns': {
@@ -747,6 +718,7 @@ class SystemValues(object):
                         }
                     },
                     # Note: soft reset is done VIA CSP services - refer to docs
+                    # magic number 0x80078007 must be sent with csp port 4 and no subport number
                 }
             },
 
@@ -813,7 +785,7 @@ class SystemValues(object):
                                 'outputConverterState': '<B',  # 4 bits!
                                 'outputStatus': '<u4',
                                 'outputFaultStatus': '<u4',
-                                'reserved': '<u2',
+                                'protectedOutputAccessCnt': '<u2',
                                 'outputOnDelta1': '<u2',
                                 'outputOnDelta2': '<u2',
                                 'outputOnDelta3': '<u2',
