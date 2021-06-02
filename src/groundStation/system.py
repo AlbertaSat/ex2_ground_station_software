@@ -650,7 +650,7 @@ class SystemValues(object):
                 'port': 16,  # As per EPS docs
                 'subservice': {
                     'RESET_WDT': {
-                        'what': 'Resets the ground station watch dog timer',
+                        'what': 'Resets the ground station watchdog timer',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['<u2'],  # key (see docs)
