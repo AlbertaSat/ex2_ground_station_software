@@ -704,7 +704,7 @@ class SystemValues(object):
                 }
             },
 
-            'RESET': {
+            'EPS_RESET': {
                 'port': 15,  # As per EPS docs
                 'subservice': {
                     'EPS_HARD_RESET': {  # Not recommended to use by the operator
@@ -713,13 +713,26 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': ['<u2'],  # 17767
                             'returns': {
-                                'err': '>b',  # gives 4. What's 4? Probably wrong key
+                                'err': '>b',
                             }
                         }
                     },
-                    # Note: soft reset is done VIA CSP services - refer to docs
-                    # magic number 0x80078007 must be sent with csp port 4 and no subport number
                 }
+            },
+
+            'REBOOT': { # Does not work atm!
+                'port': 4,  # As per CSP docs
+                # EPS soft reset
+                # Not recommended to use by the operator
+                # no subport (command ID) needed.
+                'what': 'Does a soft reset on EPS (reboot)',
+                'inoutInfo': {
+                    'args': ['<u4'],  # 2147975175
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+                # magic number 0x80078007 must be sent with csp port 4 and no subport number
             },
 
             'CLI': {
