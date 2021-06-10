@@ -25,10 +25,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#define MAX_W_CMDLEN 120
-#define MAX_W_ANSLEN 30
-#define MAX_R_CMDLEN 30
-#define MAX_R_ANSLEN 150
+// Max lengths for ESTTC strings
+#define MAX_UHF_W_CMDLEN 120
+#define MAX_UHF_W_ANSLEN 30
+#define MAX_UHF_R_CMDLEN 30
+#define MAX_UHF_R_ANSLEN 150
 #define MIN_U_FREQ 435000000
 #define MAX_U_FREQ 438000000
 
@@ -54,7 +55,7 @@ typedef enum{
 
 typedef struct {
   uint8_t len;
-  uint8_t message[MAX_W_CMDLEN];
+  uint8_t message[MAX_UHF_W_CMDLEN];
 } uhf_configStruct;
 
 typedef struct {
