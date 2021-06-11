@@ -13,9 +13,30 @@ To start the ground code!
 
 # If you don't like docker:
 
-Run (may need to run with `sudo`):
-`yarn build`
+#### You will need to first make sure you have yarn:
+`sudo apt-get update`
+`sudo apt-get install yarn -y`
+
+#### Run install dependencies and run the ground station (may need to run with `sudo`):
+`yarn build` (only need to run this once)
 `yarn run:cli <options>`
+
+#### Troubleshooting
+
+On some systems, you may see something like this:
+```
+00h00m00s 0/0: : ERROR: [Errno 2] No such file or directory: 'build'
+```
+
+In this case, you shold run the following commands:
+
+`sudo apt remove cmdtest`
+`sudo apt remove yarn`
+`curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -`
+`echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list`
+`sudo apt-get update`
+`sudo apt-get install yarn -y`
+Now try again.
 
 ## The command language:
 
