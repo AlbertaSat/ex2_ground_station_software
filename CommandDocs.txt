@@ -2,15 +2,15 @@
 Note: arguments and return types are given as numpy types
 
 
-TIME_MANAGEMENT.GET_TIME:
-		About: None
+TIME_MANAGEMENT.GET_EPS_TIME:
+		About: Get EPS UNIX timestamp
 		Arguments: [None]
 		return values: {'err': '>b', 'timestamp': '>u4'}
 		port: 8		subport: 0
 
 
-TIME_MANAGEMENT.SET_TIME:
-		About: None
+TIME_MANAGEMENT.SET_EPS_TIME:
+		About: Set EPS UNIX timestamp
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 8		subport: 1
@@ -28,6 +28,20 @@ TIME_MANAGEMENT.GET_PRECISE_TIME:
 		Arguments: [>B, >u4, >u4, >u4, >u4, >u4, >u4, >u4, >u4]
 		return values: {'err': '>B', 'requestTimeInS': '>u4', 'requestSecondFraction': '>u4', 'receiveTimeInS': '>u4', 'receiveSecondFraction': '>u4', 'transmitTimeInS': '>u4', 'transmitSecondFraction': '>u4', 'receptionTimeInS': '>u4', 'receptionSecondFraction': '>u4'}
 		port: 8		subport: 3
+
+
+TIME_MANAGEMENT.GET_TIME:
+		About: Get OBC UNIX timestamp
+		Arguments: [None]
+		return values: {'err': '>b', 'timestamp': '>u4'}
+		port: 8		subport: 10
+
+
+TIME_MANAGEMENT.SET_TIME:
+		About: Set OBC UNIX timestamp
+		Arguments: [>u4]
+		return values: {'err': '>b'}
+		port: 8		subport: 11
 
 
 COMMUNICATION.S_GET_FREQ:
