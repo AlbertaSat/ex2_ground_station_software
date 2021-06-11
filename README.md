@@ -15,7 +15,7 @@ To start the ground code!
 
 Run (may need to run with `sudo`):
 `yarn build`
-`yarn run:cli`
+`yarn run:cli <options>`
 
 ## The command language:
 
