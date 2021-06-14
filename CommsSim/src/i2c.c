@@ -21,10 +21,21 @@ void i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
     i2cSend(I2C_BUS_REG, length, command);
 
     /* Wait until Bus Busy is cleared */
-    while(i2cIsBusBusy(I2C_BUS_REG) == true);
+    int i=0;
+    while(i2cIsBusBusy(I2C_BUS_REG) == true && i<100){
+        i++;
+    }
+
+    i = 0;
 
     /* Wait until Stop is detected */
-    while(i2cIsStopDetected(I2C_BUS_REG) == 0);
+    while(i2cIsStopDetected(I2C_BUS_REG) == 0){
+        if(i==1000){
+            i2cSetStop(I2C_BUS_REG);
+            break;
+        }
+        i++;
+    }
 
     /* Clear the Stop condition */
     i2cClearSCD(I2C_BUS_REG);
