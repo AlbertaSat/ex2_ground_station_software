@@ -13,31 +13,26 @@ To start the ground code!
 
 # If you don't like docker:
 
-* Dependencies:
-    you must have cloned the [satelliteSim](https://github.com/AlbertaSat/SatelliteSim/) (or at least the [libcsp](https://github.com/AlbertaSat/SatelliteSim/) repo) and initialized the submodules
+#### 1. You will need to first make sure you have yarn:
+`sudo apt-get update`
+`sudo apt-get install yarn -y`
 
-* Building libcsp:
-    Go to libcsp root directory and configure the project as follows,
-    ```./waf configure --with-os=posix --enable-rdp --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-examples```
+#### 2. Run install dependencies and run the ground station (may need to run with `sudo`):
+`yarn build` (only need to run this once)
 
-    And then build csp,
-    ```./waf build```
+`yarn run:cli <options>`
 
-    NOTE: If your build fails due to socketcan calls, either try building with the ```--enable-can-socketcan``` option, or go comment out the 'pycsp_can_socketcan_init' function along with the line ```{"can_socketcan_init",  pycsp_can_socketcan_init,  METH_VARARGS, ""}``` from pycsp.c
+#### Troubleshooting
 
-    Note that this is built as a 64 bit program, and so you must remove the '-m32' CFLAG from the SatelliteSim makefile
+On some systems, you may see something like this:
+```
+00h00m00s 0/0: : ERROR: [Errno 2] No such file or directory: 'build'
+```
 
-* Now check that you have,
-    a. a file called 'zmqproxy' in libcsp/build/. This executable will translate ZMQ requests to CSP on your local machine for development, and maybe for inter-ground station communication in the future.
+In this case, you shold run the following command:
 
-    b. a file called libcsp_py3.so. This is the compiled version of libcsp/src/bindings/python/pycsp.c, and gives access to the CSP functions VIA a python class
-
-* Running this ground groundStation code
-
-    In the root directory of this project, run
-    ```LD_LIBRARY_PATH=<relative_path_to_libcsp>/libcsp/build PYTHONPATH=<relative_path_to_libcsp>/libcsp/build python3 Src/groundStation.py -I zmq```
-
-    NOTE: nothing will happen if either there is no xmqproxy running or if your CSP server is running!
+`bash refresh.sh`
+Now try step 2 again.
 
 ## The command language:
 
@@ -72,5 +67,3 @@ Using this description, a parser has been constructed that will allow us to add 
 }
 Code Snippet 5: Command structure object
 Incoming TM responses are automatically parsed to the return types described in the command structure object. Note that all command responses shall have the first (signed) byte as the error code, which is ‘0’ upon success.
-
-
