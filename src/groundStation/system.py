@@ -631,15 +631,12 @@ class SystemValues(object):
             'HOUSEKEEPING': {
                 'port': 9,
                 'subservice': {
-                    'PARAMETER_REPORT': {
-                        'subPort': 0,
+                    'SET_MAX_FILES': {
+                        'subPort': 1,
                         'inoutInfo': {
-                            'args': ['>B'],
+                            'args': ['>u2'],
                             'returns': {
-                                'structureID': '>B',
-                                'current': '>f4',
-                                'voltage': '>f4',
-                                'temperature': '>f4',
+                                'err': '>b'
                             }
                         }
                     }
