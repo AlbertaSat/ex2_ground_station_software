@@ -57,7 +57,9 @@ class groundStation(object):
         self.myAddr = apps['GND']
         self.parser = CommandParser()
         self.server_connection = defaultdict(dict)
-        libcsp.init(self.myAddr, 'host', 'model', '1.2.3', 100, 300)
+        self.number_of_buffers = 100
+        self.buffer_size = 300
+        libcsp.init(self.myAddr, 'host', 'model', '1.2.3', self.number_of_buffers, self.buffer_size)
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
         elif opts.interface == 'uart':

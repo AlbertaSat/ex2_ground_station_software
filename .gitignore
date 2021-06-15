@@ -13,6 +13,8 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+libcsp/
+node_modules/
 .eggs/
 lib/
 lib64/

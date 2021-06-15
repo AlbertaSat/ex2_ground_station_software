@@ -325,98 +325,133 @@ HOUSEKEEPING.PARAMETER_REPORT:
 
 
 GROUND_STATION_WDT.RESET_WDT:
-		About: None
-		Arguments: [>u2]
+		About: Resets the ground station watchdog timer
+		Arguments: [<u2]
 		return values: {'err': '>B'}
 		port: 16		subport: 0
 
 
 GROUND_STATION_WDT.GET_WDT_REMAINING:
-		About: None
+		About: Gets GS watchdog time left in seconds
 		Arguments: [None]
-		return values: {'err': '>B', 'timeLeftInS': '>u4'}
+		return values: {'err': '>B', 'timeLeftInS': '<u4'}
 		port: 16		subport: 1
 
 
-GROUND_STATION_WDT.EPS_HARD_RESET:
-		About: None
-		Arguments: [>u2]
-		return values: {'err': '>b'}
+GROUND_STATION_WDT.CLEAR_WDT_RESET_MARK:
+		About: Clears GS watchdog reset mark
+		Arguments: [<u2]
+		return values: {'err': '>B'}
 		port: 16		subport: 2
 
 
-GROUND_STATION_WDT.PAUSE_EPS_DEPLOYMENT_ACTION:
-		About: None
-		Arguments: [>B, >u4]
+GROUND_STATION_WDT.CHECK_STARTUP_POST_RESET:
+		About: Checks if startup happened after GS watchdog reset
+		Arguments: [None]
+		return values: {'err': '>B', 'startupAfterGsWdt': '?'}
+		port: 16		subport: 3
+
+
+GROUND_STATION_WDT.RESET_STATUS_TIMER_FILES:
+		About: Updates status and timer files of GS watchdog with initial values
+		Arguments: [<u2]
+		return values: {'err': '>B'}
+		port: 16		subport: 4
+
+
+EPS_RESET.EPS_HARD_RESET:
+		About: Does a hard reset on EPS (Resets the config). Be cautious.
+		Arguments: [<u2]
 		return values: {'err': '>b'}
-		port: 16		subport: 8
+		port: 15		subport: 1
+
+
+REBOOT:
+		About: Does a soft reset on EPS (reboot). Be cautious.
+		Arguments: [<u4]
+		return values: {'err': '>b'}
+		port: 4		subport: None
 
 
 CLI.GENERAL_TELEMETERY:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'timestamp': '>u4', 'uptimeInS': '>f8', 'gs_wdt_time_left_s': '>u4', 'counter_wdt_gs': '>u4', 'mpptConverterVoltage0_mV': '>u2', 'mpptConverterVoltage1_mV': '>u2', 'mpptConverterVoltage2_mV': '>u2', 'mpptConverterVoltage3_mV': '>u2', 'curSolarPanels0_mA': '>u2', 'curSolarPanels1_mA': '>u2', 'curSolarPanels2_mA': '>u2', 'curSolarPanels3_mA': '>u2', 'curSolarPanels4_mA': '>u2', 'curSolarPanels5_mA': '>u2', 'curSolarPanels6_mA': '>u2', 'curSolarPanels7_mA': '>u2', 'vBatt_mV': '>u2', 'curSolar_mA': '>u2', 'curBattIn_mA': '>u2', 'curBattOut_mA': '>u2', 'curOutput0_mA': '>u2', 'curOutput1_mA': '>u2', 'curOutput2_mA': '>u2', 'curOutput3_mA': '>u2', 'curOutput4_mA': '>u2', 'curOutput5_mA': '>u2', 'curOutput6_mA': '>u2', 'curOutput7_mA': '>u2', 'curOutput8_mA': '>u2', 'curOutput9_mA': '>u2', 'curOutput10_mA': '>u2', 'curOutput11_mA': '>u2', 'curOutput12_mA': '>u2', 'curOutput13_mA': '>u2', 'curOutput14_mA': '>u2', 'curOutput15_mA': '>u2', 'curOutput16_mA': '>u2', 'curOutput17_mA': '>u2', 'AOcurOutput0_mA': '>u2', 'AOcurOutput1_mA': '>u2', 'outputConverterVoltage0': '>u2', 'outputConverterVoltage1': '>u2', 'outputConverterVoltage2': '>u2', 'outputConverterVoltage3': '>u2', 'outputConverterVoltage4': '>u2', 'outputConverterVoltage5': '>u2', 'outputConverterVoltage6': '>u2', 'outputConverterVoltage7': '>u2', 'outputConverterState': '>B', 'outputStatus': '>u4', 'outputFaultStatus': '>u4', 'outputOnDelta0': '>u2', 'outputOnDelta1': '>u2', 'outputOnDelta2': '>u2', 'outputOnDelta3': '>u2', 'outputOnDelta4': '>u2', 'outputOnDelta5': '>u2', 'outputOnDelta6': '>u2', 'outputOnDelta7': '>u2', 'outputOnDelta8': '>u2', 'outputOnDelta9': '>u2', 'outputOnDelta10': '>u2', 'outputOnDelta11': '>u2', 'outputOnDelta12': '>u2', 'outputOnDelta13': '>u2', 'outputOnDelta14': '>u2', 'outputOnDelta15': '>u2', 'outputOnDelta16': '>u2', 'outputOnDelta17': '>u2', 'outputOffDelta0': '>u2', 'outputOffDelta1': '>u2', 'outputOffDelta2': '>u2', 'outputOffDelta3': '>u2', 'outputOffDelta4': '>u2', 'outputOffDelta5': '>u2', 'outputOffDelta6': '>u2', 'outputOffDelta7': '>u2', 'outputOffDelta8': '>u2', 'outputOffDelta9': '>u2', 'outputOffDelta10': '>u2', 'outputOffDelta11': '>u2', 'outputOffDelta12': '>u2', 'outputOffDelta13': '>u2', 'outputOffDelta14': '>u2', 'outputOffDelta15': '>u2', 'outputOffDelta16': '>u2', 'outputOffDelta17': '>u2', 'outputFaultCount0': '>u2', 'outputFaultCount1': '>u2', 'outputFaultCount2': '>u2', 'outputFaultCount3': '>u2', 'outputFaultCount4': '>u2', 'outputFaultCount5': '>u2', 'outputFaultCount6': '>u2', 'outputFaultCount7': '>u2', 'outputFaultCount8': '>u2', 'outputFaultCount9': '>u2', 'outputFaultCount10': '>u2', 'outputFaultCount11': '>u2', 'outputFaultCount12': '>u2', 'outputFaultCount13': '>u2', 'outputFaultCount14': '>u2', 'outputFaultCount15': '>u2', 'outputFaultCount16': '>u2', 'outputFaultCount17': '>u2', 'temp0_c': '>b', 'temp1_c': '>b', 'temp2_c': '>b', 'temp3_c': '>b', 'temp4_c': '>b', 'temp5_c': '>b', 'temp6_c': '>b', 'temp7_c': '>b', 'temp8_c': '>b', 'temp9_c': '>b', 'temp10_c': '>b', 'temp11_c': '>b', 'temp12_c': '>b', 'temp13_c': '>b', 'battState': '>B', 'mpptMode': '>B', 'battHeaterMode': '>B', 'battHeaterState': '>B'}
-		port: 13		subport: 0
+		return values: {'err': '>b', 'timestamp': '<f8', 'uptimeInS': '<u4', 'bootCnt': '<u4', 'gs_wdt_time_left_s': '<u4', 'counter_wdt_gs': '<u4', 'mpptConverterVoltage1_mV': '<u2', 'mpptConverterVoltage2_mV': '<u2', 'mpptConverterVoltage3_mV': '<u2', 'mpptConverterVoltage4_mV': '<u2', 'curSolarPanels1_mA': '<u2', 'curSolarPanels2_mA': '<u2', 'curSolarPanels3_mA': '<u2', 'curSolarPanels4_mA': '<u2''curSolarPanels5_mA': '<u2', 'curSolarPanels6_mA': '<u2', 'curSolarPanels7_mA': '<u2', 'curSolarPanels8_mA': '<u2', 'vBatt_mV': '<u2', 'curSolar_mA': '<u2', 'curBattIn_mA': '<u2', 'curBattOut_mA': '<u2', 'curOutput1_mA': '<u2', 'curOutput2_mA': '<u2', 'curOutput3_mA': '<u2', 'curOutput4_mA': '<u2', 'curOutput5_mA': '<u2', 'curOutput6_mA': '<u2', 'curOutput7_mA': '<u2', 'curOutput8_mA': '<u2', 'curOutput9_mA': '<u2', 'curOutput10_mA': '<u2', 'curOutput11_mA': '<u2', 'curOutput12_mA': '<u2', 'curOutput13_mA': '<u2', 'curOutput14_mA': '<u2', 'curOutput15_mA': '<u2', 'curOutput16_mA': '<u2', 'curOutput17_mA': '<u2', 'curOutput18_mA': '<u2', 'AOcurOutput1_mA': '<u2', 'AOcurOutput2_mA': '<u2', 'outputConverterVoltage1': '<u2', 'outputConverterVoltage2': '<u2', 'outputConverterVoltage3': '<u2', 'outputConverterVoltage4': '<u2', 'outputConverterVoltage5': '<u2', 'outputConverterVoltage6': '<u2', 'outputConverterVoltage7': '<u2', 'outputConverterVoltage8': '<u2', 'outputConverterState': '<B',  # 4 bits! 'outputStatus': '<u4', 'outputFaultStatus': '<u4', 'protectedOutputAccessCnt': '<u2', 'outputOnDelta1': '<u2', 'outputOnDelta2': '<u2', 'outputOnDelta3': '<u2', 'outputOnDelta4': '<u2', 'outputOnDelta5': '<u2', 'outputOnDelta6': '<u2', 'outputOnDelta7': '<u2', 'outputOnDelta8': '<u2', 'outputOnDelta9': '<u2', 'outputOnDelta10': '<u2', 'outputOnDelta11': '<u2', 'outputOnDelta12': '<u2', 'outputOnDelta13': '<u2', 'outputOnDelta14': '<u2', 'outputOnDelta15': '<u2', 'outputOnDelta16': '<u2', 'outputOnDelta17': '<u2', 'outputOnDelta18': '<u2', 'outputOffDelta1': '<u2', 'outputOffDelta2': '<u2', 'outputOffDelta3': '<u2', 'outputOffDelta4': '<u2', 'outputOffDelta5': '<u2', 'outputOffDelta6': '<u2', 'outputOffDelta7': '<u2', 'outputOffDelta8': '<u2', 'outputOffDelta9': '<u2', 'outputOffDelta10': '<u2', 'outputOffDelta11': '<u2', 'outputOffDelta12': '<u2', 'outputOffDelta13': '<u2', 'outputOffDelta14': '<u2', 'outputOffDelta15': '<u2', 'outputOffDelta16': '<u2', 'outputOffDelta17': '<u2', 'outputOffDelta18': '<u2', 'outputFaultCount1': '<B', 'outputFaultCount2': '<B', 'outputFaultCount3': '<B', 'outputFaultCount4': '<B', 'outputFaultCount5': '<B', 'outputFaultCount6': '<B', 'outputFaultCount7': '<B', 'outputFaultCount8': '<B', 'outputFaultCount9': '<B', 'outputFaultCount10': '<B', 'outputFaultCount11': '<B', 'outputFaultCount12': '<B', 'outputFaultCount13': '<B', 'outputFaultCount14': '<B', 'outputFaultCount15': '<B', 'outputFaultCount16': '<B', 'outputFaultCount17': '<B', 'outputFaultCount18': '<B', 'temp1_c': '<b', 'temp2_c': '<b', 'temp3_c': '<b', 'temp4_c': '<b', 'temp5_c': '<b', 'temp6_c': '<b', 'temp7_c': '<b', 'temp8_c': '<b', 'temp9_c': '<b', 'temp10_c': '<b', 'temp11_c': '<b', 'temp12_c': '<b', 'temp13_c': '<b', 'temp14_c': '<b', 'battMode': '<B', 'mpptMode': '<B', 'battHeaterMode': '<B', 'battHeaterState': '<B', 'PingWdt_toggles': '<u2', 'PingWdt_turnOffs': '<B'}
+		port: 7		subport: 0
 
 
 CLI.SET_TELEMETERY_PERIOD:
 		About: Set telemetery collection period on EPS
-		Arguments: [>u4, >B, >u4, >u4]
+		Arguments: [<u4, <B, <u4, <u4]
 		return values: {'err': '>b'}
-		port: 13		subport: 255
+		port: 7		subport: 255
 
 
-CONTROL. POWER OUTPUTS SINGLE_OUTPUT_CONTROL:
-		About: None
-		Arguments: [>B, >B, >u2]
+CONTROL.SINGLE_OUTPUT_CONTROL:
+		About: Turns on/off a power output channel (with a defined delay)
+		Arguments: [>B, >B, <u2]
 		return values: {'err': '>b'}
 		port: 14		subport: 0
 
 
 CONTROL.ALL_OUTPUT_CONTROL:
-		About: None
-		Arguments: [>u4]
+		About: Sets all ouputs status at once (nth bit -> nth channel
+		Arguments: [<u4]
 		return values: {'err': '>b'}
 		port: 14		subport: 1
 
 
-CONTROL. SOLAR PANEL INPUTS & MPPT SET_SINGLE_MPPT_CONV_V:
-		About: None
-		Arguments: [>B, >u2]
+CONTROL.SINGLE_OUTPUT_CONTROL_NORMAL_BATT:
+		About: Set the output channels mode on normal battery mode
+		Arguments: [>B, >B, <u2]
+		return values: {'err': '>b'}
+		port: 14		subport: 9
+
+
+CONTROL.SET_SINGLE_MPPT_CONV_V:
+		About: Sets single MPPT converter voltage
+		Arguments: [>B, <u2]
 		return values: {'err': '>b'}
 		port: 14		subport: 2
 
 
 CONTROL.SET_ALL_MPPT_CONV_V:
-		About: None
-		Arguments: [>u2, >u2, >u2, >u2]
+		About: Sets all MPPT converter voltage at once
+		Arguments: [<u2, <u2, <u2, <u2]
 		return values: {'err': '>b'}
 		port: 14		subport: 3
 
 
 CONTROL.SET_MODE_MPPT:
-		About: None
+		About: Sets MPPT mode
 		Arguments: [>B]
 		return values: {'err': '>b'}
 		port: 14		subport: 4
 
 
 CONTROL.SET_AUTO_TIMEOUT_MPPT:
-		About: None
-		Arguments: [>u4]
+		About: Sets MPPT auto timeout period
+		Arguments: [<u4]
 		return values: {'err': '>b'}
 		port: 14		subport: 5
 
 
-CONTROL. BATTERY HEATER SET_HEATER_MODE:
+CONTROL.SET_HEATER_MODE:
 		About: Manual, or automatic
-		Arguments: [>B]
+		Arguments: [<B]
 		return values: {'status': '>b'}
 		port: 14		subport: 6
 
 
 CONTROL.SET_HEATER_STATE:
 		About: On, or off
-		Arguments: [>B, >u2]
+		Arguments: [<B, <u2]
 		return values: {'err': '>b'}
 		port: 14		subport: 7
+
+
+CONTROL.PAUSE_EPS_DEPLOYMENT_ACTION:
+		About: Pauses a certain action group deployment for a set time
+		Arguments: [>B, <u4]
+		return values: {'err': '>b'}
+		port: 14		subport: 8		

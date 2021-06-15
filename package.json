@@ -1,0 +1,18 @@
+{
+  "name": "albertasat-groundstation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/AlbertaSat/ex2_ground_station_software.git",
+  "author": "Andrew Rooney <arrooney@ualberta.ca>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build:env": "sudo apt-get install libzmq3-dev -y && sudo apt install libsocketcan-dev -y && sudo apt install pkg-config -y && sudo apt install python3-dev -y && sudo apt install python3-pip -y && sudo pip3 install numpy",
+    "csp:clone": "sudo rm -rf libcsp && git clone --depth 1 --branch v1.6 https://github.com/libcsp/libcsp.git",
+    "csp:configure": "cd libcsp && python3 waf configure --with-os=posix --enable-can-socketcan --enable-rdp --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-if-zmqhub --enable-examples",
+    "csp:build": "cd libcsp && python3 waf build",
+    "csp:install": "cd libcsp && sudo python3 waf install",
+    "build": "yarn build:env && yarn csp:clone && yarn csp:configure && yarn csp:build",
+    "run:cli": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/cli.py"
+  }
+}
