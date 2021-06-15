@@ -634,9 +634,19 @@ class SystemValues(object):
                     'SET_MAX_FILES': {
                         'subPort': 1,
                         'inoutInfo': {
-                            'args': ['>u2'],
+                            'args': ['<u2'], #number of hk entries to store
                             'returns': {
                                 'err': '>b'
+                            }
+                        }
+                    },
+                    'GET_MAX_FILES': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'max': '>u2'
                             }
                         }
                     }
