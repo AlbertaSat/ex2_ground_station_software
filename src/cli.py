@@ -34,7 +34,9 @@ def cli():
         try:
             server, port, toSend = gs.getInput(prompt='to send: ')
             resp = gs.transaction(server, port, toSend)
-            print(resp)
+
+            #print(resp)
+            [print(key,':',value) for key, value in resp.items()]
         except Exception as e:
             print(e)
 
