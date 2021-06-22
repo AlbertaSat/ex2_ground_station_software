@@ -72,7 +72,7 @@ class SystemValues(object):
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value
                 'subservice': {
-                    'GET_TIME': {
+                    'GET_EPS_TIME': {
                         'subPort': 0,
                         'inoutInfo': {
                             'args': None,  # SID
@@ -82,7 +82,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_TIME': {
+                    'SET_EPS_TIME': {
                         'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u4'],  # timestamp
@@ -121,7 +121,26 @@ class SystemValues(object):
                                 'receptionSecondFraction': '<u4'
                             }
                         }
-                    }
+                    },
+                    'GET_TIME': { # OBC time
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'timestamp': '>u4'
+                            }
+                        }
+                    },
+                    'SET_TIME': { # OBC time
+                        'subPort': 11,
+                        'inoutInfo': {
+                            'args': ['>u4'],  # timestamp
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
                 }
             },
             'GENERAL': {
