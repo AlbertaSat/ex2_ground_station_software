@@ -156,18 +156,6 @@ class CommandParser(object):
         [tokenList.append(x.upper()) for x in tmp if not (
             str(x).strip() == '' or str(x).strip() == ',')]  # to accept ',' as delimiter
         return tokenList
-    
-    def hex_dump(self, stuff, size):
-        current_packet_index = 0
-        print("ground station hex dump")
-        for i in range(size):
-            if stuff[i] < 16:
-                print("0", end="")
-            print((hex(stuff[i])[2:]).upper(), end=" ")
-            if (i + 1) % 16 == 0:
-                print()
-        print()
-
 
 if __name__ == '__main__':
     parser = CommandParser()
