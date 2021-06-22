@@ -22,6 +22,8 @@ To start the ground code!
 
 `yarn run:cli <options>`
 
+e.g. `yarn run:cli -I uart -d /dev/ttyUSB0`
+
 #### Troubleshooting
 
 On some systems, you may see something like this:
