@@ -634,7 +634,7 @@ class SystemValues(object):
                     'GET_HK': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': ['<u2', '<u2', '<u4'], #limit, before_id, before_time
+                            'args': ['>u2', '>u2', '>u4'], #limit, before_id, before_time
                             'returns' : {
                                 'err': '>b',
                                 #packet meta
