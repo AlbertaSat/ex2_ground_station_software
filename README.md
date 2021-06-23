@@ -33,7 +33,7 @@ On some systems, you may see something like this:
 
 In this case, you shold run the following command:
 
-`bash refresh.sh`
+`bash install.sh`
 
 Now try step 2 again.
 
