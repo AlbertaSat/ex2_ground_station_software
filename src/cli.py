@@ -35,7 +35,8 @@ def cli():
             server, port, toSend = gs.getInput(prompt='to send: ')
             resp = gs.transaction(server, port, toSend)
 
-            [print(key,':',value) for key, value in resp.items()]
+            #[print(key,':',value) for key, value in resp.items()] #print for human reading
+            print(resp) #print for automated testing
         except Exception as e:
             print(e)
 
