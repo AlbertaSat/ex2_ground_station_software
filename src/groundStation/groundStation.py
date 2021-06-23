@@ -164,7 +164,6 @@ class groundStation(object):
             libcsp.conn_sport(conn),
             data,
             length)
-        
         if rxData is None:
             print('ERROR: bad response data')
         return rxData
