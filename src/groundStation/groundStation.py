@@ -151,6 +151,7 @@ class groundStation(object):
             return {}
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
+        rxDataList = []
         packet = libcsp.read(conn, 10000)
         if packet is None:
             print('packet is None; no more packets')
@@ -158,15 +159,32 @@ class groundStation(object):
 
         data = bytearray(libcsp.packet_get_data(packet))
         length = libcsp.packet_get_length(packet)
-        rxData = self.parser.parseReturnValue(
+        rxDataList.append(self.parser.parseReturnValue(
             libcsp.conn_dst(conn),
             libcsp.conn_src(conn),
             libcsp.conn_sport(conn),
             data,
-            length)
-        if rxData is None:
+            length))
+        
+        if rxDataList is None:
             print('ERROR: bad response data')
-        return rxData
+            return
+
+        while True:
+            packet = libcsp.read(conn, 10000)
+            if packet is None:
+                break
+
+            data = bytearray(libcsp.packet_get_data(packet))
+            length = libcsp.packet_get_length(packet)
+            rxDataList.append(self.parser.parseReturnValue(
+            libcsp.conn_dst(conn),
+            libcsp.conn_src(conn),
+            libcsp.conn_sport(conn),
+            data,
+            length))
+
+        return rxDataList
 
     def receive(self):
         parser = CommandParser()
