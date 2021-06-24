@@ -61,7 +61,7 @@ UHF_return HAL_UHF_setPipeT (uint32_t U_pipe_t){
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(6, (uint16_t*)&U_status_reg.set.pipe_t);
+        return UHF_genericWrite(6, &U_status_reg.set.pipe_t);
     #endif
 }
 
@@ -70,7 +70,7 @@ UHF_return HAL_UHF_setBeaconT (uint32_t U_beacon_t){
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(7, (uint16_t*)&U_status_reg.set.beacon_t);
+        return UHF_genericWrite(7, &U_status_reg.set.beacon_t);
     #endif
 }
 
@@ -79,7 +79,7 @@ UHF_return HAL_UHF_setAudioT (uint32_t U_audio_t){
     #ifdef UHF_IS_STUBBED
         return IS_STUBBED_U;
     #else
-        return UHF_genericWrite(8, (uint16_t*)&U_status_reg.set.audio_t);
+        return UHF_genericWrite(8, &U_status_reg.set.audio_t);
     #endif
 }
 

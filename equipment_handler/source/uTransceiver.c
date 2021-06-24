@@ -128,7 +128,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     case 7:  // Set Beacon Transmission Period
     case 8:  // Set Audio Beacon Transmission Period
     {
-      uint16_t *time = (uint16_t *)param;
+      uint32_t *time = (uint32_t *)param;
 
       if (code == 6) {
         if (*time < 1 || *time > 255) return U_BAD_PARAM;
