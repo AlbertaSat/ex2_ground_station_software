@@ -37,6 +37,12 @@ In this case, you shold run the following command:
 
 Now try step 2 again.
 
+Before and after development, the existing tests should be performed:
+
+`yarn run:test_uhf`
+
+`yarn run:test_sband`
+
 ## The command language:
 
 The ground station parses commands according to the following context free grammar described in BNF:
