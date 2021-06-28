@@ -39,9 +39,9 @@ Now try step 2 again.
 
 #### 3. Before and after development, the existing tests should be performed:
 
-`yarn run:test_uhf`
+`yarn run:test_uhf <options>`
 
-`yarn run:test_sband`
+`yarn run:test_sband <options>`
 
 ## The command language:
 
