@@ -13,6 +13,8 @@
     "csp:build": "cd libcsp && python3 waf build",
     "csp:install": "cd libcsp && sudo python3 waf install",
     "build": "yarn build:env && yarn csp:clone && yarn csp:configure && yarn csp:build",
-    "run:cli": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/cli.py"
+    "run:cli": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/cli.py",
+    "run:test_sband": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_sband.py",
+    "run:test_uhf": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/uhf/test_uhf.py"
   }
 }
