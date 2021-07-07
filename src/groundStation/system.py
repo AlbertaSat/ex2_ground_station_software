@@ -647,8 +647,145 @@ class SystemValues(object):
                     },
                 }
             },
+            
+            'CONFIGURATION': {
+                'port': 9,  # As per EPS docs
+                'subservice': {
+                    'GET_ACTIVE_CONFIG': {
+                        'what': 'Gets config values in active mode for a specific type',
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'],
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': '<u1' #?
+                            }
+                        }
+                    },                                                              
+                    'SET_CONFIG': {
+                        'what': 'Sets the configuration',
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1', '<u1'], #id, type, config
+                            'returns': {
+                                'err': '>B',
+                            }
+                        }
+                    },   
+                    'LOAD_MAIN2ACTIVE': {
+                        'what': 'Load main configuration from file into active',
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },
+                    'LOAD_FALLBACK2ACTIVE': {
+                        'what': 'Load fallback configuration from file into active',
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },        
+                    'LOAD_DEFAULT2ACTIVE': {
+                        'what': 'Load default configuration from file into active',
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },   
+                    'UNLOCK_CONFIG': {
+                        'what': 'Unlock configuration for saving',
+                        'subPort': 8,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },  
+                    'LOCK_CONFIG': {
+                        'what': 'Lock configuration from saving',
+                        'subPort': 9,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    }, 
+                    'SAVE_ACTIVE2MAIN': {
+                        'what': 'Save active configuration to main file',
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },      
+                    'SAVE_ACTIVE2FALLBACK': {
+                        'what': 'Save active configuration to fallback file',
+                        'subPort': 11,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },                                                                                                                              
+                    'ELEVATE_ACCESS': {
+                        'what': 'Elevates access role',
+                        'subPort': 12,
+                        'inoutInfo': {
+                            'args': ['<u1', '<u4'],  # role, key (see docs)
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },                
+                    'GET_STATUS': {
+                        'what': 'Gets status and errors info',
+                        'subPort': 13,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B',
+                                'isInitialized': '<u1',
+                                'isLocked': '<u1',
+                                'isFallbackConfigurationLoaded': '<u1',
+                                'isMainConfigurationLoaded': '<u1',
+                                'wasFallbackRequested': '<u1',
+                                'initSource': '<u1',
+                                'currAccessRole': '<u1',
+                                'totalNumofErrors': '<u1',
+                                'numOfParameterDoesNotExistErrors': '<u1',
+                                'numOfInvalidParameterTypeErrors': '<u1',
+                                'numOfValidationFailErrors': '<u1',
+                                'numOfStorageFailErrors': '<u1',
+                                'numOfNotInitializedErrors': '<u1',
+                                'numOfNotLoadedOnInitErrors': '<u1',
+                                'numOfLockedErrors': '<u1',
+                                'numOfAccessDeniedErrors': '<u1',
+                                'numOfWrongPasswordErrors': '<u1',
+                                'numOfUnknownErrors': '<u1',
+                            }
+                        }
+                    },  
+                }
+            },  
+                       
             'HOUSEKEEPING': {
-                'port': 9,
+                'port': 17,
                 'subservice': {
                     'GET_HK': {
                         'subPort': 0,
@@ -901,17 +1038,7 @@ class SystemValues(object):
                                 'startupAfterGsWdt': '?',
                             }
                         }
-                    },
-                    'RESET_STATUS_TIMER_FILES': {
-                        'what': 'Updates status and timer files of GS watchdog with initial values',
-                        'subPort': 4,
-                        'inoutInfo': {
-                            'args': ['<u2'],  # key (see docs)
-                            'returns': {
-                                'err': '>B',
-                            }
-                        }
-                    },
+                    }
                 }
             },
 
@@ -1166,7 +1293,7 @@ class SystemValues(object):
                         'what': 'Sets MPPT mode',
                         'subPort': 4,
                         'inoutInfo': {
-                            # Hw, manual, auto, auto w/ timeout
+                            # 0-Hw, 1-manual, 2-auto, 3-auto w/ timeout
                             'args': ['<B'],
                             'returns': {
                                 'err': '>b'
@@ -1200,16 +1327,6 @@ class SystemValues(object):
                         'subPort': 7,
                         'inoutInfo': {
                             'args': ['<B', '<u2'],  # state, duration (s)
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'PAUSE_EPS_DEPLOYMENT_ACTION': {
-                        'what': 'Pauses a certain action group deployment for a set time',
-                        'subPort': 8,
-                        'inoutInfo': {
-                            'args': ['>B', '<u4'],  # group, time
                             'returns': {
                                 'err': '>b'
                             }
