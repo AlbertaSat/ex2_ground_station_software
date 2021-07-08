@@ -936,11 +936,16 @@ class SystemValues(object):
                 # EPS soft reset
                 # Not recommended to use by the operator
                 # no subport (command ID) needed.
-                'what': 'Does a soft reset on EPS (reboot)',
-                'inoutInfo': {
-                    'args': ['<u4'],  # 2147975175
-                    'returns': {
-                        'err': '>b',
+                'subservice':{
+                    'SOFT': {                	
+                        'what': 'Does a soft reset on EPS (reboot)',
+                        'subPort': 128, #with key: 491527
+                        'inoutInfo': {
+                            'args': ['<u4'],  # 2147975175
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
                     }
                 }
                 # magic number 0x80078007 must be sent with csp port 4 and no subport number
