@@ -48,9 +48,9 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.communication.uhf_get_callsign', {
                   'err': 0, 'Destination': 'CQ12AB', 'Source': 'UX1UHF'})
     test.sendAndExpect(
-        'obc.communication.uhf_set_morse(--.--..-.---..-.-.-..-.--..-..--)', {'err': 0})
+        'obc.communication.uhf_set_morse(--.|--|..-|.---|.|.-.-|.-..|-.|--..)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_morse', {
-                  'err': 0, 'Morse': '--.--..-.---..-.-.-..-.--..-..--'})
+                  'err': 0, 'Morse': '--. -- ..- .--- . .-.- .-.. -. --..'})
     # 67H69H71H67H67H69H71H67H71H72H74W71H72H74W
     test.sendAndExpect('obc.communication.uhf_set_midi(H67H69H71H)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_midi',
