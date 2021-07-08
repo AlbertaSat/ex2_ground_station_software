@@ -108,7 +108,13 @@ class CommandParser(object):
 
         print(length)
         returns = subservice['inoutInfo']['returns']
+        args = subservice['inoutInfo']['args']
         for retVal in returns:
+            if returns[retVal] is 'var' and dport == 9 and subservice['subPort'] < 4:
+                #Variable size config return
+                outputObj[retVal] = np.frombuffer( data, dtype = args[-1], count=1, offset=idx)[0]
+                return outputObj
+            print(returns[retVal])
             outputObj[retVal] = np.frombuffer(
                 data, dtype=returns[retVal], count=1, offset=idx)[0]
             idx += np.dtype(returns[retVal]).itemsize
