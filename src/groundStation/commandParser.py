@@ -112,12 +112,25 @@ class CommandParser(object):
         for retVal in returns:
             if returns[retVal] is 'var' and dport == 9 and subservice['subPort'] < 4:
                 #Variable size config return
-                outputObj[retVal] = np.frombuffer( data, dtype = args[-1], count=1, offset=idx)[0]
+                if outputObj['type'] == 0:
+                    config_type = np.dtype('<u1')
+                elif outputObj['type'] == 1:
+                    config_type = np.dtype('<i1')
+                elif outputObj['type'] == 2:
+                    config_type = np.dtype('<u2')
+                elif outputObj['type'] == 4:
+                    config_type = np.dtype('<u4')
+                elif outputObj['type'] == 14:
+                    config_type = np.dtype('<S16')
+                                        
+                outputObj[retVal] = np.frombuffer( data, dtype = config_type, count=1, offset=idx)[0]
                 return outputObj
-            print(returns[retVal])
+                
+            else:
             outputObj[retVal] = np.frombuffer(
                 data, dtype=returns[retVal], count=1, offset=idx)[0]
             idx += np.dtype(returns[retVal]).itemsize
+
         return outputObj
 
     ''' PRIVATE METHODS '''
