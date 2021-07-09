@@ -655,19 +655,55 @@ class SystemValues(object):
                         'what': 'Gets config values in active mode for a specific type',
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': ['<u2', '<u1'],
+                            'args': ['<u2', '<u1'], #id, type_id
                             'returns': {
                                 'err': '>B',
                                 'type': '<u1',
-                                'Value': '<u1' #?
+                                'Value': 'var' #In command parser it gets the data type from the return value for 'type'
                             }
                         }
-                    },                                                              
+                    },   
+                    'GET_MAIN_CONFIG': {
+                        'what': 'Gets config values in active mode for a specific type',
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #See comment for active
+                            }
+                        }
+                    },  
+                    'GET_FALLBACK_CONFIG': {
+                        'what': 'Gets config values in active mode for a specific type',
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #See comment for active
+                            }
+                        }
+                    },
+                    'GET_DEFAULT_CONFIG': {
+                        'what': 'Gets config values in active mode for a specific type',
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #See comment for active
+                            }
+                        }
+                    },                                                                                                                      
                     'SET_CONFIG': {
                         'what': 'Sets the configuration',
                         'subPort': 4,
                         'inoutInfo': {
-                            'args': ['<u2', '<u1', '<u1'], #id, type, config
+                            'args': ['<u2', '<u1', 'var'], #id, type, config
                             'returns': {
                                 'err': '>B',
                             }
@@ -1066,9 +1102,9 @@ class SystemValues(object):
                 'subservice':{
                     'SOFT': {                	
                         'what': 'Does a soft reset on EPS (reboot)',
-                        'subPort': 128, #with key: 491527
+                        'subPort': 128,
                         'inoutInfo': {
-                            'args': ['<u4'],  # 2147975175
+                            'args': ['<u4'],  # 491527 or 2147975175
                             'returns': {
                                 'err': '>b',
                             }
