@@ -1216,5 +1216,49 @@ class SystemValues(object):
                         }
                     }
                 }
+            },
+
+            'LOGGER': {
+                'port': 13,
+                'subservice': {
+                    'GET_FILE': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': [],
+                            'returns': {
+                                'err': '>b',
+                                'log': '>S100',
+                            }
+                        }
+                    },
+                    'SET_FILE_SIZE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'GET_LIST': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'GET_FILE_SIZE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'size': '>u4'
+                            }
+                        }
+                    }
+                }
             }
         }
