@@ -29,13 +29,7 @@
 #define MAX_W_CMDLEN 120
 #define SCW_LEN 12
 
-#ifdef UHF_IS_STUBBED
-typedef enum {
-  IS_STUBBED_U = 0,
-} UHF_return;
-#else
 #include "uTransceiver.h"
-#endif
 
 typedef struct __attribute__((packed)) {
   uint32_t freq;
@@ -52,9 +46,6 @@ typedef struct __attribute__((packed)) {
   uint32_t pckts_in;
   uint32_t pckts_in_crc16;
   float temperature;
-  uint8_t low_pwr_stat;
-  uint16_t payload_size;
-  uint32_t secure_key;
 } UHF_Status;
 
 /*slightly modified version of UHF_Status to be more compatible with hk service
@@ -70,9 +61,6 @@ typedef struct __attribute__((packed)) {
   uint32_t pckts_in;
   uint32_t pckts_in_crc16;
   float temperature;
-  uint8_t low_pwr_stat;
-  uint16_t payload_size;
-  uint32_t secure_key;
 } UHF_housekeeping;
 
 typedef struct __attribute__((packed)) {
