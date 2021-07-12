@@ -291,7 +291,6 @@ class SystemValues(object):
                                 'Battery Voltage': '>f',
                                 'Power Amplifier Current': '>f',
                                 'Power Amplifier Voltage': '>f',
-                                'Firmware Version': '>f',
                             }
                         }
                     },
@@ -447,7 +446,7 @@ class SystemValues(object):
                         'what': 'Sets UHF destination callsign',
                         'subPort': 28,
                         'inoutInfo': {
-                            'args': ['>U6'],
+                            'args': ['>S6'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -457,7 +456,7 @@ class SystemValues(object):
                         'what': 'Sets UHF source callsign',
                         'subPort': 29,
                         'inoutInfo': {
-                            'args': ['>U6'],
+                            'args': ['>S6'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -467,7 +466,7 @@ class SystemValues(object):
                         'what': 'Sets UHF morse code callsign (max 36)',
                         'subPort': 30,
                         'inoutInfo': {
-                            'args': ['>U36'],
+                            'args': ['>S36'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -478,7 +477,7 @@ class SystemValues(object):
                         'subPort': 31,
                         'inoutInfo': {
                             # increase packet size and switch to >U108
-                            'args': ['>U60'],
+                            'args': ['>S60'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -489,7 +488,7 @@ class SystemValues(object):
                         'subPort': 32,
                         'inoutInfo': {
                             # Switch to >U97 after packet configuration
-                            'args': ['>U60'],
+                            'args': ['>S60'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -509,7 +508,7 @@ class SystemValues(object):
                         'what': 'Sets UHF FRAM address and write 16-byte data',
                         'subPort': 34,
                         'inoutInfo': {
-                            'args': ['>u4', '>U16'],
+                            'args': ['>u4', '>S16'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -566,8 +565,8 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Destination': '>U6',
-                                'Source': '>U6',
+                                'Destination': '>S6',
+                                'Source': '>S6',
                             }
                         }
                     },
@@ -578,7 +577,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Morse': '>U36',
+                                'Morse': '>S36',
                             }
                         }
                     },
@@ -589,7 +588,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'MIDI': '>U60',
+                                'MIDI': '>S60',
                             }
                         }
                     },
@@ -600,7 +599,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Beacon Message': '>U60',
+                                'Beacon Message': '>S60',
                             }
                         }
                     },
@@ -611,7 +610,7 @@ class SystemValues(object):
                             'args': ['>u4'],
                             'returns': {
                                 'err': '>b',
-                                'FRAM': '>U16',
+                                'FRAM': '>S16',
                             }
                         }
                     },
