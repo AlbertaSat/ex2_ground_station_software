@@ -29,7 +29,7 @@
 
 #ifdef UHF_IS_STUBBED
     // Arbitrary values for testing
-    static UHF_Status U_status_reg = {.uptime = 12, .pckts_out = 100, .pckts_in = 70, .pckts_in_crc16 = 10, .temperature = 18.4, .payload_size = 127, .secure_key = 32};
+    static UHF_Status U_status_reg = {.uptime = 12, .pckts_out = 100, .pckts_in = 70, .pckts_in_crc16 = 10, .temperature = 18.4};
 #else
     static UHF_Status U_status_reg;
 #endif
@@ -288,7 +288,7 @@ UHF_return HAL_UHF_getLowPwr (uint8_t * U_low_pwr){
     #else
         status = IS_STUBBED_U;
     #endif
-    *U_low_pwr = U_status_reg.low_pwr_stat;
+    *U_low_pwr = 0;
     return status;
 }
 
@@ -299,7 +299,7 @@ UHF_return HAL_UHF_getPayload (uint16_t * U_payload_size){
     #else
         status = IS_STUBBED_U;
     #endif
-    *U_payload_size = U_status_reg.payload_size;
+    *U_payload_size = 127;
     return status;
 }
 
@@ -310,7 +310,7 @@ UHF_return HAL_UHF_getSecureKey (uint32_t * U_secure){
     #else
         status = IS_STUBBED_U;
     #endif
-    *U_secure = U_status_reg.secure_key;
+    *U_secure = 32;
     return status;
 }
 
@@ -411,9 +411,6 @@ UHF_return UHF_getHK(UHF_housekeeping* uhf_hk) {
     if (temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t) != 0) return_code = temp;
     if (temp = HAL_UHF_getAudioT(&uhf_hk->audio_t) != 0) return_code = temp;
     if (temp = HAL_UHF_getTemp(&uhf_hk->temperature) != 0) return_code = temp;
-    if (temp = HAL_UHF_getLowPwr(&uhf_hk->low_pwr_stat) != 0) return_code = temp;
-    if (temp = HAL_UHF_getPayload(&uhf_hk->payload_size) != 0) return_code = temp;
-    if (temp = HAL_UHF_getSecureKey(&uhf_hk->secure_key) != 0) return_code = temp;
     
     return return_code;
 }
@@ -429,9 +426,6 @@ UHF_return UHF_convert_endianness(UHF_housekeeping* uhf_hk) {
     uhf_hk->pckts_in = csp_hton32(uhf_hk->pckts_in);
     uhf_hk->pckts_in_crc16 = csp_hton32(uhf_hk->pckts_in_crc16);
     uhf_hk->temperature = csp_htonflt(uhf_hk->temperature);
-    //uhf_hk->low_pwr_stat
-    uhf_hk->payload_size = csp_hton16(uhf_hk->payload_size);
-    uhf_hk->secure_key = csp_hton32(uhf_hk->secure_key);
 
     return 0;
 }

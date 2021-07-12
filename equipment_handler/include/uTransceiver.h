@@ -51,6 +51,7 @@ typedef enum {
   U_CMD_SPEC_3 = 3,
 
   U_UNK_ERR = -10,
+  IS_STUBBED_U = 0 // Used for stubbed UHF in hardware interface
 } UHF_return;
 
 typedef struct {
