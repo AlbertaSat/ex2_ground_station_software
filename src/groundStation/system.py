@@ -1227,7 +1227,7 @@ class SystemValues(object):
                             'args': [],
                             'returns': {
                                 'err': '>b',
-                                'log': '>S100',
+                                'log': '>S500',
                             }
                         }
                     },
