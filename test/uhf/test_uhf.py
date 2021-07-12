@@ -42,7 +42,7 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.communication.uhf_restore(1)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_secure(1)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_full_stat', {'err': 0, 'HFXT': 0, 'UartBaud': 1, 'Reset': 0, 'RF Mode': 3, 'Echo': 0, 'BCN': 0, 'PIPE': 0, 'Bootloader': 0, 'CTS': 0, 'SEC': 1, 'FRAM': 0, 'RFTS': 0, 'Frequency': 436000000,
-                                                          'PIPE timeout': 30, 'Beacon period': 89, 'Audio trans. period': 536, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4), 'Low power status': 0, 'Payload Size': 127, 'Secure key': 32})
+                                                          'PIPE timeout': 30, 'Beacon period': 89, 'Audio trans. period': 536, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4)})
     test.sendAndExpect('obc.communication.uhf_set_source(UX1UHF)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_set_destination(cq12AB)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_callsign', {
@@ -65,7 +65,7 @@ def testAllCommandsToOBC():
     test.sendAndExpect(
         'obc.communication.uhf_set_params(437500000 45 60 70)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_full_stat', {'err': 0, 'HFXT': 0, 'UartBaud': 1, 'Reset': 0, 'RF Mode': 3, 'Echo': 1, 'BCN': 1, 'PIPE': 1, 'Bootloader': 0, 'CTS': 0, 'SEC': 1, 'FRAM': 0, 'RFTS': 0, 'Frequency': 437500000,
-                                                          'PIPE timeout': 45, 'Beacon period': 60, 'Audio trans. period': 70, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4), 'Low power status': 0, 'Payload Size': 127, 'Secure key': 32})
+                                                          'PIPE timeout': 45, 'Beacon period': 60, 'Audio trans. period': 70, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4)})
     test.sendAndExpect('obc.communication.uhf_set_I2C(23)', {'err': 0})
 
     test.summary() #call when done to print summary of tests

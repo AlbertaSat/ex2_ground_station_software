@@ -552,9 +552,6 @@ class SystemValues(object):
                                 'Packets in': '>u4',
                                 'Packets in CRC16': '>u4',
                                 'Temperature': '>f',
-                                'Low power status': '>u1',
-                                'Payload Size': '>u2',
-                                'Secure key': '>u4',
                             }
                         }
                     },
@@ -641,6 +638,17 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
+                            }
+                        }
+                    },
+                    'UHF_GET_SECURE_KEY': {
+                        'what': 'Gets the key for secure mode',
+                        'subPort': 45,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Secure Key': '>u4',
                             }
                         }
                     },
