@@ -671,7 +671,7 @@ class SystemValues(object):
                         }
                     },   
                     'GET_MAIN_CONFIG': {
-                        'what': 'Gets config values in active mode for a specific type',
+                        'what': 'Gets config values in main mode for a specific type',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u2', '<u1'], #id, type_id
@@ -683,7 +683,7 @@ class SystemValues(object):
                         }
                     },  
                     'GET_FALLBACK_CONFIG': {
-                        'what': 'Gets config values in active mode for a specific type',
+                        'what': 'Gets config values in fallback mode for a specific type',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': ['<u2', '<u1'], #id, type_id
@@ -695,7 +695,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_DEFAULT_CONFIG': {
-                        'what': 'Gets config values in active mode for a specific type',
+                        'what': 'Gets config values in default mode for a specific type',
                         'subPort': 3,
                         'inoutInfo': {
                             'args': ['<u2', '<u1'], #id, type_id
@@ -1101,7 +1101,7 @@ class SystemValues(object):
                 }
             },
 
-            'REBOOT': { # Does not work atm!
+            'REBOOT': {
                 'port': 4,  # As per CSP docs
                 # EPS soft reset
                 # Not recommended to use by the operator
