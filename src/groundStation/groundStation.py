@@ -170,6 +170,10 @@ class groundStation(object):
             print('ERROR: bad response data')
             return
 
+        #code following is specific to housekeeping multi-packet transmission
+        if libcsp.conn_src(conn) != 1 or libcsp.conn_sport(conn) != 9 or data[0] != 0 or len(data) < 3 or data[2] != 1:
+            return rxDataList[0]
+
         while True:
             packet = libcsp.read(conn, 10000)
             if packet is None:
@@ -184,7 +188,11 @@ class groundStation(object):
             data,
             length))
 
+            if data[2] != 1:
+                break
+
         return rxDataList
+        #end code specific to housekeeping multi-packet transmission
 
     def receive(self):
         parser = CommandParser()

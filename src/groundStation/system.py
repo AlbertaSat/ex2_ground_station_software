@@ -657,6 +657,7 @@ class SystemValues(object):
                             'returns' : {
                                 'err': '>b',
                                 #packet meta
+                                'final': '<B',
                                 'UNIXtimestamp': '>u4',
                                 'dataPosition': '>u2',
                                 #ADCS
