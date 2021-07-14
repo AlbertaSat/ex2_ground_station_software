@@ -44,6 +44,8 @@ Numpy types (> for BE)
 'U' Unicode string
 
 'V' raw data (void)
+
+'var' variable-size (non-numpy). Checks the data type from elsewhere
 '''
 
 
@@ -611,8 +613,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'UHF_SET_PIPE': {
-                        'what': 'Set the communication to the PIPE(transparent) mode',
+                    'UHF_SET_ECHO': {
+                        'what': 'Starts echo over UART',
                         'subPort': 42,
                         'inoutInfo': {
                             'args': None,
@@ -631,8 +633,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'UHF_SET_ECHO': {
-                        'what': 'Starts echo over UART',
+                    'UHF_SET_PIPE': {
+                        'what': 'Set the communication to the PIPE(transparent) mode',
                         'subPort': 44,
                         'inoutInfo': {
                             'args': None,
