@@ -171,7 +171,12 @@ class groundStation(object):
             return
 
         #code following is specific to housekeeping multi-packet transmission
-        if libcsp.conn_src(conn) != 1 or libcsp.conn_sport(conn) != 9 or data[0] != 0 or len(data) < 3 or data[2] != 1:
+        if  (
+            libcsp.conn_src(conn) != vals.APP_DICT.get('OBC') or 
+            libcsp.conn_sport(conn) != vals.SERVICES.get('HOUSEKEEPING').get('port') or 
+            data[0] != vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            data[2] != 1 #marker in housekeeping data signifying more incoming data
+            ):
             return rxDataList[0]
 
         while True:
