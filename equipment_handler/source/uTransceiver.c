@@ -134,6 +134,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         if (*time < 1 || *time > 255) return U_BAD_PARAM;
       }
 
+      if (code == 7 || code == 8) {
+        if (*time > 0xFFFF) return U_BAD_PARAM;
+      }
+
       uint8_t hex[4] = {(*time >> 12) & 15, (*time >> 8) & 15,
                         (*time >> 4) & 15, (*time) & 15};
       convHexToASCII(4, hex);
@@ -680,13 +684,9 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
       int j = 0;
       for (j; j < beacon->len; j++) {
-        uint8_t chars[2] = {ans[5 + 3 * j], ans[6 + 3 * j]};
-        convHexFromASCII(2, chars);
-
-        uint8_t sym = ans[7 + 3 * j];
-
-        beacon->message[2 * j] = chars[0] * 10 + chars[1];
-        beacon->message[2 * j + 1] = sym;
+        beacon->message[3 * j] = ans[5 + 3 * j];
+        beacon->message[3 * j + 1] = ans[6 + 3 * j];
+        beacon->message[3 * j + 2] = ans[7 + 3 * j];
       }
       break;
     }

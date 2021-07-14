@@ -284,33 +284,33 @@ UHF_return HAL_UHF_getTemp (float * U_temperature){
 UHF_return HAL_UHF_getLowPwr (uint8_t * U_low_pwr){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
-        status = UHF_genericRead(244, &U_status_reg.low_pwr_stat);
+        status = UHF_genericRead(244, U_low_pwr);
     #else
         status = IS_STUBBED_U;
+        *U_low_pwr = 0;
     #endif
-    *U_low_pwr = 0;
     return status;
 }
 
 UHF_return HAL_UHF_getPayload (uint16_t * U_payload_size){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
-        status = UHF_genericRead(250, &U_status_reg.payload_size);
+        status = UHF_genericRead(250, U_payload_size);
     #else
         status = IS_STUBBED_U;
+        *U_payload_size = 127;
     #endif
-    *U_payload_size = 127;
     return status;
 }
 
 UHF_return HAL_UHF_getSecureKey (uint32_t * U_secure){
     UHF_return status;
     #ifndef UHF_IS_STUBBED
-        status = UHF_genericRead(255, &U_status_reg.secure_key);
+        status = UHF_genericRead(255, U_secure);
     #else
         status = IS_STUBBED_U;
+        *U_secure = 32;
     #endif
-    *U_secure = 32;
     return status;
 }
 
