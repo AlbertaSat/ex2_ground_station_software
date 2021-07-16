@@ -151,6 +151,7 @@ class groundStation(object):
             return {}
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
+        rxDataList = []
         packet = libcsp.read(conn, 10000)
         if packet is None:
             print('packet is None; no more packets')
@@ -158,15 +159,45 @@ class groundStation(object):
 
         data = bytearray(libcsp.packet_get_data(packet))
         length = libcsp.packet_get_length(packet)
-        rxData = self.parser.parseReturnValue(
+        rxDataList.append(self.parser.parseReturnValue(
             libcsp.conn_dst(conn),
             libcsp.conn_src(conn),
             libcsp.conn_sport(conn),
             data,
-            length)
-        if rxData is None:
+            length))
+        
+        if rxDataList is None:
             print('ERROR: bad response data')
-        return rxData
+            return
+
+        #code following is specific to housekeeping multi-packet transmission
+        if  (
+            libcsp.conn_src(conn) != vals.APP_DICT.get('OBC') or 
+            libcsp.conn_sport(conn) != vals.SERVICES.get('HOUSEKEEPING').get('port') or 
+            data[0] != vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            data[2] != 1 #marker in housekeeping data signifying more incoming data
+            ):
+            return rxDataList[0]
+
+        while True:
+            packet = libcsp.read(conn, 10000)
+            if packet is None:
+                break
+
+            data = bytearray(libcsp.packet_get_data(packet))
+            length = libcsp.packet_get_length(packet)
+            rxDataList.append(self.parser.parseReturnValue(
+            libcsp.conn_dst(conn),
+            libcsp.conn_src(conn),
+            libcsp.conn_sport(conn),
+            data,
+            length))
+
+            if data[2] != 1:
+                break
+
+        return rxDataList
+        #end code specific to housekeeping multi-packet transmission
 
     def receive(self):
         parser = CommandParser()
