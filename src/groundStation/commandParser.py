@@ -110,20 +110,9 @@ class CommandParser(object):
         returns = subservice['inoutInfo']['returns']
         args = subservice['inoutInfo']['args']
         for retVal in returns:
-            if returns[retVal] == 'var' and dport == 9 and subservice['subPort'] < 4:
-                #Variable size config return
-                if outputObj['type'] == 0:
-                    config_type = np.dtype('<u1')
-                elif outputObj['type'] == 1:
-                    config_type = np.dtype('<i1')
-                elif outputObj['type'] == 2:
-                    config_type = np.dtype('<u2')
-                elif outputObj['type'] == 4:
-                    config_type = np.dtype('<u4')
-                elif outputObj['type'] == 9:
-                    config_type = np.dtype('<S16') #Empty means all zero or Use <V16
-                                        
-                outputObj[retVal] = np.frombuffer( data, dtype = config_type, count=1, offset=idx)[0]
+            if returns[retVal] == 'var':
+            #Variable size config return
+                outputObj[retVal] = np.frombuffer( data, dtype = self.vals.varTypes[outputObj['type']], count=1, offset=idx)[0]
                 return outputObj
                 
             else:
@@ -163,19 +152,9 @@ class CommandParser(object):
 
         for i in range(0, len(args)):
             if inoutInfo['args'][i]:
-                if inoutInfo['args'][i] == 'var' and self._command['dport'] == 9 and outArgs[0] == 4:
-                    #Variable size config return
-                    if outArgs[-1] == 0:
-                        config_type = np.dtype('<u1')
-                    elif outArgs[-1] == 1:
-                        config_type = np.dtype('<i1')
-                    elif outArgs[-1] == 2:
-                        config_type = np.dtype('<u2')
-                    elif outArgs[-1] == 4:
-                        config_type = np.dtype('<u4')
-                    elif outArgs[-1] == 9:
-                        config_type = np.dtype('<S16')                   
-                    nparr = np.array([args[i]], dtype=config_type)
+                if inoutInfo['args'][i] == 'var':
+                    #Variable size config arg               
+                    nparr = np.array([args[i]], dtype=self.vals.varTypes[outArgs[-1]])
                 else :
                     nparr = np.array([args[i]], dtype=inoutInfo['args'][i])
                 outArgs.extend(nparr.tobytes())
