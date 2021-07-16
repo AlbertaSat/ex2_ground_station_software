@@ -55,6 +55,14 @@ class SystemValues(object):
         self.appIdx = 0
         self.serviceIdx = 2
         self.subserviceIdx = 4
+        
+        self.varTypes = {
+            0: '<u1',
+            1: '<i1',
+            2: '<u2',
+            4: '<u4',
+            9: '<S16' #Empty means all zero or Use <V16
+        }
 
         self.APP_DICT = {
             'OBC': 1,
