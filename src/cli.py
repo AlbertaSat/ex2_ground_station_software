@@ -35,8 +35,15 @@ def cli():
             server, port, toSend = gs.getInput(prompt='to send: ')
             resp = gs.transaction(server, port, toSend)
 
-            [print(key,':',value) for key, value in resp.items()] #print for human reading
-            #print(resp) #print for automated testing
+            #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
+            if type(resp) == list:
+                for rxData in resp:
+                    print("--------------------------------------------------------------------------")
+                    [print(key,':',value) for key, value in rxData.items()]
+            #else, only a single dictionary is returned
+            else:
+                [print(key,':',value) for key, value in resp.items()]
+            
         except Exception as e:
             print(e)
 
