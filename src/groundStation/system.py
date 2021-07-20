@@ -1392,5 +1392,98 @@ class SystemValues(object):
                         }
                     }
                 }
+            },
+            'UPDATER' : {
+                'port': 12,
+                'subservice': {
+                    'FLASH_UPDATE': {
+                        'what' : 'GOLDEN_IMAGE ONLY Flashes file VOL0:/application_image.bin from filesystem to working image',
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'GET_GOLDEN_INFO': {
+                        'what': "Get golden image metadata",
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args' : None,
+                            'returns': {
+                                'err'    : '>b',
+                                'exists' : '>u4',
+                                'size'   : '>u4',
+                                'addr'   : '>u4',
+                                'crc'    : '>u2'
+                            }
+                        }
+                    },
+                    'GET_APP_INFO' : {
+                        'what': "Get working image metadata",
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args' : None,
+                            'returns': {
+                                'err'    : '>b',
+                                'exists' : '>u4',
+                                'size'   : '>u4',
+                                'addr'   : '>u4',
+                                'crc'    : '>u2'
+                            }
+                        }
+                    },
+                    'SET_APP_ADDRESS' : {
+                        'what': 'Set the starting address of the working image',
+                        'subPort' : 3,
+                        'inoutInfo' : {
+                            'args' : ['>u4'],
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'SET_APP_CRC' : {
+                        'what': 'Set the starting address of the working image',
+                        'subPort' : 4,
+                        'inoutInfo' : {
+                            'args' : ['>u2'],
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'ERASE_APP' : {
+                        'what' : 'Erase working image',
+                        'subPort' : 5,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'VERIFY_APP' : {
+                        'what' : 'Verify crc of working image',
+                        'subPort' : 6,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'VERIFY_GOLDEN' : {
+                        'what' : 'Verify crc of golden image',
+                        'subPort' : 7,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    }
+                }
             }
         }
