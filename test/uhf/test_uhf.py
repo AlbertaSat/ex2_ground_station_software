@@ -42,30 +42,30 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.communication.uhf_restore(1)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_secure(1)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_full_stat', {'err': 0, 'HFXT': 0, 'UartBaud': 1, 'Reset': 0, 'RF Mode': 3, 'Echo': 0, 'BCN': 0, 'PIPE': 0, 'Bootloader': 0, 'CTS': 0, 'SEC': 1, 'FRAM': 0, 'RFTS': 0, 'Frequency': 436000000,
-                                                          'PIPE timeout': 30, 'Beacon period': 89, 'Audio trans. period': 536, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4), 'Low power status': 0, 'Payload Size': 127, 'Secure key': 32})
+                                                          'PIPE timeout': 30, 'Beacon period': 89, 'Audio trans. period': 536, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4)})
     test.sendAndExpect('obc.communication.uhf_set_source(UX1UHF)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_set_destination(cq12AB)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_callsign', {
-                  'err': 0, 'Destination': 'CQ12AB', 'Source': 'UX1UHF'})
+                  'err': 0, 'Destination': b'CQ12AB', 'Source': b'UX1UHF'})
     test.sendAndExpect(
-        'obc.communication.uhf_set_morse(--.--..-.---..-.-.-..-.--..-..--)', {'err': 0})
+        'obc.communication.uhf_set_morse(--.|--|..-|.---|.|.-.-|.-..|-.|--..)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_morse', {
-                  'err': 0, 'Morse': '--.--..-.---..-.-.-..-.--..-..--'})
+                  'err': 0, 'Morse': b'--. -- ..- .--- . .-.- .-.. -. --..'})
     # 67H69H71H67H67H69H71H67H71H72H74W71H72H74W
-    test.sendAndExpect('obc.communication.uhf_set_midi(H67H69H71H)', {'err': 0})
+    test.sendAndExpect('obc.communication.uhf_set_midi(M67H69H71H)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_midi',
-                  {'err': 0, 'MIDI': 'H67H69H71H'})
+                  {'err': 0, 'MIDI': b'67H69H71H'})
     test.sendAndExpect(
         'obc.communication.uhf_set_beacon_msg(HelloAlbertaSat)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_beacon_msg', {
-                  'err': 0, 'Beacon Message': 'HELLOALBERTASAT'})
+                  'err': 0, 'Beacon Message': b'HELLOALBERTASAT'})
     test.sendAndExpect('obc.communication.uhf_set_pipe', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_set_bcn', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_set_echo', {'err': 0})
     test.sendAndExpect(
         'obc.communication.uhf_set_params(437500000 45 60 70)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_full_stat', {'err': 0, 'HFXT': 0, 'UartBaud': 1, 'Reset': 0, 'RF Mode': 3, 'Echo': 1, 'BCN': 1, 'PIPE': 1, 'Bootloader': 0, 'CTS': 0, 'SEC': 1, 'FRAM': 0, 'RFTS': 0, 'Frequency': 437500000,
-                                                          'PIPE timeout': 45, 'Beacon period': 60, 'Audio trans. period': 70, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4), 'Low power status': 0, 'Payload Size': 127, 'Secure key': 32})
+                                                          'PIPE timeout': 45, 'Beacon period': 60, 'Audio trans. period': 70, 'Uptime': 12, 'Packets out': 100, 'Packets in': 70, 'Packets in CRC16': 10, 'Temperature': np.float32(18.4)})
     test.sendAndExpect('obc.communication.uhf_set_I2C(23)', {'err': 0})
 
     test.summary() #call when done to print summary of tests
