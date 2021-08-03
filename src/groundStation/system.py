@@ -820,9 +820,6 @@ class SystemValues(object):
                                 'pckts_in': '>u4',
                                 'pckts_in_crc16': '>u4',
                                 'temperature': '>f4',
-                                'low_pwr_state': '>B',
-                                'payload_size': '>u2',
-                                'secure_key': '>u4',
                                 #Sband
                                 'Output_Power': '>f4',
                                 'PA_Temp': '>f4',
