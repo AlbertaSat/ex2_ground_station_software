@@ -108,10 +108,18 @@ class CommandParser(object):
 
         print(length)
         returns = subservice['inoutInfo']['returns']
+        args = subservice['inoutInfo']['args']
         for retVal in returns:
-            outputObj[retVal] = np.frombuffer(
-                data, dtype=returns[retVal], count=1, offset=idx)[0]
-            idx += np.dtype(returns[retVal]).itemsize
+            if returns[retVal] == 'var':
+            #Variable size config return
+                outputObj[retVal] = np.frombuffer( data, dtype = self.vals.varTypes[outputObj['type']], count=1, offset=idx)[0]
+                return outputObj
+                
+            else:
+                outputObj[retVal] = np.frombuffer(
+                    data, dtype=returns[retVal], count=1, offset=idx)[0]
+                idx += np.dtype(returns[retVal]).itemsize
+
         return outputObj
 
     ''' PRIVATE METHODS '''
@@ -144,7 +152,11 @@ class CommandParser(object):
 
         for i in range(0, len(args)):
             if inoutInfo['args'][i]:
-                nparr = np.array([args[i]], dtype=inoutInfo['args'][i])
+                if inoutInfo['args'][i] == 'var':
+                    #Variable size config arg               
+                    nparr = np.array([args[i]], dtype=self.vals.varTypes[outArgs[-1]])
+                else :
+                    nparr = np.array([args[i]], dtype=inoutInfo['args'][i])
                 outArgs.extend(nparr.tobytes())
         self._command['args'] = outArgs
         return True
@@ -152,7 +164,7 @@ class CommandParser(object):
     def __lexer(self, input):
         tokenList = []
         # If an old command is not parsed, use '([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)' and make an issue
-        tmp = re.split('([-.]+|[0-9.]+|[a-zA-Z0-9_-]+|[\(\)])', input)
+        tmp = re.split('([-.|]+|[0-9.]+|[a-zA-Z0-9_-]+|[\(\)])', input)
         [tokenList.append(x.upper()) for x in tmp if not (
             str(x).strip() == '' or str(x).strip() == ',')]  # to accept ',' as delimiter
         return tokenList

@@ -30,7 +30,7 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.communication.s_get_control',
                   {'err': 0, 'status': 0, 'mode': 0})
     test.sendAndExpect('obc.communication.s_get_full_status', {'err': 0, 'PWRGD': 1, 'TXL': 1, 'Transmit Ready': 1, 'Buffer Count': 0, 'Buffer Underrun': 1, 'Buffer Overrun': 2, 'Output Power': np.float32(26), 'Power Amplifier Temperature': np.float32(
-        27.3), 'Top Temperature': np.float32(-2.8), 'Bottom Temperature': np.float32(11.7), 'Battery Current': np.float32(95), 'Battery Voltage': np.float32(7.2), 'Power Amplifier Current': np.float32(0.48), 'Power Amplifier Voltage': np.float32(5.1), 'Firmware Version': np.float32(7.14)})
+        27.3), 'Top Temperature': np.float32(-2.8), 'Bottom Temperature': np.float32(11.7), 'Battery Current': np.float32(95), 'Battery Voltage': np.float32(7.2), 'Power Amplifier Current': np.float32(0.48), 'Power Amplifier Voltage': np.float32(5.1)})
     test.sendAndExpect('obc.communication.s_set_freq(2250.5)', {'err': 0})
     test.sendAndExpect('obc.communication.s_get_freq', {
                   'err': 0, 'frequency': np.float32(2250.5)})

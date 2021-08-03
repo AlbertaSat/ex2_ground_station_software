@@ -110,7 +110,7 @@ COMMUNICATION.S_SOFT_RESET:
 COMMUNICATION.S_GET_FULL_STATUS:
 		About: A full status of S-band non-configurable parameters
 		Arguments: [None]
-		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1', 'Transmit Ready': '>i4', 'Buffer Count': '>u2', 'Buffer Underrun': '>u2', 'Buffer Overrun': '>u2', 'Output Power': '>f', 'Power Amplifier Temperature': '>f', 'Top Temperature': '>f', 'Bottom Temperature': '>f', 'Battery Current': '>f', 'Battery Voltage': '>f', 'Power Amplifier Current': '>f', 'Power Amplifier Voltage': '>f', 'Firmware Version': '>f'}
+		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1', 'Transmit Ready': '>i4', 'Buffer Count': '>u2', 'Buffer Underrun': '>u2', 'Buffer Overrun': '>u2', 'Output Power': '>f', 'Power Amplifier Temperature': '>f', 'Top Temperature': '>f', 'Bottom Temperature': '>f', 'Battery Current': '>f', 'Battery Voltage': '>f', 'Power Amplifier Current': '>f', 'Power Amplifier Voltage': '>f'}
 		port: 10		subport: 10
 
 
@@ -271,7 +271,7 @@ COMMUNICATION.UHF_SECURE:
 COMMUNICATION.UHF_GET_FULL_STAT:
 		About: Returns the full status of all the UHF non-configurable parameters
 		Arguments: [None]
-		return values: {'err': '>b', 'HFXT': '>u1', 'UartBaud': '>u1', 'Reset': '>u1', 'RF Mode': '>u1', 'Echo': '>u1', 'BCN': '>u1', 'PIPE': '>u1', 'Bootloader': '>u1', 'CTS': '>u1', 'SEC': '>u1', 'FRAM': '>u1', 'RFTS': '>u1', 'Frequency': '>u4', 'PIPE timeout': '>u2', 'Beacon period': '>u2', 'Audio trans. period': '>u2', 'Uptime': '>u4', 'Packets out': '>u4', 'Packets in': '>u4', 'Packets in CRC16': '>u4', 'Temperature': '>f', 'Low power status': '>u1', 'Payload Size': '>u2', 'Secure key': '>u4'}
+		return values: {'err': '>b', 'HFXT': '>u1', 'UartBaud': '>u1', 'Reset': '>u1', 'RF Mode': '>u1', 'Echo': '>u1', 'BCN': '>u1', 'PIPE': '>u1', 'Bootloader': '>u1', 'CTS': '>u1', 'SEC': '>u1', 'FRAM': '>u1', 'RFTS': '>u1', 'Frequency': '>u4', 'PIPE timeout': '>u2', 'Beacon period': '>u2', 'Audio trans. period': '>u2', 'Uptime': '>u4', 'Packets out': '>u4', 'Packets in': '>u4', 'Packets in CRC16': '>u4', 'Temperature': '>f'}
 		port: 10		subport: 36
 
 
@@ -330,6 +330,12 @@ COMMUNICATION.UHF_SET_ECHO:
 		return values: {'err': '>b'}
 		port: 10		subport: 44
 
+COMMUNICATION.UHF_GET_SECURE_KEY:
+		About: Gets the key for secure mode
+		Arguments: [None]
+		return values: {'err': '>b', 'Secure Key': '>u4'}
+		port: 10		subport: 45
+
 
 HOUSEKEEPING.PARAMETER_REPORT:
 		About: None
@@ -384,7 +390,7 @@ REBOOT:
 		About: Does a soft reset on EPS (reboot). Be cautious.
 		Arguments: [<u4]
 		return values: {'err': '>b'}
-		port: 4		subport: None
+		port: 4		subport: 128
 
 
 CLI.GENERAL_TELEMETERY:
@@ -464,8 +470,99 @@ CONTROL.SET_HEATER_STATE:
 		port: 14		subport: 7
 
 
-CONTROL.PAUSE_EPS_DEPLOYMENT_ACTION:
-		About: Pauses a certain action group deployment for a set time
-		Arguments: [>B, <u4]
+CONFIGURATION.GET_ACTIVE_CONFIG:
+		About: Gets config values in active mode for a specific type
+		Arguments: [<u2, <u1]
+		return values: {'err': '>b' , 'type': '<u1', 'Value': 'var'}
+		port: 9		subport: 0
+
+
+CONFIGURATION.GET_MAIN_CONFIG:
+		About: Gets config values in main mode for a specific type
+		Arguments: [<u2, <u1]
+		return values: {'err': '>b' , 'type': '<u1', 'Value': 'var'}
+		port: 9		subport: 1
+
+
+CONFIGURATION.GET_FALLBACK_CONFIG:
+		About: Gets config values in fallback mode for a specific type
+		Arguments: [<u2, <u1]
+		return values: {'err': '>b' , 'type': '<u1', 'Value': 'var'}
+		port: 9		subport: 2
+
+
+CONFIGURATION.GET_DEFAULT_CONFIG:
+		About: Gets config values in default mode for a specific type
+		Arguments: [<u2, <u1]
+		return values: {'err': '>b' , 'type': '<u1', 'Value': 'var'}
+		port: 9		subport: 3
+
+
+CONFIGURATION.SET_CONFIG:
+		About: Sets the configuration in the current mode
+		Arguments: [<u2, <u1, var]
 		return values: {'err': '>b'}
-		port: 14		subport: 8		
+		port: 9		subport: 4
+
+
+CONFIGURATION.LOAD_MAIN2ACTIVE:
+		About: Loads main configuration from file into active
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 5
+
+
+CONFIGURATION.LOAD_FALLBACK2ACTIVE:
+		About: Loads fallback configuration from file into active
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 6
+
+
+CONFIGURATION.LOAD_DEFAULT2ACTIVE:
+		About: Loads default configuration from file into active
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 7
+
+
+CONFIGURATION.UNLOCK_CONFIG:
+		About: Unlocks configuration for saving
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 8
+
+
+CONFIGURATION.LOCK_CONFIG:
+		About: Locks configuration for saving
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 9
+
+
+CONFIGURATION.SAVE_ACTIVE2MAIN:
+		About: Saves active configuration to main file
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 10
+
+
+CONFIGURATION.SAVE_ACTIVE2FALLBACK:
+		About: Saves active configuration to fallback file
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 9		subport: 11
+
+
+CONFIGURATION.ELEVATE_ACCESS:
+		About: Elevates access role
+		Arguments: [<u1, <u4]
+		return values: {'err': '>b'}
+		port: 9		subport: 12
+
+
+CONFIGURATION.GET_STATUS:
+		About: Gets the status and errors info
+		Arguments: [None]
+		return values: {'err': '>B', 'isInitialized': '<u1', 'isLocked': '<u1', 'isFallbackConfigurationLoaded': '<u1', 'isMainConfigurationLoaded': '<u1', 'wasFallbackRequested': '<u1', 'initSource': '<u1', 'currAccessRole': '<u1', 'totalNumofErrors': '<u1', 'numOfParameterDoesNotExistErrors': '<u1', 'numOfInvalidParameterTypeErrors': '<u1', 'numOfValidationFailErrors': '<u1', 'numOfStorageFailErrors': '<u1', 'numOfNotInitializedErrors': '<u1', 'numOfNotLoadedOnInitErrors': '<u1', 'numOfLockedErrors': '<u1', 'numOfAccessDeniedErrors': '<u1', 'numOfWrongPasswordErrors': '<u1', 'numOfUnknownErrors': '<u1'}
+		port: 9		subport: 13

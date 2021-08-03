@@ -44,6 +44,8 @@ Numpy types (> for BE)
 'U' Unicode string
 
 'V' raw data (void)
+
+'var' variable-size (non-numpy). Checks the data type from elsewhere
 '''
 
 
@@ -55,6 +57,14 @@ class SystemValues(object):
         self.appIdx = 0
         self.serviceIdx = 2
         self.subserviceIdx = 4
+        
+        self.varTypes = {
+            0: '<u1',
+            1: '<i1',
+            2: '<u2',
+            4: '<u4',
+            9: '<S16' #Empty means all zero or Use <V16
+        }
 
         self.APP_DICT = {
             'OBC': 1,
@@ -291,7 +301,6 @@ class SystemValues(object):
                                 'Battery Voltage': '>f',
                                 'Power Amplifier Current': '>f',
                                 'Power Amplifier Voltage': '>f',
-                                'Firmware Version': '>f',
                             }
                         }
                     },
@@ -447,7 +456,7 @@ class SystemValues(object):
                         'what': 'Sets UHF destination callsign',
                         'subPort': 28,
                         'inoutInfo': {
-                            'args': ['>U6'],
+                            'args': ['>S6'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -457,7 +466,7 @@ class SystemValues(object):
                         'what': 'Sets UHF source callsign',
                         'subPort': 29,
                         'inoutInfo': {
-                            'args': ['>U6'],
+                            'args': ['>S6'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -467,7 +476,7 @@ class SystemValues(object):
                         'what': 'Sets UHF morse code callsign (max 36)',
                         'subPort': 30,
                         'inoutInfo': {
-                            'args': ['>U36'],
+                            'args': ['>S36'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -478,7 +487,7 @@ class SystemValues(object):
                         'subPort': 31,
                         'inoutInfo': {
                             # increase packet size and switch to >U108
-                            'args': ['>U60'],
+                            'args': ['>S60'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -489,7 +498,7 @@ class SystemValues(object):
                         'subPort': 32,
                         'inoutInfo': {
                             # Switch to >U97 after packet configuration
-                            'args': ['>U60'],
+                            'args': ['>S60'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -509,7 +518,7 @@ class SystemValues(object):
                         'what': 'Sets UHF FRAM address and write 16-byte data',
                         'subPort': 34,
                         'inoutInfo': {
-                            'args': ['>u4', '>U16'],
+                            'args': ['>u4', '>S16'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -553,9 +562,6 @@ class SystemValues(object):
                                 'Packets in': '>u4',
                                 'Packets in CRC16': '>u4',
                                 'Temperature': '>f',
-                                'Low power status': '>u1',
-                                'Payload Size': '>u2',
-                                'Secure key': '>u4',
                             }
                         }
                     },
@@ -566,8 +572,8 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Destination': '>U6',
-                                'Source': '>U6',
+                                'Destination': '>S6',
+                                'Source': '>S6',
                             }
                         }
                     },
@@ -578,7 +584,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Morse': '>U36',
+                                'Morse': '>S36',
                             }
                         }
                     },
@@ -589,7 +595,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'MIDI': '>U60',
+                                'MIDI': '>S60',
                             }
                         }
                     },
@@ -600,7 +606,7 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Beacon Message': '>U60',
+                                'Beacon Message': '>S60',
                             }
                         }
                     },
@@ -611,12 +617,12 @@ class SystemValues(object):
                             'args': ['>u4'],
                             'returns': {
                                 'err': '>b',
-                                'FRAM': '>U16',
+                                'FRAM': '>S16',
                             }
                         }
                     },
-                    'UHF_SET_PIPE': {
-                        'what': 'Set the communication to the PIPE(transparent) mode',
+                    'UHF_SET_ECHO': {
+                        'what': 'Starts echo over UART',
                         'subPort': 42,
                         'inoutInfo': {
                             'args': None,
@@ -635,8 +641,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'UHF_SET_ECHO': {
-                        'what': 'Starts echo over UART',
+                    'UHF_SET_PIPE': {
+                        'what': 'Set the communication to the PIPE(transparent) mode',
                         'subPort': 44,
                         'inoutInfo': {
                             'args': None,
@@ -645,10 +651,194 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'UHF_GET_SECURE_KEY': {
+                        'what': 'Gets the key for secure mode',
+                        'subPort': 45,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Secure Key': '>u4',
+                            }
+                        }
+                    },
                 }
             },
+            
+            'CONFIGURATION': {
+                'port': 9,  # As per EPS docs
+                'subservice': {
+                    'GET_ACTIVE_CONFIG': {
+                        'what': 'Gets config values in active mode for a specific type',
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #In command parser it gets the data type from the return value for 'type'
+                            }
+                        }
+                    },   
+                    'GET_MAIN_CONFIG': {
+                        'what': 'Gets config values in main mode for a specific type',
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #See comment for active
+                            }
+                        }
+                    },  
+                    'GET_FALLBACK_CONFIG': {
+                        'what': 'Gets config values in fallback mode for a specific type',
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #See comment for active
+                            }
+                        }
+                    },
+                    'GET_DEFAULT_CONFIG': {
+                        'what': 'Gets config values in default mode for a specific type',
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1'], #id, type_id
+                            'returns': {
+                                'err': '>B',
+                                'type': '<u1',
+                                'Value': 'var' #See comment for active
+                            }
+                        }
+                    },                                                                                                                      
+                    'SET_CONFIG': {
+                        'what': 'Sets the configuration',
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['<u2', '<u1', 'var'], #id, type, config
+                            'returns': {
+                                'err': '>B',
+                            }
+                        }
+                    },   
+                    'LOAD_MAIN2ACTIVE': {
+                        'what': 'Load main configuration from file into active',
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },
+                    'LOAD_FALLBACK2ACTIVE': {
+                        'what': 'Load fallback configuration from file into active',
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },        
+                    'LOAD_DEFAULT2ACTIVE': {
+                        'what': 'Load default configuration from file into active',
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },   
+                    'UNLOCK_CONFIG': {
+                        'what': 'Unlock configuration for saving',
+                        'subPort': 8,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },  
+                    'LOCK_CONFIG': {
+                        'what': 'Lock configuration from saving',
+                        'subPort': 9,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    }, 
+                    'SAVE_ACTIVE2MAIN': {
+                        'what': 'Save active configuration to main file',
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },      
+                    'SAVE_ACTIVE2FALLBACK': {
+                        'what': 'Save active configuration to fallback file',
+                        'subPort': 11,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },                                                                                                                              
+                    'ELEVATE_ACCESS': {
+                        'what': 'Elevates access role',
+                        'subPort': 12,
+                        'inoutInfo': {
+                            'args': ['<u1', '<u4'],  # role, key (see docs)
+                            'returns': {
+                                'err': '>B'
+                            }
+                        }
+                    },                
+                    'GET_STATUS': {
+                        'what': 'Gets status and errors info',
+                        'subPort': 13,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>B',
+                                'isInitialized': '<u1',
+                                'isLocked': '<u1',
+                                'isFallbackConfigurationLoaded': '<u1',
+                                'isMainConfigurationLoaded': '<u1',
+                                'wasFallbackRequested': '<u1',
+                                'initSource': '<u1',
+                                'currAccessRole': '<u1',
+                                'totalNumofErrors': '<u1',
+                                'numOfParameterDoesNotExistErrors': '<u1',
+                                'numOfInvalidParameterTypeErrors': '<u1',
+                                'numOfValidationFailErrors': '<u1',
+                                'numOfStorageFailErrors': '<u1',
+                                'numOfNotInitializedErrors': '<u1',
+                                'numOfNotLoadedOnInitErrors': '<u1',
+                                'numOfLockedErrors': '<u1',
+                                'numOfAccessDeniedErrors': '<u1',
+                                'numOfWrongPasswordErrors': '<u1',
+                                'numOfUnknownErrors': '<u1',
+                            }
+                        }
+                    },  
+                }
+            },  
+                       
             'HOUSEKEEPING': {
-                'port': 9,
+                'port': 17,
                 'subservice': {
                     'GET_HK': {
                         'subPort': 0,
@@ -899,17 +1089,7 @@ class SystemValues(object):
                                 'startupAfterGsWdt': '?',
                             }
                         }
-                    },
-                    'RESET_STATUS_TIMER_FILES': {
-                        'what': 'Updates status and timer files of GS watchdog with initial values',
-                        'subPort': 4,
-                        'inoutInfo': {
-                            'args': ['<u2'],  # key (see docs)
-                            'returns': {
-                                'err': '>B',
-                            }
-                        }
-                    },
+                    }
                 }
             },
 
@@ -929,16 +1109,21 @@ class SystemValues(object):
                 }
             },
 
-            'REBOOT': { # Does not work atm!
+            'REBOOT': {
                 'port': 4,  # As per CSP docs
                 # EPS soft reset
                 # Not recommended to use by the operator
                 # no subport (command ID) needed.
-                'what': 'Does a soft reset on EPS (reboot)',
-                'inoutInfo': {
-                    'args': ['<u4'],  # 2147975175
-                    'returns': {
-                        'err': '>b',
+                'subservice':{
+                    'SOFT': {                	
+                        'what': 'Does a soft reset on EPS (reboot)',
+                        'subPort': 128,
+                        'inoutInfo': {
+                            'args': ['<u4'],  # 491527 or 2147975175
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
                     }
                 }
                 # magic number 0x80078007 must be sent with csp port 4 and no subport number
@@ -1164,7 +1349,7 @@ class SystemValues(object):
                         'what': 'Sets MPPT mode',
                         'subPort': 4,
                         'inoutInfo': {
-                            # Hw, manual, auto, auto w/ timeout
+                            # 0-Hw, 1-manual, 2-auto, 3-auto w/ timeout
                             'args': ['<B'],
                             'returns': {
                                 'err': '>b'
@@ -1202,14 +1387,97 @@ class SystemValues(object):
                                 'err': '>b'
                             }
                         }
-                    },
-                    'PAUSE_EPS_DEPLOYMENT_ACTION': {
-                        'what': 'Pauses a certain action group deployment for a set time',
-                        'subPort': 8,
+                    }
+                }
+            },
+            'UPDATER' : {
+                'port': 12,
+                'subservice': {
+                    'FLASH_UPDATE': {
+                        'what' : 'GOLDEN_IMAGE ONLY Flashes file VOL0:/application_image.bin from filesystem to working image',
+                        'subPort': 0,
                         'inoutInfo': {
-                            'args': ['>B', '<u4'],  # group, time
+                            'args': None,
                             'returns': {
                                 'err': '>b'
+                            }
+                        }
+                    },
+                    'GET_GOLDEN_INFO': {
+                        'what': "Get golden image metadata",
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args' : None,
+                            'returns': {
+                                'err'    : '>b',
+                                'exists' : '>u4',
+                                'size'   : '>u4',
+                                'addr'   : '>u4',
+                                'crc'    : '>u2'
+                            }
+                        }
+                    },
+                    'GET_APP_INFO' : {
+                        'what': "Get working image metadata",
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args' : None,
+                            'returns': {
+                                'err'    : '>b',
+                                'exists' : '>u4',
+                                'size'   : '>u4',
+                                'addr'   : '>u4',
+                                'crc'    : '>u2'
+                            }
+                        }
+                    },
+                    'SET_APP_ADDRESS' : {
+                        'what': 'Set the starting address of the working image',
+                        'subPort' : 3,
+                        'inoutInfo' : {
+                            'args' : ['>u4'],
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'SET_APP_CRC' : {
+                        'what': 'Set the starting address of the working image',
+                        'subPort' : 4,
+                        'inoutInfo' : {
+                            'args' : ['>u2'],
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'ERASE_APP' : {
+                        'what' : 'Erase working image',
+                        'subPort' : 5,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'VERIFY_APP' : {
+                        'what' : 'Verify crc of working image',
+                        'subPort' : 6,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b'
+                            }
+                        }
+                    },
+                    'VERIFY_GOLDEN' : {
+                        'what' : 'Verify crc of golden image',
+                        'subPort' : 7,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b'
                             }
                         }
                     }
