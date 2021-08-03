@@ -1488,7 +1488,7 @@ class SystemValues(object):
                 'port': 13,
                 'subservice': {
                     'GET_FILE': {
-                        'subPort': 3,
+                        'subPort': 0,
                         'inoutInfo': {
                             'args': [],
                             'returns': {
@@ -1497,17 +1497,8 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'SET_FILE_SIZE': {
-                        'subPort': 0,
-                        'inoutInfo': {
-                            'args': ['>u4'],
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'GET_LIST': {
-                        'subPort': 2,
+                    'GET_OLD_FILE': {
+                        'subPort': 1,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -1515,8 +1506,17 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'SET_FILE_SIZE': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
                     'GET_FILE_SIZE': {
-                        'subPort': 1,
+                        'subPort': 2,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
