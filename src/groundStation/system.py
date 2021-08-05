@@ -1010,9 +1010,6 @@ class SystemValues(object):
                                 'pckts_in': '>u4',
                                 'pckts_in_crc16': '>u4',
                                 'temperature': '>f4',
-                                'low_pwr_state': '>B',
-                                'payload_size': '>u2',
-                                'secure_key': '>u4',
                                 #Sband
                                 'Output_Power': '>f4',
                                 'PA_Temp': '>f4',
@@ -1481,6 +1478,50 @@ class SystemValues(object):
                             'args' : None,
                             'returns' : {
                                 'err' : '>b'
+                            }
+                        }
+                    }
+                }
+            },
+
+            'LOGGER': {
+                'port': 13,
+                'subservice': {
+                    'GET_FILE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': [],
+                            'returns': {
+                                'err': '>b',
+                                'log': '>S500',
+                            }
+                        }
+                    },
+                    'GET_OLD_FILE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'SET_FILE_SIZE': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'GET_FILE_SIZE': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'size': '>u4'
                             }
                         }
                     }
