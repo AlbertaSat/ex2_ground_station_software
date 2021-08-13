@@ -5,61 +5,68 @@
  *      Author: thomas
  */
 
+#include "HL_i2c.h"
 #include "i2c.h"
 
-#include "HL_i2c.h"
+void i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
+    i2cSetSlaveAdd(I2C_BUS_REG, addr);
+    i2cSetDirection(I2C_BUS_REG, I2C_TRANSMITTER);
+    i2cSetBaudrate(I2C_BUS_REG, I2C_SPEED);
+    i2cSetCount(I2C_BUS_REG, length);
+    i2cSetMode(I2C_BUS_REG, I2C_MASTER);
+    i2cSetStop(I2C_BUS_REG);
+    i2cSetStart(I2C_BUS_REG);
 
-void i2c_sendCommand(uint8_t length, char* start, char* response,
-                     uint8_t addr) {
-  i2cBASE_t* regset = i2cREG1;
+    while(i2cIsBusBusy(I2C_BUS_REG) == true); // This line is critical
+    i2cSend(I2C_BUS_REG, length, command);
 
-  i2cSetSlaveAdd(regset, addr);
-  i2cSetDirection(regset, I2C_TRANSMITTER);
-  i2cSetBaudrate(regset, 400);  // Hardcoded
-  i2cSetCount(regset, length);
-  i2cSetMode(regset, I2C_MASTER);
-  i2cSetStop(regset);
-  i2cSetStart(regset);
+    /* Wait until Bus Busy is cleared */
+    int i=0;
+    while(i2cIsBusBusy(I2C_BUS_REG) == true && i<100){
+        i++;
+    }
 
-  while (i2cIsBusBusy(regset) == true)
-    ;  // This line is critical
-  i2cSend(regset, length, start);
+    i = 0;
 
-  /* Wait until Bus Busy is cleared */
-  while (i2cIsBusBusy(regset) == true)
-    ;
+    /* Wait until Stop is detected */
+    while(i2cIsStopDetected(I2C_BUS_REG) == 0){
+        if(i==1000){
+            i2cSetStop(I2C_BUS_REG);
+            break;
+        }
+        i++;
+    }
 
-  /* Wait until Stop is detected */
-  while (i2cIsStopDetected(regset) == 0)
-    ;
+    /* Clear the Stop condition */
+    i2cClearSCD(I2C_BUS_REG);
+}
 
-  /* Clear the Stop condition */
-  i2cClearSCD(regset);
+void i2c_receiveResponse(uint8_t addr, char * response, uint8_t length){
 
-  /* Change to receive mode */
+    i2cSetSlaveAdd(I2C_BUS_REG, addr);
+    /* Set direction to receiver */
+    i2cSetDirection(I2C_BUS_REG, I2C_RECEIVER);
+    i2cSetCount(I2C_BUS_REG, length);
+    /* Set mode as Master */
+    i2cSetMode(I2C_BUS_REG, I2C_MASTER);
+    i2cSetStop(I2C_BUS_REG);
+    /* Transmit command Condition */
+    i2cSetStart(I2C_BUS_REG);
 
-  i2cSetSlaveAdd(regset, addr);
-  /* Set direction to receiver */
-  i2cSetDirection(regset, I2C_RECEIVER);
-  i2cSetCount(regset, 100);
-  /* Set mode as Master */
-  i2cSetMode(regset, I2C_MASTER);
-  i2cSetStop(regset);
-  /* Transmit Start Condition */
-  i2cSetStart(regset);
+    while(i2cIsBusBusy(I2C_BUS_REG) == true);
+    i2cReceive(I2C_BUS_REG, length, response);
 
-  while (i2cIsBusBusy(regset) == true)
-    ;
-  i2cReceive(regset, 100, response);
+    /* Wait until Bus Busy is cleared */
+    while(i2cIsBusBusy(I2C_BUS_REG) == true);
 
-  /* Wait until Bus Busy is cleared */
-  while (i2cIsBusBusy(regset) == true)
-    ;
+    /* Wait until Stop is detected */
+    while(i2cIsStopDetected(I2C_BUS_REG) == 0);
 
-  /* Wait until Stop is detected */
-  while (i2cIsStopDetected(regset) == 0)
-    ;
+    /* Clear the Stop condition */
+    i2cClearSCD(I2C_BUS_REG);
+}
 
-  /* Clear the Stop condition */
-  i2cClearSCD(regset);
+void i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len){
+    i2c_sendCommand(addr, command, command_len);
+    i2c_receiveResponse(addr, response, response_len);
 }
