@@ -71,8 +71,9 @@ static uint8_t sm_add = '2';  // Stores the second digit of the (hex) address
  * @return
  *      Outcome of the function (defined in uTransceiver.h)
  */
-UHF_return UHF_genericWrite(uint8_t code, void *param) {
-  uint8_t cmd[MAX_W_CMDLEN] = {0};
+UHF_return UHF_genericWrite(uint8_t code, void * param)
+{
+  uint8_t cmd[MAX_UHF_W_CMDLEN] = {0};
 
   /* The following switch statement depends on the command code to:    *
    *    - Calculate necessary ASCII characters from input parameters *
@@ -369,11 +370,11 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
    *    - Checking for an answer indicating an error  */
 
   crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
-  uint8_t ans[MAX_W_ANSLEN] = {0};
+  uint8_t ans[MAX_UHF_W_ANSLEN] = {0};
 
   // Command is sent to the board, and response is received
   /* -48 to go from ASCII to hex, +32 since the address is 0x20 + sm_add */
-  i2c_sendCommand(strlen(cmd), cmd, ans, sm_add - 16);
+  i2c_sendAndReceive(sm_add-16, cmd, strlen(cmd), ans, MAX_UHF_W_ANSLEN);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format
@@ -404,7 +405,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     }
   }
 
-  uint8_t expected[MAX_W_ANSLEN] = {0};
+  uint8_t expected[MAX_UHF_W_ANSLEN] = {0};
   strcpy(expected, ans);
   crc32_calc(find_blankSpace(strlen(expected), expected), expected);
 
@@ -490,7 +491,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
   uint8_t code_chars[2] = {(code >> 4) & 15, code & 15};
   convHexToASCII(2, code_chars);
 
-  uint8_t command[MAX_R_CMDLEN] = {
+  uint8_t command[MAX_UHF_R_CMDLEN] = {
       'E',           'S',           '+',         'R', '2', sm_add,
       code_chars[0], code_chars[1], BLANK_SPACE, 'C', 'C', 'C',
       'C',           'C',           'C',         'C', 'C', CARRIAGE_R};
@@ -508,28 +509,20 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
                         (add >> 4) & 15,  add & 15};
     convHexToASCII(8, chadd);
 
-    uint8_t fram_command[MAX_R_CMDLEN] = {'E',         'S',
-                                          '+',         'R',
-                                          '2',         sm_add,
-                                          'F',         'D',
-                                          chadd[0],    chadd[1],
-                                          chadd[2],    chadd[3],
-                                          chadd[4],    chadd[5],
-                                          chadd[6],    chadd[7],
-                                          BLANK_SPACE, 'C',
-                                          'C',         'C',
-                                          'C',         'C',
-                                          'C',         'C',
-                                          'C',         [25] = CARRIAGE_R};
+    uint8_t fram_command[MAX_UHF_R_CMDLEN] = {
+        'E',      'S',      '+',         'R',
+        '2',      sm_add,  'F','D', chadd[0],    chadd[1],
+        chadd[2], chadd[3], chadd[4],    chadd[5],
+        chadd[6], chadd[7], BLANK_SPACE, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',[25] = CARRIAGE_R};
     strcpy(command, fram_command);
   }
 
   crc32_calc(find_blankSpace(strlen(command), command), command);
 
   // Command is sent to the board, and response is received
-  uint8_t ans[MAX_R_ANSLEN] = {0};
+  uint8_t ans[MAX_UHF_R_ANSLEN] = {0};
   /* -48 to go from ASCII to hex, +32 since the address is 0x20 + sm_add */
-  i2c_sendCommand(strlen(command), command, ans, sm_add - 48 + 32);
+  i2c_sendAndReceive(sm_add-48+32, command, strlen(command), ans, MAX_UHF_R_ANSLEN);
 
   if (ans[0] == LETTER_E) {
     // Error answers intrinsic to all commands (unsure about exact format of
@@ -543,7 +536,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
   int b = find_blankSpace(strlen(ans), ans);
 
-  uint8_t expected[MAX_R_ANSLEN] = {0};
+  uint8_t expected[MAX_UHF_R_ANSLEN] = {0};
   strcpy(expected, ans);
   crc32_calc(find_blankSpace(strlen(expected), expected), expected);
 
@@ -883,16 +876,16 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len,
                           uint8_t *data, uint8_t n_read_bytes) {
   uint8_t params[4] = {s_address >> 4, s_address & 15, len >> 4, len & 15};
   convHexToASCII(4, params);
-  uint8_t cmd[MAX_W_CMDLEN] = {
-      'E', 'S',    '+',       'W',       '2',       sm_add,   'F',
-      '1', format, params[0], params[1], params[2], params[3]};
-  int i = 0;
+  uint8_t cmd[MAX_UHF_W_CMDLEN] = {'E','S','+','W','2',sm_add,'F','1',format,params[0],params[1],params[2],params[3]};
 
-  for (i; i < len; i++) {
-    cmd[13 + 2 * i] = data[i] >> 4;
-    cmd[13 + 2 * i + 1] = data[i] & 15;
-    convHexToASCII(2, &cmd[13 + 2 * i]);
+  int i = 0;
+  for(i; i < len; i++){
+    cmd[13 + 2*i] = data[i] >> 4;
+    cmd[13 + 2*i + 1] = data[i] & 15;
+    convHexToASCII(2, &cmd[13 + 2*i]);
   }
+
+
   uint8_t hex_bytes[2] = {n_read_bytes >> 4, n_read_bytes & 15};
   convHexToASCII(2, hex_bytes);
   cmd[13 + 2 * i] = hex_bytes[0];
@@ -901,6 +894,8 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len,
   cmd[13 + 2 * i + 11] = CARRIAGE_R;
 
   crc32_calc(find_blankSpace(strlen(cmd), cmd), cmd);
+
+  // TODO: Finish this function, which is missing the UART send command and interpreting the response
 
   return 0;
 }
