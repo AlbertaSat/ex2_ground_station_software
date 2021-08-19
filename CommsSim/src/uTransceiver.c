@@ -663,8 +663,9 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     case 245:    // Get Destination Call Sign
     case 246: {  // Get Source Call Sign
       uhf_configStruct *callsign = (uhf_configStruct *)param;
+      callsign->len = 6;
       int j = 0;
-        for (; j < 6; j++) {
+        for (; j < callsign->len; j++) {
         callsign->message[j] = ans[blankspace_index + j - 6];
       }
       break;
@@ -738,6 +739,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
         convHexFromASCII(2, temp);
         uint8_t val = (temp[0] << 4) | temp[1];
         beacon->message[i] = val;
+        //TODO: Deal with beacon encoding (read value is different from write value)
       }
       break;
     }
