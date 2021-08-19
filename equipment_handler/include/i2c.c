@@ -5,17 +5,19 @@
  *      Author: thomas
  */
 
-#include "i2c.h"
-
 #include "HL_i2c.h"
+#include "i2c.h"
 #include "i2c_io.h"
 
-void i2c_sendCommand(uint8_t length, char* start, char* response,
-                     uint8_t addr) {
-  // TODO: make this use error code return
-  i2cBASE_t* regset = i2cREG1;
+void i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
+    i2c_Send(I2C_BUS_REG, addr, length, command);
+}
 
-  i2c_Send(regset, addr, length, start);
+void i2c_receiveResponse(uint8_t addr, char * response, uint8_t length){
+    i2c_Receive(I2C_BUS_REG, addr, length, response);
+}
 
-  i2c_Receive(regset, addr, 100, response);
+void i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len){
+    i2c_sendCommand(addr, command, command_len);
+    i2c_receiveResponse(addr, response, response_len);
 }

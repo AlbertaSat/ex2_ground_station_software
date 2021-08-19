@@ -7,13 +7,13 @@
 
 #include <stdint.h>
 
-#define I2C_MAX_ANS_LENGTH 150
+#define I2C_SPEED 400
+#define I2C_BUS_REG i2cREG1
 
-// Mocked i2c functions
+void i2c_sendCommand(uint8_t addr, char * command, uint8_t length);
 
-uint8_t i2c_readRegister(uint8_t registerAddress);
-void i2c_writeRegister(uint8_t registerAddress, uint8_t value);
+void i2c_receiveResponse(uint8_t addr, char * response, uint8_t length);
 
-void i2c_sendCommand(uint8_t length, char* start, char* response, uint8_t addr);
+void i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
 
 #endif /* i2c_H */
