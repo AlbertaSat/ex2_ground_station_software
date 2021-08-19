@@ -38,11 +38,48 @@
 #define BLANK_SPACE 0x20
 #define CARRIAGE_R 0x0D
 
-typedef enum {
-  U_GOOD_CONFIG = 0,
-  U_BAD_CONFIG = -1,
-  U_BAD_PARAM = -2,
-  U_BAD_ANS_CRC = -3,
+// Defines for Status Control Word (SCW)
+#define UHF_UARTBAUD_9600 0
+#define UHF_UARTBAUD_19200 2
+#define UHF_UARTBAUD_115200 3
+#define UHF_RESETBIT_CLEAR 0
+#define UHF_RESETBIT_SET 1
+#define UHF_RFMODE0 0
+#define UHF_RFMODE1 1
+#define UHF_RFMODE2 2
+#define UHF_RFMODE3 3
+#define UHF_RFMODE4 4
+#define UHF_RFMODE5 5
+#define UHF_RFMODE6 6
+#define UHF_RFMODE7 7
+#define UHF_ECHO_ON 1
+#define UHF_ECHO_OFF 0
+#define UHF_BCN_ON 1
+#define UHF_BCN_OFF 0
+#define UHF_PIPE_ON 1
+#define UHF_PIPE_OFF 0
+#define UHF_BOOT_MODE 1
+#define UHF_APP_MODE 0
+
+#define UHF_SCW_HFTX_INDEX 0
+#define UHF_SCW_UARTBAUD_INDEX 1
+#define UHF_SCW_RESET_INDEX 2
+#define UHF_SCW_RFMODE_INDEX 3
+#define UHF_SCW_ECHO_INDEX 4
+#define UHF_SCW_BCN_INDEX 5
+#define UHF_SCW_PIPE_INDEX 6
+#define UHF_SCW_BOOT_INDEX 7
+#define UHF_SCW_CTS_INDEX 8
+#define UHF_SCW_SEC_INDEX 9
+#define UHF_SCW_FRAM_INDEX 10
+#define UHF_SCW_RFTS_INDEX 11
+
+
+typedef enum{
+	U_GOOD_CONFIG =  0,
+	U_BAD_CONFIG  = -1,
+	U_BAD_PARAM   = -2,
+	U_BAD_ANS_CRC = -3,
 
   U_BAD_CMD_CRC = -4,
   U_BAD_CMD_LEN = -5,
@@ -64,10 +101,11 @@ typedef struct {
 } uhf_framStruct;
 
 // Converts hex values to their ASCII characters
-void convHexToASCII(int length, uint8_t* arr);
-void convHexFromASCII(int length, uint8_t* arr);
-uint32_t crc32_calc(size_t length, char* cmd);
-int find_blankSpace(int length, char* string);
+
+void convHexToASCII(int length, uint8_t * arr);
+void convHexFromASCII(int length, uint8_t * arr);
+uint32_t crc32_calc(size_t length, uint8_t * cmd);
+int find_blankSpace(int length, uint8_t * string);
 
 // Read and Write command functions
 UHF_return UHF_genericWrite(uint8_t code, void* param);
