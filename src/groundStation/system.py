@@ -1502,7 +1502,8 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b'
+                                'err': '>b',
+                                'log': '>S500',
                             }
                         }
                     },
