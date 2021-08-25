@@ -12,24 +12,17 @@
  * GNU General Public License for more details.
  */
 /**
- * @file i2c.c
+ * @file uart.h
  * @author Thomas Ganley
- * @date 2021-02-17
+ * @date 2021-08-23
  */
 
-#include "HL_i2c.h"
-#include "i2c.h"
-#include "i2c_io.h"
+#ifndef EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UART_H_
+#define EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UART_H_
 
-void i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
-    i2c_Send(I2C_BUS_REG, addr, length, command);
-}
+void uart_send(uint32_t length, uint8_t * data);
 
-void i2c_receiveResponse(uint8_t addr, char * response, uint8_t length){
-    i2c_Receive(I2C_BUS_REG, addr, length, response);
-}
+void uart_sendAndReceive(uint32_t command_length, uint8_t * command, uint32_t answer_length, uint8_t * ans);
 
-void i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len){
-    i2c_sendCommand(addr, command, command_len);
-    i2c_receiveResponse(addr, response, response_len);
-}
+
+#endif /* EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UART_H_ */

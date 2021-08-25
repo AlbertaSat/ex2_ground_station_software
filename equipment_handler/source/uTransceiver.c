@@ -19,6 +19,7 @@
  */
 
 #include "uTransceiver.h"
+#include "uart.h"
 
 #include <stdlib.h>  //*
 #include <time.h>    //*
@@ -546,10 +547,11 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
   // Command is sent to the board, and response is received
   uint8_t ans[MAX_UHF_R_ANSLEN] = {0};
-  uint8_t i2c_address = i2c_address_small_digit_ascii;
-  convHexFromASCII(1, &i2c_address);
-  i2c_address += 0x20; // Address is always 0x22 or 0x23
-  i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN);
+//  uint8_t i2c_address = i2c_address_small_digit_ascii;
+//  convHexFromASCII(1, &i2c_address);
+//  i2c_address += 0x20; // Address is always 0x22 or 0x23
+//  i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN);
+  uart_sendAndReceive(strlen((char *)command_to_send), command_to_send, MAX_UHF_R_ANSLEN, ans);
 
   // Error handling
   if (ans[0] == LETTER_E) {

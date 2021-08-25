@@ -1,7 +1,21 @@
-// i2c.h
-// Author: Thomas Ganley
-// May 13, 2020
-
+/*
+ * Copyright (C) 2021  University of Alberta
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+/**
+ * @file i2c.h
+ * @author Thomas Ganley
+ * @date 2020-05-20
+ */
 #ifndef i2c_H
 #define i2c_H
 

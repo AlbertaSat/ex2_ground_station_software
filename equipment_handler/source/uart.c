@@ -12,24 +12,21 @@
  * GNU General Public License for more details.
  */
 /**
- * @file i2c.c
+ * @file uart.c
  * @author Thomas Ganley
- * @date 2021-02-17
+ * @date 2021-08-23
  */
 
-#include "HL_i2c.h"
-#include "i2c.h"
-#include "i2c_io.h"
+#include "HL_sci.h"
+#include "uart.h"
 
-void i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
-    i2c_Send(I2C_BUS_REG, addr, length, command);
+void uart_send(uint32_t length, uint8_t * data){
+    sciSetBaudrate(sciREG2, 115200);
+    sciSend(sciREG2, length, data);
 }
 
-void i2c_receiveResponse(uint8_t addr, char * response, uint8_t length){
-    i2c_Receive(I2C_BUS_REG, addr, length, response);
-}
-
-void i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len){
-    i2c_sendCommand(addr, command, command_len);
-    i2c_receiveResponse(addr, response, response_len);
+void uart_sendAndReceive(uint32_t command_length, uint8_t * command, uint32_t answer_length, uint8_t * ans){
+    sciSetBaudrate(sciREG2, 115200);
+    sciSend(sciREG2, command_length, command);
+    sciReceive(sciREG2, answer_length, ans);
 }
