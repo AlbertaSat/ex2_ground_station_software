@@ -58,7 +58,7 @@ class groundStation(object):
         self.parser = CommandParser()
         self.server_connection = defaultdict(dict)
         self.number_of_buffers = 100
-        self.buffer_size = 512 #This is max size of an incoming packet
+        self.buffer_size = 1024 #This is max size of an incoming packet
         libcsp.init(self.myAddr, 'host', 'model', '1.2.3', self.number_of_buffers, self.buffer_size)
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
