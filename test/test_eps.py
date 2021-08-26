@@ -30,8 +30,8 @@ def testAllCommandsToOBC():
     test.sendAndExpect('eps.control.single_output_control(10 1 0)', {'err': 0}) #Preferably a channe that does not power a subsystem
     test.send('eps.cli.general_telemetry')
     test.sendAndExpect('eps.control.single_output_control(10 0 0)', {'err': 0})
-    test.sendAndExpect('eps.configuration.get_active_config(0 0))', {'err': 0, 'type':0, 'Value': 4})
-    test.sendAndExpect('eps.configuration.get_active_config(136 2))', {'err': 0, 'type':2, 'Value': 500}) #Might change though. Just checking another type
+    test.sendAndExpect('eps.configuration.get_active_config(0 0)', {'err': 0, 'type':0, 'Value': 4})
+    test.sendAndExpect('eps.configuration.get_active_config(136 2)', {'err': 0, 'type':2, 'Value': 500}) #Might change though. Just checking another type
     
     test.summary() #call when done to print summary of tests
 
