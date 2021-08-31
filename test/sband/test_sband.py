@@ -21,6 +21,11 @@
 
 
 import numpy as np
+
+import sys
+from os import path
+sys.path.append("./test")
+
 from testLib import testLib as test
 
 test = test() #call to initialize local test class

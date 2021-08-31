@@ -54,6 +54,22 @@ class testLib(object):
             '\n\tRecieved: ' + str(response) +
             '\n\tExpected: ' + str(expect) + '\n\n' + '\033[0m')
         return response == expect
+
+    def send(self, send):
+        server, port, toSend = gs.getInput(inVal = send)
+        response = gs.transaction(server, port, toSend)
+        if response != {}:
+            testpassed = 'Pass'
+            colour = '\033[92m' #green
+            self.passed += 1
+        else:
+            testpassed = 'Fail'
+            colour = '\033[91m' #red
+            self.failed += 1
+
+        print(colour + ' - TEST CASE ' + testpassed + ' -\n\tSent: ' + send +
+            '\n\tRecieved: ' + str(response) + '\n\n' + '\033[0m')
+        return True
     
     def summary(self):
         delta = time.time() - self.start
