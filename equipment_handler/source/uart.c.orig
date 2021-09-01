@@ -12,17 +12,22 @@
  * GNU General Public License for more details.
  */
 /**
- * @file uart.h
+ * @file uart.c
  * @author Thomas Ganley
  * @date 2021-08-23
  */
 
-#ifndef EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UART_H_
-#define EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UART_H_
+#include "HL_sci.h"
+#include "uart.h"
 
-void uart_send(uint32_t length, uint8_t * data);
+void uart_send(uint32_t length, uint8_t * data){
+    sciSetBaudrate(sciREG2, 115200);
+    sciSend(sciREG2, length, data);
+}
 
-void uart_sendAndReceive(uint32_t command_length, uint8_t * command, uint32_t answer_length, uint8_t * ans);
-
-
-#endif /* EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UART_H_ */
+void uart_sendAndReceive(uint32_t command_length, uint8_t * command, uint32_t answer_length, uint8_t * ans){
+    sciSetBaudrate(sciREG2, 115200);
+    sciSend(sciREG2, command_length, command);
+    while(sciIsRxReady(sciREG2) == 0);
+    sciReceive(sciREG2, answer_length, ans);
+}
