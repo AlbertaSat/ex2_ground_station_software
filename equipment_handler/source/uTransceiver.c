@@ -19,9 +19,9 @@
  */
 
 #include "uTransceiver.h"
-
 #include <stdlib.h>  //*
 #include <time.h>    //*
+#include <uhf_uart.h>
 
 static uint8_t i2c_address_small_digit_ascii = '2';  // Stores the second digit of the (hex) address
 
@@ -466,9 +466,9 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
  *    4       Get # of received packets
  *    5       Get # of received packets w CRC16 error
  *    6       Get PIPE mode timeout period
- *      7     Get beacon transmission period
- *      8       Get audio beacon transmission period
- *      10      Get the internal temperature of the board
+ *    7       Get beacon transmission period
+ *    8       Get audio beacon transmission period
+ *    10      Get the internal temperature of the board
  *    244   Get low power mode status
  *    245   Get destination call sign
  *    246   Get source call sign
@@ -484,23 +484,23 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
  *      CODE TYPE         PARAM DESCRIPTION
  *      0   uint8_t*        Array of 12 status control word values
  *    1     uint32_t*     Frequency in Hz
- *    2     uint32_t*       Time in seconds
- *    3   uint32_t*     Value
- *    4   uint32_t*         Value
- *      5     uint32_t*         Value
- *      6     uint32_t*         Time in seconds (1-255)
- *    7     uint32_t*     Time in seconds (1-65535)
- *    8     uint32_t*     Time in seconds (30-65535)
+ *    2     uint32_t*     Array of 2 values (1 time, 1 rssi)
+ *    3     uint32_t*     Array of 2 Values (1 #, 1 rssi)
+ *    4     uint32_t*     Array of 2 values (1 #, 1 rssi)
+ *    5     uint32_t*     Array of 2 values (1 #, 1 rssi)
+ *    6     uint32_t*     Array of 2 values (1 time [1-255], 1 rssi)
+ *    7     uint32_t*     Array of 2 values (1 time [1-65535], 1 rssi)
+ *    8     uint32_t*     Array of 2 values (1 time [30-65535], 1 rssi)
  *    10    float*        Value in degrees celsius
- *    244 uint8_t*          = 1 for low power mode
+ *    244   uint8_t*          = 1 for low power mode
  *    245   uhf_configStruct* Config struct
- *    246 uhf_configStruct* ''
- *    247 uhf_configStruct* ''
- *    248 uhf_configStruct* ''
+ *    246   uhf_configStruct* ''
+ *    247   uhf_configStruct* ''
+ *    248   uhf_configStruct* ''
  *    249   uint8_t*      Char array (form "X.xx")
  *    250   uint16_t*     Value in # of bytes
- *    251 uhf_configStruct* Config struct
- *    253 uhf_framStruct*   FRAM structure
+ *    251   uhf_configStruct* Config struct
+ *    253   uhf_framStruct*   FRAM structure
  *    255   uint32_t*     Value of the secure key
  * @return
  *      Outcome of the function (defined in uTransceiver.h)
@@ -550,6 +550,10 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
   convHexFromASCII(1, &i2c_address);
   i2c_address += 0x20; // Address is always 0x22 or 0x23
   i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN);
+//  uhf_enter_direct_hardware_mode();
+//  uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send, MAX_UHF_R_ANSLEN, ans);
+//  uhf_exit_direct_hardware_mode();
+
 
   // Error handling
   if (ans[0] == LETTER_E) {
@@ -614,11 +618,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
       *freq = (val1 + (val2 / 524288.0f)) * 6500000.0f;
 
-      // Compute the RSSI
-      uint8_t rssi_hex[2] = {ans[blankspace_index - 10], ans[blankspace_index - 9]};
-      convHexFromASCII(2, rssi_hex);
-
-      *(freq + 1) = (rssi_hex[0] << 4) | rssi_hex[1];
       break;
     }
 
