@@ -74,43 +74,41 @@
 #define UHF_SCW_FRAM_INDEX 10
 #define UHF_SCW_RFTS_INDEX 11
 
+typedef enum {
+    U_GOOD_CONFIG = 0,
+    U_BAD_CONFIG = -1,
+    U_BAD_PARAM = -2,
+    U_BAD_ANS_CRC = -3,
 
-typedef enum{
-	U_GOOD_CONFIG =  0,
-	U_BAD_CONFIG  = -1,
-	U_BAD_PARAM   = -2,
-	U_BAD_ANS_CRC = -3,
+    U_BAD_CMD_CRC = -4,
+    U_BAD_CMD_LEN = -5,
+    U_CMD_SPEC_2 = 2,
+    U_CMD_SPEC_3 = 3,
 
-  U_BAD_CMD_CRC = -4,
-  U_BAD_CMD_LEN = -5,
-  U_CMD_SPEC_2 = 2,
-  U_CMD_SPEC_3 = 3,
-
-  U_UNK_ERR = -10,
-  IS_STUBBED_U = 0 // Used for stubbed UHF in hardware interface
+    U_UNK_ERR = -10,
+    IS_STUBBED_U = 0 // Used for stubbed UHF in hardware interface
 } UHF_return;
 
 typedef struct {
-  uint8_t len;
-  uint8_t message[MAX_UHF_W_CMDLEN];
+    uint8_t len;
+    uint8_t message[MAX_UHF_W_CMDLEN];
 } uhf_configStruct;
 
 typedef struct {
-  uint32_t add;
-  uint8_t data[16];
+    uint32_t add;
+    uint8_t data[16];
 } uhf_framStruct;
 
 // Converts hex values to their ASCII characters
 
-void convHexToASCII(int length, uint8_t * arr);
-void convHexFromASCII(int length, uint8_t * arr);
-uint32_t crc32_calc(size_t length, uint8_t * cmd);
-int find_blankSpace(int length, uint8_t * string);
+void convHexToASCII(int length, uint8_t *arr);
+void convHexFromASCII(int length, uint8_t *arr);
+uint32_t crc32_calc(size_t length, uint8_t *cmd);
+int find_blankSpace(int length, uint8_t *string);
 
 // Read and Write command functions
-UHF_return UHF_genericWrite(uint8_t code, void* param);
-UHF_return UHF_genericRead(uint8_t code, void* param);
-UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len,
-                          uint8_t* data, uint8_t n_read_bytes);
+UHF_return UHF_genericWrite(uint8_t code, void *param);
+UHF_return UHF_genericRead(uint8_t code, void *param);
+UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t *data, uint8_t n_read_bytes);
 
-#endif  // UTRANSCEIVER_H
+#endif // UTRANSCEIVER_H
