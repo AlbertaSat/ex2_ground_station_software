@@ -46,10 +46,6 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.communication.uhf_set_midi(M67H69H71H)', {'err': 0})
     test.sendAndExpect('obc.communication.uhf_get_midi',
                   {'err': 0, 'MIDI': b'67H69H71H'})
-    test.sendAndExpect(
-        'obc.communication.uhf_set_beacon_msg(HelloAlbertaSat)', {'err': 0})
-    test.sendAndExpect('obc.communication.uhf_get_beacon_msg', {
-                  'err': 0, 'Beacon Message': b'HELLOALBERTASAT'})
     test.sendAndExpect('obc.communication.uhf_set_bcn', {'err': 0})
 
     test.summary() #call when done to print summary of tests
