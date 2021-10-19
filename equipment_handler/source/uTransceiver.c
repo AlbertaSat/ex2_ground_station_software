@@ -956,11 +956,11 @@ int find_blankSpace(int length, uint8_t *command_to_send) {
  * @param s_address
  *      I2C slave device address
  * @param len
- *    length of the data field
+ *      Length of the data field
  * @param data
- *    Pointer to data to be sent over I2C bus
- * @return UHF_return
- *      Outcome of the function (defined in uTransceiver.h)
+ *      Pointer to data to be sent over I2C bus
+ * @return
+ *      UHF_return
  */
 
 UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t *data, uint8_t n_read_bytes) {
@@ -991,4 +991,38 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_
     // interpreting the response
 
     return U_GOOD_CONFIG;
+}
+
+/**
+ * @brief
+ *      Sends a firmware update command to the UHF
+ * @details
+ *      See "Firmware Update" section in User Manual
+ * @param line
+ *      Line of code from the .SCRM file as an ascii character array
+ * @param line_length
+ *      Number of characters in the line
+ * @return
+ *      UHF_return
+ */
+UHF_return UHF_firmwareUpdate(uint8_t * line, uint8_t line_length) {
+    uint8_t firmware_command = {'E','S','+','D','2', i2c_address_small_digit_ascii}
+    int i = 0
+    for(; i < line_length; i++){
+        firmware_command[6+i] = *(line + i);
+    }
+    firmware_command[6+i] = BLANK_SPACE;
+    firmware_command[7+i] = 'C';
+    firmware_command[8+i] = 'C';
+    firmware_command[9+i] = 'C';
+    firmware_command[10+i] = 'C';
+    firmware_command[11+i] = 'C';
+    firmware_command[12+i] = 'C';
+    firmware_command[13+i] = 'C';
+    firmware_command[14+i] = 'C';
+    firmware_command[15+i] = CARRIAGE_RETURN;
+
+    crc32_calc(find_blankSpace(strlen((char *)firmware_command), firmware_command), firmware_command);
+
+    //TODO: Finish this function
 }
