@@ -74,10 +74,28 @@ class SystemValues(object):
             'IAC': 5,
             'DBG': 7,
             'GND': 16,
+            'PIPE': 24,
             'DEMO': 30,
             'LAST': 31
         }
         self.SERVICES = {
+            'SET_PIPE': {
+                # This service is used to tell the GS UHF to get into pipe mode, 
+                # then to tell the satellite's UHF to get into PIPE mode. Port does not matter in this case. 
+                'port': 0,
+                'subservice' : { #this is a service written to write the GS UHF into pipe mode
+                    'UHF_GS_PIPE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,  # test
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    }
+                }
+            
+            },
             'TIME_MANAGEMENT': {
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value

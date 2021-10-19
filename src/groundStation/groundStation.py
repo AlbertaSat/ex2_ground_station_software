@@ -90,18 +90,29 @@ class groundStation(object):
         parity='N',                         
         stopbits=1,                             
         timeout=1)
-        
-        
+
+        time.sleep(4)        
+        libcsp.kiss_init(device, 9600, 512, 'uart')
+        libcsp.rtable_load('1 uart, 4 uart 1')
         print(ser.name)    #prints the name of the port that is opened
 
-# Make a python byte array with the command that needs to be sent to set pipe mode
-        ser.write(b'ES+W22000323 4A2EA06D\r')
-        time.sleep(4)
+    def __setPIPE__(self):
+        # Make a python byte array with the command that needs to be sent to set pipe mode
+        """ initialize uart interface """
+        ser = serial.Serial('/dev/ttyUSB1',                                      
+        baudrate=9600,                                    
+        bytesize=8,                              
+        parity='N',                         
+        stopbits=1,                             
+        timeout=1)
         
-        libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
-        libcsp.rtable_load('1 uart, 4 uart 1')
-
-    def __connectionManager__(self, server, port):
+        ser.write(b'ES+W22000323 4A2EA06D\r')
+        result = ser.read(17)
+        print(result)
+        
+        time.sleep(2)
+        
+        def __connectionManager__(self, server, port):
         """ Get currently open conneciton if it exists, and has not expired,
             Otherwise close the old one and make a new connection """
         current = time.time()
