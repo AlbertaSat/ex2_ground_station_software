@@ -29,11 +29,13 @@ LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/b
 
 import argparse
 import sys
+sys.path.append('/home/albertasat/.local/lib/python3.8/site-packages')
 import time
 import signal
 import socket
 import os
 import re
+import serial
 from collections import defaultdict
 
 # if __name__ == '__main__':
@@ -82,7 +84,21 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        libcsp.kiss_init(device, 115200, 512, 'uart')
+        ser = serial.Serial('/dev/ttyUSB1',                                      
+        baudrate=115200, # Or whatever baud rate it uses                                    
+        bytesize=8,       # I'm assuming                       
+        parity='N',                         
+        stopbits=1,                             
+        timeout=1)
+        
+        
+        print(ser.name)    #prints the name of the port that is opened
+
+# Make a python byte array with the command that needs to be sent to set pipe mode
+        ser.write(b'ES+W22000323 4A2EA06D\r')
+        time.sleep(4)
+        
+        libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
 
     def __connectionManager__(self, server, port):
@@ -97,8 +113,12 @@ class groundStation(object):
                 libcsp.close(self.server_connection[server][port]['conn'])
 
             try:
-                conn = libcsp.connect(
-                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                if server == 4:
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
+                    print('CRC32 Header selected\n')
+                else:
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                    print('RDP Header selected\n')
             except Exception as e:
                 print(e)
                 return None
@@ -144,7 +164,7 @@ class groundStation(object):
         return parsed packet """
         conn = self.__connectionManager__(server, port)
         if conn is None:
-            print('Error: Could not connection')
+            print('Error: Could not connect')
             return {}
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
