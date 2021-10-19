@@ -21,11 +21,6 @@
  */
 
 #include "uTransceiver.h"
-<<<<<<< HEAD
-#include <stdlib.h> //*
-#include <time.h>   //*
-=======
->>>>>>> e473682 (Fixed function brief spacing)
 #include <uhf_uart.h>
 #include <uhf.h>
 #include "logger/logger.h"
@@ -35,48 +30,7 @@
 // TODO: command code macros
 // TODO: Improve error handling
 // TODO: Better way to deal with address change?
-// TODO: Fix I2C answer length
 // TODO: Firmware update command
-
-#define UHF_WRITE_ANSLEN_SCW 17
-#define UHF_WRITE_ANSLEN_FREQ 13
-#define UHF_WRITE_ANSLEN_PIPET 13
-#define UHF_WRITE_ANSLEN_BCNT 13
-#define UHF_WRITE_ANSLEN_AUDIOT 13
-#define UHF_WRITE_ANSLEN_DFLT 12
-#define UHF_WRITE_ANSLEN_AX25 13
-#define UHF_WRITE_ANSLEN_GENI2C 77
-#define UHF_WRITE_ANSLEN_LOWPWR 13
-#define UHF_WRITE_ANSLEN_SRCCAL 13
-#define UHF_WRITE_ANSLEN_DSTCAL 13
-#define UHF_WRITE_ANSLEN_MORSECAL 13
-#define UHF_WRITE_ANSLEN_MIDIBCN 18
-#define UHF_WRITE_ANSLEN_BCNMSG 13
-#define UHF_WRITE_ANSLEN_I2CADR 15
-#define UHF_WRITE_ANSLEN_FRAM 13
-#define UHF_WRITE_ANSLEN_SECURE 13
-
-#define UHF_READ_ANSLEN_SCW 23
-#define UHF_READ_ANSLEN_FREQ 23
-#define UHF_READ_ANSLEN_UPTIME 23
-#define UHF_READ_ANSLEN_TPCKT 23
-#define UHF_READ_ANSLEN_RPCKT 23
-#define UHF_READ_ANSLEN_RPCKTER 23
-#define UHF_READ_ANSLEN_PIPET 23
-#define UHF_READ_ANSLEN_BCNT 23
-#define UHF_READ_ANSLEN_AUDIOT 23
-#define UHF_READ_ANSLEN_TEMP 17
-#define UHF_READ_ANSLEN_AX25 5
-#define UHF_READ_ANSLEN_LOWPWR 15
-#define UHF_READ_ANSLEN_SRCCAL 19
-#define UHF_READ_ANSLEN_DSTCAL 19
-#define UHF_READ_ANSLEN_MORSECAL 51
-#define UHF_READ_ANSLEN_MIDIBCN 123
-#define UHF_READ_ANSLEN_SWVER 39
-#define UHF_READ_ANSLEN_PLDSZ 17
-#define UHF_READ_ANSLEN_BCNMSG 160
-#define UHF_READ_ANSLEN_FRAM 43
-#define UHF_READ_ANSLEN_SECURE 21
 
 static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit of the (hex) address
 
@@ -84,39 +38,6 @@ static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit o
  * @brief
  *      Generic function for write commands sent over i2c
  * @details
-<<<<<<< HEAD
- *      This function will build a command dependant on
- *command code and input parameters, send the command, and
- *interpret the answer
- * @attention
- *      Only certain write command codes are valid. Be aware
- *of input pointer type
- * @param code
- *          The write command code as it appears in the UHF
- *Transceiver's manual CODE     COMMAND DESCRIPTION 0 Set
- *the status control word 1      Set the frequency 6     Set
- *PIPE mode timeout period 7     Set beacon transmission
- *period 8       Set audio beacon transmission period 9
- *Restore default values 244     Enter low power mode 245
- *Set destination call sign 246     Set source call sign 247
- *Set morse code call sign 248     Set MIDI audio beacon
- *message 251     Set the beacon message content 252     Set
- *the device address 253     FRAM memory write 255     Put
- *the transceiver into secure mode
- * @param param
- *      Pointer to required input. Code dictates required
- *pointer type: CODE    TYPE        PARAM DESCRIPTION 0
- *uint8_t*        Array of 12 SCW values 1       uint32_t*
- *Frequency in Hz 6       uint16_t*     Time in seconds
- *(1-255) 7     uint16_t*     Time in seconds (1-65535) 8
- *uint16_t*   Time in seconds (30-65535) 9         uint8_t*
- *= 1 to confirm reset 244   uint8_t*        = 1 to confirm
- *change 245   uhf_configStruct* Config struct 246
- *uhf_configStruct* '' 247   uhf_configStruct* '' 248
- *uhf_configStruct* '' 251   uhf_configStruct* '' 252
- *uint8_t* = 0x22 or 0x23 253   uhf_framStruct*  FRAM
- *structure 255   uint8_t*   = 1 to confirm change
-=======
  *      This function will build a command dependant on command code and
  *      input parameters, send the command, and interpret the answer
  * @attention
@@ -162,7 +83,6 @@ static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit o
  *          253     uhf_framStruct*     FRAM structure
  *          255     uint8_t*    = 1 to confirm change
  *
->>>>>>> e473682 (Fixed function brief spacing)
  * @return
  *      UHF_return
  */
@@ -430,37 +350,9 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 
     /* Calculate the crc32 of the command*/
     crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
-    uint8_t ans[MAX_UHF_W_ANSLEN] = {0};
+    uint8_t * ans = pvPortMalloc(answer_length * sizeof(uint8_t));
+    UHF_return return_val;
 
-<<<<<<< HEAD
-    uint8_t i2c_address = i2c_address_small_digit_ascii;
-    convHexFromASCII(1, &i2c_address);
-    i2c_address += 0x20; // Address is always 0x22 or 0x23
-    /* Send the command and receive the answer if necessary */
-
-    if ((code == 0) && (command_to_send[10] == 4)) {
-        /* For an SCW write command going from bootloader to application mode only
-         * Only send the command. Do not expect response.
-         */
-        if (i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send)) == 0) {
-                    return U_I2C_IN_PIPE;
-        }
-        return U_GOOD_CONFIG;
-    } else if ((code == 0) && ((command_to_send[10] & 0x02) == 0x02)) {
-        // Consume I2C semaphore and start timer before
-        // entering PIPE mode:
-        if (i2c_sendAndReceivePIPE(i2c_address, command_to_send, strlen((char *)command_to_send), ans,
-                                   MAX_UHF_W_ANSLEN) == 0) {
-            return U_I2C_IN_PIPE;
-        }
-    } else {
-        /* For all other commands, send and receive
-         * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
-         * i2c_address_small_digit_ascii
-         */
-        i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN);
-    }
-=======
     #ifndef UHF_USE_I2C_CMDS
         uhf_enter_direct_hardware_mode();
         uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send, answer_length, ans);
@@ -475,7 +367,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
                  * Only send the command. Do not expect response.
                  */
                 i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send));
-                return U_GOOD_CONFIG;
+                return_val = U_GOOD_CONFIG;
             } else {
                 /* For all other commands, send and receive
                  * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
@@ -484,7 +376,6 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
                 i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, answer_length);
             }
     #endif
->>>>>>> 5c4e126 (Added pre-proccessor directives for using I2C or UART for commands)
 
     /* Check if the answer is an error */
     if (ans[0] == LETTER_E) {
@@ -492,11 +383,11 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         // of these)
 
         if (!strcmp((char *)ans, "E_CRC_ERR 3D2B08DC\r"))
-            return U_BAD_CMD_CRC;
+            return_val = U_BAD_CMD_CRC;
         if (!strcmp((char *)ans, "E_CRC_ERR_LEN 9B49857A\r"))
-            return U_BAD_CMD_LEN;
+            return_val = U_BAD_CMD_LEN;
         if (!strcmp((char *)ans, "ERR 84F89937\r"))
-            return U_UNK_ERR;
+            return_val = U_UNK_ERR;
 
         // Specific error answers depending on command
         switch (code) {
@@ -510,14 +401,14 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         case 253:
         case 254:
         case 255:
-            return U_CMD_SPEC_2;
+            return_val = U_CMD_SPEC_2;
         case 248:
             if (ans[4] == LETTER_M)
-                return U_CMD_SPEC_2;
-            return U_CMD_SPEC_3;
+                return_val = U_CMD_SPEC_2;
+            return_val = U_CMD_SPEC_3;
 
         default:
-            return U_UNK_ERR;
+            return_val = U_UNK_ERR;
         }
     }
 
@@ -530,33 +421,26 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         if (code == 252)
             i2c_address_small_digit_ascii = ans[4]; // I2C address change
         if (!strcmp((char *)crc_recalc, (char *)ans)) {
-            return U_GOOD_CONFIG;
+            return_val = U_GOOD_CONFIG;
         } else {
-            return U_BAD_ANS_CRC;
+            return_val = U_BAD_ANS_CRC;
         }
     } else {
-        return U_BAD_CONFIG;
+        return_val = U_BAD_CONFIG;
     }
+    vPortFree(ans);
+    return return_val;
 }
 
 /**
  * @brief
  *      Generic function for read commands sent over i2c
  * @details
-<<<<<<< HEAD
- *      This function will send a command dependant on
- *command code, send the command, interpret the answer and
- *save read data
- * @attention
- *      Only certain read command codes are valid. Be aware
- *of input pointer type
-=======
  *      This function will send a command dependant on command code,
  *      send the command, interpret the answer and save read data
  * @attention
  *      Only certain read command codes are valid. Be aware of input
  *      pointer type
->>>>>>> e473682 (Fixed function brief spacing)
  * @param code
  *      The write command code as it appears in the UHF
  *      Transceiver's manual:
@@ -584,26 +468,6 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
  *      255     Get the secure mode key
  *
  * @param param
-<<<<<<< HEAD
- *      Pointer to required input. Code dictates required
- *pointer type: CODE TYPE         PARAM DESCRIPTION 0
- *uint8_t*        Array of 12 status control word values 1
- *uint32_t*     Frequency in Hz 2     uint32_t*     Array of
- *2 values (1 time, 1 rssi) 3     uint32_t*     Array of 2
- *Values (1 #, 1 rssi) 4     uint32_t*     Array of 2 values
- *(1 #, 1 rssi) 5     uint32_t*     Array of 2 values (1 #,
- *1 rssi) 6     uint32_t*     Array of 2 values (1 time
- *[1-255], 1 rssi) 7     uint32_t*     Array of 2 values (1
- *time [1-65535], 1 rssi) 8     uint32_t*     Array of 2
- *values (1 time [30-65535], 1 rssi) 10    float* Value in
- *degrees celsius 244   uint8_t*          = 1 for low power
- *mode 245   uhf_configStruct* Config struct 246
- *uhf_configStruct* '' 247   uhf_configStruct* '' 248
- *uhf_configStruct* '' 249   uint8_t*      Char array (form
- *"X.xx") 250   uint16_t*     Value in # of bytes 251
- *uhf_configStruct* Config struct 253   uhf_framStruct* FRAM
- *structure 255   uint32_t*     Value of the secure key
-=======
  *      Pointer to required input. Code dictates required pointer type:
  *      CODE    TYPE        PARAM DESCRIPTION
  *      0       uint8_t*    Array of 12 status control word values
@@ -627,7 +491,6 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
  *      253     uhf_framStruct*     FRAM structure
  *      255     uint32_t*   Value of the secure key
  *
->>>>>>> e473682 (Fixed function brief spacing)
  * @return
  *      UHF_return
  */
@@ -671,7 +534,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
                                                   BLANK_SPACE,'C','C','C','C','C','C','C','C',[25] = CARRIAGE_R};
         strcpy(command_to_send, fram_command);
     }
-    uint8_t answer_length;
+    uint8_t answer_length = 0;
     switch(code){
     case 0: answer_length = UHF_READ_ANSLEN_SCW;
         break;
@@ -723,21 +586,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
 
     // Send the command and receive the answer
-    uint8_t ans[MAX_UHF_R_ANSLEN] = {0};
-<<<<<<< HEAD
-    uint8_t i2c_address = i2c_address_small_digit_ascii;
-    convHexFromASCII(1, &i2c_address);
-    i2c_address += 0x20; // Address is always 0x22 or 0x23
-    if (i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN) == 0) {
-        return U_I2C_IN_PIPE;
-    }
-    //  uhf_enter_direct_hardware_mode();
-    //  uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send,
-    //  MAX_UHF_R_ANSLEN, ans); uhf_exit_direct_hardware_mode();
-
-    // Error handling
-=======
-
+    uint8_t * ans = pvPortMalloc(answer_length * sizeof(uint8_t));
+    UHF_return return_val;
 
     #ifndef UHF_USE_I2C_CMDS
         uhf_enter_direct_hardware_mode();
@@ -756,21 +606,20 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
     if (ans[0] == LETTER_O) {
         if (strcmp((char *)crc_recalc, (char *)ans)) {
-            return U_BAD_ANS_CRC;
+            return_val = U_BAD_ANS_CRC;
         }
     }
 
     // Check for an error answer
->>>>>>> 5c4e126 (Added pre-proccessor directives for using I2C or UART for commands)
     if (ans[0] == LETTER_E) {
         if (!strcmp((char *)ans, "E_CRC_ERR 3D2B08DC\r"))
-            return U_BAD_CMD_CRC;
+            return_val = U_BAD_CMD_CRC;
         if (!strcmp((char *)ans, "E_CRC_ERR_LEN 9B49857A\r"))
-            return U_BAD_CMD_LEN;
+            return_val = U_BAD_CMD_LEN;
         if (!strcmp((char *)ans, "ERR 84F89937"))
-            return U_UNK_ERR;
+            return_val = U_UNK_ERR;
         if (code == 251 || code == 253 || code == 254)
-            return U_CMD_SPEC_2;
+            return_val = U_CMD_SPEC_2;
         return U_UNK_ERR;
     }
 
@@ -803,7 +652,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
         *(array + 9) = (hex[3] >> 2) & 1;
         *(array + 10) = (hex[3] >> 1) & 1;
         *(array + 11) = hex[3] & 1;
-
         break;
     }
 
@@ -984,9 +832,10 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     }
 
     default:
-        return U_BAD_CONFIG;
+        return_val = U_BAD_CONFIG;
     }
-    return U_GOOD_CONFIG;
+    vPortFree(ans);
+    return return_val;
 }
 
 /**
