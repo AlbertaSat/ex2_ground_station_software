@@ -1006,8 +1006,8 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_
  *      UHF_return
  */
 UHF_return UHF_firmwareUpdate(uint8_t * line, uint8_t line_length) {
-    uint8_t firmware_command = {'E','S','+','D','2', i2c_address_small_digit_ascii}
-    int i = 0
+    uint8_t firmware_command[MAX_UHF_W_CMDLEN] = {'E','S','+','D','2', i2c_address_small_digit_ascii};
+    int i = 0;
     for(; i < line_length; i++){
         firmware_command[6+i] = *(line + i);
     }
@@ -1020,9 +1020,10 @@ UHF_return UHF_firmwareUpdate(uint8_t * line, uint8_t line_length) {
     firmware_command[12+i] = 'C';
     firmware_command[13+i] = 'C';
     firmware_command[14+i] = 'C';
-    firmware_command[15+i] = CARRIAGE_RETURN;
+    firmware_command[15+i] = CARRIAGE_R;
 
     crc32_calc(find_blankSpace(strlen((char *)firmware_command), firmware_command), firmware_command);
 
     //TODO: Finish this function
+    return U_GOOD_CONFIG;
 }
