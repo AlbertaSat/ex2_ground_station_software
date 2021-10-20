@@ -65,7 +65,7 @@ class groundStation(object):
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
         elif opts.interface == 'uart':
-            self.__uart__(opts.device)
+            self.ser = self.__uart__(opts.device)
         elif opts.interface == 'fifo':
             self.__fifo__()
         libcsp.route_start_task()
@@ -91,16 +91,22 @@ class groundStation(object):
         parity='N',                         
         stopbits=1,                             
         timeout=1)
-        
-        
-        print(ser.name)    #prints the name of the port that is opened
 
-# Make a python byte array with the command that needs to be sent to set pipe mode
-        ser.write(b'ES+W22000323 4A2EA06D\r')
-        time.sleep(4)
-        
+        time.sleep(4)        
         libcsp.kiss_init(device, 9600, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
+        print(ser.name)    #prints the name of the port that is opened
+        return ser
+
+    def __setPIPE__(self):
+        # Make a python byte array with the command that needs to be sent to set pipe mode
+        self.ser.write(b'ES+W22000323 4A2EA06D\r')
+        result = self.ser.read(17)
+        print(result)
+        
+        time.sleep(2)
+        
+        
 
     def __connectionManager__(self, server, port):
         """ Get currently open conneciton if it exists, and has not expired,
