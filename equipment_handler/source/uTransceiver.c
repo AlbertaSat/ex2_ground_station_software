@@ -89,6 +89,7 @@ static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit o
 
 UHF_return UHF_genericWrite(uint8_t code, void *param) {
     uint8_t command_to_send[MAX_UHF_W_CMDLEN] = {0};
+    uint8_t command_length = 0;
     uint8_t answer_length = 0;
 
     /* The following switch statement depends on the command code to:    *
@@ -276,7 +277,9 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         command_assembly[17 + k] = 'C';
         command_assembly[18 + k] = 'C';
         command_assembly[19 + k] = CARRIAGE_R;
-        strcpy(command_to_send, command_assembly);
+
+        command_length = beacon->len + 20;
+        memcpy(command_to_send, command_assembly, command_length);
         answer_length = UHF_WRITE_ANSLEN_BCNMSG;
         break;
     }
@@ -340,6 +343,8 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         return U_BAD_CONFIG;
     }
 
+    if(code != 251) command_length = strlen((char *)command_to_send);
+
     /* The following is necessary for all write commands:
      *    - Calculate the crc32 of the command
      *    - Send the command and receive the answer
@@ -349,13 +354,13 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
      */
 
     /* Calculate the crc32 of the command*/
-    crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
+    crc32_calc(find_blankSpace(command_length, command_to_send), command_to_send);
     uint8_t * ans = pvPortMalloc(answer_length * sizeof(uint8_t));
     UHF_return return_val;
 
     #ifndef UHF_USE_I2C_CMDS
         uhf_enter_direct_hardware_mode();
-        uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send, answer_length, ans);
+        uhf_direct_sendAndReceive(command_length, command_to_send, answer_length, ans);
         uhf_exit_direct_hardware_mode();
     #else
         uint8_t i2c_address = i2c_address_small_digit_ascii;
@@ -366,14 +371,14 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
                 /* For an SCW write command going from bootloader to application mode only
                  * Only send the command. Do not expect response.
                  */
-                i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send));
+                i2c_sendCommand(i2c_address, command_to_send, command_length);
                 return_val = U_GOOD_CONFIG;
             } else {
                 /* For all other commands, send and receive
                  * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
                  * i2c_address_small_digit_ascii
                  */
-                i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, answer_length);
+                i2c_sendAndReceive(i2c_address, command_to_send, command_length, ans, answer_length);
             }
     #endif
 
