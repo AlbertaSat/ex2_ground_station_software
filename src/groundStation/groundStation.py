@@ -60,7 +60,7 @@ class groundStation(object):
         self.parser = CommandParser()
         self.server_connection = defaultdict(dict)
         self.number_of_buffers = 100
-        self.buffer_size = 512 #This is max size of an incoming packet
+        self.buffer_size = 1024 #This is max size of an incoming packet
         libcsp.init(self.myAddr, 'host', 'model', '1.2.3', self.number_of_buffers, self.buffer_size)
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
@@ -71,7 +71,7 @@ class groundStation(object):
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
-        libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
+        libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
 
     """ Private Methods """
 
@@ -85,7 +85,7 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        ser = serial.Serial('/dev/ttyUSB1',                                      
+        ser = serial.Serial('/dev/ttyUSB0',                                      
         baudrate=9600, # Or whatever baud rate it uses                                    
         bytesize=8,       # I'm assuming                       
         parity='N',                         
@@ -102,10 +102,7 @@ class groundStation(object):
         # Make a python byte array with the command that needs to be sent to set pipe mode
         self.ser.write(b'ES+W22000323 4A2EA06D\r')
         result = self.ser.read(17)
-        print(result)
-        
-        time.sleep(2)
-        
+        print(result)   
         
 
     def __connectionManager__(self, server, port):
@@ -191,7 +188,7 @@ class groundStation(object):
             libcsp.conn_sport(conn),
             data,
             length))
-        
+        #print(rxDataList)
         if rxDataList is None:
             print('ERROR: bad response data')
             return

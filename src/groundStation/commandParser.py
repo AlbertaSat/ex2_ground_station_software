@@ -34,19 +34,18 @@ class CommandParser(object):
     def parseInputValue(self, input):
         tokens = self.__lexer(input)
         self._command = {}
-
+        
         if tokens[self.vals.appIdx] in self.vals.APP_DICT and tokens[self.vals.appIdx + 1] == '.':
             # Matches <app>.
             self._command['dst'] = self.vals.APP_DICT[tokens[self.vals.appIdx]]
         else:
             print('No such remote or bad format')
             return None
-
+        
         if tokens[self.vals.serviceIdx] in self.vals.SERVICES:
             # Matches <service>
             service = self.vals.SERVICES[tokens[self.vals.serviceIdx]]
             self._command['dport'] = service['port']
-
             if 'subservice' not in service:
                 # Then there is no subservice, skip to arg check
                 if 'inoutInfo' not in service:
@@ -63,7 +62,7 @@ class CommandParser(object):
         else:
             print('No such service')
             return None
-
+        
         if tokens[self.vals.subserviceIdx] in service['subservice']:
             subservice = service['subservice'][tokens[self.vals.subserviceIdx]]
             self._command['subservice'] = subservice['subPort']
@@ -73,11 +72,12 @@ class CommandParser(object):
                 return None
             if not self.__argCheck(tokens[(
                     self.vals.subserviceIdx + 1)::], subservice['inoutInfo'], subservice['subPort']):
+                
                 return None
         else:
             print('No such subservice')
             return None
-
+        
         return self._command
 
     def parseReturnValue(self, src, dst, dport, data, length):
@@ -126,7 +126,7 @@ class CommandParser(object):
 
     def __argCheck(self, args, inoutInfo, subservice=None):
         outArgs = bytearray()
-
+        
         if not inoutInfo['args']:
             # Command has no arguments
             if subservice is not None:
