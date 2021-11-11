@@ -17,10 +17,7 @@
  * @date 2021-02-17
  */
 
-#include "HL_i2c.h"
 #include "i2c.h"
-#include "i2c_io.h"
-#include "system.h"
 
 SemaphoreHandle_t uTransceiver_semaphore;
 TimerHandle_t uTransceiverPipe_timer;
@@ -33,7 +30,7 @@ static void uhf_pipe_timer_callback(TimerHandle_t xTimer) {
 }
 
 
-bool uhf_i2c_init(void) {
+UHF_return uhf_i2c_init(void) {
     uTransceiver_semaphore = xSemaphoreCreateMutex();
     if (uTransceiver_semaphore == NULL) {
         return false;
@@ -56,7 +53,7 @@ bool uhf_is_busy(void) {
     return true;
 }
 
-bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms) {
+UHF_return i2c_prepare_for_pipe_mode(uint32_t timeout_ms) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) != pdTRUE) {
         // the UHF must already be in pipe mode.
         return false;
@@ -78,7 +75,7 @@ void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken) {
     xTimerResetFromISR(uTransceiverPipe_timer, xHigherPriorityTaskWoken);
 }
 
-bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
+UHF_return i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
         bool result = (i2c_Send(UHF_I2C, addr, length, command) == I2C_OK);
         xSemaphoreGive(uTransceiver_semaphore);
@@ -89,7 +86,7 @@ bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
     // TODO: Reset I2C speed to default once the UHF I2C is done
 }
 
-bool i2c_receiveResponse(uint8_t addr, char *response, uint8_t length) {
+UHF_return i2c_receiveResponse(uint8_t addr, char *response, uint8_t length) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
         bool result = (i2c_Receive(UHF_I2C, addr, length, response) == I2C_OK);
         xSemaphoreGive(uTransceiver_semaphore);
@@ -100,7 +97,7 @@ bool i2c_receiveResponse(uint8_t addr, char *response, uint8_t length) {
     // TODO: Reset I2C speed to default once the UHF I2C is done
 }
 
-bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len) {
+UHF_return i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
         if (i2c_Send(UHF_I2C, addr, command_len, command) != I2C_OK) {
             xSemaphoreGive(uTransceiver_semaphore);
@@ -120,7 +117,7 @@ bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *
 
 }
 
-bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
+UHF_return i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
                             uint8_t response_len) {
     uint32_t pipe_timeout = 0;
     HAL_UHF_getPipeT(&pipe_timeout);

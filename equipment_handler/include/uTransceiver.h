@@ -91,6 +91,7 @@
 #define UHF_WRITE_ANSLEN_I2CADR 15
 #define UHF_WRITE_ANSLEN_FRAM 13
 #define UHF_WRITE_ANSLEN_SECURE 13
+#define UHF_WRITE_ANSLEN_FW 20 // TODO: Verify through testing
 
 #define UHF_READ_ANSLEN_SCW 23
 #define UHF_READ_ANSLEN_FREQ 23
@@ -116,17 +117,35 @@
 
 typedef enum {
     U_GOOD_CONFIG = 0,
-    U_BAD_CONFIG = -1,
-    U_BAD_PARAM = -2,
-    U_BAD_ANS_CRC = -3,
+    U_UART_SUCCESS = 9,
+    U_I2C_SUCCESS = 10,
+    U_ANS_SUCCESS = 11,
 
-    U_BAD_CMD_CRC = -4,
-    U_BAD_CMD_LEN = -5,
-    U_CMD_SPEC_2 = 2,
-    U_CMD_SPEC_3 = 3,
+    // Returned at the Equipment Handler level
+    U_BAD_CONFIG = 1,
+    U_BAD_PARAM = 2,
+    U_BAD_ANS_CRC = 3,
 
-    U_UNK_ERR = -10,
-    IS_STUBBED_U = 0 // Used for stubbed UHF in hardware interface
+    // Standard error answers from the UHF transceiver.
+    // See EnduroSat UHF Transceiver Type II Manual
+    U_ERR = 4,
+    U_BAD_CMD_CRC = 5,
+    U_BAD_CMD_LEN = 6,
+
+    // Received error answer 2 or 3. Specific to command that was sent.
+    // See EnduroSat UHF Transceiver Type II User Manual
+    U_ERR_2 = 7,
+    U_ERR_3 = 8,
+
+    // Received if UART/I2C functions fail on Athena
+    U_UART_FAIL = 12,
+    U_I2C_FAIL = 13,
+
+    // Unknown error occured
+    U_UNKOWN = 14,
+
+    // Returned in HAL if UHF is stubbed
+    IS_STUBBED_U = 0
 } UHF_return;
 
 typedef struct {
