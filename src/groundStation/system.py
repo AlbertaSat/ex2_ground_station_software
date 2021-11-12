@@ -894,14 +894,14 @@ class SystemValues(object):
                                 'Fine_Sun_Vector_Y': '>f4',
                                 'Fine_Sun_Vector_Z': '>f4',
                                 'Nadir_Vector_X': '>f4',
-                                'Nadir_Vector_X': '>f4',
-                                'Nadir_Vector_X': '>f4',
+                                'Nadir_Vector_Y': '>f4',
+                                'Nadir_Vector_Z': '>f4',
                                 'Wheel_Speed_X': '>f4',
-                                'Wheel_Speed_X': '>f4',
-                                'Wheel_Speed_X': '>f4',
+                                'Wheel_Speed_Y': '>f4',
+                                'Wheel_Speed_Z': '>f4',
                                 'Mag_Field_Vector_X': '>f4',
-                                'Mag_Field_Vector_X': '>f4',
-                                'Mag_Field_Vector_X': '>f4',
+                                'Mag_Field_Vector_Y': '>f4',
+                                'Mag_Field_Vector_Z': '>f4',
                                 'Comm_Status': '>i2',
                                 'Wheel1_Current': '>f4',
                                 'Wheel2_Current': '>f4',
@@ -919,18 +919,20 @@ class SystemValues(object):
                                 'Rate_Sensor_Temp_Z': '>i2',
 
                                 #Athena
-                                'temparray1': '<i4',
+                                'temparray1': '>i4',
                                 'temparray2': '>i4',
-                                'temparray3': '>i4',
-                                'temparray4': '>i4',
-                                'temparray5': '>i4',
-                                'temparray6': '>i4',
+                                'boot_cnt': '>u2',
+                                'last_reset_reason': '<b',
+                                'OBC_mode': '<b',
+                                'OBC_uptime': '>u2',
+                                'solar_panel_supply_curr': '<b',
+                                'OBC_software_ver': '<b',
+                                'cmds_received': '>u2',
+                                'pckts_uncovered_by_FEC': '>u2',
+                                
                                 #EPS
                                 'cmd': '<B',
                                 'status' : '<b',
-                                '?1': '<f8',
-                                '?2': '<f8',
-                                '?3': '<f8',
                                 'timestamp': '<f8',
                                 'uptimeInS': '<u4',
                                 'bootCnt': '<u4',
@@ -1209,7 +1211,7 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b',
+                                'status': '>b',
                                 'timestamp': '<f8',
                                 'uptimeInS': '<u4',
                                 'bootCnt': '<u4',
@@ -1350,6 +1352,33 @@ class SystemValues(object):
                             'args': ['<u4', '<B', '<u4', '<u4'],
                             'returns': {
                                 'err': '>b'
+                            }
+                        }
+                    },
+                    # EPS Startup Telemetry
+                    'STARTUP_TELEMETRY': {
+                        'what': 'Get the startup telemetry from the EPS',
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                #'cmd': '>b',
+                                'status': '>b',
+                                'timestamp': '<f8',
+                                'last_reset_reason_reg': '<u4',
+                                'bootCnt': '<u4',
+                                'FallbackConfigUsed': '<B',
+                                'rtcInit': '<B',
+                                'rtcClkSourceLSE': '<B',
+                                'Fram4kPartitionInit': '>b',
+                                'Fram520kPartitionInit': '>b',
+                                'intFlashPartitionInit': '>b',
+                                'FSInit': '>b',
+                                'FTInit': '>b',
+                                'supervisorInit': '>b',
+                                'uart1App': '<B',
+                                'uart2App': '<B',
+                                'tmp107Init': '>b'
                             }
                         }
                     }
