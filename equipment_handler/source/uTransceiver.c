@@ -650,7 +650,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     case 10: {  // Get the internal temperature
       float *value = (float *)param;
 
-      uint8_t dec[4] = {ans[3], ans[4], ans[5], ans[6]};
+      uint8_t dec[4] = {ans[3], ans[4], ans[5], ans[7]};
       convHexFromASCII(3, dec + 1);
 
       *value = (dec[1] * 10.0f) + (dec[2]) + (dec[3] / 10.0f);

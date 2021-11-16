@@ -22,11 +22,17 @@
 #include "i2c_io.h"
 
 void i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
+    i2cSetBaudrate(I2C_BUS_REG, 400);
     i2c_Send(I2C_BUS_REG, addr, length, command);
+
+    // TODO: Reset I2C speed to default once the UHF I2C is done
 }
 
 void i2c_receiveResponse(uint8_t addr, char * response, uint8_t length){
+    i2cSetBaudrate(I2C_BUS_REG, 400);
     i2c_Receive(I2C_BUS_REG, addr, length, response);
+
+    // TODO: Reset I2C speed to defauilt once the UHF I2C is done
 }
 
 void i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len){
