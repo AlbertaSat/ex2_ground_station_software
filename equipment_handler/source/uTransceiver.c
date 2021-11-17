@@ -23,6 +23,8 @@
 #include <stdlib.h> //*
 #include <time.h>   //*
 #include <uhf_uart.h>
+#include <uhf.h>
+#include "logger/logger.h"
 
 static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit of the (hex) address
 
@@ -385,12 +387,22 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     convHexFromASCII(1, &i2c_address);
     i2c_address += 0x20; // Address is always 0x22 or 0x23
     /* Send the command and receive the answer if necessary */
-    if ((code == 0) && (command_to_send[10] == 4)) {
+    if (code == 0 && command_to_send[10] == 4) {
         /* For an SCW write command going from bootloader to application mode only
          * Only send the command. Do not expect response.
          */
         i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send));
         return U_GOOD_CONFIG;
+    } else if (code == 0 /* && SOMETHING */) {
+        // Consume I2C semaphore and start timer before entering PIPE mode:
+        uint32_t pipe_timeout = 0;
+        HAL_UHF_getPipeT(&pipe_timeout);
+        if (i2c_prepare_for_pipe_mode(pipe_timeout)) {
+            i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans,
+                               MAX_UHF_W_ANSLEN);
+        } else {
+            ex2_log("Error preparing for pipe mode.");
+        }
     } else {
         /* For all other commands, send and receive
          * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
