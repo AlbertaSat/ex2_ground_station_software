@@ -17,38 +17,9 @@
  * @date 2021-02-17
  */
 
-#include <FreeRTOS.h>
-#include <os_semphr.h>
-#include <os_timer.h>
-#include "i2c.h"
-
 #include "HL_i2c.h"
+#include "i2c.h"
 #include "i2c_io.h"
-<<<<<<< Updated upstream
-bool I2C_OK = 1;
-
-SemaphoreHandle_t uTransceiver_semaphore;
-TimerHandle_t uTransceiverPipe_timer;
-
-bool uhf_i2c_init() {
-    uTransceiver_semaphore = xSemaphoreCreateBinary();
-    if (uTransceiver_semaphore == NULL) {
-        return false;
-    }
-    uTransceiverPipe_timer =
-        xTimerCreate("uTransceiverPipe", pdMS_TO_TICKS(100), pdFALSE, NULL, uhf_pipe_timer_callback);
-    if (uTransceiverPipe_timer == NULL) {
-        return false;
-    }
-    return true;
-}
-
-bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms) {
-    if (xSemaphoreTake(uTransceiver_semaphore, 0) != pdTRUE) {
-        // must already be in pipe mode.
-        return false;
-    }
-=======
 bool I2C_OK = 0;
 
 
@@ -103,42 +74,10 @@ bool i2c_sendCommand(uint8_t addr, char * command, uint8_t length){
         return result;
     }
     return false;
->>>>>>> Stashed changes
 
-    int timer_cushion = 1000; // a little extra time to make sure the timer comes affer pipe mode expires (ms).
-    if (xTimerChangePeriod(uTransceiverPipe_timer, pdMS_TO_TICKS(timeout_ms + timer_cushion), 0) != pdPASS) {
-        // failed to change timer period
-        return false;
-    }
-
-    if (xTimerStart(uTransceiverPipe_timer, 0) != pdPASS) {
-        // failed to start timer
-        return false;
-    }
-    return true;
+    // TODO: Reset I2C speed to default once the UHF I2C is done
 }
 
-static void uhf_pipe_timer_callback(TimerHandle_t xTimer) {
-    // release semaphore - safe to send over I2C again.
-    xSemaphoreGive(uTransceiver_semaphore);
-}
-
-<<<<<<< Updated upstream
-void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken) {
-    xTimerResetFromISR(uTransceiverPipe_timer, xHigherPriorityTaskWoken);
-}
-
-bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
-    if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
-        return i2c_Send(I2C_BUS_REG, addr, length, command) == I2C_OK;
-    }
-    return false;
-}
-
-bool i2c_receiveResponse(uint8_t addr, char *response, uint8_t length) {
-    if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
-        return i2c_Receive(I2C_BUS_REG, addr, length, response) == I2C_OK;
-=======
 bool i2c_receiveResponse(uint8_t addr, char * response, uint8_t length){
     i2cSetBaudrate(I2C_BUS_REG, 400);
     if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
@@ -164,23 +103,10 @@ bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *
         }
         xSemaphoreGive(uTransceiver_semaphore);
         return true;
->>>>>>> Stashed changes
     }
     return false;
 }
 
-<<<<<<< Updated upstream
-bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len) {
-    if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
-        if (i2c_Send(I2C_BUS_REG, addr, command_len, command) != I2C_OK) {
-            return false;
-        }
-        if (i2c_Receive(I2C_BUS_REG, addr, response_len, response) != I2C_OK) {
-            return false;
-        }
-        return true;
-    }
-=======
 bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len) {
     uint32_t pipe_timeout = 0;
     HAL_UHF_getPipeT(&pipe_timeout);
@@ -199,6 +125,5 @@ bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, ch
         ex2_log("Error preparing for pipe mode.");
     }
     xSemaphoreGive(uTransceiver_semaphore);
->>>>>>> Stashed changes
     return false;
 }

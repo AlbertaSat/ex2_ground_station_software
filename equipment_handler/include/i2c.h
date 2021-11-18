@@ -20,14 +20,6 @@
 #define i2c_H
 #include <FreeRTOS.h>
 #include <stdint.h>
-<<<<<<< Updated upstream
-#include <os_portmacro.h>
-#include <os_timer.h>
-#include <stdbool.h>
-#define I2C_SPEED 400
-#define I2C_BUS_REG i2cREG1
-
-=======
 #include <stdbool.h>
 #include <os_portmacro.h>
 #include <os_timer.h>
@@ -40,7 +32,6 @@
 SemaphoreHandle_t uTransceiver_semaphore;
 TimerHandle_t uTransceiverPipe_timer;
 
->>>>>>> Stashed changes
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
  * pipe mode, and timer. Does not actually initialize the I2C bus.
@@ -48,11 +39,7 @@ TimerHandle_t uTransceiverPipe_timer;
  * @return true If initialization was successful.
  * @return false Otherwise.
  */
-<<<<<<< Updated upstream
-bool uhf_i2c_init();
-=======
 bool uhf_i2c_init(void);
->>>>>>> Stashed changes
 
 /**
  * @brief Prepare the UHF I2C system to be put into pipe mode. This will consume the semaphore and
@@ -73,15 +60,6 @@ bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
  */
 void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken);
 
-<<<<<<< Updated upstream
-static void uhf_pipe_timer_callback(TimerHandle_t xTimer);
-
-bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
-
-bool i2c_receiveResponse(uint8_t addr, char *response, uint8_t length);
-
-bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len);
-=======
 bool i2c_sendCommand(uint8_t addr, char * command, uint8_t length);
 
 bool i2c_receiveResponse(uint8_t addr, char * response, uint8_t length);
@@ -89,6 +67,5 @@ bool i2c_receiveResponse(uint8_t addr, char * response, uint8_t length);
 bool i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
 
 bool i2c_sendAndReceivePIPE(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
->>>>>>> Stashed changes
 
 #endif /* i2c_H */
