@@ -74,6 +74,7 @@
 #define UHF_SCW_FRAM_INDEX 10
 #define UHF_SCW_RFTS_INDEX 11
 
+<<<<<<< Updated upstream
 typedef enum {
     U_GOOD_CONFIG = 0,
     U_BAD_CONFIG = -1,
@@ -87,6 +88,24 @@ typedef enum {
 
     U_UNK_ERR = -10,
     IS_STUBBED_U = 0 // Used for stubbed UHF in hardware interface
+=======
+
+typedef enum{
+	U_GOOD_CONFIG =  0,
+	U_BAD_CONFIG  = -1,
+	U_BAD_PARAM   = -2,
+	U_BAD_ANS_CRC = -3,
+
+  U_BAD_CMD_CRC = -4,
+  U_BAD_CMD_LEN = -5,
+  U_CMD_SPEC_2 = 2,
+  U_CMD_SPEC_3 = 3,
+
+  U_UNK_ERR = -10,
+  IS_STUBBED_U = 0, // Used for stubbed UHF in hardware interface
+
+  U_I2C_IN_PIPE = 4
+>>>>>>> Stashed changes
 } UHF_return;
 
 typedef struct {
