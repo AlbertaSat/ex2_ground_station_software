@@ -87,10 +87,8 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
       // Grouping params into 4 bits (hex values)
       hex[0] = (*(array) << 2) | *(array + 1);
       hex[1] = (*(array + 2) << 3) | *(array + 3);
-      hex[2] = (*(array + 4) << 3) | (*(array + 5) << 2) | (*(array + 6) << 1) |
-               (*(array + 7));
-      hex[3] = (*(array + 8) << 3) | (*(array + 9) << 2) |
-               (*(array + 10) << 1) | (*(array + 11));
+      hex[2] = (*(array + 4) << 3) | (*(array + 5) << 2) | (*(array + 6) << 1) | (*(array + 7));
+      hex[3] = (*(array + 8) << 3) | (*(array + 9) << 2) | (*(array + 10) << 1) | (*(array + 11));
 
       convHexToASCII(4, hex);
       // Building the command
@@ -104,14 +102,14 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
 
     case 1: {  // Set the frequency
       uint32_t *new_freq = (uint32_t *)param;
-      if (*new_freq < MIN_U_FREQ || *new_freq > MAX_U_FREQ) return U_BAD_PARAM;
+      if (*new_freq < MIN_U_FREQ || *new_freq > MAX_U_FREQ)
+          return U_BAD_PARAM;
 
       float temp = (*new_freq) / 6500000.0f;
       uint8_t val1 = (uint8_t)temp - 1;                    // Integer term
       uint32_t val2 = (uint32_t)((temp - val1) * 524288);  // Fractional term
       uint8_t hex[8] = {(val2 >> 4) & 15, (val2)&15,         (val2 >> 12) & 15,
-                        (val2 >> 8) & 15, (val2 >> 20) & 15, (val2 >> 16) & 15,
-                        (val1 >> 4) & 15, (val1)&15};
+                        (val2 >> 8) & 15, (val2 >> 20) & 15, (val2 >> 16) & 15, (val1 >> 4) & 15, (val1)&15};
 
       convHexToASCII(8, hex);
 
@@ -120,7 +118,8 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
           'E',    'S',    '+',         'W',    '2',       i2c_address_small_digit_ascii, '0',
           '1',    hex[0], hex[1],      hex[2], hex[3],    hex[4], hex[5],
           hex[6], hex[7], BLANK_SPACE, 'C',    'C',       'C',    'C',
-          'C',    'C',    'C',         'C',    CARRIAGE_R};
+          'C',    'C',    'C',
+          'C',    CARRIAGE_R};
       strcpy(command_to_send, command_assembly);
       break;
     }
@@ -152,212 +151,216 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
       break;
     }
 
-    case 9: {  // Restore Default Values
-      uint8_t *confirm = (uint8_t *)param;
-      if (*confirm != 1) return U_BAD_PARAM;
-      uint8_t command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
-                             '0', '9', BLANK_SPACE, 'C', 'C', 'C',
-                             'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
-      strcpy(command_to_send, command_assembly);
-      break;
+    case 9: { // Restore Default Values
+        uint8_t *confirm = (uint8_t *)param;
+        if (*confirm != 1)
+            return U_BAD_PARAM;
+        uint8_t command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
+                                        '0', '9', BLANK_SPACE, 'C', 'C', 'C',
+                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 244: {  // Enter low power mode
-      uint8_t *confirm = (uint8_t *)param;
-      if (*confirm != 1) return U_BAD_PARAM;
-      uint8_t command_assembly[30] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
-                             'F', '4', BLANK_SPACE, 'C', 'C', 'C',
-                             'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
-      strcpy(command_to_send, command_assembly);
-      break;
+    case 244: { // Enter low power mode
+        uint8_t *confirm = (uint8_t *)param;
+        if (*confirm != 1)
+            return U_BAD_PARAM;
+        uint8_t command_assembly[30] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
+                                        'F', '4', BLANK_SPACE, 'C', 'C', 'C',
+                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 245:  // Set Destination Call Sign
-    case 246:  // Set Source Call Sign
+    case 245: // Set Destination Call Sign
+    case 246: // Set Source Call Sign
     {
-      uhf_configStruct *sign = (uhf_configStruct *)param;
-      uint8_t command_assembly[30] = {'E',
-                             'S',
-                             '+',
-                             'W',
-                             '2',
-                             i2c_address_small_digit_ascii,
-                             'F',
-                             (uint8_t)code - 192,
-                             sign->message[0],
-                             sign->message[1],
-                             sign->message[2],
-                             sign->message[3],
-                             sign->message[4],
-                             sign->message[5],
-                             BLANK_SPACE,
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             CARRIAGE_R};
-      strcpy(command_to_send, command_assembly);
-      break;
+        uhf_configStruct *sign = (uhf_configStruct *)param;
+        uint8_t command_assembly[30] = {'E',
+                                        'S',
+                                        '+',
+                                        'W',
+                                        '2',
+                                        i2c_address_small_digit_ascii,
+                                        'F',
+                                        (uint8_t)code - 192,
+                                        sign->message[0],
+                                        sign->message[1],
+                                        sign->message[2],
+                                        sign->message[3],
+                                        sign->message[4],
+                                        sign->message[5],
+                                        BLANK_SPACE,
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        CARRIAGE_R};
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 247: {  // Set Morse Code Call Sign
-      uhf_configStruct *callsign = (uhf_configStruct *)param;
-      uint8_t len[2] = {(callsign->len - (callsign->len % 10)) / 10,
-                        callsign->len % 10};
-      convHexToASCII(2, len);
-      uint8_t command_assembly[60] = {'E',    'S', '+', 'W',    '2',
-                             i2c_address_small_digit_ascii, 'F', '7', len[0], len[1]};
-      int i = 0;
-      for (i; i < callsign->len; i++) {
-        uint8_t sym = callsign->message[i];
-        if (sym != 0x2D && sym != 0x2E && sym != BLANK_SPACE)
-          return U_BAD_PARAM;
-        command_assembly[10 + i] = sym;
-      }
-      command_assembly[10 + i] = BLANK_SPACE;
-      command_assembly[11 + i] = 'C';
-      command_assembly[12 + i] = 'C';
-      command_assembly[13 + i] = 'C';
-      command_assembly[14 + i] = 'C';
-      command_assembly[15 + i] = 'C';
-      command_assembly[16 + i] = 'C';
-      command_assembly[17 + i] = 'C';
-      command_assembly[18 + i] = 'C';
-      command_assembly[19 + i] = CARRIAGE_R;
-      strcpy(command_to_send, command_assembly);
-      break;
+    case 247: { // Set Morse Code Call Sign
+        uhf_configStruct *callsign = (uhf_configStruct *)param;
+        uint8_t len[2] = {(callsign->len - (callsign->len % 10)) / 10, callsign->len % 10};
+        convHexToASCII(2, len);
+        uint8_t command_assembly[60] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
+                                        'F', '7', len[0], len[1]};
+        int i = 0;
+        for (i; i < callsign->len; i++) {
+            uint8_t sym = callsign->message[i];
+            if (sym != 0x2D && sym != 0x2E && sym != BLANK_SPACE)
+                return U_BAD_PARAM;
+            command_assembly[10 + i] = sym;
+        }
+        command_assembly[10 + i] = BLANK_SPACE;
+        command_assembly[11 + i] = 'C';
+        command_assembly[12 + i] = 'C';
+        command_assembly[13 + i] = 'C';
+        command_assembly[14 + i] = 'C';
+        command_assembly[15 + i] = 'C';
+        command_assembly[16 + i] = 'C';
+        command_assembly[17 + i] = 'C';
+        command_assembly[18 + i] = 'C';
+        command_assembly[19 + i] = CARRIAGE_R;
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 248: {  // Set the MIDI Audio Beacon
-      uhf_configStruct *beacon = (uhf_configStruct *)param;
-      uint8_t len[2] = {(beacon->len - (beacon->len % 10)) / 10,
-                        beacon->len % 10};
-      convHexToASCII(2, len);
-      uint8_t command_assembly[120] = {'E',    'S', '+', 'W',    '2',
-                              i2c_address_small_digit_ascii, 'F', '8', len[0], len[1]};
-      uint8_t j = 0;
+    case 248: { // Set the MIDI Audio Beacon
+        uhf_configStruct *beacon = (uhf_configStruct *)param;
+        uint8_t len[2] = {(beacon->len - (beacon->len % 10)) / 10, beacon->len % 10};
+        convHexToASCII(2, len);
+        uint8_t command_assembly[120] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
+                                         'F', '8', len[0], len[1]};
+        uint8_t j = 0;
 
-      for (; j < (3*beacon->len); j++) {
-        command_assembly[10+j] = beacon->message[j];
-      }
-      command_assembly[10 + j] = BLANK_SPACE;
-      command_assembly[11 + j] = 'C';
-      command_assembly[12 + j] = 'C';
-      command_assembly[13 + j] = 'C';
-      command_assembly[14 + j] = 'C';
-      command_assembly[15 + j] = 'C';
-      command_assembly[16 + j] = 'C';
-      command_assembly[17 + j] = 'C';
-      command_assembly[18 + j] = 'C';
-      command_assembly[19 + j] = CARRIAGE_R;
-      strcpy(command_to_send, command_assembly);
-      break;
+        for (; j < (3 * beacon->len); j++) {
+            command_assembly[10 + j] = beacon->message[j];
+        }
+        command_assembly[10 + j] = BLANK_SPACE;
+        command_assembly[11 + j] = 'C';
+        command_assembly[12 + j] = 'C';
+        command_assembly[13 + j] = 'C';
+        command_assembly[14 + j] = 'C';
+        command_assembly[15 + j] = 'C';
+        command_assembly[16 + j] = 'C';
+        command_assembly[17 + j] = 'C';
+        command_assembly[18 + j] = 'C';
+        command_assembly[19 + j] = CARRIAGE_R;
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 251: {  // Set the Beacon Message contents
-      uhf_configStruct *beacon = (uhf_configStruct *)param;
-      uint8_t len[2] = {(beacon->len) >> 4, (beacon->len) & 15};
-      convHexToASCII(2, len);
+    case 251: { // Set the Beacon Message contents
+        uhf_configStruct *beacon = (uhf_configStruct *)param;
+        uint8_t len[2] = {(beacon->len) >> 4, (beacon->len) & 15};
+        convHexToASCII(2, len);
 
-      uint8_t command_assembly[120] = {'E',    'S', '+', 'W',    '2',
-                              i2c_address_small_digit_ascii, 'F', 'B', len[0], len[1]};
-      int k = 0;
-      for (; k < beacon->len; k++) {
-        command_assembly[10 + k] = beacon->message[k];
-      }
-      command_assembly[10 + k] = BLANK_SPACE;
-      command_assembly[11 + k] = 'C';
-      command_assembly[12 + k] = 'C';
-      command_assembly[13 + k] = 'C';
-      command_assembly[14 + k] = 'C';
-      command_assembly[15 + k] = 'C';
-      command_assembly[16 + k] = 'C';
-      command_assembly[17 + k] = 'C';
-      command_assembly[18 + k] = 'C';
-      command_assembly[19 + k] = CARRIAGE_R;
-      strcpy(command_to_send, command_assembly);
-      break;
+        uint8_t command_assembly[120] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
+                                         'F', 'B', len[0], len[1]};
+        int k = 0;
+        for (; k < beacon->len; k++) {
+            command_assembly[10 + k] = beacon->message[k];
+        }
+        command_assembly[10 + k] = BLANK_SPACE;
+        command_assembly[11 + k] = 'C';
+        command_assembly[12 + k] = 'C';
+        command_assembly[13 + k] = 'C';
+        command_assembly[14 + k] = 'C';
+        command_assembly[15 + k] = 'C';
+        command_assembly[16 + k] = 'C';
+        command_assembly[17 + k] = 'C';
+        command_assembly[18 + k] = 'C';
+        command_assembly[19 + k] = CARRIAGE_R;
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 252: {  // Set the device address
-      uint8_t *add = (uint8_t *)param;
+    case 252: { // Set the device address
+        uint8_t *add = (uint8_t *)param;
 
-      if (*add != 0x22 && *add != 0x23) return U_BAD_PARAM;
-      uint8_t small = *add - 32;
-      convHexToASCII(1, &small);
-      uint8_t command_assembly[20] = {'E', 'S', '+',   'W',         '2', i2c_address_small_digit_ascii,    'F',
-                             'C', '2', small, BLANK_SPACE, 'C', 'C',       'C',
-                             'C', 'C', 'C',   'C',         'C', CARRIAGE_R};
-      strcpy(command_to_send, command_assembly);
-      break;
+        if (*add != 0x22 && *add != 0x23)
+            return U_BAD_PARAM;
+        uint8_t small = *add - 32;
+        convHexToASCII(1, &small);
+        uint8_t command_assembly[20] = {'E', 'S',       '+', 'W',   '2',         i2c_address_small_digit_ascii,
+                                        'F', 'C',       '2', small, BLANK_SPACE, 'C',
+                                        'C', 'C',       'C', 'C',   'C',         'C',
+                                        'C', CARRIAGE_R};
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 253: {  // FRAM memory write
-      uhf_framStruct *fram_w = (uhf_framStruct *)param;
+    case 253: { // FRAM memory write
+        uhf_framStruct *fram_w = (uhf_framStruct *)param;
 
-      uint32_t add = fram_w->add;
-      if (add >= 0x8000 && add <= 0x83A4) return U_BAD_PARAM;
-      if (add >= 0x83FE && add <= 0x24000) return U_BAD_PARAM;
+        uint32_t add = fram_w->add;
+        if (add >= 0x8000 && add <= 0x83A4)
+            return U_BAD_PARAM;
+        if (add >= 0x83FE && add <= 0x24000)
+            return U_BAD_PARAM;
 
-      uint8_t chadd[8] = {add >> 28,        (add >> 24) & 15, (add >> 20) & 15,
-                          (add >> 16) & 15, (add >> 12) & 15, (add >> 8) & 15,
-                          (add >> 4) & 15,  add & 15};
-      convHexToASCII(8, chadd);
+        uint8_t chadd[8] = {add >> 28,        (add >> 24) & 15, (add >> 20) & 15, (add >> 16) & 15,
+                            (add >> 12) & 15, (add >> 8) & 15,  (add >> 4) & 15,  add & 15};
+        convHexToASCII(8, chadd);
 
-      uint8_t command_assembly[60] = {'E',
-                             'S',
-                             '+',
-                             'W',
-                             '2',
-                             i2c_address_small_digit_ascii,
-                             'F',
-                             'D',
-                             chadd[0],
-                             chadd[1],
-                             chadd[2],
-                             chadd[3],
-                             chadd[4],
-                             chadd[5],
-                             chadd[6],
-                             chadd[7],
-                             [48] = BLANK_SPACE,
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             'C',
-                             [57] = CARRIAGE_R};
-      uint8_t hex[2] = {0};
-      int i = 0;
+        uint8_t command_assembly[60] = {'E',
+                                        'S',
+                                        '+',
+                                        'W',
+                                        '2',
+                                        i2c_address_small_digit_ascii,
+                                        'F',
+                                        'D',
+                                        chadd[0],
+                                        chadd[1],
+                                        chadd[2],
+                                        chadd[3],
+                                        chadd[4],
+                                        chadd[5],
+                                        chadd[6],
+                                        chadd[7],
+                                        [48] = BLANK_SPACE,
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        'C',
+                                        [57] = CARRIAGE_R};
+        uint8_t hex[2] = {0};
+        int i = 0;
         for (; i < 16; i++) {
-        hex[0] = fram_w->data[i] >> 4;
-        hex[1] = fram_w->data[i] & 15;
-        convHexToASCII(2, hex);
+            hex[0] = fram_w->data[i] >> 4;
+            hex[1] = fram_w->data[i] & 15;
+            convHexToASCII(2, hex);
 
-        command_assembly[16 + 2 * i] = hex[0];
-        command_assembly[16 + 2 * i + 1] = hex[1];
-      }
+            command_assembly[16 + 2 * i] = hex[0];
+            command_assembly[16 + 2 * i + 1] = hex[1];
+        }
 
-      strcpy(command_to_send, command_assembly);
-      break;
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
-    case 255: {  // Secure Mode write
-      uint8_t *confirm = (uint8_t *)param;
-      if (*confirm != 1) return U_BAD_PARAM;
+    case 255: { // Secure Mode write
+        uint8_t *confirm = (uint8_t *)param;
+        if (*confirm != 1)
+            return U_BAD_PARAM;
 
-      uint8_t command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
-                             'F', 'F', BLANK_SPACE, 'C', 'C', 'C',
-                             'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
-      strcpy(command_to_send, command_assembly);
-      break;
+        uint8_t command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
+                                        'F', 'F', BLANK_SPACE, 'C', 'C', 'C',
+                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
+        strcpy(command_to_send, command_assembly);
+        break;
     }
 
     default:
@@ -385,13 +388,25 @@ UHF_return UHF_genericWrite(uint8_t code, void * param)
       /* For an SCW write command going from bootloader to application mode only
        * Only send the command. Do not expect response.
        */
-      i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send));
+      if (i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send)) == 0) {
+          return U_I2C_IN_PIPE;
+      }
       return U_GOOD_CONFIG;
-  }else{
+  } else if ((code == 0) && ((command_to_send[10] & 0x02) == 0x02)) {
+      // Consume I2C semaphore and start timer before entering PIPE mode:
+      if (i2c_sendAndReceivePIPE(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN) == 0) {
+          return U_I2C_IN_PIPE;
+      }
+
+
+  } else {
       /* For all other commands, send and receive
        * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 + i2c_address_small_digit_ascii
        */
-      i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN);
+      if (i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN) == 0) {
+          return U_I2C_IN_PIPE;
+      }
+
   }
 
 
@@ -549,7 +564,9 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
   uint8_t i2c_address = i2c_address_small_digit_ascii;
   convHexFromASCII(1, &i2c_address);
   i2c_address += 0x20; // Address is always 0x22 or 0x23
-  i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN);
+  if (i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN) == 0) {
+      return U_I2C_IN_PIPE;
+  }
 //  uhf_enter_direct_hardware_mode();
 //  uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send, MAX_UHF_R_ANSLEN, ans);
 //  uhf_exit_direct_hardware_mode();
@@ -650,7 +667,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     case 10: {  // Get the internal temperature
       float *value = (float *)param;
 
-      uint8_t dec[4] = {ans[3], ans[4], ans[5], ans[7]};
+      uint8_t dec[4] = {ans[3], ans[4], ans[5], ans[6]};
       convHexFromASCII(3, dec + 1);
 
       *value = (dec[1] * 10.0f) + (dec[2]) + (dec[3] / 10.0f);
