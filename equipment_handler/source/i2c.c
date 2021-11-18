@@ -24,6 +24,7 @@
 
 #include "HL_i2c.h"
 #include "i2c_io.h"
+bool I2C_OK = 1;
 
 SemaphoreHandle_t uTransceiver_semaphore;
 TimerHandle_t uTransceiverPipe_timer;
@@ -47,7 +48,7 @@ bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms) {
         return false;
     }
 
-    int timer_cushion = 10; // a little extra time to make sure the timer comes affer pipe mode expires.
+    int timer_cushion = 1000; // a little extra time to make sure the timer comes affer pipe mode expires (ms).
     if (xTimerChangePeriod(uTransceiverPipe_timer, pdMS_TO_TICKS(timeout_ms + timer_cushion), 0) != pdPASS) {
         // failed to change timer period
         return false;

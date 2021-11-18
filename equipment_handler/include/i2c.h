@@ -18,9 +18,11 @@
  */
 #ifndef i2c_H
 #define i2c_H
-
+#include <FreeRTOS.h>
 #include <stdint.h>
-
+#include <os_portmacro.h>
+#include <os_timer.h>
+#include <stdbool.h>
 #define I2C_SPEED 400
 #define I2C_BUS_REG i2cREG1
 
@@ -51,6 +53,8 @@ bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
  * @param xHigherPriorityTaskWoken Token to signal the scheduler that a task should be woken after ISR.
  */
 void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken);
+
+static void uhf_pipe_timer_callback(TimerHandle_t xTimer);
 
 bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
 
