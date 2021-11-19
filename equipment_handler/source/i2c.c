@@ -20,15 +20,17 @@
 #include "HL_i2c.h"
 #include "i2c.h"
 #include "i2c_io.h"
-bool I2C_OK = 0;
 
+static const bool I2C_OK = 0;
+SemaphoreHandle_t uTransceiver_semaphore;
+TimerHandle_t uTransceiverPipe_timer;
 
 static void uhf_pipe_timer_callback(TimerHandle_t xTimer) {
     // release semaphore - safe to send over I2C again.
     xSemaphoreGive(uTransceiver_semaphore);
 }
 
-bool uhf_i2c_init(void) {
+bool uhf_i2c_init() {
     uTransceiver_semaphore = xSemaphoreCreateBinary();
     if (uTransceiver_semaphore == NULL) {
         return false;
@@ -49,7 +51,7 @@ bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms) {
         return false;
     }
 
-    int timer_cushion_ms = 1000; // a little extra time to make sure the timer comes after pipe mode expires.
+    const int timer_cushion_ms = 1000; // a little extra time to make sure the timer comes after pipe mode expires.
     if (xTimerChangePeriod(uTransceiverPipe_timer, pdMS_TO_TICKS(timeout_ms + timer_cushion_ms), 0) != pdPASS) {
         // failed to change timer period
         return false;
