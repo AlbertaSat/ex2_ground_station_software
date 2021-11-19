@@ -497,9 +497,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
      *    - Handle errors
      */
 
-    // Determine the ASCII characters representing the command code
-
-
     /* Form the command */
     // Note: The FRAM read command requires a unique format
     uint8_t code_chars[2] = {(code >> 4) & 15, code & 15};
@@ -1031,18 +1028,50 @@ UHF_return UHF_firmwareUpdate(uint8_t * line, uint8_t line_length) {
     crc32_calc(find_blankSpace(strlen((char *)firmware_command), firmware_command), firmware_command);
 
     uint8_t ans[UHF_WRITE_ANSLEN_FW] = {0};
+    UHF_return return_val;
 
     #ifndef UHF_USE_I2C_CMDS
         uhf_enter_direct_hardware_mode();
-        uhf_direct_sendAndReceive(strlen((char *)firmware_command), firmware_command, UHF_WRITE_ANSLEN_FW, ans);
+        return_val = uhf_direct_sendAndReceive(strlen((char *)firmware_command), firmware_command, UHF_WRITE_ANSLEN_FW, ans);
         uhf_exit_direct_hardware_mode();
     #else
         uint8_t i2c_address = i2c_address_small_digit_ascii;
         convHexFromASCII(1, &i2c_address);
         i2c_address += 0x20; // Address is always 0x22 or 0x23
-        i2c_sendAndReceive(i2c_address, firmware_command, strlen((char *)firmware_command), ans, UHF_WRITE_ANSLEN_FW);
+        return_val = i2c_sendAndReceive(i2c_address, firmware_command, strlen((char *)firmware_command), ans, UHF_WRITE_ANSLEN_FW);
     #endif
 
-    //TODO: Finish this function
-    return U_GOOD_CONFIG;
+    // Handle errors
+    if ((return_val == U_UART_SUCCESS) || (return_val == U_I2C_SUCCESS)){
+        if ((ans[0] != LETTER_O)) {
+        // Received error-type answer
+            if(!strcmp((char *)ans, "ERR 84F89937\r")){
+                return_val = U_ERR;
+            }else if(!strcmp((char *)ans, "ERR+FB C76900C0\r")){
+                return_val = U_ERR_FB;
+            }else if(!strcmp((char *)ans, "ERR+CHKSUM 1105E41C\r")){
+                return_val = U_ERR_CHKSUM;
+            }else if(!strcmp((char *)ans, "ERR+FW AAC4E42B\r")){
+                return_val = U_ERR_FB;
+            }else{
+                return_val = U_UNKOWN;
+            }
+        }else{
+            // Received "OK..."-type answer. Now check the CRC.
+            uint8_t crc_recalc[UHF_WRITE_ANSLEN_FW];
+            memcpy(&crc_recalc, ans, UHF_WRITE_ANSLEN_FW);
+            crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
+
+            if (!strcmp((char)crc_recalc, (char *)ans)) {
+                return_val = U_GOOD_CONFIG;
+                // Check if the firmware update is finished
+                if(!strcmp((char *)ans, "OK+F1F1 908A5EAB\r")){
+                    return_val = U_FW_UPDATE_SUCCESS;
+                }
+            } else {
+                return_val = U_BAD_ANS_CRC;
+            }
+        }
+    }
+    return return_val;
 }

@@ -146,6 +146,7 @@ typedef enum {
     U_UART_SUCCESS = 9,
     U_I2C_SUCCESS = 10,
     U_ANS_SUCCESS = 11,
+    U_FW_UPDATE_SUCCESS = 18,
 
     // Returned at the Equipment Handler level
     U_BAD_CONFIG = 1,
@@ -167,8 +168,14 @@ typedef enum {
     U_UART_FAIL = 12,
     U_I2C_FAIL = 13,
 
+    // Received during a firmware update command
+    U_ERR_FB = 14, // Memory error
+    U_ERR_FW = 15, // Error while storing the firmware line
+    U_ERR_CHKSUM = 16, // Corrupted firmware line
+    U_ERR_FC = 17,
+
     // Unknown error occured
-    U_UNKOWN = 14,
+    U_UNKOWN = 19,
 
     // Returned in HAL if UHF is stubbed
     IS_STUBBED_U = 0
