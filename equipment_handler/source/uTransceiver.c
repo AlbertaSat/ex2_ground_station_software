@@ -27,8 +27,6 @@
 
 #define UHF_USE_I2C_CMDS
 
-// TODO: command code macros
-// TODO: Improve error handling
 // TODO: Firmware update command
 // TODO: Combine send code into single function?
 // TODO: Write UART function
@@ -56,6 +54,7 @@ static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit o
  *          7       Set beacon transmission period
  *          8       Set audio beacon transmission period
  *          9       Restore default values
+ *          239     Enable/Disable Automatic AX.25 Decoding
  *          244     Enter low power mode
  *          245     Set destination call sign
  *          246     Set source call sign
@@ -75,6 +74,7 @@ static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit o
  *          7       uint16_t*   Time in seconds (1-65535)
  *          8       uint16_t*   Time in seconds (30-65535)
  *          9       uint8_t*    = 1 to confirm reset
+ *          239     uint8_t*    State (0 or 1)
  *          244     uint8_t*    = 1 to confirm change
  *          245     uhf_configStruct*   Config structure
  *          246     uhf_configStruct*   ''
@@ -99,7 +99,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
      *    - Build the command to be sent                               */
 
     switch (code) {
-    case 0: { // Set the status control word
+    case UHF_SCW_CMD: { // Set the status control word
         uint8_t *array = (uint8_t *)param;
         uint8_t hex[4] = {0};
 
@@ -118,7 +118,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 1: { // Set the frequency
+    case UHF_FREQ_CMD: { // Set the frequency
         uint32_t *new_freq = (uint32_t *)param;
         if (*new_freq < MIN_U_FREQ || *new_freq > MAX_U_FREQ)
             return U_BAD_PARAM;
@@ -140,18 +140,18 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 6: // Set PIPE mode Timeout Period
-    case 7: // Set Beacon Transmission Period
-    case 8: // Set Audio Beacon Transmission Period
+    case UHF_PIPET_CMD: // Set PIPE mode Timeout Period
+    case UHF_BCNT_CMD: // Set Beacon Transmission Period
+    case UHF_AUDIOT_CMD: // Set Audio Beacon Transmission Period
     {
         uint32_t *time = (uint32_t *)param;
 
-        if (code == 6) {
+        if (code == UHF_PIPET_CMD) {
             if (*time < 1 || *time > 255)
                 return U_BAD_PARAM;
         }
 
-        if (code == 7 || code == 8) {
+        if (code == UHF_BCNT_CMD || code == UHF_AUDIOT_CMD) {
             if (*time > 0xFFFF)
                 return U_BAD_PARAM;
         }
@@ -170,7 +170,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 9: { // Restore Default Values
+    case UHF_DFLT_CMD: { // Restore Default Values
         uint8_t *confirm = (uint8_t *)param;
         if (*confirm != 1)
             return U_BAD_PARAM;
@@ -181,7 +181,17 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 244: { // Enter low power mode
+    case UHF_AX25_CMD:{ // Enable/Disable AX.25 Automatic Decoding
+        uint8_t *state = (uint8_t *)param;
+        convHexToASCII(1, state);
+        uint8_t command_assembly[20] = {'E','S','+','W','2',i2c_address_small_digit_ascii,'E','F',
+                                        '0', state, BLANK_SPACE,'C','C','C','C','C','C','C','C', CARRIAGE_R};
+        strcpy(command_to_send, command_assembly);
+        answer_length = UHF_WRITE_ANSLEN_AX25;
+        break;
+    }
+
+    case UHF_LOWPWR_CMD: { // Enter low power mode
         uint8_t *confirm = (uint8_t *)param;
         if (*confirm != 1)
             return U_BAD_PARAM;
@@ -207,7 +217,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 247: { // Set Morse Code Call Sign
+    case UHF_MORSECAL_CMD: { // Set Morse Code Call Sign
         uhf_configStruct *callsign = (uhf_configStruct *)param;
         uint8_t len[2] = {(callsign->len - (callsign->len % 10)) / 10, callsign->len % 10};
         convHexToASCII(2, len);
@@ -234,7 +244,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 248: { // Set the MIDI Audio Beacon
+    case UHF_MIDIBCN_CMD: { // Set the MIDI Audio Beacon
         uhf_configStruct *beacon = (uhf_configStruct *)param;
         uint8_t len[2] = {(beacon->len - (beacon->len % 10)) / 10, beacon->len % 10};
         convHexToASCII(2, len);
@@ -259,7 +269,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 251: { // Set the Beacon Message contents
+    case UHF_BCNMSG_CMD: { // Set the Beacon Message contents
         uhf_configStruct *beacon = (uhf_configStruct *)param;
         uint8_t len[2] = {(beacon->len) >> 4, (beacon->len) & 15};
         convHexToASCII(2, len);
@@ -286,7 +296,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 252: { // Set the device address
+    case UHF_I2CADR_CMD: { // Set the device address
         uint8_t *add = (uint8_t *)param;
 
         if (*add != 0x22 && *add != 0x23)
@@ -300,7 +310,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 253: { // FRAM memory write
+    case UHF_FRAM_CMD: { // FRAM memory write
         uhf_framStruct *fram_w = (uhf_framStruct *)param;
 
         uint32_t add = fram_w->add;
@@ -329,7 +339,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         break;
     }
 
-    case 255: { // Secure Mode write
+    case UHF_SECURE_CMD: { // Secure Mode write
         uint8_t *confirm = (uint8_t *)param;
         if (*confirm != 1)
             return U_BAD_PARAM;
@@ -346,7 +356,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     }
 
     // strlen calculates the length of all commands except the beacon command, which can have 0x00-valued bytes
-    if(code != 251) command_length = strlen((char *)command_to_send);
+    if(code != UHF_BCNMSG_CMD) command_length = strlen((char *)command_to_send);
 
     /* The following is necessary for all write commands:
      *    - Calculate the crc32 of the command
@@ -368,7 +378,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uint8_t i2c_address = i2c_address_small_digit_ascii;
         convHexFromASCII(1, &i2c_address);
         i2c_address += 0x20;
-        if (code != 252){
+        if (code != UHF_I2CADR_CMD){
             return_val = i2c_sendAndReceive(i2c_address, command_to_send, command_length, ans, answer_length);
         }else{
             // i2c command to change the i2c address does not receive a response.
@@ -439,6 +449,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
  *      7       Get beacon transmission period
  *      8       Get audio beacon transmission period
  *      10      Get the internal temperature of the board
+ *      239     Get the state of AX.25 decoding
  *      244     Get low power mode status
  *      245     Get destination call sign
  *      246     Get source call sign
@@ -463,6 +474,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
  *      7       uint32_t*   Array of 2 values (1 time [1-65535], 1 rssi)
  *      8       uint32_t*   Array of 2 values (1 time [30-65535], 1 rssi)
  *      10      float*      Value in degrees celsius
+ *      239     uint8_t*    State (0 or 1)
  *      244     uint8_t*    = 1 for low power mode
  *      245     uhf_configStruct*   Config struct
  *      246     uhf_configStruct*   ''
@@ -496,7 +508,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
                                                  code_chars[0],code_chars[1],
                                                  BLANK_SPACE,'C','C','C','C','C','C','C','C',CARRIAGE_R};
 
-    if (code == 253) {
+    if (code == UHF_FRAM_CMD) {
         uhf_framStruct *fram_struct = (uhf_framStruct *)param;
         uint32_t add = fram_struct->add;
         if (add >= 0x8000 && add <= 0x83A4)
@@ -517,47 +529,47 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
     uint8_t answer_length = 0;
     switch(code){
-    case 0: answer_length = UHF_READ_ANSLEN_SCW;
+    case UHF_SCW_CMD: answer_length = UHF_READ_ANSLEN_SCW;
         break;
-    case 1: answer_length = UHF_READ_ANSLEN_FREQ;
+    case UHF_FREQ_CMD: answer_length = UHF_READ_ANSLEN_FREQ;
         break;
-    case 2: answer_length = UHF_READ_ANSLEN_UPTIME;
+    case UHF_UPTIME_CMD: answer_length = UHF_READ_ANSLEN_UPTIME;
         break;
-    case 3: answer_length = UHF_READ_ANSLEN_TPCKT;
+    case UHF_TPCKT_CMD: answer_length = UHF_READ_ANSLEN_TPCKT;
         break;
-    case 4: answer_length = UHF_READ_ANSLEN_RPCKT;
+    case UHF_RPCKT_CMD: answer_length = UHF_READ_ANSLEN_RPCKT;
         break;
-    case 5: answer_length = UHF_READ_ANSLEN_RPCKTER;
+    case UHF_RPCKTER_CMD: answer_length = UHF_READ_ANSLEN_RPCKTER;
         break;
-    case 6: answer_length = UHF_READ_ANSLEN_PIPET;
+    case UHF_PIPET_CMD: answer_length = UHF_READ_ANSLEN_PIPET;
         break;
-    case 7: answer_length = UHF_READ_ANSLEN_BCNT;
+    case UHF_BCNT_CMD: answer_length = UHF_READ_ANSLEN_BCNT;
         break;
-    case 8: answer_length = UHF_READ_ANSLEN_AUDIOT;
+    case UHF_AUDIOT_CMD: answer_length = UHF_READ_ANSLEN_AUDIOT;
         break;
-    case 10: answer_length = UHF_READ_ANSLEN_TEMP;
+    case UHF_TEMP_CMD: answer_length = UHF_READ_ANSLEN_TEMP;
         break;
-    case 239: answer_length = UHF_READ_ANSLEN_AX25;
+    case UHF_AX25_CMD: answer_length = UHF_READ_ANSLEN_AX25;
         break;
-    case 244: answer_length = UHF_READ_ANSLEN_LOWPWR;
+    case UHF_LOWPWR_CMD: answer_length = UHF_READ_ANSLEN_LOWPWR;
         break;
-    case 245: answer_length = UHF_READ_ANSLEN_SRCCAL;
+    case UHF_SRCCAL_CMD: answer_length = UHF_READ_ANSLEN_SRCCAL;
         break;
-    case 246: answer_length = UHF_READ_ANSLEN_DSTCAL;
+    case UHF_DSTCAL_CMD: answer_length = UHF_READ_ANSLEN_DSTCAL;
         break;
-    case 247: answer_length = UHF_READ_ANSLEN_MORSECAL;
+    case UHF_MORSECAL_CMD: answer_length = UHF_READ_ANSLEN_MORSECAL;
         break;
-    case 248: answer_length = UHF_READ_ANSLEN_MIDIBCN;
+    case UHF_MIDIBCN_CMD: answer_length = UHF_READ_ANSLEN_MIDIBCN;
         break;
-    case 249: answer_length = UHF_READ_ANSLEN_SWVER;
+    case UHF_SWVER_CMD: answer_length = UHF_READ_ANSLEN_SWVER;
         break;
-    case 250: answer_length = UHF_READ_ANSLEN_PLDSZ;
+    case UHF_PLDSZ_CMD: answer_length = UHF_READ_ANSLEN_PLDSZ;
         break;
-    case 251: answer_length = UHF_READ_ANSLEN_BCNMSG;
+    case UHF_BCNMSG_CMD: answer_length = UHF_READ_ANSLEN_BCNMSG;
         break;
-    case 253: answer_length = UHF_READ_ANSLEN_FRAM;
+    case UHF_FRAM_CMD: answer_length = UHF_READ_ANSLEN_FRAM;
         break;
-    case 255: answer_length = UHF_READ_ANSLEN_SECURE;
+    case UHF_SECURE_CMD: answer_length = UHF_READ_ANSLEN_SECURE;
         break;
     default:
         return U_BAD_PARAM;
@@ -618,7 +630,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
          */
 
         switch (code) {
-        case 0: { // Get the status control word
+        case UHF_SCW_CMD: { // Get the status control word
             uint8_t *array = (uint8_t *)param;
 
             uint8_t hex[4] = {ans[blankspace_index - 4], ans[blankspace_index - 3], ans[blankspace_index - 2],
@@ -641,7 +653,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 1: { // Get the frequency
+        case UHF_FREQ_CMD: { // Get the frequency
             uint32_t *freq = (uint32_t *)param;
 
             uint8_t hex[8] = {ans[blankspace_index - 8], ans[blankspace_index - 7], ans[blankspace_index - 6],
@@ -657,13 +669,13 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 2: // Get uptime
-        case 3: // Get # of transmitted packets
-        case 4: // Get # of received packets
-        case 5: // Get # of received packets w CRC16 error
-        case 6: // Get the PIPE Mode timeout
-        case 7: // Get Beacon transmission period
-        case 8: // Get Audio Beacon period
+        case UHF_UPTIME_CMD: // Get uptime
+        case UHF_TPCKT_CMD: // Get # of transmitted packets
+        case UHF_RPCKT_CMD: // Get # of received packets
+        case UHF_RPCKTER_CMD: // Get # of received packets w CRC16 error
+        case UHF_PIPET_CMD: // Get the PIPE Mode timeout
+        case UHF_BCNT_CMD: // Get Beacon transmission period
+        case UHF_AUDIOT_CMD: // Get Audio Beacon period
         {
             uint32_t *value = (uint32_t *)param;
 
@@ -683,7 +695,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 10: { // Get the internal temperature
+        case UHF_TEMP_CMD: { // Get the internal temperature
             float *value = (float *)param;
 
             uint8_t dec[4] = {ans[3], ans[4], ans[5], ans[6]};
@@ -703,7 +715,14 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             //          break;
             //        }
 
-        case 244: { // Get Low Power Mode Status
+        case UHF_AX25_CMD: { // Get Low Power Mode Status
+            uint8_t *status = (uint8_t *)param;
+            *status = ans[4];
+            convHexFromASCII(1, status);
+            break;
+        }
+
+        case UHF_LOWPWR_CMD: { // Get Low Power Mode Status
             uint8_t *status = (uint8_t *)param;
 
             uint8_t hex[2] = {ans[blankspace_index - 2], ans[blankspace_index - 1]};
@@ -712,8 +731,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 245:   // Get Destination Call Sign
-        case 246: { // Get Source Call Sign
+        case UHF_DSTCAL_CMD:   // Get Destination Call Sign
+        case UHF_SRCCAL_CMD: { // Get Source Call Sign
             uhf_configStruct *callsign = (uhf_configStruct *)param;
             callsign->len = 6;
 
@@ -723,7 +742,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 247: { // Get Morse Code Call Sign
+        case UHF_MORSECAL_CMD: { // Get Morse Code Call Sign
             uhf_configStruct *callsign = (uhf_configStruct *)param;
             uint8_t dec[2] = {ans[3], ans[4]};
             convHexFromASCII(2, dec);
@@ -737,7 +756,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 248: { // Get the MIDI Audio Beacon
+        case UHF_MIDIBCN_CMD: { // Get the MIDI Audio Beacon
             uhf_configStruct *beacon = (uhf_configStruct *)param;
             uint8_t dec[2] = {ans[3], ans[4]};
             convHexFromASCII(2, dec);
@@ -753,7 +772,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 249: { // Get Software Version build
+        case UHF_SWVER_CMD: { // Get Software Version build
             uint8_t *version = (uint8_t *)param;
 
             *version = ans[3];
@@ -763,7 +782,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 250: { // Get Device Payload Size
+        case UHF_PLDSZ_CMD: { // Get Device Payload Size
             uint16_t *p_size = (uint16_t *)param;
 
             uint8_t hex[4] = {ans[blankspace_index - 4], ans[blankspace_index - 3], ans[blankspace_index - 2],
@@ -774,7 +793,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 251: { // Get the beacon message content
+        case UHF_BCNMSG_CMD: { // Get the beacon message content
             uhf_configStruct *beacon = (uhf_configStruct *)param;
             uint8_t len[2] = {ans[3], ans[4]};
             convHexFromASCII(2, len);
@@ -794,7 +813,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 253: { // FRAM memory read
+        case UHF_FRAM_CMD: { // FRAM memory read
             uhf_framStruct *fram_r = (uhf_framStruct *)param;
 
             int i = 0;
@@ -806,7 +825,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             break;
         }
 
-        case 255: { // Secure Mode read
+        case UHF_SECURE_CMD: { // Secure Mode read
             uint32_t *key = (uint32_t *)param;
 
             uint8_t hex[8] = {ans[3], ans[4], ans[5], ans[6], ans[7], ans[8], ans[9], ans[10]};
