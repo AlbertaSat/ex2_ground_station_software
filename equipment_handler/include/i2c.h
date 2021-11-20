@@ -18,16 +18,51 @@
  */
 #ifndef i2c_H
 #define i2c_H
-
+#include <FreeRTOS.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include <os_portmacro.h>
+#include <os_timer.h>
+#include "HL_i2c.h"
+#include "i2c_io.h"
 
 #define I2C_SPEED 400
 #define I2C_BUS_REG i2cREG1
 
-void i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
+/**
+ * @brief Initialize the UHF I2C system. This includes the semaphore for the
+ * pipe mode, and timer. Does not actually initialize the I2C bus.
+ *
+ * @return true If initialization was successful.
+ * @return false Otherwise.
+ */
+bool uhf_i2c_init(void);
 
-void i2c_receiveResponse(uint8_t addr, char *response, uint8_t length);
+/**
+ * @brief Prepare the UHF I2C system to be put into pipe mode. This will consume the semaphore and
+ * start the timer to go off when pipe mode expires.
+ *
+ * @note This function should be called immidiately before entering pipe mode.
+ *
+ * @param timeout_ms Time in ms that the pipe mode will last.
+ * @return true If the system is ready to enter pipe mode.
+ * @return false If consuming the semaphore, or starting the timer failed.
+ */
+bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
 
-void i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len);
+/**
+ * @brief Reset the UHF I2C pipe mode timer. This should be callled when any data is received from the UHF.
+ *
+ * @param xHigherPriorityTaskWoken Token to signal the scheduler that a task should be woken after ISR.
+ */
+void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken);
+
+bool i2c_sendCommand(uint8_t addr, char * command, uint8_t length);
+
+bool i2c_receiveResponse(uint8_t addr, char * response, uint8_t length);
+
+bool i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
+
+bool i2c_sendAndReceivePIPE(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
 
 #endif /* i2c_H */
