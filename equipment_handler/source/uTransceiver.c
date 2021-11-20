@@ -23,6 +23,7 @@
 #include "uTransceiver.h"
 #include <stdlib.h> //*
 #include <time.h>   //*
+
 #include <uhf_uart.h>
 #include <uhf.h>
 #include "logger/logger.h"
@@ -175,6 +176,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     case 245: // Set Destination Call Sign
     case 246: // Set Source Call Sign
     {
+
         uhf_configStruct *sign = (uhf_configStruct *)param;
         uint8_t command_assembly[30] = {'E',
                                         'S',
@@ -404,6 +406,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
          */
         i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN);
     }
+
 
     /* Check if the answer is an error */
     if (ans[0] == LETTER_E) {
@@ -676,7 +679,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
     case 10: { // Get the internal temperature
         float *value = (float *)param;
-
         uint8_t dec[4] = {ans[3], ans[4], ans[5], ans[6]};
         convHexFromASCII(3, dec + 1);
 
@@ -715,6 +717,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             callsign->message[j] = ans[blankspace_index + j - 6];
         }
         break;
+
     }
 
     case 247: { // Get Morse Code Call Sign
@@ -788,11 +791,11 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             // is different from write value)
         }
         break;
+
     }
 
     case 253: { // FRAM memory read
         uhf_framStruct *fram_r = (uhf_framStruct *)param;
-
         int i = 0;
         for (; i < 16; i++) {
             uint8_t temp[2] = {ans[3 + 2 * i], ans[4 + 2 * i]};
@@ -943,6 +946,7 @@ int find_blankSpace(int length, uint8_t *command_to_send) {
  * @return UHF_return
  *      Outcome of the function (defined in uTransceiver.h)
  */
+
 UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t *data, uint8_t n_read_bytes) {
     uint8_t params[4] = {s_address >> 4, s_address & 15, len >> 4, len & 15};
     convHexToASCII(4, params);
