@@ -92,18 +92,20 @@ class groundStation(object):
         timeout=1)
 
         time.sleep(4)        
-        libcsp.kiss_init(device, 9600, 512, 'uart')
+        libcsp.kiss_init(device, 19200, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
         print(ser.name)    #prints the name of the port that is opened
         return ser
 
     def __setPIPE__(self):
         # Make a python byte array with the command that needs to be sent to set pipe mode
-        self.ser.write(b'ES+W22000323 4A2EA06D\r')
+        self.ser.write(b'ES+W2206000000B4 D35F70CF\r')
+        #self.ser.write(b'ES+W22000323 4A2EA06D\r')
+        self.ser.write(b'ES+W22002723 E72EC03A\r')
         result = self.ser.read(17)
         time.sleep(2)
         print(result)   
-        
+
 
     def __connectionManager__(self, server, port):
         """ Get currently open conneciton if it exists, and has not expired,
