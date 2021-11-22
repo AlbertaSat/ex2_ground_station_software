@@ -397,7 +397,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         // Consume I2C semaphore and start timer before entering PIPE mode:
         uint32_t pipe_timeout = 0;
         HAL_UHF_getPipeT(&pipe_timeout);
-        if (i2c_prepare_for_pipe_mode(1000*pipe_timeout)) {
+        if (i2c_prepare_for_pipe_mode(1000 * pipe_timeout)) {
             i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans,
                                MAX_UHF_W_ANSLEN);
         } else {
