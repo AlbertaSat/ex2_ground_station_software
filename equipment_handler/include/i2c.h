@@ -28,7 +28,8 @@
 
 #define I2C_SPEED 400
 #define I2C_BUS_REG i2cREG1
-
+SemaphoreHandle_t uTransceiver_semaphore;
+TimerHandle_t uTransceiverPipe_timer;
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
  * pipe mode, and timer. Does not actually initialize the I2C bus.
@@ -57,12 +58,13 @@ bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
  */
 void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken);
 
-bool i2c_sendCommand(uint8_t addr, char * command, uint8_t length);
+bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
 
-bool i2c_receiveResponse(uint8_t addr, char * response, uint8_t length);
+bool i2c_receiveResponse(uint8_t addr, char *response, uint8_t length);
 
-bool i2c_sendAndReceive(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
+bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len);
 
-bool i2c_sendAndReceivePIPE(uint8_t addr, char * command, uint8_t command_len, char * response, uint8_t response_len);
+bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
+                            uint8_t response_len);
 
 #endif /* i2c_H */
