@@ -19,14 +19,13 @@
  */
 
 #include "uTransceiver.h"
-
-#include <stdlib.h> //*
-#include <time.h>   //*
+#include <stdlib.h>  //*
+#include <time.h>    //*
 #include <uhf_uart.h>
 #include <uhf.h>
 #include "logger/logger.h"
 
-static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit of the (hex) address
+static uint8_t i2c_address_small_digit_ascii = '2';  // Stores the second digit of the (hex) address
 
 /**
  * @brief
@@ -391,18 +390,15 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         /* For an SCW write command going from bootloader to application mode only
          * Only send the command. Do not expect response.
          */
-        i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send));
-        return U_GOOD_CONFIG;
-    } else if (code == 0 && (command_to_send[10] & 0x2) == 1) {
-        // Consume I2C semaphore and start timer before entering PIPE mode:
-        uint32_t pipe_timeout = 0;
-        HAL_UHF_getPipeT(&pipe_timeout);
-        if (i2c_prepare_for_pipe_mode(1000 * pipe_timeout)) {
-            i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans,
-                               MAX_UHF_W_ANSLEN);
-        } else {
-            ex2_log("Error preparing for pipe mode.");
-        }
+      if (i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send)) == 0) {
+          return U_I2C_IN_PIPE;
+      }
+      return U_GOOD_CONFIG;
+  } else if ((code == 0) && ((command_to_send[10] & 0x02) == 0x02)) {
+      // Consume I2C semaphore and start timer before entering PIPE mode:
+      if (i2c_sendAndReceivePIPE(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN) == 0) {
+          return U_I2C_IN_PIPE;
+      }
     } else {
         /* For all other commands, send and receive
          * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
@@ -571,15 +567,17 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
     crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
 
-    // Command is sent to the board, and response is received
-    uint8_t ans[MAX_UHF_R_ANSLEN] = {0};
-    uint8_t i2c_address = i2c_address_small_digit_ascii;
-    convHexFromASCII(1, &i2c_address);
-    i2c_address += 0x20; // Address is always 0x22 or 0x23
-    i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN);
-    //  uhf_enter_direct_hardware_mode();
-    //  uhf_direct_sendAndReceive(strlen((char *)command_to_send),
-    //  command_to_send, MAX_UHF_R_ANSLEN, ans); uhf_exit_direct_hardware_mode();
+  // Command is sent to the board, and response is received
+  uint8_t ans[MAX_UHF_R_ANSLEN] = {0};
+  uint8_t i2c_address = i2c_address_small_digit_ascii;
+  convHexFromASCII(1, &i2c_address);
+  i2c_address += 0x20; // Address is always 0x22 or 0x23
+  if (i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_R_ANSLEN) == 0) {
+      return U_I2C_IN_PIPE;
+  }
+//  uhf_enter_direct_hardware_mode();
+//  uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send, MAX_UHF_R_ANSLEN, ans);
+//  uhf_exit_direct_hardware_mode();
 
     // Error handling
     if (ans[0] == LETTER_E) {
