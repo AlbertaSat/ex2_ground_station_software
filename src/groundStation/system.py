@@ -865,10 +865,16 @@ class SystemValues(object):
                             'returns' : {
                                 'err': '>b',
                                 #packet meta
+                                '###############################\r\n'+
+                                'packet meta\r\n'+
+                                '###############################\r\n'+
                                 'final': '<B',
                                 'UNIXtimestamp': '>u4',
                                 'dataPosition': '>u2',
                                 #ADCS
+                                '###############################\r\n'
+                                'ADCS\r\n'+
+                                '###############################\r\n'+
                                 'Estimated_Angular_Rate_X': '>f4',
                                 'Estimated_Angular_Rate_Y': '>f4',
                                 'Estimated_Angular_Rate_Z': '>f4',
@@ -919,6 +925,9 @@ class SystemValues(object):
                                 'Rate_Sensor_Temp_Z': '>i2',
 
                                 #Athena
+                                '###############################\r\n'
+                                'Athena\r\n'+
+                                '###############################\r\n'+
                                 'temparray1': '>i4',
                                 'temparray2': '>i4',
                                 'boot_cnt': '>u2',
@@ -931,6 +940,9 @@ class SystemValues(object):
                                 'pckts_uncovered_by_FEC': '>u2',
                                 
                                 #EPS
+                                '###############################\r\n'
+                                'EPS\r\n'+
+                                '###############################\r\n'+
                                 'cmd': '<B',
                                 'status' : '<b',
                                 'timestamp': '<f8',
@@ -1061,6 +1073,9 @@ class SystemValues(object):
                                 'PingWdt_toggles': '<u2',
                                 'PingWdt_turnOffs': '<B',
                                 #UHF
+                                '###############################\r\n'
+                                'UHF\r\n'+
+                                '###############################\r\n'+
                                 'scw1': '<B',
                                 'scw2': '<B',
                                 'scw3': '<B',
@@ -1083,6 +1098,9 @@ class SystemValues(object):
                                 'pckts_in_crc16': '>u4',
                                 'temperature': '>f4',
                                 #Sband
+                                '###############################\r\n'
+                                'Sband\r\n'+
+                                '###############################\r\n'+
                                 'Output_Power': '>f4',
                                 'PA_Temp': '>f4',
                                 'Top_Temp': '>f4',
@@ -1090,8 +1108,60 @@ class SystemValues(object):
                                 'Bat_Current': '>f4',
                                 'Bat_Voltage': '>f4',
                                 'PA_Current': '>f4',
-                                'PA_Voltage': '>f4'
-
+                                'PA_Voltage': '>f4',
+                                #Sband
+                                '###############################\r\n'
+                                'Hyperion Panels\r\n'+
+                                '###############################\r\n'+
+                                'Nadir_Temp1': '>b',
+                                'Nadir_Temp_Adc': '>b',
+                                'Port_Temp1': '>b',
+                                'Port_Temp2': '>b',
+                                'Port_Temp3': '>b',
+                                'Port_Temp_Adc': '>b',
+                                'Port_Dep_Temp1': '>b',
+                                'Port_Dep_Temp2': '>b',
+                                'Port_Dep_Temp3': '>b',
+                                'Port_Dep_Temp_Adc': '>b',
+                                'Star_Temp1': '>b',
+                                'Star_Temp2': '>b',
+                                'Star_Temp3': '>b',
+                                'Star_Temp_Adc': '>b',
+                                'Star_Dep_Temp1': '>b',
+                                'Star_Dep_Temp2': '>b',
+                                'Star_Dep_Temp3': '>b',
+                                'Star_Dep_Temp_Adc': '>b',
+                                'Zenith_Temp1': '>b',
+                                'Zenith_Temp2': '>b',
+                                'Zenith_Temp3': '>b',
+                                'Zenith_Temp_Adc': '>b',
+                                'Nadir_Pd1': '>B',
+                                'Port_Pd1': '>B',
+                                'Port_Pd2': '>B',
+                                'Port_Pd3': '>B',
+                                'Port_Dep_Pd1': '>B',
+                                'Port_Dep_Pd2': '>B',
+                                'Port_Dep_Pd3': '>B',
+                                'Star_Pd1': '>B',
+                                'Star_Pd2': '>B',
+                                'Star_Pd3': '>B',
+                                'Star_Dep_Pd1': '>B',
+                                'Star_Dep_Pd2': '>B',
+                                'Star_Dep_Pd3': '>B',
+                                'Zenith_Pd1': '>B',
+                                'Zenith_Pd2': '>B',
+                                'Zenith_Pd3': '>B',
+                                'Port_Voltage' : '>u2',
+                                'Port_Dep_Voltage' : '>u2',
+                                'Star_Voltage' : '>u2',
+                                'Star_Dep_Voltage' : '>u2',
+                                'Zenith_Voltage' : '>u2',
+                                'Port_Current' : '>u2',
+                                'Port_Dep_Current' : '>u2',
+                                'Star_Current' : '>u2',
+                                'Star_Dep_Current' : '>u2',
+                                'Zenith_Current' : '>u2',
+                              
                             }
                         }
                     },
