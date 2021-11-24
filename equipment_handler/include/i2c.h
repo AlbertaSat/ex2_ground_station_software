@@ -28,8 +28,7 @@
 
 #define I2C_SPEED 400
 #define I2C_BUS_REG i2cREG1
-SemaphoreHandle_t uTransceiver_semaphore;
-TimerHandle_t uTransceiverPipe_timer;
+
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
  * pipe mode, and timer. Does not actually initialize the I2C bus.

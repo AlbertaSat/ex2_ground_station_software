@@ -21,6 +21,9 @@
 #include "i2c.h"
 #include "i2c_io.h"
 
+SemaphoreHandle_t uTransceiver_semaphore;
+TimerHandle_t uTransceiverPipe_timer;
+
 static const bool I2C_OK = 0;
 
 static void uhf_pipe_timer_callback(TimerHandle_t xTimer) {
