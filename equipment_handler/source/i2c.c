@@ -31,8 +31,9 @@ static void uhf_pipe_timer_callback(TimerHandle_t xTimer) {
     xSemaphoreGive(uTransceiver_semaphore);
 }
 
-bool uhf_i2c_init() {
-    uTransceiver_semaphore = xSemaphoreCreateBinary();
+
+bool uhf_i2c_init(void) {
+    uTransceiver_semaphore = xSemaphoreCreateMutex();
     if (uTransceiver_semaphore == NULL) {
         return false;
     }
@@ -99,6 +100,10 @@ bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *
             xSemaphoreGive(uTransceiver_semaphore);
             return false;
         }
+        xSemaphoreGive(uTransceiver_semaphore);
+    }
+    if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
+        i2cSetBaudrate(I2C_BUS_REG, 400);
         if (i2c_Receive(I2C_BUS_REG, addr, response_len, response) != I2C_OK) {
             xSemaphoreGive(uTransceiver_semaphore);
             return false;
@@ -107,6 +112,7 @@ bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *
         return true;
     }
     return false;
+
 }
 
 bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,

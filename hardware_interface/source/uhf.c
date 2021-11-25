@@ -401,7 +401,7 @@ UHF_return UHF_getHK(UHF_housekeeping *uhf_hk) {
     //If any return code isn't U_GOOD_CONFIG it will get caught. multiple codes
     //won't be caught. Maybe needs more robust solution
     if (temp = HAL_UHF_getSCW(&uhf_hk->scw) != 0) return_code = temp;
-    if (temp = HAL_UHF_getFreq(&uhf_hk->freq != 0)) return_code = temp;
+    if (temp = HAL_UHF_getFreq(&uhf_hk->freq) != 0) return_code = temp;
     if (temp = HAL_UHF_getUptime(&uhf_hk->uptime) != 0) return_code = temp;
     if (temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out) != 0) return_code = temp;
     if (temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in) != 0) return_code = temp;
