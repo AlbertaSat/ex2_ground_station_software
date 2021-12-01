@@ -456,6 +456,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
             return U_BAD_CONFIG;
         }
     }
+}
 
     /**
      * @brief
