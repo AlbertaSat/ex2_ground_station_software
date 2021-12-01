@@ -20,19 +20,18 @@
 /*
  * When TRX connected, the stubbed blocks can be used for TRX = off situation.
  */
-#include "uhf.h"
-
 #include <FreeRTOS.h>
 #include <os_queue.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "uhf.h"
+
 #ifdef UHF_IS_STUBBED
-// Arbitrary values for testing
-static UHF_Status U_status_reg = {
-    .uptime = 12, .pckts_out = 100, .pckts_in = 70, .pckts_in_crc16 = 10, .temperature = 18.4};
+    // Arbitrary values for testing
+    static UHF_Status U_status_reg = {.uptime = 12, .pckts_out = 100, .pckts_in = 70, .pckts_in_crc16 = 10, .temperature = 18.4};
 #else
-static UHF_Status U_status_reg;
+    static UHF_Status U_status_reg;
 #endif
 static UHF_Call_Sign U_call_reg;
 static UHF_Beacon U_beacon_reg;
@@ -397,30 +396,21 @@ UHF_return HAL_UHF_getFRAM(UHF_framStruct *U_FRAM) {
 UHF_return UHF_getHK(UHF_housekeeping *uhf_hk) {
     UHF_return temp;
     UHF_return return_code = 0;
-
-    // If any return code isn't U_GOOD_CONFIG it will get caught. multiple codes
-    // won't be caught. Maybe needs more robust solution
-    if (temp = HAL_UHF_getSCW(&uhf_hk->scw) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getFreq(&uhf_hk->freq != 0))
-        return_code = temp;
-    if (temp = HAL_UHF_getUptime(&uhf_hk->uptime) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getPcktsInCRC16(&uhf_hk->pckts_in_crc16) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getPipeT(&uhf_hk->pipe_t) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getAudioT(&uhf_hk->audio_t) != 0)
-        return_code = temp;
-    if (temp = HAL_UHF_getTemp(&uhf_hk->temperature) != 0)
-        return_code = temp;
-
+    
+    
+    //If any return code isn't U_GOOD_CONFIG it will get caught. multiple codes
+    //won't be caught. Maybe needs more robust solution
+    if (temp = HAL_UHF_getSCW(&uhf_hk->scw) != 0) return_code = temp;
+    if (temp = HAL_UHF_getFreq(&uhf_hk->freq != 0)) return_code = temp;
+    if (temp = HAL_UHF_getUptime(&uhf_hk->uptime) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPcktsInCRC16(&uhf_hk->pckts_in_crc16) != 0) return_code = temp;
+    if (temp = HAL_UHF_getPipeT(&uhf_hk->pipe_t) != 0) return_code = temp;
+    if (temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t) != 0) return_code = temp;
+    if (temp = HAL_UHF_getAudioT(&uhf_hk->audio_t) != 0) return_code = temp;
+    if (temp = HAL_UHF_getTemp(&uhf_hk->temperature) != 0) return_code = temp;
+    
     return return_code;
 }
 
