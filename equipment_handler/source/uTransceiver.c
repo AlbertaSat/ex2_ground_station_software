@@ -16,7 +16,7 @@
 
 /**
  * @file uTransceiver.c
- * @author Thomas Ganley
+ * @author Thomas Ganley, Nicholas Sorensen
  * @date 2020-05-28
  */
 
@@ -381,12 +381,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     uint8_t i2c_address = i2c_address_small_digit_ascii;
     convHexFromASCII(1, &i2c_address);
     i2c_address += 0x20; // Address is always 0x22 or 0x23
-    /* Send the command and receive the answer if necessary
-     */
+    /* Send the command and receive the answer if necessary */
     if (code == 0 && command_to_send[10] == 4) {
-        /* For an SCW write command going from bootloader to
-         * application mode only Only send the command. Do
-         * not expect response.
+        /* For an SCW write command going from bootloader to application mode only
+         * Only send the command. Do not expect response.
          */
         if (i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send)) == 0) {
             return U_I2C_IN_PIPE;
@@ -440,23 +438,23 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         default:
             return U_UNK_ERR;
         }
-    }
 
-    /* Check the CRC32 of the answer */
-    uint8_t crc_recalc[MAX_UHF_W_ANSLEN] = {0};
-    strcpy(crc_recalc, ans);
-    crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
+        /* Check the CRC32 of the answer */
+        uint8_t crc_recalc[MAX_UHF_W_ANSLEN] = {0};
+        strcpy(crc_recalc, ans);
+        crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
 
-    if (ans[0] == LETTER_O) {
-        if (code == 252)
-            i2c_address_small_digit_ascii = ans[4]; // I2C address change
-        if (!strcmp((char *)crc_recalc, (char *)ans)) {
-            return U_GOOD_CONFIG;
+        if (ans[0] == LETTER_O) {
+            if (code == 252)
+                i2c_address_small_digit_ascii = ans[4]; // I2C address change
+            if (!strcmp((char *)crc_recalc, (char *)ans)) {
+                return U_GOOD_CONFIG;
+            } else {
+                return U_BAD_ANS_CRC;
+            }
         } else {
-            return U_BAD_ANS_CRC;
+            return U_BAD_CONFIG;
         }
-    } else {
-        return U_BAD_CONFIG;
     }
 }
 
@@ -517,13 +515,12 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
  *      Outcome of the function (defined in uTransceiver.h)
  */
 UHF_return UHF_genericRead(uint8_t code, void *param) {
-    /* The following is necessary for all read commands: *
-     *    - Determining ASCII characters representing the
-     * command code *
-     *    - Calculating the crc32 *
-     *    - Sending the command and receiving the answer *
-     *    - Checking the crc32 of the answer *
-     *    - Checking for an answer indicating an error */
+    /* The following is necessary for all read commands:             *
+     *    - Determining ASCII characters representing the command code *
+     *    - Calculating the crc32                                      *
+     *    - Sending the command and receiving the answer               *
+     *    - Checking the crc32 of the answer                           *
+     *    - Checking for an answer indicating an error                 */
 
     uint8_t code_chars[2] = {(code >> 4) & 15, code & 15};
     convHexToASCII(2, code_chars);
@@ -576,10 +573,8 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
         return U_I2C_IN_PIPE;
     }
     //  uhf_enter_direct_hardware_mode();
-    //  uhf_direct_sendAndReceive(strlen((char
-    //  *)command_to_send), command_to_send,
-    //  MAX_UHF_R_ANSLEN, ans);
-    //  uhf_exit_direct_hardware_mode();
+    //  uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send,
+    //  MAX_UHF_R_ANSLEN, ans); uhf_exit_direct_hardware_mode();
 
     // Error handling
     if (ans[0] == LETTER_E) {
