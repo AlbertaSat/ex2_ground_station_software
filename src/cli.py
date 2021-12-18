@@ -32,11 +32,15 @@ def cli():
             flag.reset()
             return
         try:
+            #cmd = gs.getCommand(prompt='to send: ')
+            #print(cmd['args'].decode("utf-8"))
             server, port, toSend = gs.getInput(prompt='to send: ')
             if server == 24:
                 gs.__setPIPE__()
             else:
-                resp = gs.transaction(server, port, toSend)
+
+                #FTP HERE
+                #resp = gs.transaction(server, port, toSend)
 
                 #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
                 if type(resp) == list:

@@ -96,6 +96,32 @@ class SystemValues(object):
                 }
             
             },
+             'FTP': {
+                'port': 10,
+                'subservice' : { 
+                    'PUT': {
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': ['U', 'U'],
+                            'returns': {
+                                'err': '>b',
+                                'timestamp': '>u4'
+                            }
+                        }
+                    },
+                    'GET': {
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': ['U', 'U'],
+                            'returns': {
+                                'err': '>b',
+                                'timestamp': '>u4'
+                            }
+                        }
+                    }
+                }
+            
+            },
             'TIME_MANAGEMENT': {
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value

@@ -37,6 +37,8 @@ import os
 import re
 import serial
 from collections import defaultdict
+from groundStation.ftp import put_request
+from groundStation.ftp import get_request
 
 # if __name__ == '__main__':
 # We're running this file directly, not as a module.
@@ -85,7 +87,7 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        ser = serial.Serial('/dev/ttyUSB1',                                      
+        ser = serial.Serial('/dev/ttyUSB0',                                      
         baudrate=19200, # Or whatever baud rate it uses                                    
         bytesize=8,       # I'm assuming                       
         parity='N',                         
@@ -333,6 +335,7 @@ if __name__ == '__main__':
 
     while True:
         try:
+            
             server, port, toSend = csp.getInput(prompt='to send: ')
             csp.transaction(server, port, toSend)
             # receive()
