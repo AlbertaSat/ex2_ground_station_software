@@ -37,6 +37,8 @@ import os
 import re
 import serial
 from collections import defaultdict
+
+
 from groundStation.ftp import put_request
 from groundStation.ftp import get_request
 
@@ -138,8 +140,8 @@ class groundStation(object):
 
         return self.server_connection[server][port]['conn']
 
-    """ Public Methods """
 
+    """ Public Methods """
     def getInput(self, prompt=None, inVal=None):
         """ Take input (either prompt user or take input from funtion call)
         and parse the input to CSP packet information """
@@ -164,9 +166,15 @@ class groundStation(object):
             print('Error: Command was not parsed')
             return
 
+        
         toSend = libcsp.buffer_get(len(command['args']))
         if len(command['args']) > 0:
             libcsp.packet_set_data(toSend, command['args'])
+
+
+        if len(self.parser._stringArgs) > 0:
+            toSend = self.parser._stringArgs
+
         return command['dst'], command['dport'], toSend
 
     def transaction(self, server, port, buf):
