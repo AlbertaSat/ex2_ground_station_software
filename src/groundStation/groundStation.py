@@ -37,8 +37,6 @@ import os
 import re
 import serial
 from collections import defaultdict
-
-
 from groundStation.ftp import put_request
 from groundStation.ftp import get_request
 
@@ -111,6 +109,12 @@ class groundStation(object):
         print(result)   
 
 
+    def ftpCommand(self, subservice, localPath, satPath):
+        if subservice == "PUT":
+            put_request(localPath, satPath)
+        elif subservice == "GET":
+            get_request(satPath, localPath)
+        
     def __connectionManager__(self, server, port):
         """ Get currently open conneciton if it exists, and has not expired,
             Otherwise close the old one and make a new connection """
@@ -161,7 +165,7 @@ class groundStation(object):
         else:
             print('invalid call to getInput')
             return
-
+        
         if command is None:
             print('Error: Command was not parsed')
             return
@@ -171,10 +175,9 @@ class groundStation(object):
         if len(command['args']) > 0:
             libcsp.packet_set_data(toSend, command['args'])
 
-
         if len(self.parser._stringArgs) > 0:
             toSend = self.parser._stringArgs
-
+        
         return command['dst'], command['dport'], toSend
 
     def transaction(self, server, port, buf):

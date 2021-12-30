@@ -5,8 +5,9 @@ import datetime
 
 def change_working_dir():
     path = os.path.abspath(__file__)
+
     split = path.split("/")[0:-1]
-    split.append("src")
+    split.append("ftp")
     new_path = "/".join(split)
     os.chdir(new_path)
 
@@ -31,7 +32,7 @@ class logger():
 def get_request(sat_path, file_path, block=True):
     change_working_dir()
     
-    print("need sudo password for opening /dev/ttyUSB0")
+    #print("need sudo password for opening /dev/ttyUSB0")
     cmd = ["sudo", "./ftp", "-i", "10", "-c", "1", "-k", "/dev/ttyUSB0", "-f", 'GET {0}|{1}'.format(sat_path, file_path)]
 
     if block:
@@ -43,8 +44,8 @@ def get_request(sat_path, file_path, block=True):
     
 def put_request(file_path, sat_path, block=True):
     change_working_dir()
-
-    print("need sudo password for opening /dev/ttyUSB0")
+    
+    #print("need sudo password for opening /dev/ttyUSB0")
     cmd = ["sudo", "./ftp", "-i", "10", "-c", "1", "-k", "/dev/ttyUSB0", "-f", 'PUT {0}|{1}'.format(file_path, sat_path)]
     
     if block:
