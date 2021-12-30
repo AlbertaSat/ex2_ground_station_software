@@ -385,8 +385,17 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         /* For an SCW write command going from bootloader to application mode only
          * Only send the command. Do not expect response.
          */
-        i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send));
+        if (i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send)) == 0) {
+                    return U_I2C_IN_PIPE;
+        }
         return U_GOOD_CONFIG;
+    } else if ((code == 0) && ((command_to_send[10] & 0x02) == 0x02)) {
+        // Consume I2C semaphore and start timer before
+        // entering PIPE mode:
+        if (i2c_sendAndReceivePIPE(i2c_address, command_to_send, strlen((char *)command_to_send), ans,
+                                   MAX_UHF_W_ANSLEN) == 0) {
+            return U_I2C_IN_PIPE;
+        }
     } else {
         /* For all other commands, send and receive
          * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
