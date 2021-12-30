@@ -34,6 +34,7 @@ class CommandParser(object):
     def parseInputValue(self, input):
         tokens = self.__lexer(input)
         self._command = {}
+        self._stringArgs = []
         
         if tokens[self.vals.appIdx] in self.vals.APP_DICT and tokens[self.vals.appIdx + 1] == '.':
             # Matches <app>.
@@ -41,6 +42,7 @@ class CommandParser(object):
         else:
             print('No such remote or bad format')
             return None
+        
         
         if tokens[self.vals.serviceIdx] in self.vals.SERVICES:
             # Matches <service>
@@ -63,6 +65,7 @@ class CommandParser(object):
             print('No such service')
             return None
         
+        
         if tokens[self.vals.subserviceIdx] in service['subservice']:
             subservice = service['subservice'][tokens[self.vals.subserviceIdx]]
             self._command['subservice'] = subservice['subPort']
@@ -77,6 +80,7 @@ class CommandParser(object):
         else:
             print('No such subservice')
             return None
+        
         
         return self._command
 
@@ -106,7 +110,6 @@ class CommandParser(object):
             # error: check system SystemValues
             return None
 
-        print(length)
         returns = subservice['inoutInfo']['returns']
         args = subservice['inoutInfo']['args']
         for retVal in returns:
@@ -114,7 +117,7 @@ class CommandParser(object):
             #Variable size config return
                 outputObj[retVal] = np.frombuffer( data, dtype = self.vals.varTypes[outputObj['type']], count=1, offset=idx)[0]
                 return outputObj
-                
+
             else:
                 outputObj[retVal] = np.frombuffer(
                     data, dtype=returns[retVal], count=1, offset=idx)[0]
@@ -123,6 +126,31 @@ class CommandParser(object):
         return outputObj
 
     ''' PRIVATE METHODS '''
+
+    def __fixParamsIfFTP(self, tokenList):
+        if "FTP" in tokenList:
+            start=0
+            end=0
+            breaky=0
+            breaky_two=0
+            breakyIndex=0
+            for i in range(len(tokenList)):
+                breaky_two = breaky
+                if tokenList[i] == '(':
+                    start=i+1
+                elif tokenList[i] == ')':
+                    end=i
+                if tokenList[i].isalnum():
+                    breaky+=1
+               
+                if breaky_two != breaky:
+                    breakyIndex = i
+                
+            
+            a = "".join(tokenList[start:breakyIndex])
+            b = "".join(tokenList[breakyIndex:end])
+            tokenList[start:end] = [a,b]
+        return tokenList
 
     def __argCheck(self, args, inoutInfo, subservice=None):
         outArgs = bytearray()
@@ -144,6 +172,7 @@ class CommandParser(object):
 
         args.pop(0)
         args.pop(-1)
+        
         if len(args) != len(inoutInfo['args']):
             print('Wrong # of args')
             return None
@@ -155,9 +184,17 @@ class CommandParser(object):
                 if inoutInfo['args'][i] == 'var':
                     #Variable size config arg               
                     nparr = np.array([args[i]], dtype=self.vals.varTypes[outArgs[-1]])
+                
+                elif inoutInfo['args'][i] == 'U':
+                    self._stringArgs.append(args[i])
+                    continue
+
                 else :
                     nparr = np.array([args[i]], dtype=inoutInfo['args'][i])
+
+                
                 outArgs.extend(nparr.tobytes())
+        
         self._command['args'] = outArgs
         return True
 
@@ -165,8 +202,11 @@ class CommandParser(object):
         tokenList = []
         # If an old command is not parsed, use '([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)' and make an issue
         tmp = re.split('([-.|]+|[0-9.]+|[a-zA-Z0-9_-]+|[\(\)])', input)
+    
         [tokenList.append(x.upper()) for x in tmp if not (
             str(x).strip() == '' or str(x).strip() == ',')]  # to accept ',' as delimiter
+        
+        tokenList = self.__fixParamsIfFTP(tokenList)
         return tokenList
 
 if __name__ == '__main__':
