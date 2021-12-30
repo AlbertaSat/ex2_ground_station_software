@@ -35,6 +35,8 @@ class CommandParser(object):
         tokens = self.__lexer(input)
         self._command = {}
         self._stringArgs = []
+        self._subservice = ""
+        self._service = ""
         
         if tokens[self.vals.appIdx] in self.vals.APP_DICT and tokens[self.vals.appIdx + 1] == '.':
             # Matches <app>.
@@ -43,10 +45,11 @@ class CommandParser(object):
             print('No such remote or bad format')
             return None
         
-        
+        self._service = tokens[self.vals.serviceIdx]
         if tokens[self.vals.serviceIdx] in self.vals.SERVICES:
             # Matches <service>
             service = self.vals.SERVICES[tokens[self.vals.serviceIdx]]
+            
             self._command['dport'] = service['port']
             if 'subservice' not in service:
                 # Then there is no subservice, skip to arg check
@@ -65,8 +68,8 @@ class CommandParser(object):
             print('No such service')
             return None
         
-        
         if tokens[self.vals.subserviceIdx] in service['subservice']:
+            self._subservice = tokens[self.vals.subserviceIdx]
             subservice = service['subservice'][tokens[self.vals.subserviceIdx]]
             self._command['subservice'] = subservice['subPort']
 
@@ -80,7 +83,6 @@ class CommandParser(object):
         else:
             print('No such subservice')
             return None
-        
         
         return self._command
 
@@ -132,19 +134,22 @@ class CommandParser(object):
             start=0
             end=0
             breaky=0
-            breaky_two=0
             breakyIndex=0
+
             for i in range(len(tokenList)):
-                breaky_two = breaky
+
                 if tokenList[i] == '(':
                     start=i+1
                 elif tokenList[i] == ')':
                     end=i
+
                 if tokenList[i].isalnum():
                     breaky+=1
-               
-                if breaky_two != breaky:
-                    breakyIndex = i
+                else:
+                    breaky=0
+                
+                if breaky == 2:
+                    breakyIndex=i
                 
             
             a = "".join(tokenList[start:breakyIndex])
