@@ -25,6 +25,9 @@ opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 flag = groundStation.GracefulExiter()
 
+from groundStation.system import SystemValues
+vals = SystemValues()
+
 def cli():
     while True:
         if flag.exit():
@@ -35,12 +38,19 @@ def cli():
             #cmd = gs.getCommand(prompt='to send: ')
             #print(cmd['args'].decode("utf-8"))
             server, port, toSend = gs.getInput(prompt='to send: ')
+
             if server == 24:
                 gs.__setPIPE__()
             else:
-
                 #FTP HERE
-                #resp = gs.transaction(server, port, toSend)
+                if port == vals.SERVICES['FTP']['port']:
+                    #do ftp
+
+                    print("doing ftp stuff: file1: {0} file2: {1}".format(toSend[0], toSend[1]))
+                    break
+
+                else:
+                    resp = gs.transaction(server, port, toSend)
 
                 #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
                 if type(resp) == list:
