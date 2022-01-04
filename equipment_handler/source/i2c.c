@@ -47,6 +47,14 @@ bool uhf_i2c_init(void) {
     return true;
 }
 
+bool uhf_is_busy(void) {
+    if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
+            xSemaphoreGive(uTransceiver_semaphore);
+            return false;
+    }
+    return true;
+}
+
 bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) != pdTRUE) {
         // the UHF must already be in pipe mode.

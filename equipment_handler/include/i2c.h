@@ -39,6 +39,16 @@
 bool uhf_i2c_init(void);
 
 /**
+ * @brief Checks the UHF semaphore, which indicates if the transceiver is
+ * busy transmitting/receiving.
+ *
+ * @return true If UHF is busy and will not respond to commands.
+ * @return false Otherwise.
+ */
+
+bool uhf_is_busy(void);
+
+/**
  * @brief Prepare the UHF I2C system to be put into pipe mode. This will consume the semaphore and
  * start the timer to go off when pipe mode expires.
  *
