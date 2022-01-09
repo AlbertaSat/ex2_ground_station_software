@@ -26,9 +26,6 @@
 #include "HL_i2c.h"
 #include "i2c_io.h"
 
-#define I2C_SPEED 400
-#define I2C_BUS_REG i2cREG1
-
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
  * pipe mode, and timer. Does not actually initialize the I2C bus.
