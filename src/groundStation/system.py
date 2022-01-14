@@ -248,9 +248,20 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'S_GET_FW': {
+                        'what': 'S-band Firmware Version. XYY = X.YY',
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Firmware Version': '>u2',
+                            }
+                        }
+                    },
                     'S_GET_TR': {
                         'what': 'S-band Transmit Ready Indicator = {0: >2560B in buffer}',
-                        'subPort': 6,
+                        'subPort': 7,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -261,7 +272,7 @@ class SystemValues(object):
                     },
                     'S_GET_BUFFER': {
                         'what': 'Gets the pointer to the buffer quantity in S-band. Input = {0:Count, 1:Underrun, 2:Overrun}',
-                        'subPort': 7,
+                        'subPort': 8,
                         'inoutInfo': {
                             'args': ['>B'],
                             'returns': {
@@ -272,7 +283,7 @@ class SystemValues(object):
                     },
                     'S_GET_HK': {
                         'what': 'Gets S-band housekeeping info',
-                        'subPort': 8,
+                        'subPort': 9,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -290,7 +301,7 @@ class SystemValues(object):
                     },
                     'S_SOFT_RESET': {
                         'what': 'Reset S-band FPGA registers to default',
-                        'subPort': 9,
+                        'subPort': 10,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -300,7 +311,7 @@ class SystemValues(object):
                     },
                     'S_GET_FULL_STATUS': {
                         'what': 'A full status of S-band non-configurable parameters',
-                        'subPort': 10,
+                        'subPort': 11,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -324,7 +335,7 @@ class SystemValues(object):
                     },
                     'S_SET_FREQ': {
                         'what': 'Sets the frequency of S-band (MHz)',
-                        'subPort': 11,
+                        'subPort': 12,
                         'inoutInfo': {
                             'args': ['>f'],
                             'returns': {
@@ -334,7 +345,7 @@ class SystemValues(object):
                     },
                     'S_SET_CONTROL': {
                         'what': 'Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary',
-                        'subPort': 12,
+                        'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u1', '>u1'],
                             'returns': {
@@ -344,7 +355,7 @@ class SystemValues(object):
                     },
                     'S_SET_ENCODER': {
                         'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={1:half, 0:full}. Input: 4 binary',
-                        'subPort': 13,
+                        'subPort': 14,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1'],
                             'returns': {
@@ -354,7 +365,7 @@ class SystemValues(object):
                     },
                     'S_SET_PAPOWER': {
                         'what': 'Sets the power value of S-band power amplifier (24, 26, 28, 30 dBm)',
-                        'subPort': 14,
+                        'subPort': 15,
                         'inoutInfo': {
                             'args': ['>u1'],
                             'returns': {
@@ -364,7 +375,7 @@ class SystemValues(object):
                     },
                     'S_GET_CONFIG': {
                         'what': 'A full status of S-band configurable parameters (the ones with set functions)',
-                        'subPort': 15,
+                        'subPort': 16,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -382,7 +393,7 @@ class SystemValues(object):
                     },
                     'S_SET_CONFIG': {
                         'what': 'Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate)',
-                        'subPort': 16,
+                        'subPort': 17,
                         'inoutInfo': {
                             'args': ['>f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                             'returns': {
