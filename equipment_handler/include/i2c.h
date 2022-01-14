@@ -26,9 +26,6 @@
 #include "HL_i2c.h"
 #include "i2c_io.h"
 
-#define I2C_SPEED 400
-#define I2C_BUS_REG i2cREG1
-
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
  * pipe mode, and timer. Does not actually initialize the I2C bus.
@@ -37,6 +34,16 @@
  * @return false Otherwise.
  */
 bool uhf_i2c_init(void);
+
+/**
+ * @brief Checks the UHF semaphore, which indicates if the transceiver is
+ * busy transmitting/receiving.
+ *
+ * @return true If UHF is busy and will not respond to commands.
+ * @return false Otherwise.
+ */
+
+bool uhf_is_busy(void);
 
 /**
  * @brief Prepare the UHF I2C system to be put into pipe mode. This will consume the semaphore and
