@@ -46,15 +46,14 @@ import libcsp_py3 as libcsp
 #     from ex2_ground_station_software.src.system import SystemValues
 #     import libcsp.build.libcsp_py3 as libcsp
 
-vals = SystemValues()
-apps = vals.APP_DICT
-
 
 class groundStation(object):
     """ Constructor """
 
     def __init__(self, opts):
-        self.myAddr = apps['GND']
+        self.vals = SystemValues()
+        self.apps = self.vals.APP_DICT
+        self.myAddr = self.apps['GND']
         self.parser = CommandParser()
         self.server_connection = defaultdict(dict)
         self.number_of_buffers = 100
@@ -83,7 +82,7 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        libcsp.kiss_init(device, 9600, 512, 'uart')
+        libcsp.kiss_init(device, 115200, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
 
     def __connectionManager__(self, server, port):
@@ -132,11 +131,9 @@ class groundStation(object):
         else:
             print('invalid call to getInput')
             return
-
         if command is None:
             print('Error: Command was not parsed')
             return
-
         toSend = libcsp.buffer_get(len(command['args']))
         if len(command['args']) > 0:
             libcsp.packet_set_data(toSend, command['args'])
@@ -172,9 +169,9 @@ class groundStation(object):
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != vals.APP_DICT.get('OBC') or 
-            libcsp.conn_sport(conn) != vals.SERVICES.get('HOUSEKEEPING').get('port') or 
-            data[0] != vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or 
+            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
+            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]

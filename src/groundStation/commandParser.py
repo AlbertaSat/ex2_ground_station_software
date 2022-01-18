@@ -32,7 +32,7 @@ class CommandParser(object):
     ''' PUBLIC METHODS '''
 
     def parseInputValue(self, input):
-        tokens = self.__lexer(input)
+        tokens = self._lexer(input)
         self._command = {}
 
         if tokens[self.vals.appIdx] in self.vals.APP_DICT and tokens[self.vals.appIdx + 1] == '.':
@@ -161,13 +161,29 @@ class CommandParser(object):
         self._command['args'] = outArgs
         return True
 
-    def __lexer(self, input):
+    def _lexer(self, input):
         tokenList = []
         # If an old command is not parsed, use '([a-zA-Z_-]+|[\(\)]|[0-9_.-]*)' and make an issue
         tmp = re.split('([-.|]+|[0-9.]+|[a-zA-Z0-9_-]+|[\(\)])', input)
         [tokenList.append(x.upper()) for x in tmp if not (
             str(x).strip() == '' or str(x).strip() == ',')]  # to accept ',' as delimiter
         return tokenList
+
+class cliCommandParser(CommandParser):
+    def _lexer(self, input):
+        tokenList = []
+        middle = input[input.find("(")+1 : input.find(")")]
+        beginning = input[0 : input.find("(")]
+        tmp = re.split('([.,]|[\(\)])', beginning)
+        for x in tmp:
+            if not (str(x).strip() == '' or str(x).strip() == ','):
+                    tokenList.append(str(x).upper())
+        tokenList.append("(")
+        for item in middle.split(",", 1):
+            tokenList.append(item)
+        tokenList.append(")")
+        return tokenList
+
 
 if __name__ == '__main__':
     parser = CommandParser()
