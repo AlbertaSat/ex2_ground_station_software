@@ -1,6 +1,6 @@
 # Installation Instructions
 
-Please note that the Docker installation is unstable and should not be used. Please try the manual installation instead (as denoted by the `If you don't like Docker...` heading below).
+Please note that the Docker installation is unstable and should not be used. As a result, it is recommended that you use the manual installation instead (as denoted by the `If you don't like Docker...` heading below).
 
 ## If you like Docker... (deprecated and unstable)
 
@@ -20,35 +20,36 @@ You are now good to go, enjoy!
 
 ## If you don't like Docker...
 
-#### 1. You will need to first make sure you have yarn:
+Step 1: first you will need to make sure that you have yarn.
 
-`sudo apt-get update`
+```
+sudo apt-get update
+sudo apt-get install yarn -y
+```
 
-`sudo apt-get install yarn -y`
+Step 2: install dependencies and run the ground station (may need to run with `sudo`).
 
-#### 2. Install dependencies and run the ground station (may need to run with `sudo`):
-
-`yarn build` (only need to run this once)
-
-`yarn run:cli <options>`
+```
+yarn build
+yarn run:cli <options>
+```
 
 e.g. `yarn run:cli -I uart -d /dev/ttyUSB0`
 
-#### 3. Before and after development, the existing tests should be performed:
+Step 3: before and after development, the existing tests should be run:
 
-`yarn run:test_uhf <options>`
+```
+yarn run:test_uhf <options>
+yarn run:test_sband <options>
+```
 
-`yarn run:test_sband <options>`
-
-#### Troubleshooting
+### Troubleshooting
 
 On some systems, you may see something like:
 
 `00h00m00s 0/0: : ERROR: [Errno 2] No such file or directory: 'build'`
 
-If this occurs run the following command and then try step 2 again:
-
-`bash install.sh`
+If this occurs run `bash install.sh` and then try step 2 again.
 
 ## Command Documentation
 Documentation for supported ground station commands can be found in [CommandDocs.txt](https://github.com/AlbertaSat/ex2_ground_station_software/blob/update-readme/CommandDocs.txt).
