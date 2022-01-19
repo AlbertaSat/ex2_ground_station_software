@@ -1,6 +1,8 @@
 # Installation Instructions
 
-## If you like Docker...
+Please note that the Docker installation is unstable and should not be used. Please try the manual installation instead (as denoted by the `If you don't like Docker...` heading below).
+
+## If you like Docker... (deprecated and unstable)
 
 First, ensure that Docker is installed and running in the background. Once that is done, run the following to build the image that we will be using:
 
@@ -16,7 +18,7 @@ docker run --rm -it --network=host ground_station:latest
 
 You are now good to go, enjoy!
 
-## If you don't like docker:
+## If you don't like Docker...
 
 #### 1. You will need to first make sure you have yarn:
 
