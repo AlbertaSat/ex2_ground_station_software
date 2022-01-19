@@ -19,7 +19,9 @@ You are now good to go, enjoy!
 ## If you don't like docker:
 
 #### 1. You will need to first make sure you have yarn:
+
 `sudo apt-get update`
+
 `sudo apt-get install yarn -y`
 
 #### 2. Install dependencies and run the ground station (may need to run with `sudo`):
