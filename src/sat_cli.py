@@ -12,9 +12,9 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test.py
- * @author Andrew Rooney
- * @date 2020-11-20
+ * @file sat_cli.py
+ * @author Robert Taylor
+ * @date 2021-12-21
 '''
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
