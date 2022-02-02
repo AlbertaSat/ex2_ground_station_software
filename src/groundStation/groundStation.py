@@ -85,10 +85,10 @@ class groundStation(object):
     def __uart__(self, device):
         """ initialize uart interface """
         ser = serial.Serial('/dev/ttyUSB1',                                      
-        baudrate=115200, # Or whatever baud rate it uses                                    
-        bytesize=8,       # I'm assuming                       
+        baudrate=115200,                              
+        bytesize=8,                 
         parity='N',                         
-        stopbits=1,                             
+        stopbits=2,                             
         timeout=1)
 
         time.sleep(4)        
