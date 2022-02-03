@@ -20,8 +20,8 @@
 /*
  * When TRX connected, the stubbed blocks can be used for TRX = off situation.
  */
-#include <FreeRTOS.h>
-#include <os_queue.h>
+// #include <FreeRTOS.h>
+// #include <os_queue.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -414,17 +414,17 @@ UHF_return UHF_getHK(UHF_housekeeping *uhf_hk) {
     return return_code;
 }
 
-UHF_return UHF_convert_endianness(UHF_housekeeping *uhf_hk) {
-    // uhf_hk->scw[i]
-    uhf_hk->freq = csp_hton32(uhf_hk->freq);
-    uhf_hk->pipe_t = csp_hton32(uhf_hk->pipe_t);
-    uhf_hk->beacon_t = csp_hton32(uhf_hk->beacon_t);
-    uhf_hk->audio_t = csp_hton32(uhf_hk->audio_t);
-    uhf_hk->uptime = csp_hton32(uhf_hk->uptime);
-    uhf_hk->pckts_out = csp_hton32(uhf_hk->pckts_out);
-    uhf_hk->pckts_in = csp_hton32(uhf_hk->pckts_in);
-    uhf_hk->pckts_in_crc16 = csp_hton32(uhf_hk->pckts_in_crc16);
-    uhf_hk->temperature = csp_htonflt(uhf_hk->temperature);
+// UHF_return UHF_convert_endianness(UHF_housekeeping *uhf_hk) {
+//     // uhf_hk->scw[i]
+//     uhf_hk->freq = csp_hton32(uhf_hk->freq);
+//     uhf_hk->pipe_t = csp_hton32(uhf_hk->pipe_t);
+//     uhf_hk->beacon_t = csp_hton32(uhf_hk->beacon_t);
+//     uhf_hk->audio_t = csp_hton32(uhf_hk->audio_t);
+//     uhf_hk->uptime = csp_hton32(uhf_hk->uptime);
+//     uhf_hk->pckts_out = csp_hton32(uhf_hk->pckts_out);
+//     uhf_hk->pckts_in = csp_hton32(uhf_hk->pckts_in);
+//     uhf_hk->pckts_in_crc16 = csp_hton32(uhf_hk->pckts_in_crc16);
+//     uhf_hk->temperature = csp_htonflt(uhf_hk->temperature);
 
-    return 0;
-}
+//     return 0;
+// }

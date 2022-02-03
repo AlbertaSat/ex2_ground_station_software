@@ -21,10 +21,10 @@
 #ifndef UHF_HAL_H
 #define UHF_HAL_H
 
-#include <csp/csp.h>
+// #include <csp/csp.h>
 #include <inttypes.h>
 
-#include "services.h"
+// #include "services.h"
 
 #define MAX_W_CMDLEN 120
 #define SCW_LEN 12

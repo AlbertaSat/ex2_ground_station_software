@@ -21,6 +21,12 @@
  */
 
 #include "uTransceiver.h"
+#include <stdlib.h> //*
+#include <time.h>   //*
+#include <uhf_uart.h>
+#include <uhf.h>
+// #include "logger/logger.h"
+#include "i2c_dummy.h"
 
 // TODO: Firmware update command
 // TODO: Combine send code into single function?
@@ -444,6 +450,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
     convHexFromASCII(1, &i2c_address);
+<<<<<<< HEAD
     i2c_address += 0x20;
     if (code == UHF_I2CADR_CMD) {
         // i2c command to change the i2c address does not receive a response.
@@ -493,6 +500,91 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     vPortFree(ans);
     enter_pipe_mode = false;
     return return_val;
+=======
+    i2c_address += 0x20; // Address is always 0x22 or 0x23
+    /* Send the command and receive the answer if necessary */
+
+    // if ((code == 0) && (command_to_send[10] == 4)) {
+    //     /* For an SCW write command going from bootloader to application mode only
+    //      * Only send the command. Do not expect response.
+    //      */
+    //     if (i2c_sendCommand(i2c_address, command_to_send, strlen((char *)command_to_send)) == 0) {
+    //                 return U_I2C_IN_PIPE;
+    //     }
+    //     return U_GOOD_CONFIG;
+    // } else if ((code == 0) && ((command_to_send[10] & 0x02) == 0x02)) {
+    //     // Consume I2C semaphore and start timer before
+    //     // entering PIPE mode:
+    //     if (i2c_sendAndReceivePIPE(i2c_address, command_to_send, strlen((char *)command_to_send), ans,
+    //                                MAX_UHF_W_ANSLEN) == 0) {
+    //         return U_I2C_IN_PIPE;
+    //     }
+    // } else {
+    //     /* For all other commands, send and receive
+    //      * Note: -48 to go from ASCII to hex, +32 since the address is 0x20 +
+    //      * i2c_address_small_digit_ascii
+    //      */
+    //     i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, MAX_UHF_W_ANSLEN);
+    // }
+
+
+    // This function will print with printf the result.
+    i2c_package_for_radio(command_to_send, strlen((char *)command_to_send));
+
+    return 0;
+
+    // /* Check if the answer is an error */
+    // if (ans[0] == LETTER_E) {
+    //     // Error answers common to all commands (unsure about exact format
+    //     // of these)
+
+    //     if (!strcmp((char *)ans, "E_CRC_ERR 3D2B08DC\r"))
+    //         return U_BAD_CMD_CRC;
+    //     if (!strcmp((char *)ans, "E_CRC_ERR_LEN 9B49857A\r"))
+    //         return U_BAD_CMD_LEN;
+    //     if (!strcmp((char *)ans, "ERR 84F89937\r"))
+    //         return U_UNK_ERR;
+
+    //     // Specific error answers depending on command
+    //     switch (code) {
+    //     case 1:
+    //     case 6:
+    //     case 7:
+    //     case 8:
+    //     case 244:
+    //     case 247:
+    //     case 251:
+    //     case 253:
+    //     case 254:
+    //     case 255:
+    //         return U_CMD_SPEC_2;
+    //     case 248:
+    //         if (ans[4] == LETTER_M)
+    //             return U_CMD_SPEC_2;
+    //         return U_CMD_SPEC_3;
+
+    //     default:
+    //         return U_UNK_ERR;
+    //     }
+    // }
+
+    // /* Check the CRC32 of the answer */
+    // uint8_t crc_recalc[MAX_UHF_W_ANSLEN] = {0};
+    // strcpy(crc_recalc, ans);
+    // crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
+
+    // if (ans[0] == LETTER_O) {
+    //     if (code == 252)
+    //         i2c_address_small_digit_ascii = ans[4]; // I2C address change
+    //     if (!strcmp((char *)crc_recalc, (char *)ans)) {
+    //         return U_GOOD_CONFIG;
+    //     } else {
+    //         return U_BAD_ANS_CRC;
+    //     }
+    // } else {
+    //     return U_BAD_CONFIG;
+    // }
+>>>>>>> Modified original code to print radio-ready packet in binary to stdout.
 }
 
 /**
