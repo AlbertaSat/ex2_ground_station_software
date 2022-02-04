@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "uTransceiver.h"
+#include "uhf.h"
 
 // int main(int argc, char *argv[]) {
 //     // For example, sending command 1 with frequency parameter.
@@ -18,5 +19,6 @@ int main(int argc, char *argv[]) {
     uint8_t scw[12] = {0, 0b11, 0, 0b101, 0, 0, 1, 0, 0, 0, 1, 1};
 
     UHF_return ret_val = UHF_genericWrite(code, scw);
+    //UHF_return ret_val = HAL_UHF_getFreq(465000000);
     return 0;
 }
