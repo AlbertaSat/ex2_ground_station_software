@@ -19,6 +19,7 @@
 
 #include "i2c_dummy.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
     for( int i = 0; i < length; i++){
@@ -79,9 +80,17 @@ bool i2c_package_for_radio(char *command, uint8_t command_len) {
     radio_command[18+command_len] = ((uint16_t)crc_res >> 8) & 0xFF;
     radio_command[18+command_len+1] = ((uint16_t)crc_res >> 0) & 0xFF;
 
+    FILE *fptr = fopen("output.bin","w");
+
     int radio_len = 16+2+command_len+2;
+        fwrite(radio_command, sizeof(uint8_t), radio_len, fptr);
     for( int i = 0; i < radio_len; i++){
-        printf("%c", radio_command[i]);
+    	
+      printf("%c", radio_command[i]);
     }
+    fclose(fptr);
+    
+    int status = system("cat output.bin | nc -w 1 127.0.0.1 1234");
+    
     return true;
 }
