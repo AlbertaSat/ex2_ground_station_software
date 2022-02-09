@@ -37,15 +37,16 @@ import re
 import serial
 from collections import defaultdict
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 # We're running this file directly, not as a module.
-from groundStation.commandParser import CommandParser
-from groundStation.system import SystemValues
-import libcsp_py3 as libcsp
-# else:
-#     # We're importing this file as a module to use in the website
-#     from ex2_ground_station_software.src.system import SystemValues
-#     import libcsp.build.libcsp_py3 as libcsp
+    from groundStation.commandParser import CommandParser
+    from groundStation.system import SystemValues
+    import libcsp_py3 as libcsp
+else:
+    # We're importing this file as a module to use in the website
+    from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
+    from ex2_ground_station_software.src.groundStation.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
 
 
 class groundStation(object):
@@ -183,7 +184,7 @@ class groundStation(object):
             libcsp.conn_sport(conn),
             data,
             length))
-        
+
         if rxDataList is None:
             print('ERROR: bad response data')
             return
