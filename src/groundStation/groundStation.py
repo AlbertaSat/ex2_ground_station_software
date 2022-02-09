@@ -39,8 +39,8 @@ from collections import defaultdict
 
 # if __name__ == '__main__':
 # We're running this file directly, not as a module.
-from groundStation.commandParser import CommandParser
-from groundStation.system import SystemValues
+from .commandParser import CommandParser
+from .system import SystemValues
 import libcsp_py3 as libcsp
 # else:
 #     # We're importing this file as a module to use in the website
@@ -83,13 +83,13 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        ser = serial.Serial(device,                                      
-        baudrate=115200,                              
-        bytesize=8,                 
-        parity='N',                         
-        stopbits=2,                             
+        ser = serial.Serial(device,
+        baudrate=115200,
+        bytesize=8,
+        parity='N',
+        stopbits=2,
         timeout=1)
-   
+
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
         return ser
@@ -101,7 +101,7 @@ class groundStation(object):
         self.ser.write(b'ES+W22002723 E72EC03A\r')
         result = self.ser.read(17)
         time.sleep(2)
-        print(result)   
+        print(result)
 
 
     def __connectionManager__(self, server, port):
@@ -190,9 +190,9 @@ class groundStation(object):
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or 
-            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
-            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or
+            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or
+            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]
