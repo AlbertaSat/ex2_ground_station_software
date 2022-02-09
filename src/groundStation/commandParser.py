@@ -20,7 +20,7 @@
 
 import numpy as np
 import re
-from .system import SystemValues
+from groundStation.system import SystemValues
 
 
 class CommandParser(object):
@@ -112,7 +112,7 @@ class CommandParser(object):
             #Variable size config return
                 outputObj[retVal] = np.frombuffer( data, dtype = self.vals.varTypes[outputObj['type']], count=1, offset=idx)[0]
                 return outputObj
-
+                
             else:
                 outputObj[retVal] = np.frombuffer(
                     data, dtype=returns[retVal], count=1, offset=idx)[0]
@@ -151,7 +151,7 @@ class CommandParser(object):
         for i in range(0, len(args)):
             if inoutInfo['args'][i]:
                 if inoutInfo['args'][i] == 'var':
-                    #Variable size config arg
+                    #Variable size config arg               
                     nparr = np.array([args[i]], dtype=self.vals.varTypes[outArgs[-1]])
                 else :
                     nparr = np.array([args[i]], dtype=inoutInfo['args'][i])

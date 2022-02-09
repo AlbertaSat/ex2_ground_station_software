@@ -39,8 +39,8 @@ from collections import defaultdict
 
 # if __name__ == '__main__':
 # We're running this file directly, not as a module.
-from .commandParser import CommandParser
-from .system import SystemValues
+from groundStation.commandParser import CommandParser
+from groundStation.system import SystemValues
 import libcsp_py3 as libcsp
 # else:
 #     # We're importing this file as a module to use in the website
@@ -183,7 +183,7 @@ class groundStation(object):
             libcsp.conn_sport(conn),
             data,
             length))
-
+        
         if rxDataList is None:
             print('ERROR: bad response data')
             return
