@@ -1115,7 +1115,19 @@ class SystemValues(object):
                                 'Star_Current': '>f4',
                                 'Star_Dep_Current': '>f4',
                                 'Zenith_Current': '>f4',
-                                
+                                #DFGM
+                                'Core Voltage': '>f4',
+                                'Sensor Temperature': '>f4',
+                                'Reference Temperature': '>f4',
+                                'Board Temperature': '>f4',
+                                'Positive Rail Voltage': '>f4',
+                                'Input Voltage': '>f4',
+                                'Reference Voltage': '>f4',
+                                'Input Current': '>f4',
+                                'Reserved 1': '>f4',
+                                'Reserved 2': '>f4',
+                                'Reserved 3': '>f4',
+                                'Reserved 4': '>f4',
 
                             }
                         }
@@ -1620,6 +1632,74 @@ class SystemValues(object):
                             'returns': {
                                 'err': '>b',
                                 'size': '>u4'
+                            }
+                        }
+                    }
+                }
+            },
+
+            'DFGM': {
+                'port': 16,
+                'subservice': {
+                    'DFGM_RUN': {
+                        'what': 'Collects magnetic field data for a set runtime',
+                        'subport': 0,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_START': {
+                        'what': 'Collects magnetic field data for an indefinite runtime',
+                        'subport': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_STOP': {
+                        'what': 'Stops collecting magnetic field data',
+                        'subport': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_FILTER': {
+                        'what': 'Filters 100 Hz DFGM data from a specific time frame into either 10 Hz or 1 Hz data rates',
+                        'subport': 3,
+                        'inoutInfo': {
+                            'args': ['>u1', '>u4', '>u4'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_GET_HK': {
+                        'what': 'Gets DFGM housekeeping data',
+                        'subport': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Core Voltage': '>f',
+                                'Sensor Temperature': '>f',
+                                'Reference Temperature': '>f',
+                                'Board Temperature': '>f',
+                                'Positive Rail Voltage': '>f',
+                                'Input Voltage': '>f',
+                                'Reference Voltage': '>f',
+                                'Input Current': '>f',
+                                'Reserved 1': '>f',
+                                'Reserved 2': '>f',
+                                'Reserved 3': '>f',
+                                'Reserved 4': '>f',
                             }
                         }
                     }
