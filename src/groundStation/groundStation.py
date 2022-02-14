@@ -37,16 +37,14 @@ import re
 import serial
 from collections import defaultdict
 
-if __name__ == '__main__':
-# We're running this file directly, not as a module.
-    from groundStation.commandParser import CommandParser
-    from groundStation.system import SystemValues
-    import libcsp_py3 as libcsp
-else:
-    # We're importing this file as a module to use in the website
+try: # We are importing this file for use on the website (comm.py)
     from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
     from ex2_ground_station_software.src.groundStation.system import SystemValues
     import libcsp.build.libcsp_py3 as libcsp
+except ModuleNotFoundError: # We are using this file directly or through cli.py
+    from groundStation.commandParser import CommandParser
+    from groundStation.system import SystemValues
+    import libcsp_py3 as libcsp
 
 
 class groundStation(object):
