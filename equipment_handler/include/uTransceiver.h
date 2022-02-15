@@ -174,8 +174,12 @@ typedef enum {
     U_ERR_CHKSUM = 16, // Corrupted firmware line
     U_ERR_FC = 17,
 
+    // Returned by software if the transceiver is in PIPE mode,
+    // meaning it cannot respond to commands
+    U_I2C_IN_PIPE = 19,
+
     // Unknown error occured
-    U_UNKOWN = 19,
+    U_UNKOWN = 20,
 
     // Returned in HAL if UHF is stubbed
     IS_STUBBED_U = 0
