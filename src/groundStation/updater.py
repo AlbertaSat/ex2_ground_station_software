@@ -6,7 +6,6 @@ from groundStation.system import SystemValues
 import libcsp_py3 as libcsp
 
 def crc16(data : bytearray, offset , length):
-    return 0x3019
     if data is None or offset < 0 or offset > len(data)- 1 and offset+length > len(data):
         return 0
     crc = 0
@@ -26,17 +25,19 @@ class updater(groundStation):
         if self.blocksize % 32 != 0:
             raise ValueError("Blocksize must be a multiple of 32")
         self.filename = opts.file
-        self.address = opts.address
-        self.file = open(self.filename, "rb");
+        self.file = open(self.filename, "rb")
         self.filesize = os.path.getsize(self.filename)
         if self.filesize == 0:
             raise ValueError("File size is null")
-        print("crc start")
-        self.file_crc = self.crc(self.file.read())
-        print("Crc done")
+        if opts.crc == None:
+            self.file_crc = self.crc(self.file.read())
+        else:
+            self.file_crc = opts.crc
         self.file.seek(0)
+        self.doresume = opts.resume
+        self.address = opts.address
 
-    
+
     def crc(self, data):
         return crc16(data, 0, len(data))
 
@@ -57,8 +58,16 @@ class updater(groundStation):
         if packet is None:
             print('Did not receive response')
             return None
-        return bytearray(libcsp.packet_get_data(packet))
-
+        rxDataList = []
+        data = bytearray(libcsp.packet_get_data(packet))
+        length = libcsp.packet_get_length(packet)
+        rxDataList.append(self.parser.parseReturnValue(
+            libcsp.conn_dst(conn),
+            libcsp.conn_src(conn),
+            libcsp.conn_sport(conn),
+            data,
+            length))
+        return rxDataList
 
     def get_conn(self):
         server = self.vals.APP_DICT.get('OBC')
@@ -81,29 +90,54 @@ class updater(groundStation):
         libcsp.packet_set_data(toSend, out)
         return toSend
 
+    def get_resume_packet(self):
+        server, port, toSend = self.getInput(None, inVal="obc.updater.GET_PROGRESS()")
+        return toSend
+
     def send_update(self):
 
-        init_packet = self.get_init_packet()
-        data = self.transaction(init_packet)
-        if (data is None):
-            print("Could not initialize connection")
-            return False
-        if data[1] == -1:
-            print("Error response from init packet")
-            return False
+        if self.doresume:
+            resume_packet = self.get_resume_packet()
+            data = self.transaction(resume_packet);
+            if (len(data) == 0):
+                print("Could not initialize connection")
+                return False
+            if data[0]['err'] == -1:
+                print("Error response from resume packet")
+                return False
+            d = data[0]
+            print(d);
+            if self.file_crc != d['crc'] :
+                print("Crc of input file differs from CRC of file the satellite is expecting")
+                exit(1)
+            self.address = int(d['next_addr'])
+            skip = int(d['next_addr'] - d['start_addr']);
+            print("Skip: {}".format(skip))
+            self.file.read(skip) # move the filepointer ahead by the size already sent
+        else:
+            init_packet = self.get_init_packet()
+            data = self.transaction(init_packet)
+            if (len(data) == 0):
+                print("Could not initialize connection")
+                return False
+            if data[0]['err'] == -1:
+                print("Error response from init packet")
+                return False
 
         b = bytearray()
         while True:
             b = self.file.read(self.blocksize)
             if len(b) == 0:
-                return True
+                break
             update_packet = self.get_block_update_packet(b)
             data = self.transaction(update_packet)
-            print(data[1])
-            if data[1] == 255:
-                print("Error response from data packet")
+            if (len(data) == 0):
+                print("Did not receive response from data packet")
                 return False
+            if data[0]['err'] != 0:
+                print("error from data packet")
             self.address += len(b)
+        
         return True
 
 
@@ -130,6 +164,19 @@ class update_options(options):
             type=lambda x: int(x,0),
             default='0x00200000',
             help='address to flash update on OBC')
+        self.parser.add_argument(
+            '-r',
+            '--resume',
+            action='store_true',
+            help="Attempt to resume update if possible"
+        )
+        self.parser.add_argument(
+            '-c',
+            '--crc',
+            type=lambda x: int(x,0),
+            default=None,
+            help="Provide file CRC. Can be hex or decimal"
+        )
 
         return super().getOptions();
 

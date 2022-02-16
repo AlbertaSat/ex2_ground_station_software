@@ -1510,9 +1510,22 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'GET_PROGRESS' : {
+                        'what' : 'Get update progress',
+                        'subPort' : 2,
+                        'inoutInfo' : {
+                            'args' : None,
+                            'returns' : {
+                                'err' : '>b',
+                                'start_addr' : '>u4',
+                                'next_addr' : ">u4",
+                                'crc' : '>u2'
+                            }
+                        }
+                    },
                     'ERASE_APP' : {
                         'what' : 'Erase working image',
-                        'subPort' : 2,
+                        'subPort' : 3,
                         'inoutInfo' : {
                             'args' : None,
                             'returns' : {
@@ -1522,7 +1535,7 @@ class SystemValues(object):
                     },
                     'VERIFY_APP' : {
                         'what' : 'Verify crc of working image',
-                        'subPort' : 3,
+                        'subPort' : 4,
                         'inoutInfo' : {
                             'args' : None,
                             'returns' : {
@@ -1532,7 +1545,7 @@ class SystemValues(object):
                     },
                     'VERIFY_GOLDEN' : {
                         'what' : 'Verify crc of golden image',
-                        'subPort' : 4,
+                        'subPort' : 5,
                         'inoutInfo' : {
                             'args' : None,
                             'returns' : {
