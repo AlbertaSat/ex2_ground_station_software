@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  */
 /**
- * @file i2c.c
+ * @file uhf_i2c.c
  * @author Thomas Ganley
  * @date 2021-02-17
  */
 
-#include "i2c.h"
+#include "uhf_i2c.h"
 
 SemaphoreHandle_t uTransceiver_semaphore;
 TimerHandle_t uTransceiverPipe_timer;

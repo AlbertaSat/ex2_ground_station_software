@@ -21,11 +21,6 @@
  */
 
 #include "uTransceiver.h"
-#include <uhf_uart.h>
-#include <uhf.h>
-#include "logger/logger.h"
-
-#define UHF_USE_I2C_CMDS
 
 // TODO: Firmware update command
 // TODO: Combine send code into single function?
@@ -372,7 +367,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     /* Send the command and receive the answer */
     #ifndef UHF_USE_I2C_CMDS
         uhf_enter_direct_hardware_mode();
-        return_value = uhf_direct_sendAndReceive(command_length, command_to_send, answer_length, ans);
+        return_val = uhf_direct_sendAndReceive(command_length, command_to_send, answer_length, ans);
         uhf_exit_direct_hardware_mode();
     #else
         uint8_t i2c_address = i2c_address_small_digit_ascii;

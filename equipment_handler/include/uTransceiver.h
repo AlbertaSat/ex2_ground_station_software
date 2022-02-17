@@ -23,6 +23,10 @@
 
 #include <stdint.h>
 #include <string.h>
+#include "uhf_uart.h"
+#include "uhf_i2c.h"
+#include "uhf.h"
+#include "logger/logger.h"
 
 // Max lengths for ESTTC strings
 #define MAX_UHF_W_CMDLEN 120
@@ -140,50 +144,6 @@
 #define UHF_READ_ANSLEN_BCNMSG 160
 #define UHF_READ_ANSLEN_FRAM 43
 #define UHF_READ_ANSLEN_SECURE 21
-
-typedef enum {
-    U_GOOD_CONFIG = 0,
-    U_UART_SUCCESS = 9,
-    U_I2C_SUCCESS = 10,
-    U_ANS_SUCCESS = 11,
-    U_FW_UPDATE_SUCCESS = 18,
-
-    // Returned at the Equipment Handler level
-    U_BAD_CONFIG = 1,
-    U_BAD_PARAM = 2,
-    U_BAD_ANS_CRC = 3,
-
-    // Standard error answers from the UHF transceiver.
-    // See EnduroSat UHF Transceiver Type II Manual
-    U_ERR = 4,
-    U_BAD_CMD_CRC = 5,
-    U_BAD_CMD_LEN = 6,
-
-    // Received error answer 2 or 3. Specific to command that was sent.
-    // See EnduroSat UHF Transceiver Type II User Manual
-    U_ERR_2 = 7,
-    U_ERR_3 = 8,
-
-    // Received if UART/I2C functions fail on Athena
-    U_UART_FAIL = 12,
-    U_I2C_FAIL = 13,
-
-    // Received during a firmware update command
-    U_ERR_FB = 14, // Memory error
-    U_ERR_FW = 15, // Error while storing the firmware line
-    U_ERR_CHKSUM = 16, // Corrupted firmware line
-    U_ERR_FC = 17,
-
-    // Returned by software if the transceiver is in PIPE mode,
-    // meaning it cannot respond to commands
-    U_I2C_IN_PIPE = 19,
-
-    // Unknown error occured
-    U_UNKOWN = 20,
-
-    // Returned in HAL if UHF is stubbed
-    IS_STUBBED_U = 0
-} UHF_return;
 
 typedef struct {
   uint8_t len;

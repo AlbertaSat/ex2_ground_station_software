@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  */
 /**
- * @file i2c.h
+ * @file uhf_i2c.h
  * @author Thomas Ganley
  * @date 2020-05-20
  */
@@ -25,7 +25,7 @@
 #include <os_timer.h>
 #include "i2c_io.h"
 #include "system.h"
-#include "uTransceiver.h"
+#include "uhf.h"
 
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
