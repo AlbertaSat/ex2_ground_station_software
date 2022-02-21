@@ -1171,6 +1171,19 @@ class SystemValues(object):
                                 'Star_Current' : '>u2',
                                 'Star_Dep_Current' : '>u2',
                                 'Zenith_Current' : '>u2',
+                                #Charon
+                                '###############################\r\n'
+                                'Charon Interfacing Board\r\n'+
+                                '###############################\r\n'+
+                                'crc' : '>u2',
+                                'temp1' : '>b',
+                                'temp2' : '>b',
+                                'temp3' : '>b',
+                                'temp4' : '>b',
+                                'temp5' : '>b',
+                                'temp6' : '>b',
+                                'temp7' : '>b',
+                                'temp8' : '>b',
                               
                             }
                         }
