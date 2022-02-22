@@ -1671,19 +1671,9 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'DFGM_FILTER': {
-                        'what': 'Filters 100 Hz DFGM data from a specific time frame into either 10 Hz or 1 Hz data rates',
-                        'subport': 3,
-                        'inoutInfo': {
-                            'args': ['>u1', '>u4', '>u4'],
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
                     'DFGM_GET_HK': {
                         'what': 'Gets DFGM housekeeping data',
-                        'subport': 4,
+                        'subport': 3,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
