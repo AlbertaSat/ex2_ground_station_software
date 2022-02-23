@@ -1639,7 +1639,7 @@ class SystemValues(object):
             },
 
             'DFGM': {
-                'port': 16,
+                'port': 19,
                 'subservice': {
                     'DFGM_RUN': {
                         'what': 'Collects magnetic field data for a set runtime',
