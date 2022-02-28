@@ -1625,7 +1625,18 @@ class SystemValues(object):
                     }
                 }
             },
-
+            'CLI' : {
+                'port': 14,
+                'subservice': {
+                    'SEND_CMD': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ["B", "a128"],
+                            'returns': None
+                        }
+                    }
+                }
+            },
             'adcs': { # refer to the adcs service
                 'port': 18,
                 'subservice': {
