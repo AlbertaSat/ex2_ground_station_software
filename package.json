@@ -19,6 +19,7 @@
     "run:test_updater": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_updater.py",
     "run:test_uhf_hardware": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/uhf/test_uhf_hardware.py",
     "run:test_sband_hardware": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/sband/test_sband_hardware.py",
-    "run:test_eps": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_eps.py"
+    "run:test_eps": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_eps.py",
+    "run:test_dfgm": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_dfgm.py"
   }
 }
