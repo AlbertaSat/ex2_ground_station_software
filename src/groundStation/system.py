@@ -1642,8 +1642,7 @@ class SystemValues(object):
                 'port': 19,
                 'subservice': {
                     'DFGM_RUN': {
-                        'what': 'Collects magnetic field data for a set runtime',
-                        'subport': 0,
+                        'subPort': 0,
                         'inoutInfo': {
                             'args': ['>u4'],
                             'returns': {
@@ -1652,8 +1651,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_START': {
-                        'what': 'Collects magnetic field data for an indefinite runtime',
-                        'subport': 1,
+                        'subPort': 1,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -1662,8 +1660,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_STOP': {
-                        'what': 'Stops collecting magnetic field data',
-                        'subport': 2,
+                        'subPort': 2,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -1672,8 +1669,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_GET_HK': {
-                        'what': 'Gets DFGM housekeeping data',
-                        'subport': 3,
+                        'subPort': 3,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
