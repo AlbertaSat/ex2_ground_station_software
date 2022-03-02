@@ -40,7 +40,9 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.dfgm.dfgm_run(1)', {'err': 2}) # Busy - DFGM already running
     test.sendAndExpect('obc.dfgm.dfgm_start', {'err': 2}) # Busy - DFGM already running
     test.send('obc.dfgm.dfgm_get_hk()') # Should not fail
-    test.send('obc.dfgm.dfgm_stop', {'err': 0})
+    test.send('obc.dfgm.dfgm_stop')
+
+    test.sendAndExpect('obc.dfgm.dfgm_stop', {'err': 0}) # Should not fail
 
 
     test.summary() #call when done to print summary of tests
