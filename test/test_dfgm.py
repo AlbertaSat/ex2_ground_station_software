@@ -33,7 +33,6 @@ def testAllCommandsToOBC():
 
     # Error checking tests
     test.sendAndExpect('obc.dfgm.dfgm_run(2147483648)', {'err': 1}) # Bad param. - Overflow for 32-bit int
-    test.sendAndExpect('obc.dfgm.dfgm_run(-1)', {'err': 1}) # Bad param. - Negative runtime
     test.sendAndExpect('obc.dfgm.dfgm_run(0)', {'err': 1}) # Bad param. - Zero runtime
 
     test.send('obc.dfgm.dfgm_run(100)')
