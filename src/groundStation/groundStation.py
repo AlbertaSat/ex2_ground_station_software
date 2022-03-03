@@ -90,8 +90,7 @@ class groundStation(object):
         parity='N',                         
         stopbits=2,                             
         timeout=1)
-
-        #time.sleep(4)        
+   
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
         print(ser.name)    #prints the name of the port that is opened
