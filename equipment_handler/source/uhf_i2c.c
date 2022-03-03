@@ -111,7 +111,7 @@ UHF_return i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, 
         xSemaphoreGive(uTransceiver_semaphore);
         return U_I2C_SUCCESS;
     }
-    return U_I2C_FAIL;
+    return U_I2C_IN_PIPE;
 
 }
 

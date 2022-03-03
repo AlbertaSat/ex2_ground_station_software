@@ -50,7 +50,7 @@ bool uhf_is_busy(void);
  * @brief Prepare the UHF I2C system to be put into pipe mode. This will consume the semaphore and
  * start the timer to go off when pipe mode expires.
  *
- * @note This function should be called immidiately before entering pipe mode.
+ * @note This function should be called immediately before entering pipe mode.
  *
  * @param timeout_ms Time in ms that the pipe mode will last.
  * @return true If the system is ready to enter pipe mode.

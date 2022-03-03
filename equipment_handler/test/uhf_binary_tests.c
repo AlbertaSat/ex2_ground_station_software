@@ -20,7 +20,11 @@
 #include "uTransceiver.h"
 
 UHF_return uhf_binary_test(){
-    //Read from the UHF
+    // Read from the UHF
+
+    i2c_Send(UHF_I2C, 0x22, 22, "ES+W22002723 E72EC03A\r");
+    uint8_t response[20];
+    i2c_Receive(UHF_I2C, 0x22, 20, response);
 //    uint8_t UHF_return;
 //    uint8_t scw[12] = {0};
 //    uint32_t pipe_timeout = 0;

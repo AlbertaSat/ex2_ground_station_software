@@ -28,6 +28,7 @@
 // TODO: Add error logging
 
 static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit of the i2c address (in hex)
+bool enter_pipe_mode = false;
 
 /**
  * @brief
@@ -97,6 +98,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     case UHF_SCW_CMD: { // Set the status control word
         uint8_t *array = (uint8_t *)param;
         uint8_t hex[4] = {0};
+
+        if(*(array + UHF_SCW_PIPE_INDEX) == 1){
+            enter_pipe_mode = true;
+        }
 
         // Grouping params into 4 bits (hex values)
         hex[0] = (*(array) << 2) | *(array + 1);
@@ -373,11 +378,13 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uint8_t i2c_address = i2c_address_small_digit_ascii;
         convHexFromASCII(1, &i2c_address);
         i2c_address += 0x20;
-        if (code != UHF_I2CADR_CMD){
-            return_val = i2c_sendAndReceive(i2c_address, command_to_send, command_length, ans, answer_length);
-        }else{
+        if (code == UHF_I2CADR_CMD){
             // i2c command to change the i2c address does not receive a response.
             return_val = i2c_sendCommand(i2c_address, command_to_send, command_length);
+        } else if ((code == UHF_SCW_CMD) && (enter_pipe_mode == true)){
+            return_val = i2c_sendAndReceivePIPE(i2c_address, command_to_send, command_length, ans, answer_length);
+        } else {
+            return_val = i2c_sendAndReceive(i2c_address, command_to_send, command_length, ans, answer_length);
         }
     #endif
 
@@ -417,6 +424,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         }
     }
     vPortFree(ans);
+    enter_pipe_mode = false;
     return return_val;
 }
 
