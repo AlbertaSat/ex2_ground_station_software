@@ -85,14 +85,14 @@ class groundStation(object):
     def __uart__(self, device):
         """ initialize uart interface """
         ser = serial.Serial('/dev/ttyUSB0',                                      
-        baudrate=19200, # Or whatever baud rate it uses                                    
+        baudrate=115200, # Or whatever baud rate it uses                                    
         bytesize=8,       # I'm assuming                       
         parity='N',                         
         stopbits=2,                             
         timeout=1)
 
         time.sleep(4)        
-        libcsp.kiss_init(device, 19200, 512, 'uart')
+        libcsp.kiss_init(device, 115200, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
         print(ser.name)    #prints the name of the port that is opened
         return ser
