@@ -17,10 +17,10 @@ def testAllCommandsToOBC():
     test.send('obc.dfgm.dfgm_get_hk') # Update empty HK buffer by turning on DFGM for 1 sec
     time.sleep(2)
 
-    test.sendAndExpect('obc.dfgm.dfgm_run(2)', {'err': 0})
+    test.sendAndExpect('obc.dfgm.dfgm_run(1)', {'err': 0})
     time.sleep(2)
 
-    test.sendAndExpect('obc.dfgm.dfgm_run(5)', {'err': 0})
+    test.sendAndExpect('obc.dfgm.dfgm_run(10)', {'err': 0})
     time.sleep(6) 
 
     test.sendAndExpect('obc.dfgm.dfgm_start', {'err': 0})
@@ -37,7 +37,6 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.dfgm.dfgm_run(1)', {'err': 1}) # Bad param. - Less than min runtime
 
     test.send('obc.dfgm.dfgm_run(100)')
-    test.sendAndExpect('obc.dfgm.dfgm_run(1)', {'err': 2}) # Busy - DFGM already running
     test.sendAndExpect('obc.dfgm.dfgm_start', {'err': 2}) # Busy - DFGM already running
     test.send('obc.dfgm.dfgm_get_hk()') # Should not fail
     test.send('obc.dfgm.dfgm_stop')
