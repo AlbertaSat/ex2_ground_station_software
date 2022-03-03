@@ -21,7 +21,7 @@ def testAllCommandsToOBC():
     time.sleep(2)
 
     test.sendAndExpect('obc.dfgm.dfgm_run(10)', {'err': 0})
-    time.sleep(6) 
+    time.sleep(11) 
 
     test.sendAndExpect('obc.dfgm.dfgm_start', {'err': 0})
     time.sleep(5) # Let DFGM run for a bit
@@ -33,8 +33,7 @@ def testAllCommandsToOBC():
 
     # Error checking tests
     test.sendAndExpect('obc.dfgm.dfgm_run(2147483648)', {'err': 1}) # Bad param. - Overflow for 32-bit int
-    test.sendAndExpect('obc.dfgm.dfgm_run(0)', {'err': 1}) # Bad param. - Less than min runtime
-    test.sendAndExpect('obc.dfgm.dfgm_run(1)', {'err': 1}) # Bad param. - Less than min runtime
+    test.sendAndExpect('obc.dfgm.dfgm_run(0)', {'err': 1}) # Bad param. - Less than minRuntime
 
     test.send('obc.dfgm.dfgm_run(100)')
     test.sendAndExpect('obc.dfgm.dfgm_start', {'err': 2}) # Busy - DFGM already running
