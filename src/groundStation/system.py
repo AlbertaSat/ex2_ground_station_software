@@ -1293,7 +1293,7 @@ class SystemValues(object):
                 # magic number 0x80078007 must be sent with csp port 4 and no subport number
             },
 
-            'CLI': {
+            'TM_CLI': {
                 # EPS SPECIFIC
                 'port': 7,  # EPS remote CLI uses port 13 unless Otherwise specified
                 'subservice': {
