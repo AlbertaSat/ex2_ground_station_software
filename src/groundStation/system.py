@@ -941,11 +941,11 @@ class SystemValues(object):
                                 'temparray1': '>i4',
                                 'temparray2': '>i4',
                                 'boot_cnt': '>u2',
-                                'last_reset_reason': '<b',
-                                'OBC_mode': '<b',
+                                'last_reset_reason': '<B',
+                                'OBC_mode': '<B',
                                 'OBC_uptime': '>u2',
-                                'solar_panel_supply_curr': '<b',
-                                'OBC_software_ver': '<b',
+                                'solar_panel_supply_curr': '<B',
+                                'OBC_software_ver': '<B',
                                 'cmds_received': '>u2',
                                 'pckts_uncovered_by_FEC': '>u2',
                                 
@@ -958,8 +958,8 @@ class SystemValues(object):
                                 'timestamp': '<f8',
                                 'uptimeInS': '<u4',
                                 'bootCnt': '<u4',
-                                'gs_wdt_time_left_s': '<u4',
-                                'counter_wdt_gs': '<u4',
+                                'wdt_gs_time_left_s': '<u4',
+                                'wdt_gs_counter': '<u4',
                                 'mpptConverterVoltage1_mV': '<u2',
                                 'mpptConverterVoltage2_mV': '<u2',
                                 'mpptConverterVoltage3_mV': '<u2',
@@ -1183,8 +1183,7 @@ class SystemValues(object):
                                 'temp5' : '>b',
                                 'temp6' : '>b',
                                 'temp7' : '>b',
-                                'temp8' : '>b',
-                              
+                                'temp8' : '>b'  
                             }
                         }
                     },
@@ -1431,7 +1430,7 @@ class SystemValues(object):
                                 'battHeaterMode': '<B',
                                 'battHeaterState': '<B',
                                 'PingWdt_toggles': '<u2',
-                                'PingWdt_turnOffs': '<B',
+                                'PingWdt_turnOffs': '<B'
                             }
                         }
                     },
