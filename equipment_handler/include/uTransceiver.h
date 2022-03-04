@@ -103,7 +103,6 @@
 #define UHF_SECURE_CMD 255
 #define UHF_FW_CMD
 
-
 #define UHF_WRITE_ANSLEN_SCW 17
 #define UHF_WRITE_ANSLEN_FREQ 13
 #define UHF_WRITE_ANSLEN_PIPET 13
@@ -146,26 +145,26 @@
 #define UHF_READ_ANSLEN_SECURE 21
 
 typedef struct {
-  uint8_t len;
-  uint8_t message[MAX_UHF_W_CMDLEN];
+    uint8_t len;
+    uint8_t message[MAX_UHF_W_CMDLEN];
 } uhf_configStruct;
 
 typedef struct {
-  uint32_t add;
-  uint8_t data[16];
+    uint32_t add;
+    uint8_t data[16];
 } uhf_framStruct;
 
 // Converts hex values to their ASCII characters
 
-void convHexToASCII(int length, uint8_t * arr);
-void convHexFromASCII(int length, uint8_t * arr);
-uint32_t crc32_calc(size_t length, uint8_t * cmd);
-int find_blankSpace(int length, uint8_t * string);
+void convHexToASCII(int length, uint8_t *arr);
+void convHexFromASCII(int length, uint8_t *arr);
+uint32_t crc32_calc(size_t length, uint8_t *cmd);
+int find_blankSpace(int length, uint8_t *string);
 
 // Read and Write command functions
 UHF_return UHF_genericWrite(uint8_t code, void *param);
 UHF_return UHF_genericRead(uint8_t code, void *param);
 UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t *data, uint8_t n_read_bytes);
-UHF_return UHF_firmwareUpdate(uint8_t * line, uint8_t line_length);
+UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length);
 
-#endif  // UTRANSCEIVER_H
+#endif // UTRANSCEIVER_H

@@ -21,9 +21,9 @@
 
 //#define UHF_DIRECT_TX_TIMEOUT 1000
 //
-//static bool command_mode = false;
+// static bool command_mode = false;
 //
-//bool uhf_enter_direct_hardware_mode() {
+// bool uhf_enter_direct_hardware_mode() {
 //
 //    while (*rx_mode != KISS_MODE_NOT_STARTED) {
 //        vTaskDelay(10);
@@ -32,12 +32,12 @@
 //    return true;
 //}
 //
-//void uhf_exit_direct_hardware_mode() {
+// void uhf_exit_direct_hardware_mode() {
 //    command_mode = false;
 //    sciReceive(CSP_SCI, sizeof(uint8_t), &incomingData);
 //}
 //
-//int uhf_direct_send(uint32_t length, uint8_t * data) {
+// int uhf_direct_send(uint32_t length, uint8_t * data) {
 //    configASSERT(command_mode);
 //
 //    sciSend(UHF_SCI, length, data);
@@ -46,7 +46,8 @@
 //    }
 //}
 //
-//int uhf_direct_sendAndReceive(uint32_t command_length, uint8_t * command, uint32_t answer_length, uint8_t * ans) {
+// int uhf_direct_sendAndReceive(uint32_t command_length, uint8_t * command, uint32_t answer_length, uint8_t * ans)
+// {
 //    configASSERT(command_mode);
 //
 //    uhf_direct_send(command_length, command);

@@ -69,9 +69,10 @@ UHF_return i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
 
 UHF_return i2c_receiveResponse(uint8_t addr, char *response, uint8_t length);
 
-UHF_return i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len);
+UHF_return i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response,
+                              uint8_t response_len);
 
 UHF_return i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
-                            uint8_t response_len);
+                                  uint8_t response_len);
 
 #endif /* i2c_H */
