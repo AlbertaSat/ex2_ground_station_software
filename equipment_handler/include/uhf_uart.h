@@ -21,6 +21,9 @@
 #define EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UHF_UART_H_
 
 #include <stdbool.h>
+#include <FreeRTOS.h>
+#include "system.h"
+#include "HL_sci.h"
 
 bool uhf_enter_direct_hardware_mode();
 

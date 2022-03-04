@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  */
 /**
- * @file i2c.h
+ * @file uhf_i2c.h
  * @author Thomas Ganley
  * @date 2020-05-20
  */
@@ -23,8 +23,9 @@
 #include <stdbool.h>
 #include <os_portmacro.h>
 #include <os_timer.h>
-#include "HL_i2c.h"
 #include "i2c_io.h"
+#include "system.h"
+#include "uhf.h"
 
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
@@ -33,7 +34,7 @@
  * @return true If initialization was successful.
  * @return false Otherwise.
  */
-bool uhf_i2c_init(void);
+UHF_return uhf_i2c_init(void);
 
 /**
  * @brief Checks the UHF semaphore, which indicates if the transceiver is
@@ -49,13 +50,13 @@ bool uhf_is_busy(void);
  * @brief Prepare the UHF I2C system to be put into pipe mode. This will consume the semaphore and
  * start the timer to go off when pipe mode expires.
  *
- * @note This function should be called immidiately before entering pipe mode.
+ * @note This function should be called immediately before entering pipe mode.
  *
  * @param timeout_ms Time in ms that the pipe mode will last.
  * @return true If the system is ready to enter pipe mode.
  * @return false If consuming the semaphore, or starting the timer failed.
  */
-bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
+UHF_return i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
 
 /**
  * @brief Reset the UHF I2C pipe mode timer. This should be callled when any data is received from the UHF.
@@ -64,13 +65,14 @@ bool i2c_prepare_for_pipe_mode(uint32_t timeout_ms);
  */
 void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken);
 
-bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
+UHF_return i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
 
-bool i2c_receiveResponse(uint8_t addr, char *response, uint8_t length);
+UHF_return i2c_receiveResponse(uint8_t addr, char *response, uint8_t length);
 
-bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len);
+UHF_return i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response,
+                              uint8_t response_len);
 
-bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
-                            uint8_t response_len);
+UHF_return i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
+                                  uint8_t response_len);
 
 #endif /* i2c_H */
