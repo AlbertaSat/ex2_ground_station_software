@@ -44,8 +44,7 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.dfgm.dfgm_run(100)', {'err': 0})
     test.sendAndExpect('obc.dfgm.dfgm_start', {'err': 2}) # Busy - DFGM already running
     test.sendAndExpect('obc.dfgm.dfgm_run(1000)', {'err': 2}) # Busy
-    test.send('obc.dfgm.dfgm_get_hk()') # Should not fail during data collection
-    time.sleep(10)
+
     test.send('obc.dfgm.dfgm_get_hk') # See if any of the values get updated from other packets
     test.sendAndExpect('obc.dfgm.dfgm_stop', {'err': 0}) 
 
