@@ -23,7 +23,7 @@ def testAllCommandsToOBC():
     time.sleep(2)
 
     test.sendAndExpect('obc.dfgm.dfgm_run(10)', {'err': 0})
-    time.sleep(11) 
+    time.sleep(12) 
 
     test.sendAndExpect('obc.dfgm.dfgm_run(2147483647)', {'err': 0}) # INT_MAX
     time.sleep(1)
