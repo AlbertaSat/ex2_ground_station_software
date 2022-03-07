@@ -58,6 +58,7 @@ class groundStation(object):
         self.server_connection = defaultdict(dict)
         self.number_of_buffers = 100
         self.buffer_size = 1024 #This is max size of an incoming packet
+        self.dummy = False # Use dummy responses instead
         libcsp.init(self.myAddr, 'host', 'model', '1.2.3', self.number_of_buffers, self.buffer_size)
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
@@ -65,6 +66,8 @@ class groundStation(object):
             self.ser = self.__uart__(opts.device)
         elif opts.interface == 'fifo':
             self.__fifo__()
+        elif opts.interface == 'dummy':
+            self.dummy = True
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
@@ -130,6 +133,15 @@ class groundStation(object):
 
         return self.server_connection[server][port]['conn']
 
+    def __dummy_resp__(self, server, port, buf):
+        return [
+            {
+                'Server': str(server),
+                'Port': str(port),
+                'Buffer': libcsp.packet_get_data(buf)
+            }
+        ]
+
     """ Public Methods """
 
     def getInput(self, prompt=None, inVal=None):
@@ -162,6 +174,8 @@ class groundStation(object):
     def transaction(self, server, port, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
         return parsed packet """
+        if self.dummy:
+            return self.__dummy_resp__(server, port, buf)
         conn = self.__connectionManager__(server, port)
         if conn is None:
             print('Error: Could not connect')
