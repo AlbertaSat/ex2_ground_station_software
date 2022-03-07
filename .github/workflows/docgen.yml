@@ -17,7 +17,10 @@ jobs:
         run: python3 -m pip install numpy
       - name: Generate Docs
         run: python3 src/docGen.py
-      - name: Commit CommandDocs.txt
-        run: git commit -m "Auto-updating CommandDocs.txt"
-      - name: Push CommandDocs.txt
-        run: git push
+      - name: Commit and Push CommandDocs.txt
+        run:
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          git add CommandDocs.txt
+          git commit -m "Auto-updating CommandDocs.txt"
+          git push
