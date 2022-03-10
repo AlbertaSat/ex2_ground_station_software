@@ -21,7 +21,6 @@
 Build required code from satelliteSim/libcsp:
 Start zmqproxy (only one instance)
 $ ./build/zmqproxy
-
 Run client against server using:
 LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/build python3 src/groundStation.py -I <zmq|uart>
 """
@@ -29,11 +28,13 @@ LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/b
 
 import argparse
 import sys
+sys.path.append('/home/albertasat/.local/lib/python3.8/site-packages')
 import time
 import signal
 import socket
 import os
 import re
+import serial
 from collections import defaultdict
 
 # if __name__ == '__main__':
@@ -46,14 +47,15 @@ import libcsp_py3 as libcsp
 #     from ex2_ground_station_software.src.system import SystemValues
 #     import libcsp.build.libcsp_py3 as libcsp
 
+vals = SystemValues()
+apps = vals.APP_DICT
+
 
 class groundStation(object):
     """ Constructor """
 
     def __init__(self, opts):
-        self.vals = SystemValues()
-        self.apps = self.vals.APP_DICT
-        self.myAddr = self.apps['GND']
+        self.myAddr = apps['GND']
         self.parser = CommandParser()
         self.server_connection = defaultdict(dict)
         self.number_of_buffers = 100
@@ -62,13 +64,13 @@ class groundStation(object):
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
         elif opts.interface == 'uart':
-            self.__uart__(opts.device)
+            self.ser = self.__uart__(opts.device)
         elif opts.interface == 'fifo':
             self.__fifo__()
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
-        libcsp.rdp_set_opt(4, self.rdp_timeout, 1000, 1, 250, 2)
+        libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
 
     """ Private Methods """
 
@@ -82,8 +84,26 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        libcsp.kiss_init(device, 115200, 512, 'uart')
+        ser = serial.Serial('/dev/ttyUSB0',                                      
+        baudrate=115200, # Or whatever baud rate it uses                                    
+        bytesize=8,       # I'm assuming                       
+        parity='N',                         
+        stopbits=2,                             
+        timeout=1)
+   
+        libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
+        print(ser.name)    #prints the name of the port that is opened
+        return ser
+
+    def __setPIPE__(self):
+        # Make a python byte array with the command that needs to be sent to set pipe mode
+        self.ser.write(b'ES+W2206000000B4 D35F70CF\r')
+        #self.ser.write(b'ES+W22000323 4A2EA06D\r')
+        self.ser.write(b'ES+W22002723 E72EC03A\r')
+        result = self.ser.read(17)
+        print(result)   
+
 
     def __connectionManager__(self, server, port):
         """ Get currently open conneciton if it exists, and has not expired,
@@ -97,8 +117,12 @@ class groundStation(object):
                 libcsp.close(self.server_connection[server][port]['conn'])
 
             try:
-                conn = libcsp.connect(
-                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                if server == 4:
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
+                    print('CRC32 Header selected\n')
+                else:
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                    print('RDP Header selected\n')
             except Exception as e:
                 print(e)
                 return None
@@ -131,9 +155,11 @@ class groundStation(object):
         else:
             print('invalid call to getInput')
             return
+
         if command is None:
             print('Error: Command was not parsed')
             return
+
         toSend = libcsp.buffer_get(len(command['args']))
         if len(command['args']) > 0:
             libcsp.packet_set_data(toSend, command['args'])
@@ -144,7 +170,7 @@ class groundStation(object):
         return parsed packet """
         conn = self.__connectionManager__(server, port)
         if conn is None:
-            print('Error: Could not connection')
+            print('Error: Could not connect')
             return {}
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
@@ -162,16 +188,16 @@ class groundStation(object):
             libcsp.conn_sport(conn),
             data,
             length))
-        
+        #print(rxDataList)
         if rxDataList is None:
             print('ERROR: bad response data')
             return
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or 
-            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
-            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            libcsp.conn_src(conn) != vals.APP_DICT.get('OBC') or 
+            libcsp.conn_sport(conn) != vals.SERVICES.get('HOUSEKEEPING').get('port') or 
+            data[0] != vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]
