@@ -23,6 +23,11 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
+    # Commisioning/LEOP Test
+
+    # Manual Deployment Test
+
+    # Failure to Deploy Test
 
     test.summary() #call when done to print summary of tests
 
