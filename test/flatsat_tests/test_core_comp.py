@@ -16,28 +16,38 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
-
+import time
 import numpy as np
 from testLib import testLib as test
 
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    # OBC System-Wide Housekeeping Test
-    # Gather all HK data & save as file
+    # OBC SYSTEM-WIDE HOUSEKEEPING TEST
+    print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
+    # TODO Set parameters for HK command, save data somehow
+    test.send('obc.housekeeping.get_hk()') # Gather all HK data & save as file
     # Downlink and check if data is within range
-
     # PASS CONDITION: all HK data is within range
 
 
-    # EPS Ping Watchdog Test
+    # EPS PING WATCHDOG TEST
+    print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     # Configure an EPS ping watchdog to check CSP ID 1 every 5 mins and toggle EPS output 6 for 10 seconds if it times out
     # Enable OBC to check UHF operating status every 5 min by verifying the software version. OBC will command EPS to reset power channel 8 for 10 seconds if verification fails
     # Repeat the following every 10 seconds for 6 minutes:
         # Gather all EPS HK info and save to file
         # Save it to PC and display all EPS HK info
+    for i in range(36):
+        test.send('eps.cli.general_telemetry')
+        time.sleep(10)
     # Disconnect UART connection between UHF and OBC, then repeat steps above
+    input("\nPlease disconnect the UART connection between the UHF and OBC. Press enter to resume tests.\n")
+    for j in range(36):
+        test.send('eps.cli.general_telemetry')
+        time.sleep(10)
     # Reconnect UART connection between UHF and OBC, then wait 30 seconds
+    input("\nPlease Reconnect the UART connection between the UHF and OBC. Press enter to resume tests.\n")
     # Tell OBC to stop respnding to ping requests
     # Repeat HK steps
     # Disable EPS ping watchdog
@@ -46,24 +56,17 @@ def testAllCommandsToOBC():
     #                 During the second 6 minutes of gathering HK data, Output State = 1 for all active channels except channel 8, which should be 0
 
 
-    # Ground Station Ping Watchdog Test
-    #
+    print("\n---------- GROUND STATION PING WATCHDOG TEST ----------\n")
+    # GROUND STATION PING WATCHDOG TEST
 
 
-    # OBC Firmware Update
+    print("\n---------- OBC FIRMWARE UPDATE TEST ----------\n")
+    # OBC FIRMWARE UPDATE TEST
 
 
+    print("\n---------- OBC GOLDEN FIRMWARE UPDATE TEST ----------\n")
+    # OBC GOLDEN FIRMWARE UPDATE TEST
 
-    # OBC Golden Firmware Image
-
-
-
-    test.send('eps.time_management.get_eps_time')
-    test.sendAndExpect('eps.control.single_output_control(10 1 0)', {'err': 0}) #Preferably a channe that does not power a subsystem
-    test.send('eps.cli.general_telemetry')
-    test.sendAndExpect('eps.control.single_output_control(10 0 0)', {'err': 0})
-    test.sendAndExpect('eps.configuration.get_active_config(0 0)', {'err': 0, 'type':0, 'Value': 4})
-    test.sendAndExpect('eps.configuration.get_active_config(136 2)', {'err': 0, 'type':2, 'Value': 500}) #Might change though. Just checking another type
     
     test.summary() #call when done to print summary of tests
 
