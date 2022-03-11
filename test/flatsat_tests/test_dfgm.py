@@ -23,6 +23,11 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
+    # Collect all HK data and ensure that they are all within their expected values
+
+    # Collect and process DFGM data for 10 seconds, then downlink it over SBAND
+
+    # Collect and process DFGM data for 10 seconds, then downlink it over UHF
 
     test.summary() #call when done to print summary of tests
 

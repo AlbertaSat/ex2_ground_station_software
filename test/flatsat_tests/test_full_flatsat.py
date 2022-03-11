@@ -23,6 +23,7 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
+    # Lots of tests, see FlatSat Test Plan
 
     test.summary() #call when done to print summary of tests
 

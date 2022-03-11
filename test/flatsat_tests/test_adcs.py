@@ -23,6 +23,9 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
+    # Gather all HK data and check if all values are within their given ranges
+
+    # EPS Ping Watchdog
 
     test.summary() #call when done to print summary of tests
 

@@ -23,6 +23,19 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
+    # Gather all HK data and check if all values are within their given ranges
+
+    # Downlink uncompressed data over SBand
+
+    # Downlink uncompressed data over UHF
+
+    # Downlink compressed data over SBand
+
+    # Downlink compressed data over UHF
+    
+    # Iris Firmware Update over UHF
+
+    # EPS Ping Watchdog
 
     test.summary() #call when done to print summary of tests
 
