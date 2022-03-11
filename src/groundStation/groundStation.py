@@ -29,7 +29,6 @@ LD_LIBRARY_PATH=../SatelliteSim/libcsp/build PYTHONPATH=../SatelliteSim/libcsp/b
 
 import argparse
 import sys
-sys.path.append('/home/albertasat/.local/lib/python3.8/site-packages')
 import time
 import signal
 import socket
@@ -84,7 +83,7 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        ser = serial.Serial('/dev/ttyUSB1',                                      
+        ser = serial.Serial(device,                                      
         baudrate=115200,                              
         bytesize=8,                 
         parity='N',                         
@@ -93,7 +92,6 @@ class groundStation(object):
    
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
-        print(ser.name)    #prints the name of the port that is opened
         return ser
 
     def __setPIPE__(self):
@@ -187,7 +185,7 @@ class groundStation(object):
             libcsp.conn_sport(conn),
             data,
             length))
-        #print(rxDataList)
+
         if rxDataList is None:
             print('ERROR: bad response data')
             return
