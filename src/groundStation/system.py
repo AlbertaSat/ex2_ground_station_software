@@ -74,10 +74,28 @@ class SystemValues(object):
             'IAC': 5,
             'DBG': 7,
             'GND': 16,
+            'PIPE': 24,
             'DEMO': 30,
             'LAST': 31
         }
         self.SERVICES = {
+            'SET_PIPE': {
+                # This service is used to tell the GS UHF to get into pipe mode, 
+                # then to tell the satellite's UHF to get into PIPE mode. Port does not matter in this case. 
+                'port': 0,
+                'subservice' : { #this is a service written to write the GS UHF into pipe mode
+                    'UHF_GS_PIPE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,  # test
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    }
+                }
+            
+            },
             'TIME_MANAGEMENT': {
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value
@@ -230,9 +248,20 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'S_GET_FW': {
+                        'what': 'S-band Firmware Version. XYY = X.YY',
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Firmware Version': '>u2',
+                            }
+                        }
+                    },
                     'S_GET_TR': {
                         'what': 'S-band Transmit Ready Indicator = {0: >2560B in buffer}',
-                        'subPort': 6,
+                        'subPort': 7,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -243,7 +272,7 @@ class SystemValues(object):
                     },
                     'S_GET_BUFFER': {
                         'what': 'Gets the pointer to the buffer quantity in S-band. Input = {0:Count, 1:Underrun, 2:Overrun}',
-                        'subPort': 7,
+                        'subPort': 8,
                         'inoutInfo': {
                             'args': ['>B'],
                             'returns': {
@@ -254,7 +283,7 @@ class SystemValues(object):
                     },
                     'S_GET_HK': {
                         'what': 'Gets S-band housekeeping info',
-                        'subPort': 8,
+                        'subPort': 9,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -272,7 +301,7 @@ class SystemValues(object):
                     },
                     'S_SOFT_RESET': {
                         'what': 'Reset S-band FPGA registers to default',
-                        'subPort': 9,
+                        'subPort': 10,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -282,7 +311,7 @@ class SystemValues(object):
                     },
                     'S_GET_FULL_STATUS': {
                         'what': 'A full status of S-band non-configurable parameters',
-                        'subPort': 10,
+                        'subPort': 11,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -306,7 +335,7 @@ class SystemValues(object):
                     },
                     'S_SET_FREQ': {
                         'what': 'Sets the frequency of S-band (MHz)',
-                        'subPort': 11,
+                        'subPort': 12,
                         'inoutInfo': {
                             'args': ['>f'],
                             'returns': {
@@ -316,7 +345,7 @@ class SystemValues(object):
                     },
                     'S_SET_CONTROL': {
                         'what': 'Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary',
-                        'subPort': 12,
+                        'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u1', '>u1'],
                             'returns': {
@@ -326,7 +355,7 @@ class SystemValues(object):
                     },
                     'S_SET_ENCODER': {
                         'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={1:half, 0:full}. Input: 4 binary',
-                        'subPort': 13,
+                        'subPort': 14,
                         'inoutInfo': {
                             'args': ['>u1', '>u1', '>u1', '>u1'],
                             'returns': {
@@ -336,7 +365,7 @@ class SystemValues(object):
                     },
                     'S_SET_PAPOWER': {
                         'what': 'Sets the power value of S-band power amplifier (24, 26, 28, 30 dBm)',
-                        'subPort': 14,
+                        'subPort': 15,
                         'inoutInfo': {
                             'args': ['>u1'],
                             'returns': {
@@ -346,7 +375,7 @@ class SystemValues(object):
                     },
                     'S_GET_CONFIG': {
                         'what': 'A full status of S-band configurable parameters (the ones with set functions)',
-                        'subPort': 15,
+                        'subPort': 16,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -364,7 +393,7 @@ class SystemValues(object):
                     },
                     'S_SET_CONFIG': {
                         'what': 'Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate)',
-                        'subPort': 16,
+                        'subPort': 17,
                         'inoutInfo': {
                             'args': ['>f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                             'returns': {
@@ -847,10 +876,16 @@ class SystemValues(object):
                             'returns' : {
                                 'err': '>b',
                                 #packet meta
+                                '###############################\r\n'+
+                                'packet meta\r\n'+
+                                '###############################\r\n'+
                                 'final': '<B',
                                 'UNIXtimestamp': '>u4',
                                 'dataPosition': '>u2',
                                 #ADCS
+                                '###############################\r\n'
+                                'ADCS\r\n'+
+                                '###############################\r\n'+
                                 'Estimated_Angular_Rate_X': '>f4',
                                 'Estimated_Angular_Rate_Y': '>f4',
                                 'Estimated_Angular_Rate_Z': '>f4',
@@ -881,10 +916,10 @@ class SystemValues(object):
                                 'Wheel_Speed_X': '>f4',
                                 'Wheel_Speed_Y': '>f4',
                                 'Wheel_Speed_Z': '>f4',
-                                'Mag_field_vector_X': '>f4',
-                                'Mag_field_vector_Y': '>f4',
-                                'Mag_field_vector_Z': '>f4',
-                                'Comm_Status': '>u2',
+                                'Mag_Field_Vector_X': '>f4',
+                                'Mag_Field_Vector_Y': '>f4',
+                                'Mag_Field_Vector_Z': '>f4',
+                                'Comm_Status': '>i2',
                                 'Wheel1_Current': '>f4',
                                 'Wheel2_Current': '>f4',
                                 'Wheel3_Current': '>f4',
@@ -893,27 +928,38 @@ class SystemValues(object):
                                 'CubeControl_Current3v3': '>f4',
                                 'CubeControl_Current5v0': '>f4',
                                 'CubeStar_Current': '>f4',
-                                'CubeStart_Temp': '>f4',
+                                'CubeStar_Temp': '>f4',
                                 'Magnetorquer_Current': '>f4',
                                 'MCU_Temp': '>f4',
                                 'Rate_Sensor_Temp_X': '>i2',
                                 'Rate_Sensor_Temp_Y': '>i2',
                                 'Rate_Sensor_Temp_Z': '>i2',
                                 #Athena
+                                '###############################\r\n'
+                                'Athena\r\n'+
+                                '###############################\r\n'+
                                 'temparray1': '>i4',
                                 'temparray2': '>i4',
-                                'temparray3': '>i4',
-                                'temparray4': '>i4',
-                                'temparray5': '>i4',
-                                'temparray6': '>i4',
+                                'boot_cnt': '>u2',
+                                'last_reset_reason': '<B',
+                                'OBC_mode': '<B',
+                                'OBC_uptime': '>u2',
+                                'solar_panel_supply_curr': '<B',
+                                'OBC_software_ver': '<B',
+                                'cmds_received': '>u2',
+                                'pckts_uncovered_by_FEC': '>u2',
+                                
                                 #EPS
+                                '###############################\r\n'
+                                'EPS\r\n'+
+                                '###############################\r\n'+
                                 'cmd': '<B',
                                 'status' : '<b',
                                 'timestamp': '<f8',
                                 'uptimeInS': '<u4',
                                 'bootCnt': '<u4',
-                                'gs_wdt_time_left_s': '<u4',
-                                'counter_wdt_gs': '<u4',
+                                'wdt_gs_time_left_s': '<u4',
+                                'wdt_gs_counter': '<u4',
                                 'mpptConverterVoltage1_mV': '<u2',
                                 'mpptConverterVoltage2_mV': '<u2',
                                 'mpptConverterVoltage3_mV': '<u2',
@@ -1037,6 +1083,9 @@ class SystemValues(object):
                                 'PingWdt_toggles': '<u2',
                                 'PingWdt_turnOffs': '<B',
                                 #UHF
+                                '###############################\r\n'
+                                'UHF\r\n'+
+                                '###############################\r\n'+
                                 'scw1': '<B',
                                 'scw2': '<B',
                                 'scw3': '<B',
@@ -1059,6 +1108,9 @@ class SystemValues(object):
                                 'pckts_in_crc16': '>u4',
                                 'temperature': '>f4',
                                 #Sband
+                                '###############################\r\n'
+                                'Sband\r\n'+
+                                '###############################\r\n'+
                                 'Output_Power': '>f4',
                                 'PA_Temp': '>f4',
                                 'Top_Temp': '>f4',
@@ -1067,56 +1119,71 @@ class SystemValues(object):
                                 'Bat_Voltage': '>f4',
                                 'PA_Current': '>f4',
                                 'PA_Voltage': '>f4',
-                                #hyperion
-                                'Nadir_Temp1': '>f4',
-                                'Port_Temp1': '>f4',
-                                'Port_Temp2': '>f4',
-                                'Port_Temp3': '>f4',
-                                'Port_Temp_Adc': '>f4',
-                                'Port_Dep_Temp1': '>f4',
-                                'Port_Dep_Temp2': '>f4',
-                                'Port_Dep_Temp3': '>f4',
-                                'Port_Dep_Temp_Adc': '>f4',
-                                'Star_Temp1': '>f4',
-                                'Star_Temp2': '>f4',
-                                'Star_Temp3': '>f4',
-                                'Star_Temp_Adc': '>f4',
-                                'Star_Dep_Temp1': '>f4',
-                                'Star_Dep_Temp2': '>f4',
-                                'Star_Dep_Temp3': '>f4',
-                                'Star_Dep_Temp_Adc': '>f4',
-                                'Zenith_Temp1': '>f4',
-                                'Zenith_Temp2': '>f4',
-                                'Zenith_Temp3': '>f4',
-                                'Zenith_Temp_Adc': '>f4',
-                                'Nadir_Pd1': '>f4',
-                                'Port_Pd1': '>f4',
-                                'Port_Pd2': '>f4',
-                                'Port_Pd3': '>f4',
-                                'Port_Dep_Pd1': '>f4',
-                                'Port_Dep_Pd2': '>f4',
-                                'Port_Dep_Pd3': '>f4',
-                                'Star_Pd1': '>f4',
-                                'Star_Pd2': '>f4',
-                                'Star_Pd3': '>f4',
-                                'Star_Dep_Pd1': '>f4',
-                                'Star_Dep_Pd2': '>f4',
-                                'Star_Dep_Pd3': '>f4',
-                                'Zenith_Pd1': '>f4',
-                                'Zenith_Pd2': '>f4',
-                                'Zenith_Pd3': '>f4',
-                                'Port_Voltage': '>f4',
-                                'Port_Dep_Voltage': '>f4',
-                                'Star_Voltage': '>f4',
-                                'Star_Dep_Voltage': '>f4',
-                                'Zenith_Voltage': '>f4',
-                                'Port_Current': '>f4',
-                                'Port_Dep_Current': '>f4',
-                                'Star_Current': '>f4',
-                                'Star_Dep_Current': '>f4',
-                                'Zenith_Current': '>f4',
-                                
-
+                                #Hyperion
+                                '###############################\r\n'
+                                'Hyperion Panels\r\n'+
+                                '###############################\r\n'+
+                                'Nadir_Temp1': '>b',
+                                'Nadir_Temp_Adc': '>b',
+                                'Port_Temp1': '>b',
+                                'Port_Temp2': '>b',
+                                'Port_Temp3': '>b',
+                                'Port_Temp_Adc': '>b',
+                                'Port_Dep_Temp1': '>b',
+                                'Port_Dep_Temp2': '>b',
+                                'Port_Dep_Temp3': '>b',
+                                'Port_Dep_Temp_Adc': '>b',
+                                'Star_Temp1': '>b',
+                                'Star_Temp2': '>b',
+                                'Star_Temp3': '>b',
+                                'Star_Temp_Adc': '>b',
+                                'Star_Dep_Temp1': '>b',
+                                'Star_Dep_Temp2': '>b',
+                                'Star_Dep_Temp3': '>b',
+                                'Star_Dep_Temp_Adc': '>b',
+                                'Zenith_Temp1': '>b',
+                                'Zenith_Temp2': '>b',
+                                'Zenith_Temp3': '>b',
+                                'Zenith_Temp_Adc': '>b',
+                                'Nadir_Pd1': '>B',
+                                'Port_Pd1': '>B',
+                                'Port_Pd2': '>B',
+                                'Port_Pd3': '>B',
+                                'Port_Dep_Pd1': '>B',
+                                'Port_Dep_Pd2': '>B',
+                                'Port_Dep_Pd3': '>B',
+                                'Star_Pd1': '>B',
+                                'Star_Pd2': '>B',
+                                'Star_Pd3': '>B',
+                                'Star_Dep_Pd1': '>B',
+                                'Star_Dep_Pd2': '>B',
+                                'Star_Dep_Pd3': '>B',
+                                'Zenith_Pd1': '>B',
+                                'Zenith_Pd2': '>B',
+                                'Zenith_Pd3': '>B',
+                                'Port_Voltage' : '>u2',
+                                'Port_Dep_Voltage' : '>u2',
+                                'Star_Voltage' : '>u2',
+                                'Star_Dep_Voltage' : '>u2',
+                                'Zenith_Voltage' : '>u2',
+                                'Port_Current' : '>u2',
+                                'Port_Dep_Current' : '>u2',
+                                'Star_Current' : '>u2',
+                                'Star_Dep_Current' : '>u2',
+                                'Zenith_Current' : '>u2',
+                                #Charon
+                                '###############################\r\n'
+                                'Charon Interfacing Board\r\n'+
+                                '###############################\r\n'+
+                                'crc' : '>u2',
+                                'temp1' : '>b',
+                                'temp2' : '>b',
+                                'temp3' : '>b',
+                                'temp4' : '>b',
+                                'temp5' : '>b',
+                                'temp6' : '>b',
+                                'temp7' : '>b',
+                                'temp8' : '>b'  
                             }
                         }
                     },
@@ -1226,7 +1293,7 @@ class SystemValues(object):
                 # magic number 0x80078007 must be sent with csp port 4 and no subport number
             },
 
-            'CLI': {
+            'TM_CLI': {
                 # EPS SPECIFIC
                 'port': 7,  # EPS remote CLI uses port 13 unless Otherwise specified
                 'subservice': {
@@ -1236,7 +1303,7 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b',
+                                'status': '>b',
                                 'timestamp': '<f8',
                                 'uptimeInS': '<u4',
                                 'bootCnt': '<u4',
@@ -1363,7 +1430,7 @@ class SystemValues(object):
                                 'battHeaterMode': '<B',
                                 'battHeaterState': '<B',
                                 'PingWdt_toggles': '<u2',
-                                'PingWdt_turnOffs': '<B',
+                                'PingWdt_turnOffs': '<B'
                             }
                         }
                     },
@@ -1377,6 +1444,33 @@ class SystemValues(object):
                             'args': ['<u4', '<B', '<u4', '<u4'],
                             'returns': {
                                 'err': '>b'
+                            }
+                        }
+                    },
+                    # EPS Startup Telemetry
+                    'STARTUP_TELEMETRY': {
+                        'what': 'Get the startup telemetry from the EPS',
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                #'cmd': '>b',
+                                'status': '>b',
+                                'timestamp': '<f8',
+                                'last_reset_reason_reg': '<u4',
+                                'bootCnt': '<u4',
+                                'FallbackConfigUsed': '<B',
+                                'rtcInit': '<B',
+                                'rtcClkSourceLSE': '<B',
+                                'Fram4kPartitionInit': '>b',
+                                'Fram520kPartitionInit': '>b',
+                                'intFlashPartitionInit': '>b',
+                                'FSInit': '>b',
+                                'FTInit': '>b',
+                                'supervisorInit': '>b',
+                                'uart1App': '<B',
+                                'uart2App': '<B',
+                                'tmp107Init': '>b'
                             }
                         }
                     }

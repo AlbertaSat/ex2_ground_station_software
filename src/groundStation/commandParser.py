@@ -46,7 +46,6 @@ class CommandParser(object):
             # Matches <service>
             service = self.vals.SERVICES[tokens[self.vals.serviceIdx]]
             self._command['dport'] = service['port']
-
             if 'subservice' not in service:
                 # Then there is no subservice, skip to arg check
                 if 'inoutInfo' not in service:
