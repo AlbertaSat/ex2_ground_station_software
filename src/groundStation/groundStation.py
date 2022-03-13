@@ -134,10 +134,14 @@ class groundStation(object):
         return self.server_connection[server][port]['conn']
 
     def __dummy_resp__(self, server, port, buf):
+        """ Generates a dummy response for a command, returning
+        its intended server, port, and a bytestring representing the libcsp
+        packet.
+        """
         return [
             {
-                'Server': str(server),
-                'Port': str(port),
+                'Server': server,
+                'Port': port,
                 'Buffer': libcsp.packet_get_data(buf)
             }
         ]
