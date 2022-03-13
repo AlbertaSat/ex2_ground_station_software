@@ -19,8 +19,8 @@ jobs:
         run: python3 src/docGen.py
       - name: Commit and Push CommandDocs.txt
         run:
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          git add CommandDocs.txt
-          git commit -m "Auto-updating CommandDocs.txt"
+          git config --global user.name github-actions &&
+          git config --global user.email github-actions@github.com &&
+          git add CommandDocs.txt &&
+          git commit -m "Auto-updating CommandDocs.txt" &&
           git push
