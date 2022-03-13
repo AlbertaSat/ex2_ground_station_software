@@ -41,7 +41,7 @@ try: # We are importing this file for use on the website (comm.py)
     from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
     from ex2_ground_station_software.src.groundStation.system import SystemValues
     import libcsp.build.libcsp_py3 as libcsp
-except ModuleNotFoundError: # We are using this file directly or through cli.py
+except ImportError: # We are using this file directly or through cli.py
     from groundStation.commandParser import CommandParser
     from groundStation.system import SystemValues
     import libcsp_py3 as libcsp
