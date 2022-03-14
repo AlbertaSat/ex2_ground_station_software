@@ -1183,7 +1183,23 @@ class SystemValues(object):
                                 'temp5' : '>b',
                                 'temp6' : '>b',
                                 'temp7' : '>b',
-                                'temp8' : '>b'  
+                                'temp8' : '>b',
+                                #DFGM
+                                '###############################\r\n'
+                                'DFGM Board\r\n'+
+                                '###############################\r\n'+
+                                'Core_Voltage': '>f4',
+                                'Sensor_Temperature': '>f4',
+                                'Reference_Temperature': '>f4',
+                                'Board_Temperature': '>f4',
+                                'Positive_Rail_Voltage': '>f4',
+                                'Input_Voltage': '>f4',
+                                'Reference_Voltage': '>f4',
+                                'Input_Current': '>f4',
+                                'Reserved_1': '>f4',
+                                'Reserved_2': '>f4',
+                                'Reserved_3': '>f4',
+                                'Reserved_4': '>f4',  
                             }
                         }
                     },
@@ -3006,6 +3022,59 @@ class SystemValues(object):
                             }
                         }
                     },
+                }
+            },
+            'DFGM': {
+                'port': 19,
+                'subservice': {
+                    'DFGM_RUN': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>u4'],
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_START': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_STOP': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'DFGM_GET_HK': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Core Voltage': '>f',
+                                'Sensor Temperature': '>f',
+                                'Reference Temperature': '>f',
+                                'Board Temperature': '>f',
+                                'Positive Rail Voltage': '>f',
+                                'Input Voltage': '>f',
+                                'Reference Voltage': '>f',
+                                'Input Current': '>f',
+                                'Reserved 1': '>f',
+                                'Reserved 2': '>f',
+                                'Reserved 3': '>f',
+                                'Reserved 4': '>f',
+                            }
+                        }
+                    }
                 }
             }
         }
