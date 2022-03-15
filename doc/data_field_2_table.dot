@@ -1,0 +1,17 @@
+digraph html {
+  packet [shape=none, margin=0, label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+      <TR >
+      <TD bgcolor="#aaaaaa" COLSPAN="5" Align = "Center">Data Field 2</TD>
+      </TR>
+      <TR >
+      <TD bgcolor="#ffffff" COLSPAN="5" Align = "Center"></TD>
+      </TR>
+      <TR>
+      <TD bgcolor="#ff7777" COLSPAN="1" Align = "Center">MAC Header (4 bytes)</TD>
+      <TD bgcolor="#77ff77" COLSPAN="4" Align = "Center">Codeword (Message + Parity) (0 - 124 bytes)</TD>
+      </TR>
+    </TABLE>
+  >];
+ }
+
