@@ -1,3 +1,5 @@
+NOTE: ex2_sdr and ex2_uhf_software directories are subtrees of their identically-named repositories.
+
 # Installation Instructions
 
 Please note that the Docker installation is unstable and should not be used. As a result, it is recommended that you use the manual installation instead (as denoted by the `If you don't like Docker...` heading below).
