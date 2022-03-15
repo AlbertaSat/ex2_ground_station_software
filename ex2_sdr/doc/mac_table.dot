@@ -1,0 +1,25 @@
+digraph html {
+  packet [shape=none, margin=0, label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+      <TR >
+      <TD bgcolor="#ff7777" COLSPAN="12" Align = "Center">MAC Header (4 bytes)</TD>
+      </TR>
+      <TR>
+      <TD bgcolor="#ffffff" COLSPAN="12"></TD>
+      </TR>
+      <TR>
+      <TD bgcolor="#ff7777" COLSPAN="3" Align = "Center">Modulation/FEC Scheme (9 bits)</TD>
+      <TD bgcolor="#ff7777" COLSPAN="4" Align = "Center">Codeword Index (7 bits)</TD>
+      <TD bgcolor="#ff7777" COLSPAN="5" Align = "Center">Packet Number (2 bytes)</TD>
+      </TR>
+      <TR>
+      <TD bgcolor="#ffffff" COLSPAN="3"></TD>
+      </TR>
+      <TR>
+      <TD bgcolor="#ff7777" COLSPAN="1">Modulation (4 bits)</TD>
+      <TD bgcolor="#ff7777" COLSPAN="2">FEC Scheme (6 bits)</TD>
+      </TR>
+    </TABLE>
+  >];
+ }
+
