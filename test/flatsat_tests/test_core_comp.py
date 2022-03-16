@@ -48,7 +48,7 @@ def test_EPS_pingWatchdog():
         
         # Display data on ground station CLI
         for val in test.expected_EPS_HK:
-            # Check if output state = 1 for all active power channels. 
+            # To pass test, all active power channels have output state = 1
             colour = '\033[0m' #white
             if val in pchannels:
                 if (response[val] == 0):
@@ -69,7 +69,7 @@ def test_EPS_pingWatchdog():
         response = gs.transaction(server, port, toSend)
 
         for val in test.expected_EPS_HK:
-            # Check if output state = 1 for all active power channels except channel 8, which should be 0
+            # To pass test, all active power channels have output state = 1 except channel 8, which should be 0
             colour = '\033[0m' #white
             if val in pchannels:
                 if (response[val] == 0) and (val != 'pchannel8'):
@@ -98,7 +98,7 @@ def test_EPS_pingWatchdog():
         response = gs.transaction(server, port, toSend)
 
         for val in test.expected_EPS_HK:
-            # Check if output state = 1 for all active power channels except 6 and 9, which should both be 0
+            # To pass test, all active power channels have output state = 1 except channels 6 and 9, which should both be 0
             colour = '\033[0m' #white
             if val in pchannels:
                 if (response[val] == 0) and (val != 'pchannel6') and (val != 'pchannel9'):
@@ -115,7 +115,7 @@ def test_EPS_pingWatchdog():
 
     # 12) Disable EPS ping watchdog and UHF verification check
 
-    # Take note of the test's result
+    # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
         test.passed += 1
@@ -140,7 +140,7 @@ def test_GS_pingWatchdog():
 
     # 3) Display data on ground station CLI
     for val in test.expected_EPS_HK:
-        # To pass test, check if ground station WDT is < 86300 seconds
+        # To pass test, ground station WDT remaining time is < 86300 seconds
         colour = '\033[0m' #white
         if (val == 'gs_wdt_time_left_s'):
             if (response['gs_wdt_time_left_s'] >= 86300):
@@ -159,7 +159,7 @@ def test_GS_pingWatchdog():
     response = gs.transaction(server, port, toSend)
 
     for val in test.expected_EPS_HK:
-        # To pass test, check if ground station WDT is > 86300 seconds
+        # To pass test, ground station WDT remaining time is > 86300 seconds
         colour = '\033[0m' #white
         if (val == 'gs_wdt_time_left_s'):
             if (response['gs_wdt_time_left_s'] <= 86300):
@@ -183,12 +183,103 @@ def test_GS_pingWatchdog():
     #                 Ground Station WDT Remaining Time displayed in step 5 is greater than 86300 seconds
     return True 
 
-# TODO - Automate the steps in the OBC Firmware Update test
+# TODO - Automate the remaining steps in the OBC Firmware Update test - 3, 4, 6
 def test_OBC_firmwareUpdate():
+    testPassed = "Pass"
+    goldenImage_ID = 1 # TODO - Replace the current value here with the actual golden image version ID
+
+    # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
+
+    # 2) Retrieve the current firmware version ID and display it on the ground station CLI
+    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    response = gs.transaction(server, port, toSend)
+    currentVersion = response['OBC_software_ver']
+    print("Current firmware/software version ID: " + str(currentVersion))
+    # To pass test, current version should NOT be the "golden" image
+    if (currentVersion == goldenImage_ID):
+        testPassed = "Fail"
+
+    # 3) Reset the OBC into a mode in which the working firmware image can be updated
+
+    # 4) Update the working firmware image by uploading a new image
+    # New image should have identical functionality to the one being replaced, but with a unique firmware version ID
+
+    # 5) Repeat step 2
+    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    response = gs.transaction(server, port, toSend)
+    lastVersion = currentVersion
+    currentVersion = response['OBC_software_ver']
+    print("Current firmware/software version ID: " + str(currentVersion))
+    # To pass test, current version should be different than the version retrieved in step 2
+    if (currentVersion == lastVersion):
+        testPassed = "Fail"
+
+    # 6) Repeat steps 3 & 4, but with a new firmware image having a unique version ID number and incorrect CRC bits
+
+    # 7) Repeat step 2
+    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    response = gs.transaction(server, port, toSend)
+    lastVersion = currentVersion
+    currentVersion = response['OBC_software_ver']
+    print("Current firmware/software version ID: " + str(currentVersion))
+    # To pass test, current version should be the same as the version retrieved in step 5
+    if (currentVersion != lastVersion):
+        testPassed = "Fail"
+
+    # Take note of the test results
+    if (testPassed == "Pass"):
+        colour = '\033[92m' #green
+        test.passed += 1
+    else:
+        colour = '\033[91m' #red
+        test.failed += 1
+
+    print(colour + ' - OBC FIRMWARE UPDATE TEST ' + testPassed + '\n\n' + '\033[0m')
+    
+    # PASS CONDITION: Firmware version ID displayed in step 2 is the current working firmware image, not the "golden" image
+    #                 Firmware version ID displayed in step 5 is the new updated firmware image, which is different than the one in step 2
+    #                 Firmware version ID displayed in step 7, is the same as the ID from step 5
     return True
 
-# TODO - Automate the steps in the OBC Golden Firmware Update test
+# TODO - Automate the remaining steps in the OBC Golden Firmware Update test - 3
 def test_OBC_goldenFirmwareUpdate():
+    testPassed = "Pass"
+    goldenImage_ID = 1 # TODO - Replace the current value here with the actual golden image version ID
+
+    # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
+
+    # 2) Retrieve the current firmware version ID and display it on the ground station CLI
+    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    response = gs.transaction(server, port, toSend)
+    currentVersion = response['OBC_software_ver']
+    print("Current firmware/software version ID: " + str(currentVersion))
+    # To pass test, current version should NOT be the "golden" image
+    if (currentVersion == goldenImage_ID):
+        testPassed = "Fail"
+
+    # 3) Reset the OBC and have it boot the "golden" firmware image
+
+    # 4) Repeat step 2
+    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    response = gs.transaction(server, port, toSend)
+    currentVersion = response['OBC_software_ver']
+    print("Current firmware/software version ID: " + str(currentVersion))
+    # To pass test, current version should be the "golden" image
+    if (currentVersion != goldenImage_ID):
+        testPassed = "Fail"
+
+    # Take note of the test results
+    if (testPassed == "Pass"):
+        colour = '\033[92m' #green
+        test.passed += 1
+    else:
+        colour = '\033[91m' #red
+        test.failed += 1
+
+    print(colour + ' - OBC GOLDEN FIRMWARE UPDATE TEST ' + testPassed + '\n\n' + '\033[0m')
+
+    # PASS CONDITION: Firmware version ID displayed in step 2 is the current working firmware image, not the "golden" image
+    #                 Firmware version ID displayed in step 4 is the current "golden" image
     return True
 
 def testAllCommandsToOBC():
