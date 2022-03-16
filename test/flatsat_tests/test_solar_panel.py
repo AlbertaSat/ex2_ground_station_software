@@ -23,7 +23,8 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    # Gather all HK data and check if all values are within their given ranges
+    print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
+    test.testHousekeeping(1, 1, 1, 1, 0, 0, 0, 0, 0)
 
     test.summary() #call when done to print summary of tests
 
