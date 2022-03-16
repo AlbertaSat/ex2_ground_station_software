@@ -34,7 +34,7 @@ opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
 # TODO - Add in remaining HK variables and their expected values to the following dictionaries:
-#        expected_EPS_HK, expected_OBC_HK, expected_charon_HK
+#        expected_EPS_HK, expected_OBC_HK, expected_charon_HK, expected_sBand_HK
 # NOTE - The HK variables to be added in don't exist yet at the time of last edit
 class testLib(object):
     def __init__(self):
@@ -204,17 +204,17 @@ class testLib(object):
         }
 
         self.expected_sBand_HK = {
-            # Radio Frequency
+            # Radio Frequency in MHz
             # Encoder Register (bit order, data rate, modulation, filter, scrambler)
             # Status register
-            # RF Output Power
-            # PA Temperature
-            # Top Temperature Sensor
-            # Bottom Temperature Sensor
-            # Battery Current
-            # Battery Voltage
-            # PA Current
-            # PA Voltage
+            'outputPower': [30, 30],# RF Output Power in dBm
+            'PA_Temp': [17, 35], # PA Temperature in deg C
+            'Top_Temp': [17, 35], # Top Temperature Sensor in deg C
+            'Bottom_Temp': [17, 35], # Bottom Temperature Sensor in deg C
+            'Bat_Current': [0],# Battery Current in A
+            'Bat_Voltage': [6, 12], # Battery Voltage in V
+            'PA_Current': [0.86, 0.86], # PA Current in A
+            'PA_Voltage': [5, 5], # PA Voltage in V
         }
 
         self.expected_iris_HK = {
