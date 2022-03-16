@@ -26,7 +26,7 @@ gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
-# TODO - Automate the remaining steps in the EPS test
+# TODO - Automate the remaining steps in the EPS test - 2, 3, 4, 10, 12
 def test_EPS_pingWatchdog():
     testPassed = "Pass"
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
@@ -37,7 +37,7 @@ def test_EPS_pingWatchdog():
 
     # 4) Enable OBC to check UHF operating status every 5 min by verifying the software version. OBC will command EPS to reset power channel 8 for 10 seconds if verification fails
 
-    # NOTE "pchannelX" (where X = a num from 1-9) doesn't exist yet. The name is just a placeholder
+    # TODO "pchannelX" (where X = a num from 1-9) doesn't exist yet. The name is just a placeholder, so replace them with the right HK names
     pchannels = ['pchannel1', 'pchannel2', 'pchannel3', 'pchannel4', 'pchannel5', 'pchannel6', 'pchannel7', 'pchannel8','pchannel9']
 
     # 5) Repeat the following every 10 seconds for 6 minutes:
@@ -116,7 +116,7 @@ def test_EPS_pingWatchdog():
     # 12) Disable EPS ping watchdog and UHF verification check
 
     # Take note of the test's result
-    if (testPassed == 'Pass'):
+    if (testPassed == "Pass"):
         colour = '\033[92m' #green
         test.passed += 1
     else:
@@ -130,36 +130,54 @@ def test_EPS_pingWatchdog():
     #                 During step 11, Output State = 1 for all active power channels except channels 6 and 9, which should both equal 0
     return True
 
-# TODO - Automate the remaining steps in the Ground Station Ping Watch dog
 def test_GS_pingWatchdog():
     testPassed = "Pass"
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
-    # 2) & 3) Gather all EPS HK info and display data on ground station CLI
-    test.send('eps.cli.general_telemetry') 
+    # 2) Gather all EPS HK info
+    server, port, toSend = gs.getInput('eps.cli.general_telemetry')
+    response = gs.transaction(server, port, toSend)
 
-    # To pass test, check if ground station WDT is < 86300 seconds
-    if (test.response['gs_wdt_time_left_s'] >= 86300):
-        testPassed = "Fail"
+    # 3) Display data on ground station CLI
+    for val in test.expected_EPS_HK:
+        # To pass test, check if ground station WDT is < 86300 seconds
+        colour = '\033[0m' #white
+        if (val == 'gs_wdt_time_left_s'):
+            if (response['gs_wdt_time_left_s'] >= 86300):
+                testPassed = "Fail"
+                colour = '\033[91m' #red
+            else:
+                colour = '\033[92m' #green
+        print(colour + str(val) + ": " + str(response[val]))
 
     # 4) Reset the ground station watchdog timer
-    test.send('eps.ground_station_wdt.reset')
+    server, port, toSend = gs.getInput('eps.ground_station_wdt.reset')
+    response = gs.transaction(server, port, toSend)
 
     # 5) Repeat steps 2 & 3 within 100 seconds of step 4
-    test.send('eps.cli.general_telemetry')
+    server, port, toSend = gs.getInput('eps.cli.general_telemetry')
+    response = gs.transaction(server, port, toSend)
 
-    # To pass test, check if ground station WDT is > 86300 seconds
-    if (test.response['gs_wdt_time_left_s'] <= 86300):
-        testPassed = "fail"
+    for val in test.expected_EPS_HK:
+        # To pass test, check if ground station WDT is > 86300 seconds
+        colour = '\033[0m' #white
+        if (val == 'gs_wdt_time_left_s'):
+            if (response['gs_wdt_time_left_s'] <= 86300):
+                testPassed = "Fail"
+                colour = '\033[91m' #red
+            else:
+                colour = '\033[92m' #green
+        print(colour + str(val) + ": " + str(response[val]))
 
-    if (testPassed == 'Pass'):
+    # Take note of the test's result
+    if (testPassed == "Pass"):
         colour = '\033[92m' #green
         test.passed += 1
     else:
         colour = '\033[91m' #red
         test.failed += 1
 
-    print(colour + ' - EPS PING WATCHDOG TEST ' + testPassed + '\n\n' + '\033[0m')
+    print(colour + ' - GROUND STATION PING WATCHDOG TEST ' + testPassed + '\n\n' + '\033[0m')
 
     # PASS CONDITION: Ground Station WDT Remaining Time displayed in step 3 is less than 86300 seconds
     #                 Ground Station WDT Remaining Time displayed in step 5 is greater than 86300 seconds
@@ -181,7 +199,6 @@ def testAllCommandsToOBC():
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 
-    # TODO  - Finish function implementation
     print("\n---------- GROUND STATION PING WATCHDOG TEST ----------\n")
     test_GS_pingWatchdog()
 
