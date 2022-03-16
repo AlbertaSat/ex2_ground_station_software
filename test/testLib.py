@@ -13,11 +13,12 @@
 '''
 '''
  * @file commandParser.py
- * @author Dustin Wagner
+ * @author Dustin Wagner, Daniel Sacro
  * @date 2021-06-28
 '''
 
-'''This File contains no actual tests. Only a class to send/receive and format results of tests'''
+'''In addition to sending/receiving CSP packets and formatting test results, the class in this 
+file also contains a function that runs the OBC system-wide housekeeping test'''
 
 from email.charset import add_charset
 import time
@@ -32,14 +33,15 @@ import numpy as np
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
-
+# TODO - Add in remaining HK variables and their expected values to the following dictionaries:
+#        expected_EPS_HK, expected_OBC_HK, expected_charon_HK
+# NOTE - The HK variables to be added in don't exist yet at the time of last edit
 class testLib(object):
     def __init__(self):
         self.start = time.time()
         self.failed = 0
         self.passed = 0
         self.response = None
-
         self.expected_EPS_HK = {
             'vBatt_mv': [7400, 7800], # Battery Voltage in mV
             'curBattIn_mA': [1100, 1100], # Battery Input Current in mA
@@ -126,79 +128,79 @@ class testLib(object):
             'temp10_c': [17, 25],
             'temp11_c': [17, 25],
             'temp12_c': [17, 25],
-            'wdt_gs_counter': [0, 10], # GS WDT Reboot count = wdt_gs_counter
-            'wdt_gs_time_left': [1, 86400], # GS WDT Remaining time = wdt_gs_time_left or eps.ground_station_wdt.get_wdt_remaining
-            # Last reset reason = last_reset_reason (IN ATHENA HK)
+            'wdt_gs_counter': [0, 10], # GS WDT Reboot count
+            'wdt_gs_time_left': [1, 86400], # GS WDT Remaining time
+            # Last reset reason = last_reset_reason (in Athena HK?)
             'bootCnt': [0, 50]# boot counter = bootCnt
         }
        
         self.expected_OBC_HK = {
-            # MCU Temperature
+            # MCU Temperature - in ADCS...?
             # Converter Temperature
             # Uptime
             # Memory Usage
         }
 
         self.expected_UHF_HK = {
-            # Radio frequency
-            # Uptime
-            # Internal Temperature
+            'freq': [436.5, 436.5], # Radio frequency in MHz
+            'uptime': [1, 21600], # Uptime in s
+            'temperature': [17, 25], # Internal Temperature in deg C
         }
 
         self.expected_solarPanel_HK = {
-            # Nadir Temp 1
-            # Nadir Temp ADC
-            # Port Temp 1
-            # Port Temp 2
-            # Port Temp 3
-            # Port Temp ADC
-            # Port Dep Temp 1
-            # Port Dep Temp 2
-            # Port Dep Temp 3
-            # Port Dep Temp ADC
-            # Star Temp 1
-            # Star Temp 2
-            # Star Temp 3
-            # Star Temp ADC
-            # Star Dep Temp 1
-            # Star Dep Temp 2
-            # Star Dep Temp 3
-            # Star Dep Temp ADC
-            # Zenith Temp 1
-            # Zenith Temp 2
-            # Zenith Temp 3
-            # Zenith Temp ADC
-            # Nadir PD 1
-            # Port PD 1
-            # Port PD 2
-            # Port PD 3
-            # Port Dep PD 1
-            # Port Dep PD 2
-            # Port Dep PD 3
-            # Star PD 1
-            # Star PD 2
-            # Star PD 3
-            # Star Dep PD 1
-            # Star Dep PD 2
-            # Star Dep PD 3
-            # Zenith PD 1
-            # Zenith PD 2
-            # Zenith PD 3
-            # Port Voltage
-            # Port Dep Voltage
-            # Star Voltage
-            # Star Dep Voltage
-            # Zenith Voltage
-            # Port Current
-            # Port Dep Current
-            # Star Current
-            # Star Dep Current
-            # Zenith Current
+            'Nadir_Temp1': [0, 70],# Nadir Temp 1 in deg C
+            'Nadir_Temp_Adc': [0, 70], # Nadir Temp ADC in deg C
+            'Port_Temp1': [0, 70], # Port Temp 1-3  in deg C
+            'Port_Temp2': [0, 70],
+            'Port_Temp3': [0, 70],
+            'Port_Temp_Adc': [0, 70], # Port Temp ADC in deg C
+            'Port_Dep_Temp1': [0, 70], # Port Dep Temp 1-3 in deg C
+            'Port_Dep_Temp2': [0, 70],
+            'Port_Dep_Temp3': [0, 70],
+            'Port_Dep_Temp_Adc': [0, 70], # Port Dep Temp ADC in deg C
+            'Star_Temp1': [0, 70], # Star Temp 1-3 in deg C
+            'Star_Temp2': [0, 70],
+            'Star_Temp3': [0, 70],
+            'Star_Temp_Adc': [0, 70], # Star Temp ADC in deg C
+            'Star_Dep_Temp1': [0, 70], # Star Dep Temp 1-3 in deg C
+            'Star_Dep_Temp2': [0, 70],
+            'Star_Dep_Temp3': [0, 70],
+            'Star_Dep_Temp_Adc': [0, 70], # Star Dep Temp ADC in deg C
+            'Zenith_Temp1': [0, 70], # Zenith Temp 1-3 in deg C
+            'Zenith_Temp2': [0, 70],
+            'Zenith_Temp3': [0, 70],
+            'Zenith_Temp_Adc': [0, 70], # Zenith Temp ADC in deg C
+            'Nadir_Pd1': [0, 100], # Nadir PD 1 in %
+            'Port_Pd1': [0, 100], # Port PD 1-3 in %
+            'Port_Pd2': [0, 100],
+            'Port_Pd3': [0, 100],
+            'Port_Dep_Pd1': [0, 100], # Port Dep PD 1-3 in %
+            'Port_Dep_Pd2': [0, 100],
+            'Port_Dep_Pd3': [0, 100],
+            'Star_Pd1': [0, 100], # Star PD 1-3 in %
+            'Star_Pd2': [0, 100],
+            'Star_Pd3': [0, 100],
+            'Star_Dep_Pd1': [0, 100], # Star Dep PD 1-3 in %
+            'Star_Dep_Pd2': [0, 100],
+            'Star_Dep_Pd3': [0, 100],
+            'Zenith_Pd1': [0, 100], # Zenith PD 1-3 in %
+            'Zenith_Pd2': [0, 100],
+            'Zenith_Pd3': [0, 100],
+            'Port_Voltage': [0, 16500], # Port Voltage in mV
+            'Port_Dep_Voltage': [0, 16500], # Port Dep Voltage in mV
+            'Star_Voltage': [0, 16500], # Star Voltage in mV
+            'Star_Dep_Voltage': [0, 16500], # Star Dep Voltage in mV
+            'Zenith_Voltage': [0, 16500], # Zenith Voltage in mV
+            'Port_Current': [0, 600], # Port Current in mA
+            'Port_Dep_Current': [0, 600], # Port Dep Current in mA
+            'Star_Current': [0, 600], # Star Current in mA
+            'Star_Dep_Current': [0, 600], # Star Dep Current in mA
+            'Zenith_Current': [0, 600], # Zenith Current in mA
         }
 
         self.expected_charon_HK = {
             # GPS CRC
-            # Temperature Sensors
+            # Temperature Sensors 1-8 in deg C
         }
 
         self.expected_sBand_HK = {
