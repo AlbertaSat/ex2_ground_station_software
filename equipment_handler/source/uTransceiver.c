@@ -21,11 +21,10 @@
  */
 
 #include "uTransceiver.h"
-#include <stdlib.h> //*
-#include <time.h>   //*
+#include <stdlib.h>
+#include <time.h>
 #include <uhf_uart.h>
 #include <uhf.h>
-// #include "logger/logger.h"
 #include "i2c_dummy.h"
 
 // TODO: Firmware update command

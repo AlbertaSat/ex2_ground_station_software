@@ -85,12 +85,12 @@ bool i2c_package_for_radio(char *command, uint8_t command_len) {
     int radio_len = 16+2+command_len+2;
         fwrite(radio_command, sizeof(uint8_t), radio_len, fptr);
     for( int i = 0; i < radio_len; i++){
-    	
+
       printf("%c", radio_command[i]);
     }
     fclose(fptr);
-    
+
     int status = system("cat output.bin | nc -w 1 127.0.0.1 1234");
-    
+
     return true;
 }
