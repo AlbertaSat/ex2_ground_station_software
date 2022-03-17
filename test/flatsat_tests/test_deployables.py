@@ -23,11 +23,11 @@ from testLib import testLib as test
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    # Commisioning/LEOP Test
+    # Commisioning/LEOP Test - Cannot be automated. Requires a visual inspection of the burn wires, a release of physical switches, and watching mechanisms deploy
 
-    # Manual Deployment Test
+    # Manual Deployment Test - Cannot be automated. Requires a visual inspection of the burn wires, a release of physical switches, and watching mechanisms deploy
 
-    # Failure to Deploy Test
+    # Failure to Deploy Test - Cannot be automated. Requires the securing and releasing of physical switches
 
     test.summary() #call when done to print summary of tests
 
