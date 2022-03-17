@@ -27,6 +27,8 @@ def test_sBandDownlink():
     # 1) Ensure that the OBC, UHF, EPS, and S-Band are turned on, and that the OBC has the most up-to-date firmware (doesn't need to be automated)
 
     # 2) Gather all system-wide housekeeping information and save it to the OBC SD card
+    server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+    response = gs.transaction(server, port, toSend)
 
     # 3) Downlink the housekeeping information file over the S-Band connection and display all HK info on the ground station CLI
 
