@@ -16,18 +16,93 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
+'''NOTE - Processing for 10 Hz DFGM data is not implemented into the DFGM software. It was decided that 1 Hz and 100 Hz would be more than enough data.'''
+'''Please also note that there were NO ground station commands to allow for file transferring at the time of last edit.'''
+
 import time
 import numpy as np
 from testLib import testLib as test
 
 test = test() #call to initialize local test class
 
+# TODO - Automate the remaining steps in the EPS test - 3, 4
+def test_DFGM_dataAcquisitionAndSBandDownlink():
+    testPassed = "Pass"
+    # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
+
+    # 2) Turn the DFGM on for 10 seconds and have the OBC process the data output by the DFGM into 1 Hz, 10 Hz, and 100 Hz data. Store them as separate
+    # files on the SD card. This data will just be used for testing, and will consist of background magnetic signatures
+    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(10)')
+    response = gs.transaction(server, port, toSend)
+    if (response['err'] != 0):
+        testPassed = "Fail"
+    time.sleep(11)
+
+    # 3) Downlink a 1 Hz DFGM data file over the S-Band connection, and save it to the personal computer
+
+    # 4) Repeat step 3 for the 10 Hz and 100 Hz DFGM data
+
+    # Take note of the test results
+    if (testPassed == "Pass"):
+        colour = '\033[92m' #green
+        test.passed += 1
+    else:
+        colour = '\033[91m' #red
+        test.failed += 1
+
+    print(colour + ' - DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ' + testPassed + '\n\n' + '\033[0m')
+
+    # PASS CONDITION: The data packet should be visible on the ground station computer and able to open and read within 5 seconds of downlink
+    #                 All DFGM data magnitude and direction is within +/- 10% of expected magnetic field at the time, position, and orientation of the test,
+    #                 with an expected level of noise and interference present
+    #                 Each frequency of DFGM data type corresponds to a different data file, so the data on each type of packet should be different from each other
+    return True
+
+# TODO - Automate the remaining steps in the EPS test - 3, 4
+def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
+    testPassed = "Pass"
+    # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
+
+    # 2) Turn the DFGM on for 10 seconds and have the OBC process the data output by the DFGM into 1 Hz, 10 Hz, and 100 Hz data. Store them as separate
+    # files on the SD card
+    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(10)')
+    response = gs.transaction(server, port, toSend)
+    if (response['err'] != 0):
+        testPassed = "Fail"
+    time.sleep(11)
+
+    # 3) Downlink a 1 Hz DFGM data file over the UHF connection, and save it to the personal computer
+
+    # 4) Repeat step 3 for 10 Hz and 100 Hz DFGM data
+
+    # Take note of the test results
+    if (testPassed == "Pass"):
+        colour = '\033[92m' #green
+        test.passed += 1
+    else:
+        colour = '\033[91m' #red
+        test.failed += 1
+
+    print(colour + ' - DFGM DATA ACQUISITION AND UHF DOWNLINK TEST ' + testPassed + '\n\n' + '\033[0m')
+
+    # PASS CONDITION: The data packet should be visible on the ground station computer and able to open and read within 5 seconds of downlink
+    #                 The packet should not be empty, and should contain data that corresponds to a magnetic field reading of the immediate area
+    #                 Each frequency of DFGM data type corresponds to a different data file, so the data on each type of packet should be different from each other
+
+    return True
+
 def testAllCommandsToOBC():
-    # Collect all HK data and ensure that they are all within their expected values
+    print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
+    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0)
 
-    # Collect and process DFGM data for 10 seconds, then downlink it over SBAND
+    # TODO  - Finish function implementation
+    print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")
+    test_DFGM_dataAcquisitionAndSBandDownlink()
 
-    # Collect and process DFGM data for 10 seconds, then downlink it over UHF
+    # TODO  - Finish function implementation
+    print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")
+    test_DFGM_dataAcquisitionAnd_UHF_Downlink()
 
     test.summary() #call when done to print summary of tests
 
