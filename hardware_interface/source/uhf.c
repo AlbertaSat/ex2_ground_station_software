@@ -20,8 +20,8 @@
 /*
  * When TRX connected, the stubbed blocks can be used for TRX = off situation.
  */
-// #include <FreeRTOS.h>
-// #include <os_queue.h>
+#include <FreeRTOS.h>
+#include <os_queue.h>
 #include <stdio.h>
 #include <string.h>
 #include <csp/csp_endian.h>

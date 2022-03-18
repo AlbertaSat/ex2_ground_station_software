@@ -21,11 +21,7 @@
  */
 
 #include "uTransceiver.h"
-#include <stdlib.h>
-#include <time.h>
-#include <uhf_uart.h>
-#include <uhf.h>
-#include "i2c_dummy.h"
+#include "gnuradio_interface.h"
 
 // TODO: Firmware update command
 // TODO: Combine send code into single function?
@@ -90,11 +86,16 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     uint8_t answer_length = UHF_write_ans_len_table[code];
     uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
 
+#ifndef IS_SATELLITE
+    i2c_package_for_radio(command_to_send, strlen((char *)command_to_send));
+    return U_GOOD_CONFIG;
+#else
+
 #ifndef UHF_USE_I2C_CMDS
     return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, command_length, ans, answer_length);
 #else
     return_val = i2c_sendAndReceive(UHF_I2C_ADDRESS, command_to_send, command_length, ans, answer_length);
-#endif
+#endif /* UHF_USE_I2C_CMDS */
 
     // Handle errors
     if ((return_val == U_I2C_SUCCESS) || (return_val == U_UART_SUCCESS)) {
@@ -104,6 +105,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     vPortFree(ans);
     enter_pipe_mode = false;
     return return_val;
+#endif /* IS_SATELLITE */
 }
 
 /**
@@ -143,12 +145,17 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     uint8_t answer_length = UHF_read_ans_len_table[code];
     uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
 
+#ifndef IS_SATELLITE
+    i2c_package_for_radio(command_to_send, strlen((char *)command_to_send));
+    return U_GOOD_CONFIG;
+#else
+
 #ifndef UHF_USE_I2C_CMDS
     return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
 #else
     return_val =
         i2c_sendAndReceive(UHF_I2C_ADDRESS, (uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
-#endif
+#endif /* UHF_USE_I2C_CMDS */
 
     /* Handle Errors */
     if ((return_val == U_I2C_SUCCESS) || (return_val == U_UART_SUCCESS)) {
@@ -161,6 +168,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     }
     vPortFree(ans);
     return return_val;
+#endif /* IS_SATELLITE */
 }
 
 /**
@@ -838,7 +846,6 @@ static UHF_return UHF_read_command_parse(uint8_t code, void *param, uint8_t *ans
 
     case UHF_LOWPWR_CMD: { // Get Low Power Mode Status
         uint8_t *status = (uint8_t *)param;
-
         uint8_t hex[2] = {ans[blankspace_index - 2], ans[blankspace_index - 1]};
         convHexFromASCII(2, hex);
         *status = (hex[0] << 4) | hex[1];

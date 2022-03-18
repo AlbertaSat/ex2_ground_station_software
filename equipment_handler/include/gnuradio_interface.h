@@ -12,25 +12,19 @@
  * GNU General Public License for more details.
  */
 /**
- * @file i2c.h
- * @author Thomas Ganley
- * @date 2020-05-20
+ * @file gnuradio_interface.h
+ * @author Josh Lazaruk
+ * @date 2022-03-16
  */
-#ifndef i2c_H
-#define i2c_H
+
+#ifndef gnuradio_interface_H
+#define gnuradio_interface_H
 
 #include <stdint.h>
 #include <stdbool.h>
-
-bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length);
-
-bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len);
-
-bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
-                            uint8_t response_len);
 
 uint16_t crc16(char* pData, int length);
 
 bool i2c_package_for_radio(char *command, uint8_t command_len);
 
-#endif /* i2c_H */
+#endif
