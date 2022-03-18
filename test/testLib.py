@@ -34,7 +34,7 @@ opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
 # TODO - Add in remaining HK variables and their expected values to the following dictionaries:
-#        expected_EPS_HK, expected_OBC_HK, expected_charon_HK, expected_sBand_HK
+#        expected_EPS_HK, expected_OBC_HK, expected_charon_HK, expected_sBand_HK, expected_DFGM_HK
 # NOTE - The HK variables to be added in don't exist yet at the time of last edit
 class testLib(object):
     def __init__(self):
@@ -227,14 +227,14 @@ class testLib(object):
         }
 
         self.expected_DFGM_HK = {
-            # Sensor Temperature
-            # Board Temperature
-            # Reference Temperature
-            # Input Voltage
-            # Input Current
-            # Core Voltage
-            # Positive Rail Voltage
-            # Reference Voltage
+            'Sensor_Temperature': [17, 25], # Sensor Temperature in deg C
+            'Board_Temperature': [17, 25], # Board Temperature in deg C
+            'Reference_Temperature': [17, 25], # Reference Temperature in deg C
+            'Input_Voltage': [4900, 5100], # Input Voltage in mV
+            'Input_Current': [30, 50], # Input Current in mA
+            #'Core_Voltage': [, ], # Core Voltage in mV
+            'Positive_Rail_Voltage': [4900, 5100], # Positive Rail Voltage in mV
+            'Reference_Voltage': [4900, 5100], # Reference Voltage in mV
         }
 
         self.expected_ADCS_HK = {
