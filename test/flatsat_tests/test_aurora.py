@@ -161,6 +161,7 @@ def testAllCommandsToOBC():
 
     # TODO  - Finish function implementation
     print("\n---------- FULL PAYLOAD FUNCTIONALITY TEST ----------\n")
+    testFullPayloadFunctionality()
 
     test.summary() #call when done to print summary of tests
 
