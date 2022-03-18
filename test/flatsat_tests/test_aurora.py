@@ -42,10 +42,10 @@ def testFirmwareUpdate():
     # 6) Retrieve the current payload firmware version ID and display it on the ground station CLI
     # To pass test, version ID should be different from the one in step 3
 
-    # 7) Repeat steps 4 and 5, but with a new firmware image having a unique firmware version ID number and inccorect CRC bits
+    # 7) Repeat steps 4 and 5, but with a new firmware image having a unique firmware version ID number and incorrect CRC bits
 
     # 8) Repeat step 6
-    # To ass test, version ID should be the same as the one from step 6
+    # To pass test, version ID should be the same as the one from step 6
 
     # PASS CONDITION: The version ID displayed in step 3 is that of the current working firmware image
     #                 The version ID displayed in step 6 is the ID of the new updated firmware image, which is different from step 3's ID
