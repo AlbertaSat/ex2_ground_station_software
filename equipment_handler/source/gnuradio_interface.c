@@ -11,37 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-/**
- * @file i2c.c
- * @author Thomas Ganley
- * @date 2021-02-17
- */
+ /**
+  * @file gnuradio_interface.c
+  * @author Josh Lazaruk
+  * @date 2022-03-16
+  */
 
 #include "i2c_dummy.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-bool i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
-    for( int i = 0; i < length; i++){
-        printf("%c", command[i]);
-    }
-    return true;
-}
-
-bool i2c_sendAndReceive(uint8_t addr, char *command, uint8_t command_len, char *response, uint8_t response_len) {
-    for( int i = 0; i < command_len; i++){
-        printf("%c", command[i]);
-    }
-    return true;
-}
-
-bool i2c_sendAndReceivePIPE(uint8_t addr, char *command, uint8_t command_len, char *response,
-                            uint8_t response_len) {
-    for( int i = 0; i < command_len; i++){
-        printf("%c", command[i]);
-    }
-    return true;
-}
 
 uint16_t crc16(char* pData, int length)
 {
