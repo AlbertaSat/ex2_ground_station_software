@@ -35,6 +35,7 @@ gs = groundStation.groundStation(opts.getOptions())
 
 # TODO - Add in remaining HK variables and their expected values to the following dictionaries:
 #        expected_EPS_HK, expected_OBC_HK, expected_charon_HK, expected_sBand_HK, expected_DFGM_HK
+#        expected_NIM_HK, expected_yukon_HK
 # NOTE - The HK variables to be added in don't exist yet at the time of last edit
 class testLib(object):
     def __init__(self):
@@ -237,6 +238,26 @@ class testLib(object):
             'Reference_Voltage': [4900, 5100], # Reference Voltage in mV
         }
 
+        self.expected_NIM_HK = {
+            # PCB Temperature 00 - Main Board in deg C
+            # PCB Temperature 01 - Main Board in deg C
+            # PCB Temperature 02 - Screen board in deg C
+            # PCB Temperature 03 - Screen board in deg C
+            # PCB Temperature 04 - Camera board in deg C
+            # PCB Temperature 05 - Camera board in deg C
+            # eNIM Pre-Test Backgronud Reading in Lux
+            # eNIM Test Pattern Reading in Lux
+        }
+
+        self.expected_yukon_HK = {
+            # Temperatures TBD in deg C
+            # Motor Encoder Positions
+            # Payload MCU RAM Available in Bytes
+            # Science Package Data File Size in Bytes
+            # TBD Camera Health
+            # TBD SD Artwork Buffer Positions in "16 Bytes"
+        }
+
         self.expected_ADCS_HK = {
             # Estimated Angular Rate(s)
             # Estimated Angular Angle(s)
@@ -258,6 +279,7 @@ class testLib(object):
             # Rate Sensor Temperatures
             # Current ADCS State
         }
+        
         pass
 
     def check_EPS_HK(self):
@@ -314,10 +336,15 @@ class testLib(object):
                 print(colour + str(val) + ': ' + str(self.expected_UHF_HK[val][0]) + ' <= ' + str(self.response[val]) + ' <= ' + str(self.expected_UHF_HK[val][1]))
         return checkPassed
 
-    def check_solarPanel_HK(self):
+    def check_solarPanel_HK(self, ignoringSomeHK = 0):
         checkPassed = True
+        # Ignore list contains HK variables from this subsystem that aren't required by the AuroraSat and YukonSat payloads to pass the test
+        ignoreList = ['Port_Temp3', 'Port_Dep_Temp3', 'Star_Temp3', 'Star_Dep_Temp3', 'Zenith_Temp3' ,'Port_Pd3' ,'Port_Dep_Pd3' ,'Star_Pd3' ,'Star_Dep_Pd3' ,'Zenith_Pd3']
         for val in self.expected_solarPanel_HK:
-            if (self.response[val] > (self.expected_solarPanel_HK[val])[1]):
+            if (ignoringSomeHK and val in ignoreList):
+                colour = '\033[0m' #white
+                print(colour + str(val) + ': ' + str(self.response[val]))
+            elif (self.response[val] > (self.expected_solarPanel_HK[val])[1]):
                 # Greater than Max
                 colour = '\033[91m' #red
                 checkPassed = False
@@ -332,10 +359,15 @@ class testLib(object):
                 print(colour + str(val) + ': ' + str(self.expected_solarPanel_HK[val][0]) + ' <= ' + str(self.response[val]) + ' <= ' + str(self.expected_solarPanel_HK[val][1]))
         return checkPassed
     
-    def check_charon_HK(self):
+    def check_charon_HK(self, ignoringSomeHk = 0):
         checkPassed = True
+        # Ignore list contains HK variables from this subsystem that aren't required by the AuroraSat and YukonSat payloads to pass the test
+        ignoreList = [] # TODO - Include the variable name for GPS CRC in this ignoreList
         for val in self.expected_charon_HK:
-            if (self.response[val] > (self.expected_charon_HK[val])[1]):
+            if (ignoringSomeHk and val in ignoreList):
+                colour = '\033[0m' #white
+                print(colour + str(val) + ': ' + str(self.response[val]))
+            elif (self.response[val] > (self.expected_charon_HK[val])[1]):
                 # Greater than Max
                 colour = '\033[91m' #red
                 checkPassed = False
@@ -404,6 +436,43 @@ class testLib(object):
                 print(colour + str(val) + ': ' + str(self.expected_DFGM_HK[val][0]) + ' <= ' + str(self.response[val]) + ' <= ' + str(self.expected_DFGM_HK[val][1]))
         return checkPassed
 
+    def check_NIM_HK(self):
+        checkPassed = True
+        for val in self.expected_NIM_HK:
+            if (self.response[val] > (self.expected_NIM_HK[val])[1]):
+                # Greater than Max
+                colour = '\033[91m' #red
+                checkPassed = False
+                print(colour + str(val) + ': ' + str(self.response[val]) + ' > ' + str(self.expected_NIM_HK[val][1]))
+            elif (self.response[val] < (self.expected_NIM_HK[val])[0]):
+                # Less than min
+                colour = '\033[91m' #red
+                checkPassed = False
+                print(colour + str(val) + ': ' + str(self.response[val]) + ' < ' + str(self.expected_NIM_HK[val][0]))
+            else:
+                colour = '\033[0m' #white
+                print(colour + str(val) + ': ' + str(self.expected_NIM_HK[val][0]) + ' <= ' + str(self.response[val]) + ' <= ' + str(self.expected_NIM_HK[val][1]))
+        return checkPassed
+
+    def check_yukon_HK(self):
+        checkPassed = True
+        self.expected
+        for val in self.expected_yukon_HK:
+            if (self.response[val] > (self.expected_yukon_HK[val])[1]):
+                # Greater than Max
+                colour = '\033[91m' #red
+                checkPassed = False
+                print(colour + str(val) + ': ' + str(self.response[val]) + ' > ' + str(self.expected_yukon_HK[val][1]))
+            elif (self.response[val] < (self.expected_yukon_HK[val])[0]):
+                # Less than min
+                colour = '\033[91m' #red
+                checkPassed = False
+                print(colour + str(val) + ': ' + str(self.response[val]) + ' < ' + str(self.expected_yukon_HK[val][0]))
+            else:
+                colour = '\033[0m' #white
+                print(colour + str(val) + ': ' + str(self.expected_yukon_HK[val][0]) + ' <= ' + str(self.response[val]) + ' <= ' + str(self.expected_yukon_HK[val][1]))
+        return checkPassed
+
     def check_ADCS_HK(self):
         checkPassed = True
         for val in self.expected_ADCS_HK:
@@ -423,7 +492,7 @@ class testLib(object):
         return checkPassed
 
     # Checks all HK data by default
-    def testHousekeeping(self, EPS = 1, OBC = 1, UHF = 1, solar = 1, charon = 1, sBand = 1, iris = 1, DFGM = 1, ADCS = 1):
+    def testHousekeeping(self, EPS = 1, OBC = 1, UHF = 1, solar = 1, charon = 1, sBand = 1, iris = 1, DFGM = 1, NIM = 1, yukon = 1, ADCS = 1):
         server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
         self.response = gs.transaction(server, port, toSend)
         testPassed = 'Pass'
@@ -444,12 +513,14 @@ class testLib(object):
                 testPassed = 'Fail'
 
         if (solar):
-            checkPassed = self.check_solarPanel_HK()
+            # if NIM + yukon > 0, certain HK values will be ignored in the test since the AuroraSat and YukonSat payloads don't require them
+            checkPassed = self.check_solarPanel_HK(NIM + yukon)
             if not checkPassed:
                 testPassed = 'Fail'
 
         if (charon):
-            checkPassed = self.check_charon_HK()
+            # if NIM + yukon > 0, certain HK values will be ignored in the test since the AuroraSat and YukonSat payloads don't require them
+            checkPassed = self.check_charon_HK(NIM + yukon)
             if not checkPassed:
                 testPassed = 'Fail'
 
@@ -465,6 +536,16 @@ class testLib(object):
 
         if (DFGM):
             checkPassed = self.check_DFGM_HK()
+            if not checkPassed:
+                testPassed = 'Fail'
+
+        if (NIM):
+            checkPassed = self.check_NIM_HK()
+            if not checkPassed:
+                testPassed = 'Fail'
+
+        if (yukon):
+            checkPassed = self.check_yukon_HK()
             if not checkPassed:
                 testPassed = 'Fail'
 
