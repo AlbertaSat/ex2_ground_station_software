@@ -35,7 +35,7 @@ gs = groundStation.groundStation(opts.getOptions())
 
 # TODO - Add in remaining HK variables and their expected values to the following dictionaries:
 #        expected_EPS_HK, expected_OBC_HK, expected_charon_HK, expected_sBand_HK, expected_DFGM_HK
-#        expected_NIM_HK, expected_yukon_HK
+#        expected_NIM_HK, expected_yukon_HK, expected_adcs_HK
 # NOTE - The HK variables to be added in don't exist yet at the time of last edit
 class testLib(object):
     def __init__(self):
