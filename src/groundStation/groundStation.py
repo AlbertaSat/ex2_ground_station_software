@@ -35,6 +35,7 @@ import socket
 import os
 import re
 from collections import defaultdict
+from types import ClassMethodDescriptorType
 
 # if __name__ == '__main__':
 # We're running this file directly, not as a module.
@@ -113,7 +114,7 @@ class groundStation(object):
     """ Public Methods """
 
     def getInput(self, prompt=None, inVal=None):
-        """ Take input (either prompt user or take input from funtion call)
+        """ Take input (either prompt user or take .
         and parse the input to CSP packet information """
         if inVal is not None:
             try:
@@ -144,7 +145,7 @@ class groundStation(object):
         return parsed packet """
         conn = self.__connectionManager__(server, port)
         if conn is None:
-            print('Error: Could not connection')
+            print('Error: Could not connect')
             return {}
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
@@ -298,15 +299,61 @@ class options(object):
             help='RDP connection timeout')
         return self.parser.parse_args(sys.argv[1:])
 
+class embedCSP:
+
+    def __init__(self, scheduledTime, cmd):
+        self.scheduledTime = scheduledTime
+        self.cmd = cmd
+
+    def embedCSP(self):
+        self._command = {}
+        self._command['time'] = self.scheduledTime
+        embeddedServer, embeddedPort, embeddedToSend = csp.getInput(inVal = self.cmd)
+        self._command['dst'] = embeddedServer
+        self._command['dport'] = embeddedPort
+        self._command['subservice'] = embeddedToSend
+        return self._command
+
+class parseScheduler:
+
+    def __init__(self, cmd):
+        self.cmd = cmd
+    
+    def parseCmd(self):
+        cmdStart = re.search(r'[a-z]', self.cmd, re.I)
+        if cmdStart is not None:
+            return cmdStart.start()
+        return -1
 
 if __name__ == '__main__':
     opts = options()
     csp = groundStation(opts.getOptions())
+    sysVals = SystemValues()
 
     while True:
         try:
             server, port, toSend = csp.getInput(prompt='to send: ')
-            csp.transaction(server, port, toSend)
+            if server == sysVals.APP_DICT['OBC'] and port == sysVals.SERVICES['SCHEDULER'] and toSend[0] == sysVals.serviceIdx['SET_SCHEDULE']:
+                # open the scheduler text file as an array of strings
+                with open(toSend[1:]) as f:
+                    cmdList = f.readlines()
+                #create an empty list, and create another list of csp objects
+                schedule = list()
+                #cspObj = [embeddedCSP() for i in range(len(cmdList))]
+                # for each line of command, parse the packet
+                for i in range(len(cmdList)):
+                    # parse the time and command as strings
+                    cmdStart = parseScheduler.parseCmd(cmdList[i])
+                    scheduledTime = cmdList[i][:cmdStart]
+                    scheduledCmd = cmdList[i][cmdStart:]
+                    # embed the parsed command as csp packet
+                    embeddedPacket = embedCSP.embedCSP(scheduledTime,scheduledCmd)
+                    # append the list
+                    schedule.append(embeddedPacket)
+                # embed the csp packet in each cspObj
+                csp.transaction(server, port, schedule)
+            else:
+                csp.transaction(server, port, toSend)
             # receive()
         except Exception as e:
             print(e)

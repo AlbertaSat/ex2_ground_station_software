@@ -78,6 +78,31 @@ class SystemValues(object):
             'LAST': 31
         }
         self.SERVICES = {
+            'SCHEDULER': {
+                'port': 15,  # share a port with EPS time service
+                # TODO: these need a error response value
+                'subservice': {
+                    'SET_SCHEDULE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['<U13'],  # schedule file name, ex. schedule.txt. All scheduled commands should be stored here
+                            'returns': {
+                                'err': '>b',
+                                'timestamp': '<u4'
+                            }
+                        }
+                    },
+                    'GET_SCHEDULE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                }
+            },
             'TIME_MANAGEMENT': {
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value
