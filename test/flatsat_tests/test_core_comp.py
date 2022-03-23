@@ -291,7 +291,7 @@ def test_OBC_goldenFirmwareUpdate():
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 0, 0, 0, 0, 0, 0)
+    test.testHousekeeping(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
