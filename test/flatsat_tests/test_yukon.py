@@ -17,11 +17,20 @@
  * @date 2022-3-10
 '''
 
-'''Please also note that there were NO ground station commands or service software implementation for the YukonSat payload at the time of last edit.'''
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
 
 import time
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
+
+sys.path.append("../src")
+from groundStation import groundStation
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
@@ -160,18 +169,18 @@ def testFullPayloadFunctionality():
     return True
 
 def testAllCommandsToOBC():
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- FIRMWARE UPDATE TEST ----------\n")
     testFirmwareUpdate()
 
     print("\n---------- OBC HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0)
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- FULL PAYLOAD FUNCTIONALITY TEST ----------\n")  
 
     test.summary() #call when done to print summary of tests

@@ -16,17 +16,24 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
 import time
 import numpy as np
-from testLib import testLib as test
-from groundStation import groundStation
 
+import sys
+import os
+sys.path.append("./test")
+from testLib import testLib as test
+
+sys.path.append("../src")
+from groundStation import groundStation
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
-# TODO - Automate the remaining steps in the EPS test - 2, 3, 4, 10, 12
+# TODO - Automate the remaining steps in the EPS test - 2-4, 10, 12
 def test_EPS_pingWatchdog():
     testPassed = "Pass"
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
@@ -286,22 +293,21 @@ def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 0, 0, 0, 0, 0, 0)
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 
     print("\n---------- GROUND STATION PING WATCHDOG TEST ----------\n")
     test_GS_pingWatchdog()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- OBC FIRMWARE UPDATE TEST ----------\n")
     test_OBC_firmwareUpdate()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- OBC GOLDEN FIRMWARE UPDATE TEST ----------\n")
     test_OBC_goldenFirmwareUpdate()
 
-    
     test.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':

@@ -16,6 +16,9 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
+'''Please note that all the tests in this file cannot be automated'''
+
 import time
 import numpy as np
 from testLib import testLib as test

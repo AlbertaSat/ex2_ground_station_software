@@ -16,12 +16,24 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
 import time
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
+
+sys.path.append("../src")
+from groundStation import groundStation
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
+# TODO - Automate the remaining steps in the EPS Ping Watchdog test - 2-4
 def test_EPS_pingWatchdog():
     testPassed = "Pass"
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
@@ -100,6 +112,7 @@ def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 1, 1, 0, 0, 0, 0, 0)
 
+    # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 
