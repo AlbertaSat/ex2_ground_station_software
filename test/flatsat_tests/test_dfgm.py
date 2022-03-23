@@ -103,7 +103,7 @@ def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0)
+    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
 
     # TODO - Finish function implementation
     print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")

@@ -217,7 +217,7 @@ def test_EPS_pingWatchdog():
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 0, 0)
+    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0)
 
     # TODO - Finish function implementation
     print("\n---------- DATA ACQUISITION TO FILE AND DOWNLINK OVER S-BAND (UNCOMPRESSED) TEST ----------\n")

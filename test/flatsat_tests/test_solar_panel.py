@@ -29,7 +29,7 @@ test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 0, 0, 0, 0, 0)
+    test.testHousekeeping(1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0)
 
     test.summary() #call when done to print summary of tests
 
