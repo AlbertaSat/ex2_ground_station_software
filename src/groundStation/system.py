@@ -182,7 +182,91 @@ class SystemValues(object):
                                 'err': '>b'  # err
                             }
                         }
-                    }
+                    },
+                    'DEPLOY_DEPLOYABLES': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': ['>B'],  # switch #. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7.
+                            'returns': {
+                                'err': '>b',  # switch status
+                                'current_mA': '>u2'
+                            }
+                        }
+                    },
+                    'GET_SWITCH_STATUS': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'switch_DFGM' : '>b',
+                                'switch_UHF_P' : '>b',
+                                'switch_UHF_Z' : '>b',
+                                'switch_UHF_S' : '>b',
+                                'switch_UHF_N' : '>b',
+                                'switch_Port' : '>b',
+                                'switch_Payload' : '>b',
+                                'switch_Starboard' : '>b'
+                            }
+                        }
+                    },
+                    'GET_UHF_WATCHDOG_TIMEOUT': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'timeout': '>u4'
+                            }
+                        }
+                    },
+                    'SET_UHF_WATCHDOG_TIMEOUT': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['>B'], 
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
+                    'GET_SBAND_WATCHDOG_TIMEOUT': {
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'timeout': '>u4'
+                            }
+                        }
+                    },
+                    'SET_SBAND_WATCHDOG_TIMEOUT': {
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': ['>B'], 
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
+                    'GET_CHARON_WATCHDOG_TIMEOUT': {
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'timeout': '>u4'
+                            }
+                        }
+                    },
+                    'SET_CHARON_WATCHDOG_TIMEOUT': {
+                        'subPort': 8,
+                        'inoutInfo': {
+                            'args': ['>B'], 
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
                 }
             },
             'COMMUNICATION': {

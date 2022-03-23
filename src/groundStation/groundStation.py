@@ -317,7 +317,7 @@ class options(object):
             '-t',
             '--timeout',
             type=int,
-            default='10000', # 10 seconds
+            default='15000', # 15 seconds
             help='RDP connection timeout')
         return self.parser.parse_args(sys.argv[1:])
 
