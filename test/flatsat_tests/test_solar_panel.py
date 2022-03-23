@@ -16,8 +16,13 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
 import time
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
 
 test = test() #call to initialize local test class

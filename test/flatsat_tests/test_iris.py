@@ -17,15 +17,24 @@
  * @date 2022-3-10
 '''
 
-'''Please note that there were NO ground station commands for iris at the time of last edit'''
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
 
 import time
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
+
+sys.path.append("../src")
+from groundStation import groundStation
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
-# TODO - Automate the remainings steps in the S-Band Downlink Test - 3, 4, 5
+# TODO - Automate the remainings steps in the S-Band Downlink Uncompressed Test - 3-5
 def test_sBandDownlinkUncompressed():
     # 1) Ensure OBC, S-Band transceiver, EPS, and electra are turned on, and that the OBC and Electra have the most up-to-date firmware installed, 
     # including Electra image acquisition parameters (Doesn't have to be automated)
@@ -42,7 +51,7 @@ def test_sBandDownlinkUncompressed():
     #                 component image testing. 
     return True
 
-# TODO - Automate the remainings steps in the S-Band Downlink Test - 3, 4, 5
+# TODO - Automate the remainings steps in the UHF Downlink Uncompressed Test - 3-5
 def test_UHF_downlinkUncompressed():
     # 1) Attach Electra to the OBC and to the EPS via Charon. Attach UHF and associated components. Ensure that the OBC, UHF transceiver, EPS
     # and Electra are turned on, and than the OBC and Electra have the most up-to-date firmware installed, including Electra image acquisition
@@ -60,7 +69,7 @@ def test_UHF_downlinkUncompressed():
     #                 component image testing    
     return True
 
-# TODO - Automate the remainings steps in the S-Band Downlink Test - 3, 4, 5, 6, 7
+# TODO - Automate the remainings steps in the S-Band Downlink Compressed Test - 3-7
 def test_sBandDownlinkCompressed():
     # 1) Attach Electra to the OBC and to the EPS via Charon. Attach UHF and associated components. Ensure that the OBC, UHF transceiver, EPS
     # and Electra are turned on, and than the OBC and Electra have the most up-to-date firmware installed, including Electra image acquisition
@@ -82,7 +91,7 @@ def test_sBandDownlinkCompressed():
     #                 component image testing
     return True
 
-# TODO - Automate the remainings steps in the S-Band Downlink Test - 3, 4, 5, 6
+# TODO - Automate the remainings steps in the UHF Downlink Compressed Test - 3-6
 def test_UHF_downlinkCompressed():
     # 1) Attach Electra to the OBC and to the EPS via Charon. Attach UHF and associated components. Ensure that the OBC, UHF transceiver, EPS
     # and Electra are turned on, and than the OBC and Electra have the most up-to-date firmware installed, including Electra image acquisition
@@ -102,7 +111,7 @@ def test_UHF_downlinkCompressed():
     #                 component image testing
     return True
 
-# TODO - Automate the remainings steps in the S-Band Downlink Test - 3, 4, 5, 6, 7, 8
+# TODO - Automate the remainings steps in the S-Band Downlink Test - 3-8
 def test_irisFirmwareUpdate():
     # 1) Develop a new Electra FPGA program. Ensure that this image has a different firmware version number than the currently flashed Electra image
 
@@ -130,7 +139,7 @@ def test_irisFirmwareUpdate():
     #                 The version ID displayed during step 8 is the same ID as the one from step 6
     return True
 
-# TODO - Automate the remaining steps in the EPS test - 2, 3, 4
+# TODO - Automate the remaining steps in the EPS Ping Watchdog test - 2-4
 def test_EPS_pingWatchdog():
     testPassed = "Pass"
     # 1) Ensure OBC, UHF, EPS, Charon, Sband, and Iris are turned on (Doesn't have to be automated)
@@ -210,27 +219,27 @@ def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 0, 0)
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DATA ACQUISITION TO FILE AND DOWNLINK OVER S-BAND (UNCOMPRESSED) TEST ----------\n")
     test_sBandDownlinkUncompressed()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DATA ACQUISITION TO FILE AND DOWNLINK OVER UHF (UNCOMPRESSED) TEST ----------\n")
     test_UHF_downlinkUncompressed()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DATA ACQUISITION TO FILE AND DOWNLINK OVER S-BAND (COMPRESSED) TEST ----------\n")
     test_sBandDownlinkCompressed()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DATA ACQUISITION TO FILE AND DOWNLINK OVER UHF (COMPRESSED) TEST ----------\n")
     test_UHF_downlinkCompressed()
     
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- IRIS FIRMWARE OVER UHF UPDATE TEST ----------\n")
     test_irisFirmwareUpdate()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 

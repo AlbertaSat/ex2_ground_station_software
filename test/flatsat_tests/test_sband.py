@@ -16,13 +16,25 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
+
 import time
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
+
+sys.path.append("../src")
+from groundStation import groundStation
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
-# TODO - Automate the remainings steps in the S-Band Downlink Test - 2 & 3
+# TODO - Automate the remainings steps in the S-Band Downlink Test - 2, 3
 def test_sBandDownlink():
     # 1) Ensure that the OBC, UHF, EPS, and S-Band are turned on, and that the OBC has the most up-to-date firmware (doesn't need to be automated)
 
@@ -35,7 +47,7 @@ def test_sBandDownlink():
     # PASS CONDITION: Ground station CLI is able to successfully show the data outlined in the pass criteria of the previous test (system-wide HK test)
     return True
 
-# TODO - Automate the remaining steps in the EPS test - 2, 3, 4
+# TODO - Automate the remaining steps in the EPS Ping Watchdog test - 2-4
 def test_EPS_pingWatchdog():
     testPassed = "Pass"
     # 1) Ensure OBC, UHF, EPS, Charon, and S-Band are turned on (Doesn't have to be automated)
@@ -119,11 +131,11 @@ def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 1, 1, 1, 0, 0, 0)
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DOWNLINK HOUSEKEEPING OVER S-BAND TEST ----------\n")
     test_sBandDownlink()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 

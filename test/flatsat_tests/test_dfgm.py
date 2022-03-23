@@ -17,16 +17,26 @@
  * @date 2022-3-10
 '''
 
-'''NOTE - Processing for 10 Hz DFGM data is not implemented into the DFGM software. It was decided that 1 Hz and 100 Hz would be more than enough data.'''
-'''Please also note that there were NO ground station commands to allow for file transferring at the time of last edit.'''
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
+'''Also please note that processing for 10 Hz DFGM data is not implemented into the DFGM software. It was decided that 1 Hz and 100 Hz data
+would be more than enough data.'''
 
 import time
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
+
+sys.path.append("../src")
+from groundStation import groundStation
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
-# TODO - Automate the remaining steps in the EPS test - 3, 4
+# TODO - Automate the remaining steps in the DFGM Data Acquisition and S Band Downlink test - 3, 4
 def test_DFGM_dataAcquisitionAndSBandDownlink():
     testPassed = "Pass"
     # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
@@ -59,7 +69,7 @@ def test_DFGM_dataAcquisitionAndSBandDownlink():
     #                 Each frequency of DFGM data type corresponds to a different data file, so the data on each type of packet should be different from each other
     return True
 
-# TODO - Automate the remaining steps in the EPS test - 3, 4
+# TODO - Automate the remaining steps in the DFGM Data Acquisition and UHF Downlink test - 3, 4
 def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
     testPassed = "Pass"
     # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
@@ -89,18 +99,17 @@ def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
     # PASS CONDITION: The data packet should be visible on the ground station computer and able to open and read within 5 seconds of downlink
     #                 The packet should not be empty, and should contain data that corresponds to a magnetic field reading of the immediate area
     #                 Each frequency of DFGM data type corresponds to a different data file, so the data on each type of packet should be different from each other
-
     return True
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0)
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")
     test_DFGM_dataAcquisitionAndSBandDownlink()
 
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")
     test_DFGM_dataAcquisitionAnd_UHF_Downlink()
 

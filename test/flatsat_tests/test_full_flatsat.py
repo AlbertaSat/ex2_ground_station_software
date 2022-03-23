@@ -16,6 +16,8 @@
  * @author Daniel Sacro
  * @date 2022-3-10
 '''
+
+'''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
 import time
 import numpy as np
 
@@ -522,7 +524,8 @@ def testModeChangeDuringFlightScheduleActivityExecution():
     # PASS CONDITION: -> In steps 3 and 4, the housekeeping says the satellite is in safe mode and only the UHF and OBC's power channels are enabled 
     return True
 
-# NOTE - The LEOP test cannot be automated. It requires visual inspections, manual measurements with a multimeter, and the physical act of holding down or releasing footswitches or antennas
+# NOTE - The LEOP test cannot be automated. It requires visual inspections, manual measurements with a multimeter,
+# and the physical act of holding down or releasing footswitches or antennas
 def test_LEOP():
     return True
 
@@ -714,11 +717,11 @@ def testWeekInTheLife():
 
 def testAllCommandsToOBC():
     print("\n---------- VALIDATE POWER BUDGET TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     validatePowerBudget()
     
     print("\n---------- SAFE MODE BEHAVIOUR AND RECOVERY TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testSafeModeBehaviourAndRecovery()    
 
     print("\n---------- CHARON POWER CHANNEL FORCED RESET TEST ----------\n")
@@ -726,27 +729,27 @@ def testAllCommandsToOBC():
     testCharonPowerChannelForcedReset()
     
     print("\n---------- CLOCK SYNCHRONIZATION USING GROUND STATION TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testClockSynchronizationUsing_GS()
 
     print("\n---------- INTERRUPTION OF S BAND TRANSMISSION TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testInterruptionOfSBandTransmission()
 
     print("\n---------- INTERRUPTION OF UHF UPLINK TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testInterruptionOf_UHF_uplink()
 
     print("\n---------- INTERRUPTION OF UHF DOWNLINK TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testInterruptionOf_UHF_downlink()
     
     print("\n---------- INTERRUPTION OF FIRMWARE UPDATE TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testInterruptionOfFirmwareUpdate()
 
     print("\n---------- MODE CHANGE DURING FLIGHT SCHEDULE ACTIVITY EXECUTION TEST ----------\n")
-    # TODO  - Finish function implementation
+    # TODO - Finish function implementation
     testModeChangeDuringFlightScheduleActivityExecution()
 
     print("\n---------- ITU-REQUESTED TRANSMITTER TURN OFF AND TURN ON TEST ----------\n")
