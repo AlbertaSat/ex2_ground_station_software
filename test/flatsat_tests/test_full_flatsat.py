@@ -17,11 +17,17 @@
  * @date 2022-3-10
 '''
 import time
-from wsgiref import validate
 import numpy as np
+
+import sys
+import os
+sys.path.append("./test")
 from testLib import testLib as test
 
-import os
+sys.path.append("../src")
+from groundStation import groundStation
+opts = groundStation.options()
+gs = groundStation.groundStation(opts.getOptions())
 
 test = test() #call to initialize local test class
 
@@ -516,11 +522,11 @@ def testModeChangeDuringFlightScheduleActivityExecution():
     # PASS CONDITION: -> In steps 3 and 4, the housekeeping says the satellite is in safe mode and only the UHF and OBC's power channels are enabled 
     return True
 
-# NOTE - LEOP test cannot be automated. It requires visual inspections, manual measurements with a multimeter, and the physical act of holding down or releasing footswitches or antennas
+# NOTE - The LEOP test cannot be automated. It requires visual inspections, manual measurements with a multimeter, and the physical act of holding down or releasing footswitches or antennas
 def test_LEOP():
     return True
 
-# NOTE - Failed LEOP test cannot be automated. It requires the physical act of holding down deployable mechanisms
+# NOTE - The Failed LEOP test cannot be automated. It requires the physical act of holding down deployable mechanisms
 def testFailed_LEOP():
     return True
 
@@ -655,11 +661,55 @@ def testSendCommandsTo_EPS_viaIris(): # NOTE - TBC pending Iris design changes. 
     #                 -> The "Last Reset Reason" field displayed during step 6 equals "Power_on" 
     return True
 
+# NOTE - The Day in the Life test cannot be automated. "All 'Expected Results' will be verified by a human"
 def testDayInTheLife():
-    # Follow the Daily Activity Sample Document
+    # For the Prototype FlatSat, run the "Daily Activity Sample for Ex-Alta 2"
+
+    # For the Ex-Alta 2 Protoflight FlatSat, run the "Daily Activity Sample for Ex-Alta 2"
+
+    # For the AuroraSat Protoflight FlatSat, run the "Daily Activity Sample for AuroraSat"
+
+    # For the YukonSat Protoflight FlatSat, run the "Daily Activity Sample for YukonSat"
+
+    # PASS CONDITION: -> All DFGM, image, and HK data was downlinked to the GS PC and is not corrupted 
+    #                 -> All DFGM data magnitude and direction is within +/- 10% of the expected magnetic field 
+    #                    at the time, position, and orientation of the test, with an expected level of noise and
+    #                    interference present
+    #                 -> When viewed as images, all image data shows the test pattern at the expected resolution
+    #                    and focus
+    #                 -> All received housekeeping values are nominal as defined in the HK data sheet
+    #                 -> All file delete operations were successful
+    #                 -> ADCS TLE was updated successfully
+    #                 -> All onboard clock synchronoizations were performed successfully
+    #                 -> If any anomalies occur, their root cause was traced back to operator failure (not system
+    #                    failure), and were successfully recovered from 
     return True
 
+# NOTE - The Week in the Life test cannot be automated. "All 'Expected Results' will be verified by a human"
 def testWeekInTheLife():
+    # Ensure that OBC tools used to detect and flat memory leaks and uninitialized memory reads are enabled
+
+    # For the Prototype FlatSat, run the "Daily Activity Sample for Ex-Alta 2"
+
+    # For the Ex-Alta 2 Protoflight FlatSat, run the "Daily Activity Sample for Ex-Alta 2"
+
+    # For the AuroraSat Protoflight FlatSat, run the "Daily Activity Sample for AuroraSat"
+
+    # For the YukonSat Protoflight FlatSat, run the "Daily Activity Sample for YukonSat"
+
+    # PASS CONDITION: -> All DFGM, image, and HK data was downlinked to the GS PC and is not corrupted 
+    #                 -> All DFGM data magnitude and direction is within +/- 10% of the expected magnetic field 
+    #                    at the time, position, and orientation of the test, with an expected level of noise and
+    #                    interference present
+    #                 -> When viewed as images, all image data shows the test pattern at the expected resolution
+    #                    and focus
+    #                 -> All received housekeeping values are nominal as defined in the HK data sheet
+    #                 -> All file delete operations were successful
+    #                 -> ADCS TLE was updated successfully 
+    #                 -> All onboard clock synchronoizations were performed successfully
+    #                 -> No memory leaks or reads from uninitialized memory are flagged 
+    #                 -> If any anomalies occur, their root cause was traced back to operator failure (not system
+    #                    failure), and were successfully recovered from
     return True
 
 def testAllCommandsToOBC():
@@ -710,14 +760,6 @@ def testAllCommandsToOBC():
     print("\n---------- SEND COMMANDS TO EPS VIA IRIS TEST ----------\n")
     # TODO  - Finish function implementation
     testSendCommandsTo_EPS_viaIris()
-
-    print("\n---------- DAY IN THE LIFE TEST ----------\n")
-    # TODO  - Finish function implementation
-    testDayInTheLife()
-
-    print("\n---------- DAY IN THE WEEK TEST ----------\n")
-    # TODO  - Finish function implementation
-    testWeekInTheLife()
 
     test.summary() #call when done to print summary of tests
 
