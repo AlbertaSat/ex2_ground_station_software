@@ -443,7 +443,7 @@ def testInterruptionOf_UHF_downlink():
     #                 -> In 1 to 240 (TBC) seconds after step 9, the system responds with a confirmation that the file has completed uploading 
     return True
 
-# TODO - Automate the remaining steps in the Interruption of UHF Downlink test - 1-3, 6-9
+# TODO - Automate the remaining steps in the Interruption of Firmware Update test - 1-3, 6-9
 def testInterruptionOfFirmwareUpdate():
     testPassed = "Pass"
 
