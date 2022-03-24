@@ -308,6 +308,7 @@ class embedCSP:
     def embedCSP(self):
         self._command = {}
         self._command['time'] = self.scheduledTime
+        # convert embeddedToSend into a byte array
         embeddedServer, embeddedPort, embeddedToSend = csp.getInput(inVal = self.cmd)
         self._command['dst'] = embeddedServer
         self._command['dport'] = embeddedPort
@@ -333,9 +334,14 @@ if __name__ == '__main__':
     while True:
         try:
             server, port, toSend = csp.getInput(prompt='to send: ')
-            if server == sysVals.APP_DICT['OBC'] and port == sysVals.SERVICES['SCHEDULER'] and toSend[0] == sysVals.serviceIdx['SET_SCHEDULE']:
+            data = bytearray(libcsp.packet_get_data(toSend))
+            if (
+                server == sysVals.APP_DICT.get('OBC') and 
+                port == sysVals.SERVICES.get('SCHEDULER').get('port') and
+                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort')
+                ):
                 # open the scheduler text file as an array of strings
-                with open(toSend[1:]) as f:
+                with open('schedule.txt') as f:
                     cmdList = f.readlines()
                 #create an empty list, and create another list of csp objects
                 schedule = list()
