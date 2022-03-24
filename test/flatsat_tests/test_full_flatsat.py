@@ -270,7 +270,7 @@ def testCharonPowerChannelForcedReset():
     # PASS CONDITION: -> The number of power channel resets for each channel after the reset command is executed must be one more than before the command is executed
     return True
 
-# TODO - Automate the remaining steps in the Charon Power Channel Forced Reset test - 1, 3
+# TODO - Automate the remaining steps in the Clock Synchronization test - 1, 3
 def testClockSynchronizationUsing_GS():
     testPassed = "Pass"
 
