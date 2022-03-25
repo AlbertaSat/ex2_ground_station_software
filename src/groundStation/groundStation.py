@@ -37,6 +37,8 @@ import re
 from collections import defaultdict
 from types import ClassMethodDescriptorType
 
+import numpy
+
 # if __name__ == '__main__':
 # We're running this file directly, not as a module.
 from groundStation.commandParser import CommandParser
@@ -326,38 +328,47 @@ class parseScheduler:
             return cmdStart.start()
         return -1
 
+
 if __name__ == '__main__':
     opts = options()
     csp = groundStation(opts.getOptions())
     sysVals = SystemValues()
+    print("hello world")
 
     while True:
         try:
             server, port, toSend = csp.getInput(prompt='to send: ')
-            data = bytearray(libcsp.packet_get_data(toSend))
+            #data = bytearray(libcsp.packet_get_data(toSend))
+            print('about to enter if loop\n')
             if (
                 server == sysVals.APP_DICT.get('OBC') and 
-                port == sysVals.SERVICES.get('SCHEDULER').get('port') and
-                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort')
+                port == sysVals.SERVICES.get('SCHEDULER').get('port')
+                #data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort')
+                #server == sysVals.APP_DICT['OBC'] and 
+                #port == sysVals.SERVICES['SCHEDULER'] and
+                #data[0] == 
                 ):
                 # open the scheduler text file as an array of strings
-                with open('schedule.txt') as f:
+                print("about to open schedule.txt\n")
+                with open('scheduler.txt') as f:
                     cmdList = f.readlines()
                 #create an empty list, and create another list of csp objects
                 schedule = list()
                 #cspObj = [embeddedCSP() for i in range(len(cmdList))]
                 # for each line of command, parse the packet
-                for i in range(len(cmdList)):
-                    # parse the time and command as strings
-                    cmdStart = parseScheduler.parseCmd(cmdList[i])
-                    scheduledTime = cmdList[i][:cmdStart]
-                    scheduledCmd = cmdList[i][cmdStart:]
-                    # embed the parsed command as csp packet
-                    embeddedPacket = embedCSP.embedCSP(scheduledTime,scheduledCmd)
-                    # append the list
-                    schedule.append(embeddedPacket)
+                if len(cmdList) > 0:
+                    for i in range(len(cmdList)):
+                        # parse the time and command as strings
+                        cmdStart = parseScheduler.parseCmd(cmdList[i])
+                        scheduledTime = cmdList[i][:cmdStart]
+                        scheduledCmd = cmdList[i][cmdStart:]
+                        # embed the parsed command as csp packet
+                        embeddedPacket = embedCSP.embedCSP(scheduledTime,scheduledCmd)
+                        # append the list
+                        schedule.append(embeddedPacket)
                 # embed the csp packet in each cspObj
-                csp.transaction(server, port, schedule)
+                print("about to send packet\n")
+                csp.transaction(server, port, toSend)
             else:
                 csp.transaction(server, port, toSend)
             # receive()

@@ -85,7 +85,7 @@ class SystemValues(object):
                     'SET_SCHEDULE': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': ['<U13'],  # schedule file name, ex. schedule.txt. All scheduled commands should be stored here
+                            'args': None,  # schedule file name, ex. schedule.txt. All scheduled commands should be stored here
                             'returns': {
                                 'err': '>b',
                                 'timestamp': '<u4'
