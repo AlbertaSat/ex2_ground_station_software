@@ -79,7 +79,7 @@ def cli():
                         schedule.append(scheduler)
                         print("list of schedules: ", schedule)
                 # embed the csp packet in each cspObj
-                embeddedData = libcsp.packet_set_data(toSend, schedule)
+                embeddedData = libcsp.packet_set_data(toSend, data)
                 resp = gs.transaction(server, port, embeddedData)
             else:
                 resp = gs.transaction(server, port, toSend)

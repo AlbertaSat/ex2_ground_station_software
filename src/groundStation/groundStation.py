@@ -302,16 +302,21 @@ class options(object):
         return self.parser.parse_args(sys.argv[1:])
 
 class embedCSP:
-
-    def __init__(self, scheduledTime, cmd):
-        self.scheduledTime = scheduledTime
+    def __init__(self, cmd):
         self.cmd = cmd
+        self.opts = options()
+        self.csp = groundStation(self.opts.getOptions())
 
     def embedCSP(self):
+        cmdStart = re.search(r'[a-z]', self.cmd, re.I)
+        if cmdStart is not None:
+            cmdStart = cmdStart.start()
+        scheduledTime = self.cmd[:cmdStart]
+        scheduledCmd = self.cmd[cmdStart:]
         self._command = {}
-        self._command['time'] = self.scheduledTime
+        self._command['time'] = scheduledTime
         # convert embeddedToSend into a byte array
-        embeddedServer, embeddedPort, embeddedToSend = csp.getInput(inVal = self.cmd)
+        embeddedServer, embeddedPort, embeddedToSend = self.csp.getInput(inVal = scheduledCmd)
         self._command['dst'] = embeddedServer
         self._command['dport'] = embeddedPort
         self._command['subservice'] = embeddedToSend
