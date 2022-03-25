@@ -137,7 +137,7 @@ def test_EPS_pingWatchdog():
     #                 During step 7, Output State = 1 for all active power channels except channel 10, which should be 0
     return True
 
-# TODO - Automate the remaining steps in the Full Payload Functionality test - 2-6
+# TODO - Automate the remaining steps in the Full Payload Functionality test - 2-8
 def testFullPayloadFunctionality():
     # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
