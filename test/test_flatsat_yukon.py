@@ -12,22 +12,22 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test_aurora.py
+ * @file test_flatsat_yukon.py
  * @author Daniel Sacro
- * @date 2022-3-10
+ * @date 2022-03-22
 '''
 
 '''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
+
 import time
+import sys
+from testLib import testLib as test
+from os import path
+sys.path.append("./src")
+from groundStation import groundStation
+
 import numpy as np
 
-import sys
-import os
-sys.path.append("./test")
-from testLib import testLib as test
-
-sys.path.append("../src")
-from groundStation import groundStation
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
@@ -63,16 +63,16 @@ def testFirmwareUpdate():
 # TODO - Automate the remaining steps in the EPS Ping Watchdog test - 2-4
 def test_EPS_pingWatchdog():
     testPassed = "Pass"
-    # 1) Ensure OBC, UHF, EPS, Charon, S Band, and NIM are turned on (Doesn't need to be automated)
+    # 1) Ensure OBC, UHF, EPS, Charon, S Band, and YukonSat payload are turned on (Doesn't need to be automated)
 
     # 2) Ensure that the OBC is operating in such a way that it will respond to ping requests of CSP ID 1
 
     # 3) Configure an EPS ping watchdog to check CSP ID 1 every 5 mins and toggle EPS output 6 for 10 seconds if it times out
 
-    # 4) Enable OBC to check NIM's operating status every 5 min by verifying the that the firmware version number can be read.
+    # 4) Enable OBC to check YukonSat Payload's operating status every 5 min by verifying the that the firmware version number can be read.
     # OBC will command EPS to reset power channel 3 and 10 simultaneously for 10 seconds if the verification fails
 
-    # TODO "pchannelX" (where X = a num from 1-9) doesn't exist yet. The name is just a placeholder, so replace them with the right HK names
+    # TODO "pchannelX" (where X = a num from 1-10) doesn't exist yet. The name is just a placeholder, so replace them with the right HK names
     pchannels = ['pchannel1', 'pchannel2', 'pchannel3', 'pchannel4', 'pchannel5', 'pchannel6', 'pchannel7', 'pchannel8','pchannel9', 'pchannel10']
 
     # 5) Repeat the following every 10 seconds for 6 minutes:
@@ -95,8 +95,8 @@ def test_EPS_pingWatchdog():
 
         time.sleep(10)
 
-    # 6) Disconnect UART connection between NIM and the OBC
-    input("\nPlease disconnect the UART connection between NIM and the OBC. Press enter to resume tests.\n") 
+    # 6) Disconnect UART connection between YukonSat Payload and the OBC
+    input("\nPlease disconnect the UART connection between YukonSat Payload and the OBC. Press enter to resume tests.\n") 
 
     # 7) Repeat step 5:
     for j in range(36): 
@@ -119,8 +119,8 @@ def test_EPS_pingWatchdog():
             
         time.sleep(10)
 
-    # 8) Reconnect  UART connection between NIM and the OBC
-    input("\nPlease Reconnect the UART connection between NIM and the OBC. Press enter to resume tests.\n")  
+    # 8) Reconnect  UART connection between YukonSat Payload and the OBC
+    input("\nPlease Reconnect the UART connection between YukonSat Payload and the OBC. Press enter to resume tests.\n")  
 
     # Take note of the test results
     if (testPassed == "Pass"):
@@ -136,23 +136,35 @@ def test_EPS_pingWatchdog():
     #                 During step 7, Output State = 1 for all active power channels except channel 10, which should be 0
     return True
 
-# TODO - Automate the remaining steps in the Full Payload Functionality test - 2-6
+# TODO - Automate the remaining steps in the Full Payload Functionality test - 2-8
 def testFullPayloadFunctionality():
     # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
-    # 2) Upload 2 test images to the payload. Select the first image to be displayed during the next image capture
+    # 2) Upload 2 test image files to the payload. Select the first image to be displayed during the next image capture
 
-    # 3) Take a picture using the payload's camera and save it as a file on the OBC
+    # 3) Send a command over UHF connection to reposition the robotic arm to a position that would intersect with the cubesat structure
 
-    # 4) Switch the image displayed on the screen to the second image, and take a picture using the payload's camera and save it as a file on the OBC
+    # 4) Send a command over UHF connection to reposition the robotic arm to a position that will NOT intersect with the cubesat structure, and will
+    # have the screen in the camera FOV
 
-    # 5) Send a command to downlink both OBC picture files over UHF
+    # 5) Command the OBC to deliever a command to the payload to display the first uploaded image on the screen and capture an image using the camera. Ensure
+    # that this captured image is stored as a file on the OBC
 
-    # 6) Send a command to downlink both OBC picture files over S Band
+    # 6) Command the OBC to deliever a command to the payload to display the second uploaded image on the screen and capture an image using the camera. Ensure
+    # that this captured image is stored as a file on the OBC
 
-    # PASS CONDITION: Both pictures are received uncorrupted at the ground staiton PC and show the correct test images to displayed on the payload
-    #                 screen with the background being the test area.
-    #                 The images received over S Band and UHF are identical. 
+    # 7) Send a command to downlink both captured images over UHF
+
+    # 8) Send a command to downlink both captured images over S Band
+
+    # PASS CONDITION: In step 3, the payload either:
+    #                       -Doesn't move the arm location and responds with a message indiciating that the requested location is forbidden, or
+    #                       -The arm moves but stops moving before colliding with the structure, and also responds with a message indiciating that the requested
+    #                        location is forbidden
+    #                 The correct image files are both successfully displayed on the screen momentarily during their respective steps.
+    #                 The arm moves to the requested location and stops moving afterwards.
+    #                 The iamges are retrieved at the ground station PC for both UHF and S Band downlink, and the images are displayed and show the screen with
+    #                 the correct uploaded image file in the foreground with the appropriate background for the test setup location. 
     return True
 
 def testAllCommandsToOBC():
@@ -161,15 +173,14 @@ def testAllCommandsToOBC():
     testFirmwareUpdate()
 
     print("\n---------- OBC HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0)
+    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0)
 
     # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 
     # TODO - Finish function implementation
-    print("\n---------- FULL PAYLOAD FUNCTIONALITY TEST ----------\n")
-    testFullPayloadFunctionality()
+    print("\n---------- FULL PAYLOAD FUNCTIONALITY TEST ----------\n")  
 
     test.summary() #call when done to print summary of tests
 

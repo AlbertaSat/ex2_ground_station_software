@@ -12,25 +12,18 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test_deployables.py
+ * @file test_flatsat_solar_panels.py
  * @author Daniel Sacro
- * @date 2022-3-10
+ * @date 2022-03-14
 '''
 
-'''Please note that all the tests in this file cannot be automated'''
-
-import time
-import numpy as np
 from testLib import testLib as test
 
 test = test() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    # Commisioning/LEOP Test - Cannot be automated. Requires a visual inspection of the burn wires, a release of physical switches, and watching mechanisms deploy
-
-    # Manual Deployment Test - Cannot be automated. Requires a visual inspection of the burn wires, a release of physical switches, and watching mechanisms deploy
-
-    # Failure to Deploy Test - Cannot be automated. Requires the securing and releasing of physical switches
+    print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
+    test.testHousekeeping(1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0)
 
     test.summary() #call when done to print summary of tests
 

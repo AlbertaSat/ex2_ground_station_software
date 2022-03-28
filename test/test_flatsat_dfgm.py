@@ -12,9 +12,9 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test_dfgm.py
+ * @file test_flatsat_dfgm.py
  * @author Daniel Sacro
- * @date 2022-3-10
+ * @date 2022-03-18
 '''
 
 '''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
@@ -22,15 +22,14 @@
 would be more than enough data.'''
 
 import time
+import sys
+from testLib import testLib as test
+from os import path
+sys.path.append("./src")
+from groundStation import groundStation
+
 import numpy as np
 
-import sys
-import os
-sys.path.append("./test")
-from testLib import testLib as test
-
-sys.path.append("../src")
-from groundStation import groundStation
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file commandParser.py
+ * @file testLib.py
  * @author Dustin Wagner, Daniel Sacro
  * @date 2021-06-28
 '''
@@ -20,11 +20,9 @@
 '''In addition to sending/receiving CSP packets and formatting test results, the class in this 
 file also contains a function that runs the OBC system-wide housekeeping test'''
 
-from email.charset import add_charset
 import time
 import sys
 from os import path
-from tkinter import W
 sys.path.append("./src")
 from groundStation import groundStation
 

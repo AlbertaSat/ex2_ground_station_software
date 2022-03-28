@@ -17,16 +17,13 @@
  * @date 2022-03-24
 '''
 
-'''In addition to sending/receiving CSP packets and formatting test results, the class in this 
-file also contains a function that runs the OBC system-wide housekeeping test'''
-
+'''This file serves as an extension of testLib.py and contains tests that are to
+be used in any of the scripts for the Full and Partial Functional Test Plan'''
 
 import time
 import sys
-from os import path
-
 from testLib import testLib as test
-
+from os import path
 sys.path.append("./src")
 from groundStation import groundStation
 
