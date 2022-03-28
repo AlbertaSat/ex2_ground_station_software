@@ -14,20 +14,20 @@
 '''
  * @file test_full_flatsat.py
  * @author Daniel Sacro
- * @date 2022-3-10
+ * @date 2022-03-22
 '''
 
 '''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
+
 import time
+import sys
+from testLib import testLib as test
+import os
+sys.path.append("./src")
+from groundStation import groundStation
+
 import numpy as np
 
-import sys
-import os
-sys.path.append("./test")
-from testLib import testLib as test
-
-sys.path.append("../src")
-from groundStation import groundStation
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
