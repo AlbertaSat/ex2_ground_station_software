@@ -49,6 +49,7 @@ class functionalTestLib(object):
     def testSystemWideDeployment(self):
         return True
 
+    # TODO - Automate the remaining steps - 1c, 1f, 1h, and all of a-d, g, and i for steps 4-6
     def run_ADCS_healthCheck(self):
         testPassed = "Pass"
         # 1) Perform the control computer health check
