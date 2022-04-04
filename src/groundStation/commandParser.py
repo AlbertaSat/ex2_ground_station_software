@@ -105,7 +105,6 @@ class CommandParser(object):
             # error: check system SystemValues
             return None
 
-        print(length)
         returns = subservice['inoutInfo']['returns']
         args = subservice['inoutInfo']['args']
         for retVal in returns:
