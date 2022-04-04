@@ -216,14 +216,14 @@ class SystemValues(object):
                             'args': None, 
                             'returns': {
                                 'err': '>b',  # err status
-                                'timeout': '>u4'
+                                'timeout_ms': '>u4'
                             }
                         }
                     },
                     'SET_UHF_WATCHDOG_TIMEOUT': {
                         'subPort': 4,
                         'inoutInfo': {
-                            'args': ['>B'], 
+                            'args': ['>u4'], 
                             'returns': {
                                 'err': '>b',  # err status
                             }
@@ -235,14 +235,14 @@ class SystemValues(object):
                             'args': None, 
                             'returns': {
                                 'err': '>b',  # err status
-                                'timeout': '>u4'
+                                'timeout_ms': '>u4'
                             }
                         }
                     },
                     'SET_SBAND_WATCHDOG_TIMEOUT': {
                         'subPort': 6,
                         'inoutInfo': {
-                            'args': ['>B'], 
+                            'args': ['>u4'], 
                             'returns': {
                                 'err': '>b',  # err status
                             }
@@ -254,14 +254,14 @@ class SystemValues(object):
                             'args': None, 
                             'returns': {
                                 'err': '>b',  # err status
-                                'timeout': '>u4'
+                                'timeout_ms': '>u4'
                             }
                         }
                     },
                     'SET_CHARON_WATCHDOG_TIMEOUT': {
                         'subPort': 8,
                         'inoutInfo': {
-                            'args': ['>B'], 
+                            'args': ['>u4'], 
                             'returns': {
                                 'err': '>b',  # err status
                             }
