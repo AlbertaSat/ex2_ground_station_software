@@ -33,7 +33,6 @@ def cli():
 
     #strVal = u'12 * 13 14 2 2 52'
     #print(unicodedata.normalize('NFKD', strVal).encode('ascii', 'replace').decode())
-    print("hello world\n")
 
     while True:
         if flag.exit():
@@ -44,7 +43,9 @@ def cli():
             server, port, toSend = gs.getInput(prompt='to send: ')
             print("printing server, port: ", server, port)
             data = bytearray(libcsp.packet_get_data(toSend))
-            print("print toSend data bytearray: ", data)
+            cspData = bytearray(libcsp.packet_content(toSend))
+            print("toSend data bytearray: ", data)
+            print("toSend csp packet bytearray: ", cspData)
 
             if (
                 server == sysVals.APP_DICT.get('OBC') and 
@@ -60,16 +61,12 @@ def cli():
 
                 #create an empty list, and create another list of csp objects
                 schedule = list()
-
-                print("empty list created\n")
-
                 #cspObj = [embeddedCSP() for i in range(len(cmdList))]
                 # for each line of command, parse the packet
                 if len(cmdList) > 0:
+                    print("length of cmdList is > 0")
                     print(cmdList)
                     for i in range(0, len(cmdList)):
-
-                        print(cmdList[i])
 
                         # parse the time and command, then embed the command as a CSP packet
                         schedulerObj = groundStation.embedCSP(cmdList[i])
@@ -78,9 +75,22 @@ def cli():
                         # append the list
                         schedule.append(scheduler)
                         print("list of schedules: ", schedule)
+                    scheduledTime = schedule[0]['time']
+                    scheduleSubservice = schedule[0]['subservice']
+                    returnPacket = bytearray(libcsp.packet_content(scheduleSubservice))
+                    data.extend(scheduledTime)
+                    data.extend(returnPacket)
+                    print("bytearray of data: ", data)
+                    reply = libcsp.buffer_get(len(scheduledTime)+1)
+                    libcsp.packet_set_data(toSend, data)
+                    libcsp.sendto_reply(toSend, reply, libcsp.CSP_O_NONE)
+                    resp = gs.transaction(server, port, toSend)
+
                 # embed the csp packet in each cspObj
-                embeddedData = libcsp.packet_set_data(toSend, data)
-                resp = gs.transaction(server, port, embeddedData)
+                #embeddedData = libcsp.packet_set_data(toSend, data)
+                
+                #libcsp.packet_set_data(toSend, data)
+                #resp = gs.transaction(server, port, toSend)
             else:
                 resp = gs.transaction(server, port, toSend)
 

@@ -101,7 +101,8 @@ class groundStation(object):
 
             try:
                 conn = libcsp.connect(
-                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                    #libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                    libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_NONE)
             except Exception as e:
                 print(e)
                 return None
@@ -312,9 +313,12 @@ class embedCSP:
         if cmdStart is not None:
             cmdStart = cmdStart.start()
         scheduledTime = self.cmd[:cmdStart]
+        print("scheduledTime: ", scheduledTime)
+        ascii_values = [ord(character) for character in scheduledTime]
+        print("scheduledTime in ascii: ", ascii_values)
         scheduledCmd = self.cmd[cmdStart:]
         self._command = {}
-        self._command['time'] = scheduledTime
+        self._command['time'] = ascii_values
         # convert embeddedToSend into a byte array
         embeddedServer, embeddedPort, embeddedToSend = self.csp.getInput(inVal = scheduledCmd)
         self._command['dst'] = embeddedServer
@@ -338,7 +342,6 @@ if __name__ == '__main__':
     opts = options()
     csp = groundStation(opts.getOptions())
     sysVals = SystemValues()
-    print("hello world")
 
     while True:
         try:
