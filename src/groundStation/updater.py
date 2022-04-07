@@ -85,7 +85,7 @@ class updater(groundStation):
         out.extend(self.address.to_bytes(4, byteorder='big'))
         out.extend(len(data).to_bytes(2, byteorder='big'))
         out.extend(data)
-        print(out)
+        #print(out)
         toSend = libcsp.buffer_get(len(out))
         libcsp.packet_set_data(toSend, out)
         return toSend
@@ -95,6 +95,7 @@ class updater(groundStation):
         return toSend
 
     def send_update(self):
+        skip = 0;
 
         if self.doresume:
             resume_packet = self.get_resume_packet()
@@ -125,11 +126,15 @@ class updater(groundStation):
                 return False
 
         b = bytearray()
+        total_blocks = self.filesize // self.blocksize;
+        current_block = skip // self.blocksize
         while True:
             b = self.file.read(self.blocksize)
             if len(b) == 0:
                 break
             update_packet = self.get_block_update_packet(b)
+            print("Sending block {}/{}".format(current_block, total_blocks));
+            current_block += 1;
             data = self.transaction(update_packet)
             if (len(data) == 0):
                 print("Did not receive response from data packet")
