@@ -79,12 +79,16 @@ def cli():
                     scheduleSubservice = schedule[0]['subservice']
                     returnPacket = bytearray(libcsp.packet_content(scheduleSubservice))
                     data.extend(scheduledTime)
+                    print("data list extended with scheduledTime")
                     data.extend(returnPacket)
+                    print("data list extended with returnPacket")
                     print("bytearray of data: ", data)
                     reply = libcsp.buffer_get(len(scheduledTime)+1)
                     libcsp.packet_set_data(toSend, data)
-                    libcsp.sendto_reply(toSend, reply, libcsp.CSP_O_NONE)
+                    print("executed packet_set_data")
+                    #libcsp.sendto_reply(toSend, reply, libcsp.CSP_O_NONE)
                     resp = gs.transaction(server, port, toSend)
+                    print("packet has been sent to the OBC")
 
                 # embed the csp packet in each cspObj
                 #embeddedData = libcsp.packet_set_data(toSend, data)
@@ -92,6 +96,8 @@ def cli():
                 #libcsp.packet_set_data(toSend, data)
                 #resp = gs.transaction(server, port, toSend)
             else:
+                print("the server is: ", server)
+                print("the port is: ", port)
                 resp = gs.transaction(server, port, toSend)
 
             #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
