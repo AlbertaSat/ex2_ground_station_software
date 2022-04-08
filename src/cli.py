@@ -19,6 +19,8 @@
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
 import time
+import libcsp_py3 as libcsp
+import unicodedata
 from groundStation import groundStation
 
 opts = groundStation.options()
@@ -26,18 +28,76 @@ gs = groundStation.groundStation(opts.getOptions())
 flag = groundStation.GracefulExiter()
 
 def cli():
+    #csp = groundStation(opts.getOptions())
+    sysVals = groundStation.SystemValues()
+
+    #strVal = u'12 * 13 14 2 2 52'
+    #print(unicodedata.normalize('NFKD', strVal).encode('ascii', 'replace').decode())
+
     while True:
         if flag.exit():
-            print('Exiting receiving loop')
+            print('Exiting receiving loop\n')
             flag.reset()
             return
         try:
             server, port, toSend = gs.getInput(prompt='to send: ')
-            if server == 24:
-                # This is a direct UART command to a ground station EnduroSat transceiver to enter PIPE
-                # Can be deleted for flight
-                gs.__setPIPE__()
+            print("printing server, port: ", server, port)
+            data = bytearray(libcsp.packet_get_data(toSend))
+            cspData = bytearray(libcsp.packet_content(toSend))
+            print("toSend data bytearray: ", data)
+            print("toSend csp packet bytearray: ", cspData)
+
+            if (
+                server == sysVals.APP_DICT.get('OBC') and 
+                port == sysVals.SERVICES.get('SCHEDULER').get('port') and
+                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort')
+                ):
+
+                print('entered SET_SCHEDULE\n')
+
+                # open the scheduler text file as an array of strings
+                with open('schedule.txt') as f:
+                    cmdList = f.readlines()
+
+                #create an empty list, and create another list of csp objects
+                schedule = list()
+                #cspObj = [embeddedCSP() for i in range(len(cmdList))]
+                # for each line of command, parse the packet
+                if len(cmdList) > 0:
+                    print("length of cmdList is > 0")
+                    print(cmdList)
+                    for i in range(0, len(cmdList)):
+
+                        # parse the time and command, then embed the command as a CSP packet
+                        schedulerObj = groundStation.embedCSP(cmdList[i])
+                        scheduler = schedulerObj.embedCSP()
+                        
+                        # append the list
+                        schedule.append(scheduler)
+                        print("list of schedules: ", schedule)
+                    scheduledTime = schedule[0]['time']
+                    scheduleSubservice = schedule[0]['subservice']
+                    returnPacket = bytearray(libcsp.packet_content(scheduleSubservice))
+                    data.extend(scheduledTime)
+                    print("data list extended with scheduledTime")
+                    data.extend(returnPacket)
+                    print("data list extended with returnPacket")
+                    print("bytearray of data: ", data)
+                    reply = libcsp.buffer_get(len(scheduledTime)+1)
+                    libcsp.packet_set_data(toSend, data)
+                    print("executed packet_set_data")
+                    #libcsp.sendto_reply(toSend, reply, libcsp.CSP_O_NONE)
+                    resp = gs.transaction(server, port, toSend)
+                    print("packet has been sent to the OBC")
+
+                # embed the csp packet in each cspObj
+                #embeddedData = libcsp.packet_set_data(toSend, data)
+                
+                #libcsp.packet_set_data(toSend, data)
+                #resp = gs.transaction(server, port, toSend)
             else:
+                print("the server is: ", server)
+                print("the port is: ", port)
                 resp = gs.transaction(server, port, toSend)
 
                 #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
