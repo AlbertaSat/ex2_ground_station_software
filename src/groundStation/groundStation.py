@@ -296,7 +296,6 @@ class options(object):
         self.parser = argparse.ArgumentParser(description='Parses command.')
 
     def getOptions(self):
-        self.parser = argparse.ArgumentParser(description='Parses command.')
         self.parser.add_argument(
             '-I',
             '--interface',

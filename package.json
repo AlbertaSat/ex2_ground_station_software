@@ -15,6 +15,7 @@
     "build": "yarn build:env && yarn csp:clone && yarn csp:configure && yarn csp:build",
     "run:cli": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/cli.py",
     "run:sat_cli": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/sat_cli.py",
+    "run:sat_update": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/updater.py",
     "run:test_sband": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/sband/test_sband.py",
     "run:test_uhf": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/uhf/test_uhf.py",
     "run:test_updater": "sudo LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_updater.py",
