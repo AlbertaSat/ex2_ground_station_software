@@ -28,11 +28,8 @@ gs = groundStation.groundStation(opts.getOptions())
 flag = groundStation.GracefulExiter()
 
 def cli():
-    #csp = groundStation(opts.getOptions())
-    sysVals = groundStation.SystemValues()
 
-    #strVal = u'12 * 13 14 2 2 52'
-    #print(unicodedata.normalize('NFKD', strVal).encode('ascii', 'replace').decode())
+    sysVals = groundStation.SystemValues()
 
     while True:
         if flag.exit():
