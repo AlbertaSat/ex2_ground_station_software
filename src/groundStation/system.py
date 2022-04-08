@@ -77,6 +77,58 @@ class SystemValues(object):
             'LAST': 31
         }
         self.SERVICES = {
+            'SCHEDULER': {
+                'port': 15,  # share a port with EPS time service
+                # TODO: these need a error response value
+                'subservice': {
+                    'SET_SCHEDULE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,  # schedule file name, ex. schedule.txt. All scheduled commands should be stored here
+                            'returns': {
+                                'err': '>b',
+                                'timestamp': '<u4'
+                            }
+                        }
+                    },
+                    'GET_SCHEDULE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                    'RESET_SCHEDULE': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                    'DELETE_SCHEDULE': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                    'PING_SCHEDULE': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                }
+            },
             'SET_PIPE': {
                 'port': 0,
                 'subservice' : {

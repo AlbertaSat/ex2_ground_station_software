@@ -26,9 +26,12 @@ gs = groundStation.groundStation(opts.getOptions())
 flag = groundStation.GracefulExiter()
 
 def cli():
+
+    sysVals = groundStation.SystemValues()
+
     while True:
         if flag.exit():
-            print('Exiting receiving loop')
+            print('Exiting receiving loop\n')
             flag.reset()
             return
         try:
@@ -40,6 +43,8 @@ def cli():
                 print("calling __setPIPE")
                 gs.__setPIPE__()
             else:
+                print("the server is: ", server)
+                print("the port is: ", port)
                 resp = gs.transaction(server, port, toSend)
 
                 #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
