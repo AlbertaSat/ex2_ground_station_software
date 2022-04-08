@@ -76,6 +76,31 @@ class SystemValues(object):
             'LAST': 31
         }
         self.SERVICES = {
+            'SCHEDULER': {
+                'port': 15,  # share a port with EPS time service
+                # TODO: these need a error response value
+                'subservice': {
+                    'SET_SCHEDULE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,  # schedule file name, ex. schedule.txt. All scheduled commands should be stored here
+                            'returns': {
+                                'err': '>b',
+                                'timestamp': '<u4'
+                            }
+                        }
+                    },
+                    'GET_SCHEDULE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                }
+            },
             'SET_PIPE': {
                 # This service is used to tell the GS UHF to get into pipe mode, 
                 # then to tell the satellite's UHF to get into PIPE mode. Port does not matter in this case. 

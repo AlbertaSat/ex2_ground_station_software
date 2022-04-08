@@ -19,6 +19,8 @@
 
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
 import time
+import libcsp_py3 as libcsp
+import unicodedata
 from groundStation import groundStation
 
 opts = groundStation.options()
@@ -26,9 +28,15 @@ gs = groundStation.groundStation(opts.getOptions())
 flag = groundStation.GracefulExiter()
 
 def cli():
+    #csp = groundStation(opts.getOptions())
+    sysVals = groundStation.SystemValues()
+
+    #strVal = u'12 * 13 14 2 2 52'
+    #print(unicodedata.normalize('NFKD', strVal).encode('ascii', 'replace').decode())
+
     while True:
         if flag.exit():
-            print('Exiting receiving loop')
+            print('Exiting receiving loop\n')
             flag.reset()
             return
         try:
@@ -40,6 +48,8 @@ def cli():
                 print("calling __setPIPE")
                 gs.__setPIPE__()
             else:
+                print("the server is: ", server)
+                print("the port is: ", port)
                 resp = gs.transaction(server, port, toSend)
 
                 #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
