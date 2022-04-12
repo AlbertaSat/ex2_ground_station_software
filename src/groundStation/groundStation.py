@@ -411,17 +411,20 @@ class embedCSP:
         if cmdStart is not None:
             cmdStart = cmdStart.start()
         scheduledTime = self.cmd[:cmdStart]
-        print("scheduledTime: ", scheduledTime)
+        #print("scheduledTime: ", scheduledTime)
         ascii_values = [ord(character) for character in scheduledTime]
-        print("scheduledTime in ascii: ", ascii_values)
+        #print("scheduledTime in ascii: ", ascii_values)
         scheduledCmd = self.cmd[cmdStart:]
+        print("scheduledCmd is: ", scheduledCmd)
         self._command = {}
         self._command['time'] = ascii_values
         # convert embeddedToSend into a byte array
         embeddedServer, embeddedPort, embeddedToSend = self.csp.getInput(inVal = scheduledCmd)
+        data = bytearray(libcsp.packet_get_data(embeddedToSend))
         self._command['dst'] = embeddedServer
         self._command['dport'] = embeddedPort
         self._command['subservice'] = embeddedToSend
+        
         return self._command
 
 
