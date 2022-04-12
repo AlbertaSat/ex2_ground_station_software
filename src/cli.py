@@ -39,8 +39,7 @@ def cli():
         try:
             server, port, toSend = gs.getInput(prompt='to send: ')
             data = bytearray(libcsp.packet_get_data(toSend))
-            cspData = bytearray(libcsp.packet_content(toSend))
-            print("toSend csp packet bytearray: ", cspData)
+            print("data in bytearray is : ", data)
 
             if (
                 server == sysVals.APP_DICT.get('OBC') and 
@@ -67,21 +66,23 @@ def cli():
                         
                         # append the list
                         schedule.append(scheduler)
-                        print("list of schedules: ", schedule)
                         scheduledTime = schedule[i]['time']
                         scheduledDst = schedule[i]['dst']
-                        dst = (scheduledDst).to_bytes(2, byteorder='big')
+                        dst = (scheduledDst).to_bytes(1, byteorder='big')
                         scheduledDport = schedule[i]['dport']
-                        dport = (scheduledDport).to_bytes(2, byteorder='big')
+                        dport = (scheduledDport).to_bytes(1, byteorder='big')
                         scheduleSubservice = schedule[i]['subservice']
-                        returnPacket = bytearray(libcsp.packet_content(scheduleSubservice))
+                        packetContent = bytearray(libcsp.packet_get_data(scheduleSubservice))
+                        packetLength = bytearray(libcsp.packet_get_length(scheduleSubservice))
                         data.extend(scheduledTime)
                         data.extend(dst)
                         data.extend(dport)
-                        data.extend(returnPacket)
+                        data.extend((len(packetContent)).to_bytes(2, byteorder='big'))
+                        data.extend(packetContent)
                     #reply = libcsp.buffer_get(len(scheduledTime)+1)
                     libcsp.packet_set_data(toSend, data)
                     #libcsp.sendto_reply(toSend, reply, libcsp.CSP_O_NONE)
+                    print("data is: ", data)
                     print("the server is: ", server)
                     print("the port is: ", port)
                     resp = gs.transaction(server, port, toSend)

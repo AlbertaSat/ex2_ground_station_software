@@ -1,0 +1,2 @@
+* * * 14 2 2 52 obc.time_management.get_time()
+0 1 2 3 24 2 52  obc.time_management.get_time()
