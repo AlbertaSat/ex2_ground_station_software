@@ -30,6 +30,8 @@
 static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit of the i2c address (in hex)
 bool enter_pipe_mode = false;
 
+static uint32_t crc32_calc(size_t length, char *cmd);
+static int find_blankSpace(int length, char *string);
 /**
  * @brief
  *      Generic function for write commands sent over i2c
@@ -996,7 +998,7 @@ void convHexFromASCII(int length, uint8_t *arr) {
  *      crc32 value (not used)
  */
 
-uint32_t crc32_calc(size_t length, uint8_t *command_to_send) {
+static uint32_t crc32_calc(size_t length, char *command_to_send) {
     int count = length;
     const uint32_t POLY = 0xEDB88320;
     const unsigned char *buffer = (const unsigned char *)command_to_send;
@@ -1040,7 +1042,7 @@ uint32_t crc32_calc(size_t length, uint8_t *command_to_send) {
  *      Index
  */
 
-int find_blankSpace(int length, uint8_t *command_to_send) {
+static int find_blankSpace(int length, char *command_to_send) {
     for (int k = length; k > 0; k--) {
         if (command_to_send[k] == BLANK_SPACE) {
             return k;
