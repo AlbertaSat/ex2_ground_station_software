@@ -18,6 +18,7 @@
  */
 #ifndef i2c_H
 #define i2c_H
+#include <string.h>
 #include <FreeRTOS.h>
 #include <stdint.h>
 #include <stdbool.h>

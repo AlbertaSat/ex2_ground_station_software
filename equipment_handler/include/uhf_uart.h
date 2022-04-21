@@ -24,6 +24,7 @@
 #include <FreeRTOS.h>
 #include "system.h"
 #include "HL_sci.h"
+#include "uhf.h"
 
 bool uhf_enter_direct_hardware_mode();
 
@@ -31,6 +32,6 @@ void uhf_exit_direct_hardware_mode();
 
 int uhf_direct_send(uint32_t length, uint8_t *data);
 
-int uhf_direct_sendAndReceive(uint32_t command_length, uint8_t *command, uint32_t answer_length, uint8_t *ans);
+UHF_return uhf_direct_sendAndReceive(uint32_t command_length, uint8_t *command, uint32_t answer_length, uint8_t *ans);
 
 #endif /* EX2_HAL_EX2_UHF_SOFTWARE_EQUIPMENT_HANDLER_INCLUDE_UHF_UART_H_ */

@@ -18,6 +18,7 @@
  */
 
 #include "uhf_i2c.h"
+#include "logger/logger.h"
 
 SemaphoreHandle_t uTransceiver_semaphore;
 TimerHandle_t uTransceiverPipe_timer;
@@ -77,7 +78,7 @@ void uhf_pipe_timer_reset_from_isr(BaseType_t *xHigherPriorityTaskWoken) {
 UHF_return i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
         // TODO: Fix error return once I2C send returns properly
-        bool result = (i2c_Send(UHF_I2C, addr, length, command) == I2C_OK);
+        UHF_return result = (i2c_Send(UHF_I2C, addr, length, command) == I2C_OK)? U_I2C_SUCCESS : U_I2C_FAIL;
         xSemaphoreGive(uTransceiver_semaphore);
         return result;
     }
@@ -87,7 +88,7 @@ UHF_return i2c_sendCommand(uint8_t addr, char *command, uint8_t length) {
 UHF_return i2c_receiveResponse(uint8_t addr, char *response, uint8_t length) {
     if (xSemaphoreTake(uTransceiver_semaphore, 0) == pdTRUE) {
         // TODO: Fix error return once I2C send returns properly
-        bool result = (i2c_Receive(UHF_I2C, addr, length, response) == I2C_OK);
+        UHF_return result = (i2c_Receive(UHF_I2C, addr, length, response) == I2C_OK)? U_I2C_SUCCESS : U_I2C_FAIL;
         xSemaphoreGive(uTransceiver_semaphore);
         return result;
     }
