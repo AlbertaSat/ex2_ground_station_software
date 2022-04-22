@@ -63,4 +63,5 @@ UHF_return uhf_binary_test() {
 
     // Send the new configuration (write to pipe mode)
     //    UHF_return = UHF_genericWrite(0, scw);
+    return U_UART_SUCCESS;
 }

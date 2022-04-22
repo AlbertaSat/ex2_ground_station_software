@@ -17,6 +17,7 @@
  * @date 2022-02-16
  */
 
+#include <string.h>
 #include "uhf_uart.h"
 
 //#define UHF_DIRECT_TX_TIMEOUT 1000

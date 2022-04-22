@@ -158,8 +158,6 @@ typedef struct {
 
 void convHexToASCII(int length, uint8_t *arr);
 void convHexFromASCII(int length, uint8_t *arr);
-uint32_t crc32_calc(size_t length, uint8_t *cmd);
-int find_blankSpace(int length, uint8_t *string);
 
 // Read and Write command functions
 UHF_return UHF_genericWrite(uint8_t code, void *param);

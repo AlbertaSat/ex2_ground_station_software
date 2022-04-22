@@ -27,8 +27,11 @@
 // TODO: Write UART function
 // TODO: Add error logging
 
-static uint8_t i2c_address_small_digit_ascii = '2'; // Stores the second digit of the i2c address (in hex)
+static char i2c_address_small_digit_ascii = '2'; // Stores the second digit of the i2c address (in hex)
 bool enter_pipe_mode = false;
+
+static uint32_t crc32_calc(size_t length, char *cmd);
+static int find_blankSpace(int length, char *string);
 
 /**
  * @brief
@@ -86,7 +89,7 @@ bool enter_pipe_mode = false;
  */
 
 UHF_return UHF_genericWrite(uint8_t code, void *param) {
-    uint8_t command_to_send[MAX_UHF_W_CMDLEN] = {0};
+    char command_to_send[MAX_UHF_W_CMDLEN] = {0};
     uint8_t command_length = 0;
     uint8_t answer_length = 0;
 
@@ -111,10 +114,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 
         convHexToASCII(4, hex);
         // Building the command
-        uint8_t command_assembly[30] = {'E',         'S', '+',    'W',       '2',    i2c_address_small_digit_ascii,
+        char command_assembly[30] = {'E',         'S', '+',    'W',       '2',    i2c_address_small_digit_ascii,
                                         '0',         '0', hex[0], hex[1],    hex[2], hex[3],
                                         BLANK_SPACE, 'C', 'C',    'C',       'C',    'C',
-                                        'C',         'C', 'C',    CARRIAGE_R};
+                                        'C',         'C', 'C',    CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_SCW;
         break;
@@ -134,12 +137,12 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         convHexToASCII(8, hex);
 
         // Building the command
-        uint8_t command_assembly[30] = {
+        char command_assembly[30] = {
             'E',    'S',       '+',    'W',    '2',         i2c_address_small_digit_ascii,
             '0',    '1',       hex[0], hex[1], hex[2],      hex[3],
             hex[4], hex[5],    hex[6], hex[7], BLANK_SPACE, 'C',
             'C',    'C',       'C',    'C',    'C',         'C',
-            'C',    CARRIAGE_R};
+            'C',    CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_FREQ;
         break;
@@ -164,12 +167,12 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uint8_t hex[4] = {(*time >> 12) & 15, (*time >> 8) & 15, (*time >> 4) & 15, (*time) & 15};
         convHexToASCII(4, hex);
 
-        uint8_t command_assembly[30] = {
+        char command_assembly[30] = {
             'E',    'S',       '+',    'W',    '2',         i2c_address_small_digit_ascii,
             '0',    code + 48, '0',    '0',    '0',         '0',
             hex[0], hex[1],    hex[2], hex[3], BLANK_SPACE, 'C',
             'C',    'C',       'C',    'C',    'C',         'C',
-            'C',    CARRIAGE_R};
+            'C',    CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         if (code == 6) {
             answer_length = UHF_WRITE_ANSLEN_PIPET;
@@ -185,9 +188,9 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uint8_t *confirm = (uint8_t *)param;
         if (*confirm != 1)
             return U_BAD_PARAM;
-        uint8_t command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
+        char command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
                                         '0', '9', BLANK_SPACE, 'C', 'C', 'C',
-                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
+                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_DFLT;
         break;
@@ -196,10 +199,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     case UHF_AX25_CMD: { // Enable/Disable AX.25 Automatic Decoding
         uint8_t *state = (uint8_t *)param;
         convHexToASCII(1, state);
-        uint8_t command_assembly[20] = {'E', 'S',       '+', 'W',   '2',         i2c_address_small_digit_ascii,
-                                        'E', 'F',       '0', state, BLANK_SPACE, 'C',
-                                        'C', 'C',       'C', 'C',   'C',         'C',
-                                        'C', CARRIAGE_R};
+        char command_assembly[21] = {'E', 'S',       '+', 'W',   '2',         i2c_address_small_digit_ascii,
+	                             'E', 'F',       '0', *state, BLANK_SPACE, 'C',
+				     'C', 'C',       'C', 'C',   'C',         'C',
+				     'C', CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_AX25;
         break;
@@ -209,9 +212,9 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uint8_t *confirm = (uint8_t *)param;
         if (*confirm != 1)
             return U_BAD_PARAM;
-        uint8_t command_assembly[30] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
+        char command_assembly[30] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
                                         'F', '4', BLANK_SPACE, 'C', 'C', 'C',
-                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
+                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_LOWPWR;
         break;
@@ -221,30 +224,12 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     case 246: // Set Source Call Sign
     {
         uhf_configStruct *sign = (uhf_configStruct *)param;
-        uint8_t command_assembly[30] = {'E',
-                                        'S',
-                                        '+',
-                                        'W',
-                                        '2',
-                                        i2c_address_small_digit_ascii,
-                                        'F',
-                                        (uint8_t)code - 192,
-                                        sign->message[0],
-                                        sign->message[1],
-                                        sign->message[2],
-                                        sign->message[3],
-                                        sign->message[4],
-                                        sign->message[5],
-                                        BLANK_SPACE,
-                                        'C',
-                                        'C',
-                                        'C',
-                                        'C',
-                                        'C',
-                                        'C',
-                                        'C',
-                                        'C',
-                                        CARRIAGE_R};
+        char command_assembly[30] = {'E', 'S', '+', 'W', '2', i2c_address_small_digit_ascii, 'F',
+	                             (uint8_t)code - 192,
+				     sign->message[0], sign->message[1], sign->message[2],
+				     sign->message[3], sign->message[4], sign->message[5],
+				     BLANK_SPACE, 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C',
+				     CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         if (code == 245) {
             answer_length = UHF_WRITE_ANSLEN_DSTCAL;
@@ -258,10 +243,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uhf_configStruct *callsign = (uhf_configStruct *)param;
         uint8_t len[2] = {(callsign->len - (callsign->len % 10)) / 10, callsign->len % 10};
         convHexToASCII(2, len);
-        uint8_t command_assembly[60] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
-                                        'F', '7', len[0], len[1]};
-        int i = 0;
-        for (i; i < callsign->len; i++) {
+        char command_assembly[60] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
+	                             'F', '7', len[0], len[1]};
+	int i = 0;
+        for (; i < callsign->len; i++) {
             uint8_t sym = callsign->message[i];
             if (sym != 0x2D && sym != 0x2E && sym != BLANK_SPACE)
                 return U_BAD_PARAM;
@@ -277,6 +262,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         command_assembly[17 + i] = 'C';
         command_assembly[18 + i] = 'C';
         command_assembly[19 + i] = CARRIAGE_R;
+        command_assembly[20 + i] = 0;
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_MORSECAL;
         break;
@@ -286,10 +272,9 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         uhf_configStruct *beacon = (uhf_configStruct *)param;
         uint8_t len[2] = {(beacon->len - (beacon->len % 10)) / 10, beacon->len % 10};
         convHexToASCII(2, len);
-        uint8_t command_assembly[120] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
-                                         'F', '8', len[0], len[1]};
+        char command_assembly[120] = {'E', 'S', '+',    'W',   '2', i2c_address_small_digit_ascii,
+	                              'F', '8', len[0], len[1], 0};
         uint8_t j = 0;
-
         for (; j < (3 * beacon->len); j++) {
             command_assembly[10 + j] = beacon->message[j];
         }
@@ -303,6 +288,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         command_assembly[17 + j] = 'C';
         command_assembly[18 + j] = 'C';
         command_assembly[19 + j] = CARRIAGE_R;
+        command_assembly[20 + j] = 0;
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_MIDIBCN;
         break;
@@ -343,10 +329,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
             return U_BAD_PARAM;
         uint8_t small = *add - 32;
         convHexToASCII(1, &small);
-        uint8_t command_assembly[20] = {'E', 'S',       '+', 'W',   '2',         i2c_address_small_digit_ascii,
-                                        'F', 'C',       '2', small, BLANK_SPACE, 'C',
-                                        'C', 'C',       'C', 'C',   'C',         'C',
-                                        'C', CARRIAGE_R};
+        char command_assembly[21] = {'E', 'S',       '+', 'W',   '2',         i2c_address_small_digit_ascii,
+                                     'F', 'C',       '2', small, BLANK_SPACE, 'C',
+				     'C', 'C',       'C', 'C',   'C',         'C',
+				     'C', CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_I2CADR;
         break;
@@ -365,7 +351,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
                             (add >> 12) & 15, (add >> 8) & 15,  (add >> 4) & 15,  add & 15};
         convHexToASCII(8, chadd);
 
-        uint8_t command_assembly[60] = {'E',
+        char command_assembly[60] = {'E',
                                         'S',
                                         '+',
                                         'W',
@@ -390,7 +376,8 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
                                         'C',
                                         'C',
                                         'C',
-                                        CARRIAGE_R};
+                                        CARRIAGE_R,
+					0};
         uint8_t hex[2] = {0};
         for (int i = 0; i < 16; i++) {
             hex[0] = fram_w->data[i] >> 4;
@@ -409,9 +396,9 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
         if (*confirm != 1)
             return U_BAD_PARAM;
 
-        uint8_t command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
-                                        'F', 'F', BLANK_SPACE, 'C', 'C', 'C',
-                                        'C', 'C', 'C',         'C', 'C', CARRIAGE_R};
+        char command_assembly[20] = {'E', 'S', '+',         'W', '2', i2c_address_small_digit_ascii,
+	                             'F', 'F', BLANK_SPACE, 'C', 'C', 'C',
+				     'C', 'C', 'C',         'C', 'C', CARRIAGE_R, 0};
         strcpy(command_to_send, command_assembly);
         answer_length = UHF_WRITE_ANSLEN_SECURE;
         break;
@@ -423,7 +410,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 
     // strlen calculates the length of all commands except the beacon command, which can have 0x00-valued bytes
     if (code != UHF_BCNMSG_CMD)
-        command_length = strlen((char *)command_to_send);
+        command_length = strlen(command_to_send);
 
     /* The following is necessary for all write commands:
      *    - Calculate the crc32 of the command
@@ -439,7 +426,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 /* Send the command and receive the answer */
 #ifndef UHF_USE_I2C_CMDS
     uhf_enter_direct_hardware_mode();
-    return_val = uhf_direct_sendAndReceive(command_length, command_to_send, answer_length, ans);
+    return_val = uhf_direct_sendAndReceive(command_length, (uint8_t *) command_to_send, answer_length, ans);
     uhf_exit_direct_hardware_mode();
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
@@ -472,16 +459,16 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
             }
         } else {
             // Received "OK..."-type answer. Now check the CRC.
-            uint8_t *crc_recalc = (uint8_t *)pvPortMalloc(answer_length * sizeof(uint8_t));
+            char *crc_recalc = (char *)pvPortMalloc(answer_length * sizeof(uint8_t));
             memcpy(crc_recalc, ans, answer_length);
-            crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
+            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
 
             if (code == 252) {
                 // I2C address change needs to be tracked in the code
                 i2c_address_small_digit_ascii = ans[4];
             }
 
-            if (!strcmp((char *)crc_recalc, (char *)ans)) {
+            if (!strcmp(crc_recalc, (char *)ans)) {
                 return_val = U_GOOD_CONFIG;
             } else {
                 return_val = U_BAD_ANS_CRC;
@@ -571,10 +558,10 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     // Note: The FRAM read command requires a unique format
     uint8_t code_chars[2] = {(code >> 4) & 15, code & 15};
     convHexToASCII(2, code_chars);
-    uint8_t command_to_send[MAX_UHF_R_CMDLEN] = {
+    char command_to_send[MAX_UHF_R_CMDLEN] = {
         'E',           'S',           '+',         'R', '2', i2c_address_small_digit_ascii,
         code_chars[0], code_chars[1], BLANK_SPACE, 'C', 'C', 'C',
-        'C',           'C',           'C',         'C', 'C', CARRIAGE_R};
+        'C',           'C',           'C',         'C', 'C', CARRIAGE_R, 0};
 
     if (code == UHF_FRAM_CMD) {
         uhf_framStruct *fram_struct = (uhf_framStruct *)param;
@@ -588,19 +575,19 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
                             (add >> 12) & 15, (add >> 8) & 15,  (add >> 4) & 15,  add & 15};
         convHexToASCII(8, chadd);
 
-        uint8_t fram_command[MAX_UHF_R_CMDLEN] = {'E',         'S',
-                                                  '+',         'R',
-                                                  '2',         i2c_address_small_digit_ascii,
-                                                  'F',         'D',
-                                                  chadd[0],    chadd[1],
-                                                  chadd[2],    chadd[3],
-                                                  chadd[4],    chadd[5],
-                                                  chadd[6],    chadd[7],
-                                                  BLANK_SPACE, 'C',
-                                                  'C',         'C',
-                                                  'C',         'C',
-                                                  'C',         'C',
-                                                  'C',         [25] = CARRIAGE_R};
+        char fram_command[MAX_UHF_R_CMDLEN] = {'E',         'S',
+                                               '+',         'R',
+					       '2',         i2c_address_small_digit_ascii,
+					       'F',         'D',
+					       chadd[0],    chadd[1],
+					       chadd[2],    chadd[3],
+					       chadd[4],    chadd[5],
+					       chadd[6],    chadd[7],
+					       BLANK_SPACE, 'C',
+					       'C',         'C',
+					       'C',         'C',
+					       'C',         'C',
+					       'C',         [25] = CARRIAGE_R, 0};
         strcpy(command_to_send, fram_command);
     }
 
@@ -673,7 +660,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
         return U_BAD_PARAM;
     }
 
-    crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
+    crc32_calc(find_blankSpace(strlen(command_to_send), command_to_send), command_to_send);
 
     /* Send the command and receive the answer */
     uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
@@ -681,7 +668,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
 #ifndef UHF_USE_I2C_CMDS
     uhf_enter_direct_hardware_mode();
-    return_val = uhf_direct_sendAndReceive(strlen((char *)command_to_send), command_to_send, answer_length, ans);
+    return_val = uhf_direct_sendAndReceive(strlen(command_to_send), (uint8_t *)command_to_send, answer_length, ans);
     uhf_exit_direct_hardware_mode();
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
@@ -706,9 +693,9 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             }
         } else {
             // Received "OK..."-type answer. Now check the CRC. CRC
-            uint8_t *crc_recalc = (uint8_t *)pvPortMalloc(answer_length * sizeof(uint8_t));
+            char *crc_recalc = (char *)pvPortMalloc(answer_length * sizeof(uint8_t));
             memcpy(crc_recalc, ans, answer_length);
-            crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
+            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
             if (strcmp((char *)crc_recalc, (char *)ans)) {
                 return_val = U_BAD_ANS_CRC;
             }
@@ -718,7 +705,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     }
 
     if (return_val == U_ANS_SUCCESS) {
-        int blankspace_index = find_blankSpace(strlen((char *)ans), ans);
+      int blankspace_index = find_blankSpace(strlen((char *)ans), (char *)ans);
 
         /* The following switch statement depends on the command code to:
          *    - Interpret the answer
@@ -863,7 +850,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             beacon->len = dec[0] * 10 + dec[1];
 
             int j = 0;
-            for (j; j < beacon->len; j++) {
+            for (; j < beacon->len; j++) {
                 beacon->message[3 * j] = ans[5 + 3 * j];
                 beacon->message[3 * j + 1] = ans[6 + 3 * j];
                 beacon->message[3 * j + 2] = ans[7 + 3 * j];
@@ -996,11 +983,11 @@ void convHexFromASCII(int length, uint8_t *arr) {
  *      crc32 value (not used)
  */
 
-uint32_t crc32_calc(size_t length, uint8_t *command_to_send) {
+static uint32_t crc32_calc(size_t length, char *command_to_send) {
     int count = length;
     const uint32_t POLY = 0xEDB88320;
-    const unsigned char *buffer = (const unsigned char *)command_to_send;
-    uint32_t crc = -1;
+    const unsigned char *buffer = (const unsigned char *) command_to_send;
+    uint32_t crc = (uint32_t) -1;
 
     while (length--) {
         crc = crc ^ *buffer++;
@@ -1040,7 +1027,7 @@ uint32_t crc32_calc(size_t length, uint8_t *command_to_send) {
  *      Index
  */
 
-int find_blankSpace(int length, uint8_t *command_to_send) {
+static int find_blankSpace(int length, char *command_to_send) {
     for (int k = length; k > 0; k--) {
         if (command_to_send[k] == BLANK_SPACE) {
             return k;
@@ -1069,15 +1056,15 @@ int find_blankSpace(int length, uint8_t *command_to_send) {
 UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_t *data, uint8_t n_read_bytes) {
     uint8_t params[4] = {s_address >> 4, s_address & 15, len >> 4, len & 15};
     convHexToASCII(4, params);
-    uint8_t command_to_send[MAX_UHF_W_CMDLEN] = {
+    char command_to_send[MAX_UHF_W_CMDLEN] = {
         'E',    'S',       '+',       'W',       '2',      i2c_address_small_digit_ascii, 'F', '1',
-        format, params[0], params[1], params[2], params[3]};
+        format, params[0], params[1], params[2], params[3], 0};
 
     int i = 0;
     for (; i < len; i++) {
         command_to_send[13 + 2 * i] = data[i] >> 4;
         command_to_send[13 + 2 * i + 1] = data[i] & 15;
-        convHexToASCII(2, &command_to_send[13 + 2 * i]);
+        convHexToASCII(2, (uint8_t *) &command_to_send[13 + 2 * i]);
     }
 
     uint8_t hex_bytes[2] = {n_read_bytes >> 4, n_read_bytes & 15};
@@ -1087,7 +1074,7 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_
     command_to_send[13 + 2 * i + 2] = BLANK_SPACE;
     command_to_send[13 + 2 * i + 11] = CARRIAGE_R;
 
-    crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
+    crc32_calc(find_blankSpace(strlen(command_to_send), command_to_send), command_to_send);
 
     // TODO: Finish this function, which is missing the UART send command and
     // interpreting the response
@@ -1108,7 +1095,7 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_
  *      UHF_return
  */
 UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
-    uint8_t firmware_command[MAX_UHF_W_CMDLEN] = {'E', 'S', '+', 'D', '2', i2c_address_small_digit_ascii};
+    char firmware_command[MAX_UHF_W_CMDLEN] = {'E', 'S', '+', 'D', '2', i2c_address_small_digit_ascii};
     int i = 0;
     for (; i < line_length; i++) {
         firmware_command[6 + i] = *(line + i);
@@ -1123,7 +1110,8 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
     firmware_command[13 + i] = 'C';
     firmware_command[14 + i] = 'C';
     firmware_command[15 + i] = CARRIAGE_R;
-
+    firmware_command[16 + i] = 0;
+    
     crc32_calc(find_blankSpace(strlen((char *)firmware_command), firmware_command), firmware_command);
 
     uint8_t ans[UHF_WRITE_ANSLEN_FW] = {0};
@@ -1132,13 +1120,13 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
 #ifndef UHF_USE_I2C_CMDS
     uhf_enter_direct_hardware_mode();
     return_val =
-        uhf_direct_sendAndReceive(strlen((char *)firmware_command), firmware_command, UHF_WRITE_ANSLEN_FW, ans);
+      uhf_direct_sendAndReceive(strlen(firmware_command), (uint8_t *) firmware_command, UHF_WRITE_ANSLEN_FW, ans);
     uhf_exit_direct_hardware_mode();
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
     convHexFromASCII(1, &i2c_address);
     i2c_address += 0x20; // Address is always 0x22 or 0x23
-    return_val = i2c_sendAndReceive(i2c_address, firmware_command, strlen((char *)firmware_command), ans,
+    return_val = i2c_sendAndReceive(i2c_address, firmware_command, strlen(firmware_command), ans,
                                     UHF_WRITE_ANSLEN_FW);
 #endif
 
@@ -1159,11 +1147,11 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
             }
         } else {
             // Received "OK..."-type answer. Now check the CRC.
-            uint8_t crc_recalc[UHF_WRITE_ANSLEN_FW];
+            char crc_recalc[UHF_WRITE_ANSLEN_FW];
             memcpy(&crc_recalc, ans, UHF_WRITE_ANSLEN_FW);
-            crc32_calc(find_blankSpace(strlen((char *)crc_recalc), crc_recalc), crc_recalc);
+            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
 
-            if (!strcmp((char)crc_recalc, (char *)ans)) {
+            if (!strcmp(crc_recalc, (char *)ans)) {
                 return_val = U_GOOD_CONFIG;
                 // Check if the firmware update is finished
                 if (!strcmp((char *)ans, "OK+F1F1 908A5EAB\r")) {
