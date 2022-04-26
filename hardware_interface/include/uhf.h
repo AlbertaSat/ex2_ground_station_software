@@ -66,7 +66,7 @@ typedef enum {
     // meaning it cannot respond to commands
     U_I2C_IN_PIPE = 19,
 
-    // Unknown error occured
+    // Unknown error occurred
     U_UNKOWN = 20,
 
     // Returned in HAL if UHF is stubbed

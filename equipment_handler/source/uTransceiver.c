@@ -425,9 +425,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 
 /* Send the command and receive the answer */
 #ifndef UHF_USE_I2C_CMDS
-    uhf_enter_direct_hardware_mode();
-    return_val = uhf_direct_sendAndReceive(command_length, (uint8_t *) command_to_send, answer_length, ans);
-    uhf_exit_direct_hardware_mode();
+    return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, command_length, ans, answer_length);
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
     convHexFromASCII(1, &i2c_address);
@@ -667,9 +665,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     UHF_return return_val;
 
 #ifndef UHF_USE_I2C_CMDS
-    uhf_enter_direct_hardware_mode();
-    return_val = uhf_direct_sendAndReceive(strlen(command_to_send), (uint8_t *)command_to_send, answer_length, ans);
-    uhf_exit_direct_hardware_mode();
+    return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
     convHexFromASCII(1, &i2c_address);
@@ -698,9 +694,10 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
             if (strcmp((char *)crc_recalc, (char *)ans)) {
                 return_val = U_BAD_ANS_CRC;
+            }else{
+                return_val = U_ANS_SUCCESS;
             }
             vPortFree(crc_recalc);
-            return_val = U_ANS_SUCCESS;
         }
     }
 
@@ -776,7 +773,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
             uint8_t rssi_hex[2] = {ans[blankspace_index - 10], ans[blankspace_index - 9]};
             convHexFromASCII(2, rssi_hex);
 
-            *(value + 1) = (rssi_hex[0] << 4) | rssi_hex[1];
+//            *(value + 1) = (rssi_hex[0] << 4) | rssi_hex[1];
             break;
         }
 
@@ -1118,10 +1115,7 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
     UHF_return return_val;
 
 #ifndef UHF_USE_I2C_CMDS
-    uhf_enter_direct_hardware_mode();
-    return_val =
-      uhf_direct_sendAndReceive(strlen(firmware_command), (uint8_t *) firmware_command, UHF_WRITE_ANSLEN_FW, ans);
-    uhf_exit_direct_hardware_mode();
+        uhf_uart_sendAndReceive((uint8_t *)firmware_command, strlen(firmware_command), ans, UHF_WRITE_ANSLEN_FW);
 #else
     uint8_t i2c_address = i2c_address_small_digit_ascii;
     convHexFromASCII(1, &i2c_address);
