@@ -32,6 +32,7 @@ bool enter_pipe_mode = false;
 
 static uint32_t crc32_calc(size_t length, char *cmd);
 static int find_blankSpace(int length, char *string);
+static UHF_return UHF_error_check(uint8_t *ans, uint8_t answer_length);
 
 /**
  * @brief
@@ -441,40 +442,10 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 #endif
 
     // Handle errors
-    if ((return_val == U_UART_SUCCESS) || (return_val == U_I2C_SUCCESS)) {
-        if ((ans[0] != LETTER_O)) {
-            // Received error-type answer
-            if (!strcmp((char *)ans, "E_CRC_ERR 3D2B08DC\r")) {
-                return_val = U_BAD_CMD_CRC;
-            } else if (!strcmp((char *)ans, "E_CRC_ERR_LEN 9B49857A\r")) {
-                return_val = U_BAD_CMD_LEN;
-            } else if (!strcmp((char *)ans, "ERR 84F89937\r")) {
-                return_val = U_ERR;
-            } else if (!strcmp((char *)ans, "ERR+MIDI CA62190D\r")) {
-                return_val = U_ERR_2;
-            } else {
-                return_val = U_UNKOWN;
-            }
-        } else {
-            // Received "OK..."-type answer. Now check the CRC.
-            char *crc_recalc = (char *)pvPortMalloc(answer_length * sizeof(uint8_t));
-            memcpy(crc_recalc, ans, answer_length);
-            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
-
-            if (code == 252) {
-                // I2C address change needs to be tracked in the code
-                i2c_address_small_digit_ascii = ans[4];
-            }
-
-            if (!strcmp(crc_recalc, (char *)ans)) {
-                return_val = U_GOOD_CONFIG;
-            } else {
-                return_val = U_BAD_ANS_CRC;
-            }
-
-            vPortFree(crc_recalc);
-        }
+    if((return_val == U_I2C_SUCCESS) || (return_val == U_UART_SUCCESS)){
+        return_val = UHF_error_check(ans, answer_length);
     }
+
     vPortFree(ans);
     enter_pipe_mode = false;
     return return_val;
@@ -671,34 +642,12 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     convHexFromASCII(1, &i2c_address);
     i2c_address += 0x20; // Address is always 0x22 or 0x23
     return_val =
-        i2c_sendAndReceive(i2c_address, command_to_send, strlen((char *)command_to_send), ans, answer_length);
+        i2c_sendAndReceive(i2c_address, (uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
 #endif
 
     /* Handle Errors */
-    if ((return_val == U_UART_SUCCESS) || (return_val == U_I2C_SUCCESS)) {
-        if (ans[0] != LETTER_O) {
-            // Received error-type answer
-            if (!strcmp((char *)ans, "E_CRC_ERR 3D2B08DC\r")) {
-                return_val = U_BAD_CMD_CRC;
-            } else if (!strcmp((char *)ans, "E_CRC_ERR_LEN 9B49857A\r")) {
-                return_val = U_BAD_CMD_LEN;
-            } else if (!strcmp((char *)ans, "ERR 84F89937\r")) {
-                return_val = U_ERR;
-            } else if (!strcmp((char *)ans, "ERR+REMOTE 6884D28\r")) {
-                return_val = U_ERR_2;
-            }
-        } else {
-            // Received "OK..."-type answer. Now check the CRC. CRC
-            char *crc_recalc = (char *)pvPortMalloc(answer_length * sizeof(uint8_t));
-            memcpy(crc_recalc, ans, answer_length);
-            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
-            if (strcmp((char *)crc_recalc, (char *)ans)) {
-                return_val = U_BAD_ANS_CRC;
-            }else{
-                return_val = U_ANS_SUCCESS;
-            }
-            vPortFree(crc_recalc);
-        }
+    if((return_val == U_I2C_SUCCESS) || (return_val == U_UART_SUCCESS)){
+        return_val = UHF_error_check(ans, answer_length);
     }
 
     if (return_val == U_ANS_SUCCESS) {
@@ -1012,6 +961,51 @@ static uint32_t crc32_calc(size_t length, char *command_to_send) {
     return crc;
 }
 
+static UHF_return UHF_error_check(uint8_t *ans, uint8_t answer_length){
+
+    UHF_return return_val = U_ANS_SUCCESS;
+    char *ans_str = (char *)pvPortMalloc(sizeof(char)*(answer_length+1));
+    memcpy(ans_str, ans, answer_length);
+    *(ans_str + answer_length) = 0; // string terminator
+
+        if (ans_str[0] != LETTER_O) {
+            // Received error-type answer
+            if (!strcmp(ans_str, "E_CRC_ERR 3D2B08DC\r")) {
+                return_val = U_BAD_CMD_CRC;
+            } else if (!strcmp(ans_str, "E_CRC_ERR_LEN 9B49857A\r")) {
+                return_val = U_BAD_CMD_LEN;
+            } else if (!strcmp(ans_str, "ERR 84F89937\r")) {
+                return_val = U_ERR;
+            } else if (!strcmp(ans_str, "ERR+REMOTE 6884D28\r")) {
+                return_val = U_ERR_2;
+            } else if (!strcmp(ans_str, "ERR+MIDI CA62190D\r")) {
+                return_val = U_ERR_2;
+            } else if (!strcmp(ans_str, "ERR+FB C76900C0\r")) {
+                return_val = U_ERR_FB;
+            } else if (!strcmp(ans_str, "ERR+CHKSUM 1105E41C\r")) {
+                return_val = U_ERR_CHKSUM;
+            } else if (!strcmp(ans_str, "ERR+FW AAC4E42B\r")) {
+                return_val = U_ERR_FW;
+            } else {
+                return_val = U_UNKOWN;
+            }
+        } else {
+            // Received "OK..."-type answer. Now check the CRC.
+            char *crc_recalc = (char *)pvPortMalloc(sizeof(char) * (answer_length+1));
+            memcpy(crc_recalc, ans_str, answer_length+1);
+            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
+
+            if (strcmp(crc_recalc, ans_str)) {
+                return_val = U_BAD_ANS_CRC;
+            } else if (!strcmp(ans_str, "OK+F1F1 908A5EAB\r")) {
+                return_val = U_FW_UPDATE_SUCCESS;
+            }
+            vPortFree(crc_recalc);
+            vPortFree(ans_str);
+        }
+        return return_val;
+}
+
 /**
  * @brief
  *      For parsing: Returns the index of the last blank
@@ -1125,36 +1119,9 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
 #endif
 
     // Handle errors
-    if ((return_val == U_UART_SUCCESS) || (return_val == U_I2C_SUCCESS)) {
-        if ((ans[0] != LETTER_O)) {
-            // Received error-type answer
-            if (!strcmp((char *)ans, "ERR 84F89937\r")) {
-                return_val = U_ERR;
-            } else if (!strcmp((char *)ans, "ERR+FB C76900C0\r")) {
-                return_val = U_ERR_FB;
-            } else if (!strcmp((char *)ans, "ERR+CHKSUM 1105E41C\r")) {
-                return_val = U_ERR_CHKSUM;
-            } else if (!strcmp((char *)ans, "ERR+FW AAC4E42B\r")) {
-                return_val = U_ERR_FB;
-            } else {
-                return_val = U_UNKOWN;
-            }
-        } else {
-            // Received "OK..."-type answer. Now check the CRC.
-            char crc_recalc[UHF_WRITE_ANSLEN_FW];
-            memcpy(&crc_recalc, ans, UHF_WRITE_ANSLEN_FW);
-            crc32_calc(find_blankSpace(strlen(crc_recalc), crc_recalc), crc_recalc);
-
-            if (!strcmp(crc_recalc, (char *)ans)) {
-                return_val = U_GOOD_CONFIG;
-                // Check if the firmware update is finished
-                if (!strcmp((char *)ans, "OK+F1F1 908A5EAB\r")) {
-                    return_val = U_FW_UPDATE_SUCCESS;
-                }
-            } else {
-                return_val = U_BAD_ANS_CRC;
-            }
-        }
+    if((return_val == U_I2C_SUCCESS) || (return_val == U_UART_SUCCESS)){
+        return_val = UHF_error_check(ans, UHF_WRITE_ANSLEN_FW);
     }
+
     return return_val;
 }
