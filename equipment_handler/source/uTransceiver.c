@@ -40,7 +40,7 @@ static uint8_t UHF_write_ans_len_table[56] = {17,13,[6]=13,13,13,13,12,[39]=13,[
  * @brief
  *      Generic function for write commands sent over i2c
  * @details
- *      This function will build a command dependant on command code and
+ *      This function will build a command dependent on command code and
  *      input parameters, send the command, and interpret the answer
  * @attention
  *      Only certain write command codes are valid. Be aware of input
@@ -48,45 +48,6 @@ static uint8_t UHF_write_ans_len_table[56] = {17,13,[6]=13,13,13,13,12,[39]=13,[
  * @param code
  *          The write command code as it appears in the UHF
  *          Transceiver's manual
- *
- *          CODE    COMMAND DESCRIPTION
- *          0       Set the status control word
- *          1       Set the frequency
- *          6       Set PIPE mode timeout period
- *          7       Set beacon transmission period
- *          8       Set audio beacon transmission period
- *          9       Restore default values
- *          239     Enable/Disable Automatic AX.25 Decoding
- *          244     Enter low power mode
- *          245     Set destination call sign
- *          246     Set source call sign
- *          247     Set morse code call sign
- *          248     Set MIDI audio beacon message
- *          251     Set the beacon message content
- *          252     Set the device address
- *          253     FRAM memory write
- *          255     Put the transceiver into secure mode
- *
- * @param param
- *          Pointer to required input. Code dictates required pointer type:
- *          CODE    TYPE        PARAM DESCRIPTION
- *          0       uint8_t*    Array of 12 SCW values
- *          1       uint32_t*   Frequency in Hz
- *          6       uint16_t*   Time in seconds (1-255)
- *          7       uint16_t*   Time in seconds (1-65535)
- *          8       uint16_t*   Time in seconds (30-65535)
- *          9       uint8_t*    = 1 to confirm reset
- *          239     uint8_t*    State (0 or 1)
- *          244     uint8_t*    = 1 to confirm change
- *          245     uhf_configStruct*   Config structure
- *          246     uhf_configStruct*   ''
- *          247     uhf_configStruct*   ''
- *          248     uhf_configStruct*   ''
- *          251     uhf_configStruct*   ''
- *          252     uint8_t*    = 0x22 or 0x23
- *          253     uhf_framStruct*     FRAM structure
- *          255     uint8_t*    = 1 to confirm change
- *
  * @return
  *      UHF_return
  */
@@ -95,10 +56,6 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     char command_to_send[MAX_UHF_W_CMDLEN] = {0};
     uint8_t command_length = 0;
     uint8_t answer_length = UHF_write_ans_len_table[code & 0b00111111];
-
-    /* The following switch statement depends on the command code to:    *
-     *    - Calculate necessary ASCII characters from input parameters *
-     *    - Build the command to be sent                               */
 
     switch (code) {
     case UHF_SCW_CMD: { // Set the status control word
@@ -377,12 +334,6 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     if (code != UHF_BCNMSG_CMD)
         command_length = strlen(command_to_send);
 
-    /* The following is necessary for all write commands:
-     *    - Calculate the crc32 of the command
-     *    - Send the command and receive the answer
-     *    - Handle errors
-     */
-
     /* Calculate the crc32 of the command*/
     crc32_calc(find_blankSpace(command_length, command_to_send), command_to_send);
     uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
@@ -409,73 +360,19 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
  * @brief
  *      Generic function for read commands sent over i2c
  * @details
- *      This function will send a command dependant on command code,
+ *      This function will assemble a command dependant on command code,
  *      send the command, interpret the answer and save read data
  * @attention
  *      Only certain read command codes are valid. Be aware of input
  *      pointer type
  * @param code
  *      The write command code as it appears in the UHF
- *      Transceiver's manual:
- *
- *      CODE    COMMAND DESCRIPTION
- *      0       Get the status control word
- *      1       Get the frequency
- *      2       Get uptime
- *      3       Get # of transmitted packets
- *      4       Get # of received packets
- *      5       Get # of received packets w CRC16 error
- *      6       Get PIPE mode timeout period
- *      7       Get beacon transmission period
- *      8       Get audio beacon transmission period
- *      10      Get the internal temperature of the board
- *      239     Get the state of AX.25 decoding
- *      244     Get low power mode status
- *      245     Get destination call sign
- *      246     Get source call sign
- *      247     Get morse code call sign
- *      248     Get MIDI audio beacon
- *      249     Get software version build
- *      250     Get device payload size
- *      251     Get the beacon message content
- *      253     FRAM memory read
- *      255     Get the secure mode key
- *
- * @param param
- *      Pointer to required input. Code dictates required pointer type:
- *      CODE    TYPE        PARAM DESCRIPTION
- *      0       uint8_t*    Array of 12 status control word values
- *      1       uint32_t*   Frequency in Hz
- *      2       uint32_t*   Array of 2 values (1 time, 1 rssi)
- *      3       uint32_t*   Array of 2 Values (1 #, 1 rssi)
- *      4       uint32_t*   Array of 2 values (1 #, 1 rssi)
- *      5       uint32_t*   Array of 2 values (1 #, 1 rssi)
- *      6       uint32_t*   Array of 2 values (1 time [1-255], 1 rssi)
- *      7       uint32_t*   Array of 2 values (1 time [1-65535], 1 rssi)
- *      8       uint32_t*   Array of 2 values (1 time [30-65535], 1 rssi)
- *      10      float*      Value in degrees celsius
- *      239     uint8_t*    State (0 or 1)
- *      244     uint8_t*    = 1 for low power mode
- *      245     uhf_configStruct*   Config struct
- *      246     uhf_configStruct*   ''
- *      247     uhf_configStruct*   ''
- *      248     uhf_configStruct*   ''
- *      249     uint8_t*    Char array (form "X.xx")
- *      250     uint16_t*   Value in # of bytes
- *      251     uhf_configStruct*   Config struct
- *      253     uhf_framStruct*     FRAM structure
- *      255     uint32_t*   Value of the secure key
- *
+ *      Transceiver's manual: *
  * @return
  *      UHF_return
  */
 
 UHF_return UHF_genericRead(uint8_t code, void *param) {
-    /* The following is necessary for all read commands:
-     *    - Form the command
-     *    - Send the command and receive the answer
-     *    - Handle errors
-     */
 
     /* Form the command */
     // Note: The FRAM read command requires a unique format
@@ -512,12 +409,6 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
     if (return_val == U_ANS_SUCCESS) {
       int blankspace_index = find_blankSpace(strlen((char *)ans), (char *)ans);
-
-        /* The following switch statement depends on the command code to:
-         *    - Interpret the answer
-         *    - Calculate relevant parameters
-         *    - Save these in *param and subsequent pointers
-         */
 
         switch (code) {
         case UHF_SCW_CMD: { // Get the status control word
