@@ -488,30 +488,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
 
     if (code == UHF_FRAM_CMD) {
         uhf_framStruct *fram_struct = (uhf_framStruct *)param;
-        uint32_t add = fram_struct->add;
-        if (add >= 0x8000 && add <= 0x83A4)
-            return U_BAD_PARAM;
-        if (add >= 0x83FE && add <= 0x24000)
-            return U_BAD_PARAM;
-
-        uint8_t chadd[8] = {add >> 28,        (add >> 24) & 15, (add >> 20) & 15, (add >> 16) & 15,
-                            (add >> 12) & 15, (add >> 8) & 15,  (add >> 4) & 15,  add & 15};
-        convHexToASCII(8, chadd);
-
-        char fram_command[MAX_UHF_R_CMDLEN] = {'E',         'S',
-                                               '+',         'R',
-					       '2',         '2',
-					       'F',         'D',
-					       chadd[0],    chadd[1],
-					       chadd[2],    chadd[3],
-					       chadd[4],    chadd[5],
-					       chadd[6],    chadd[7],
-					       BLANK_SPACE, 'C',
-					       'C',         'C',
-					       'C',         'C',
-					       'C',         'C',
-					       'C',         [25] = CARRIAGE_R, 0};
-        strcpy(command_to_send, fram_command);
+        UHF_fram_read_command_assembly(command_to_send, fram_struct);
     }
 
     uint8_t answer_length = UHF_read_ans_len_table[code & 0b00111111];
@@ -835,6 +812,17 @@ static uint32_t crc32_calc(size_t length, char *command_to_send) {
     return crc;
 }
 
+/**
+ * @brief
+ *      Check a receive response from the UHF for errors
+ * @param ans
+ *      array of bytes that makes up the answer
+ * @param answer_length
+ *      length of answer
+ * @return UHF_return
+ *      error code associated with answer
+ */
+
 static UHF_return UHF_error_check(uint8_t *ans, uint8_t answer_length){
 
     UHF_return return_val = U_ANS_SUCCESS;
@@ -994,4 +982,41 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
     }
 
     return return_val;
+}
+
+/**
+ * @brief
+ *      Builds fram read command string
+ * @param command_to_send
+ *      pointer to command that will be sent
+ * @param fram_struct
+ *      Contains the fram address to be read
+ * @return
+ *      UHF_return
+ */
+static UHF_return UHF_fram_read_command_assembly(uint8_t *command_to_send, uhf_framStruct * fram_struct){
+    uint32_t add = fram_struct->add;
+    if (add >= 0x8000 && add <= 0x83A4)
+        return U_BAD_PARAM;
+    if (add >= 0x83FE && add <= 0x24000)
+        return U_BAD_PARAM;
+
+    uint8_t chadd[8] = {add >> 28,        (add >> 24) & 15, (add >> 20) & 15, (add >> 16) & 15,
+                        (add >> 12) & 15, (add >> 8) & 15,  (add >> 4) & 15,  add & 15};
+    convHexToASCII(8, chadd);
+
+    char fram_command[MAX_UHF_R_CMDLEN] = {'E',         'S',
+                                           '+',         'R',
+                       '2',         '2',
+                       'F',         'D',
+                       chadd[0],    chadd[1],
+                       chadd[2],    chadd[3],
+                       chadd[4],    chadd[5],
+                       chadd[6],    chadd[7],
+                       BLANK_SPACE, 'C',
+                       'C',         'C',
+                       'C',         'C',
+                       'C',         'C',
+                       'C',         [25] = CARRIAGE_R, 0};
+    memcpy(command_to_send, fram_command, MAX_UHF_R_CMDLEN);
 }
