@@ -90,6 +90,7 @@
 #define UHF_AUDIOT_CMD 8
 #define UHF_DFLT_CMD 9
 #define UHF_TEMP_CMD 10
+#define UHF_FW_CMD 220 // This command actually doesn't have a command code
 #define UHF_AX25_CMD 239
 #define UHF_GENI2C_CMD 241
 #define UHF_LOWPWR_CMD 244
@@ -102,10 +103,8 @@
 #define UHF_BCNMSG_CMD 251
 #define UHF_FRAM_CMD 253
 #define UHF_SECURE_CMD 255
-#define UHF_FW_CMD
 
 #define UHF_WRITE_ANSLEN_FW 20 // TODO: Verify through testing
-
 
 typedef struct {
     uint8_t len;
@@ -116,11 +115,6 @@ typedef struct {
     uint32_t add;
     uint8_t data[16];
 } uhf_framStruct;
-
-// Converts hex values to their ASCII characters
-
-void convHexToASCII(int length, uint8_t *arr);
-void convHexFromASCII(int length, uint8_t *arr);
 
 // Read and Write command functions
 UHF_return UHF_genericWrite(uint8_t code, void *param);
