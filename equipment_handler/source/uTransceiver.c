@@ -142,7 +142,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
 #else
     return_val =
-        i2c_sendAndReceive(i2c_address, (uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
+        i2c_sendAndReceive(UHF_I2C_ADDRESS, (uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
 #endif
 
     /* Handle Errors */
@@ -243,7 +243,7 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
         uhf_uart_sendAndReceive((uint8_t *)firmware_command, strlen(firmware_command), ans, UHF_WRITE_ANSLEN_FW);
 #else
     return_val =
-        i2c_sendAndReceive(i2c_address, firmware_command, strlen(firmware_command), ans, UHF_WRITE_ANSLEN_FW);
+        i2c_sendAndReceive(UHF_I2C_ADDRESS, firmware_command, strlen(firmware_command), ans, UHF_WRITE_ANSLEN_FW);
 #endif
 
     // Handle errors
