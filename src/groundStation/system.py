@@ -102,6 +102,33 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'RESET_SCHEDULE': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                    'DELETE_SCHEDULE': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
+                    'PING_SCHEDULE': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # err
+                            }
+                        }
+                    },
                 }
             },
             'SET_PIPE': {
