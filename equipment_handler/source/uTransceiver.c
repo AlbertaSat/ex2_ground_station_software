@@ -399,8 +399,8 @@ static UHF_return UHF_error_check(uint8_t *ans, uint8_t answer_length) {
             return_val = U_FW_UPDATE_SUCCESS;
         }
         vPortFree(crc_recalc);
-        vPortFree(ans_str);
     }
+    vPortFree(ans_str);
     return return_val;
 }
 
