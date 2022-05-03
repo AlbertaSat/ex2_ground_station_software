@@ -27,6 +27,7 @@
 #include "uhf.h"
 
 #define UHF_DIRECT_TX_TIMEOUT 1000
+#define UHF_UART_TIMEOUT_MS 1000
 
 void uhf_enter_direct_command_mode(void);
 

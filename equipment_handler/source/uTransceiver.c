@@ -40,7 +40,7 @@ static UHF_return UHF_fram_read_command_assembly(uint8_t *command_to_send, uhf_f
 
 /* These two arrays are constructed from expected answer lengths provided by the UHF User Manual*/
 static uint8_t UHF_read_ans_len_table[256] = {
-    [UHF_SCW_CMD] = 23,    [UHF_FREQ_CMD] = 23,    [UHF_UPTIME_CMD] = 23,   [UHF_UPTIME_CMD] = 23,
+    [UHF_SCW_CMD] = 23,    [UHF_FREQ_CMD] = 23,    [UHF_UPTIME_CMD] = 23,   [UHF_TPCKT_CMD] = 23,
     [UHF_RPCKT_CMD] = 23,  [UHF_RPCKTER_CMD] = 23, [UHF_PIPET_CMD] = 23,    [UHF_BCNT_CMD] = 23,
     [UHF_AUDIOT_CMD] = 23, [UHF_TEMP_CMD] = 17,    [UHF_AX25_CMD] = 5,      [UHF_LOWPWR_CMD] = 15,
     [UHF_DSTCAL_CMD] = 19, [UHF_SRCCAL_CMD] = 19,  [UHF_MORSECAL_CMD] = 51, [UHF_MIDIBCN_CMD] = 123,

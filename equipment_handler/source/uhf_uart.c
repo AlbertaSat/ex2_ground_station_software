@@ -20,20 +20,35 @@
 #include <string.h>
 #include "uhf_uart.h"
 #include "uTransceiver.h"
+#include "FreeRTOS.h"
 
 static int response_index;
 static uint8_t response_length;
 static uint8_t response[UHF_ULTIMATE_BUFF_SIZE];
 
-static xQueueHandle uhf_response_queue;
+static QueueHandle_t uhf_response_queue;
+static SemaphoreHandle_t uhf_uart_mutex;
 
 UHF_return uhf_uart_init(void){
     uhf_response_queue = xQueueCreate((unsigned portBASE_TYPE)3, (unsigned portBASE_TYPE)(sizeof(uint8_t) * UHF_ULTIMATE_BUFF_SIZE));
+
+    uhf_uart_mutex = xSemaphoreCreateMutex();
+    if (uhf_uart_mutex == NULL) {
+        return U_I2C_FAIL;
+    }
+    xSemaphoreGive(uhf_uart_mutex);
+
     return U_GOOD_CONFIG;
 }
 
 UHF_return uhf_uart_sendAndReceive(uint8_t *command, uint8_t command_len, uint8_t *ans, uint8_t ans_len){
     UHF_return err = U_UART_SUCCESS;
+    TaskHandle_t task = xSemaphoreGetMutexHolder(uhf_uart_mutex);
+
+    if(xSemaphoreTake(uhf_uart_mutex, UHF_UART_TIMEOUT_MS) != pdTRUE) {
+          return U_UART_FAIL;
+    }
+
     uhf_enter_direct_command_mode();
     response_index = 0;
     response_length = ans_len;
@@ -41,11 +56,12 @@ UHF_return uhf_uart_sendAndReceive(uint8_t *command, uint8_t command_len, uint8_
     sciSend(UHF_SCI, command_len, command);
 
     uint8_t temp_ans[UHF_ULTIMATE_BUFF_SIZE];
-    if(xQueueReceive(uhf_response_queue, temp_ans, portMAX_DELAY) == pdFALSE){
+    if(xQueueReceive(uhf_response_queue, temp_ans, UHF_UART_TIMEOUT_MS) == pdFALSE){
         err = U_UART_FAIL;
     }
 
     memcpy(ans, temp_ans, ans_len);
+    xSemaphoreGive(uhf_uart_mutex);
     return err;
 }
 
