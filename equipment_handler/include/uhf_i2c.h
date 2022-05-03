@@ -28,7 +28,7 @@
 #include "system.h"
 #include "uhf.h"
 
-#define UHF_I2C_ADDRESS
+#define UHF_I2C_ADDRESS 0x22
 
 /**
  * @brief Initialize the UHF I2C system. This includes the semaphore for the
