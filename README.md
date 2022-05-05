@@ -5,7 +5,7 @@ UHF Functions List" spreadsheet](https://docs.google.com/spreadsheets/d/1zNhxhs0
 ## Building on OBC vs Ground Station
 If building on OBC, ensure IS_SATELLITE is defined in the project. If it is not, commands will not be sent/received from the actual Transceiver.
 
-If building on Ground Station, note that data received by the ground station radio is not handled by this code, but is instead handled separately by the ex2_ground_station_software code.
+If building on Ground Station, run "./build.sh" before running ground station code. This is necessary to make the UHF commands available as a shared library.
 
 ## Ceedling Build Instructions
 First, [install Ceedling](https://github.com/ThrowTheSwitch/Ceedling). Then run:
