@@ -83,13 +83,13 @@ class groundStation(object):
 
     def __uart__(self, device):
         """ initialize uart interface """
-        ser = serial.Serial(device,                                      
-        baudrate=115200,                              
-        bytesize=8,                 
-        parity='N',                         
-        stopbits=2,                             
+        ser = serial.Serial(device,
+        baudrate=115200,
+        bytesize=8,
+        parity='N',
+        stopbits=2,
         timeout=1)
-   
+
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
         return ser
@@ -101,7 +101,7 @@ class groundStation(object):
         self.ser.write(b'ES+W22002723 E72EC03A\r')
         result = self.ser.read(17)
         time.sleep(2)
-        print(result)   
+        print(result)
 
 
     def __connectionManager__(self, server, port):
@@ -140,13 +140,17 @@ class groundStation(object):
         and parse the input to CSP packet information """
         if inVal is not None:
             try:
+                if(inVal.split('_')[0] == 'UHFDIR'): #UHF-direct command, not using CSP
+                    uTransceiver.parseUHFDIRCommand(inVal)
                 command = self.parser.parseInputValue(inVal)
             except Exception as e:
                 print(e + '\n')
                 return
         elif prompt is not None:
-            inStr = input(prompt)
+            inStr = input(prompt)#TODO maybe add uhf-checker here!
             try:
+                if(inVal.split("_")[0] == 'UHFDIR'): #UHF-direct command, not using CSP
+                    uTransceiver.parseUHFDIRCommand(inVal)
                 command = self.parser.parseInputValue(inStr)
             except Exception as e:
                 print(e + '\n')
@@ -192,9 +196,9 @@ class groundStation(object):
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or 
-            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
-            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or
+            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or
+            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]
