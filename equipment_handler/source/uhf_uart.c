@@ -43,7 +43,6 @@ UHF_return uhf_uart_init(void){
 
 UHF_return uhf_uart_sendAndReceive(uint8_t *command, uint8_t command_len, uint8_t *ans, uint8_t ans_len){
     UHF_return err = U_UART_SUCCESS;
-    TaskHandle_t task = xSemaphoreGetMutexHolder(uhf_uart_mutex);
 
     if(xSemaphoreTake(uhf_uart_mutex, UHF_UART_TIMEOUT_MS) != pdTRUE) {
           return U_UART_FAIL;
