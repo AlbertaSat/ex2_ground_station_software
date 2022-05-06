@@ -33,6 +33,7 @@
 #define MAX_UHF_W_ANSLEN 30
 #define MAX_UHF_R_CMDLEN 30
 #define MAX_UHF_R_ANSLEN 160
+#define UHF_ULTIMATE_BUFF_SIZE MAX_UHF_R_ANSLEN
 #define MIN_U_FREQ 435000000
 #define MAX_U_FREQ 438000000
 
@@ -89,7 +90,9 @@
 #define UHF_AUDIOT_CMD 8
 #define UHF_DFLT_CMD 9
 #define UHF_TEMP_CMD 10
+#define UHF_FW_CMD 220 // This command actually doesn't have a command code
 #define UHF_AX25_CMD 239
+#define UHF_GENI2C_CMD 241
 #define UHF_LOWPWR_CMD 244
 #define UHF_DSTCAL_CMD 245
 #define UHF_SRCCAL_CMD 246
@@ -98,51 +101,10 @@
 #define UHF_SWVER_CMD 249
 #define UHF_PLDSZ_CMD 250
 #define UHF_BCNMSG_CMD 251
-#define UHF_I2CADR_CMD 252
 #define UHF_FRAM_CMD 253
 #define UHF_SECURE_CMD 255
-#define UHF_FW_CMD
 
-#define UHF_WRITE_ANSLEN_SCW 17
-#define UHF_WRITE_ANSLEN_FREQ 13
-#define UHF_WRITE_ANSLEN_PIPET 13
-#define UHF_WRITE_ANSLEN_BCNT 13
-#define UHF_WRITE_ANSLEN_AUDIOT 13
-#define UHF_WRITE_ANSLEN_DFLT 12
-#define UHF_WRITE_ANSLEN_AX25 13
-#define UHF_WRITE_ANSLEN_GENI2C 77
-#define UHF_WRITE_ANSLEN_LOWPWR 13
-#define UHF_WRITE_ANSLEN_SRCCAL 13
-#define UHF_WRITE_ANSLEN_DSTCAL 13
-#define UHF_WRITE_ANSLEN_MORSECAL 13
-#define UHF_WRITE_ANSLEN_MIDIBCN 18
-#define UHF_WRITE_ANSLEN_BCNMSG 13
-#define UHF_WRITE_ANSLEN_I2CADR 15
-#define UHF_WRITE_ANSLEN_FRAM 13
-#define UHF_WRITE_ANSLEN_SECURE 13
 #define UHF_WRITE_ANSLEN_FW 20 // TODO: Verify through testing
-
-#define UHF_READ_ANSLEN_SCW 23
-#define UHF_READ_ANSLEN_FREQ 23
-#define UHF_READ_ANSLEN_UPTIME 23
-#define UHF_READ_ANSLEN_TPCKT 23
-#define UHF_READ_ANSLEN_RPCKT 23
-#define UHF_READ_ANSLEN_RPCKTER 23
-#define UHF_READ_ANSLEN_PIPET 23
-#define UHF_READ_ANSLEN_BCNT 23
-#define UHF_READ_ANSLEN_AUDIOT 23
-#define UHF_READ_ANSLEN_TEMP 17
-#define UHF_READ_ANSLEN_AX25 5
-#define UHF_READ_ANSLEN_LOWPWR 15
-#define UHF_READ_ANSLEN_SRCCAL 19
-#define UHF_READ_ANSLEN_DSTCAL 19
-#define UHF_READ_ANSLEN_MORSECAL 51
-#define UHF_READ_ANSLEN_MIDIBCN 123
-#define UHF_READ_ANSLEN_SWVER 39
-#define UHF_READ_ANSLEN_PLDSZ 17
-#define UHF_READ_ANSLEN_BCNMSG 160
-#define UHF_READ_ANSLEN_FRAM 43
-#define UHF_READ_ANSLEN_SECURE 21
 
 typedef struct {
     uint8_t len;
@@ -153,11 +115,6 @@ typedef struct {
     uint32_t add;
     uint8_t data[16];
 } uhf_framStruct;
-
-// Converts hex values to their ASCII characters
-
-void convHexToASCII(int length, uint8_t *arr);
-void convHexFromASCII(int length, uint8_t *arr);
 
 // Read and Write command functions
 UHF_return UHF_genericWrite(uint8_t code, void *param);

@@ -398,19 +398,37 @@ UHF_return UHF_getHK(UHF_housekeeping *uhf_hk) {
     UHF_return temp;
     UHF_return return_code = U_GOOD_CONFIG;
     
-    
     //If any return code isn't U_GOOD_CONFIG it will get caught. multiple codes
     //won't be caught. Maybe needs more robust solution
-    if ((temp = HAL_UHF_getSCW(uhf_hk->scw)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getFreq(&uhf_hk->freq)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getUptime(&uhf_hk->uptime)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getPcktsInCRC16(&uhf_hk->pckts_in_crc16)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getPipeT(&uhf_hk->pipe_t)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getAudioT(&uhf_hk->audio_t)) != U_GOOD_CONFIG) return_code = temp;
-    if ((temp = HAL_UHF_getTemp(&uhf_hk->temperature)) != U_GOOD_CONFIG) return_code = temp;
+    temp = HAL_UHF_getSCW(&uhf_hk->scw[0]);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getFreq(&uhf_hk->freq);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getUptime(&uhf_hk->uptime);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getPcktsOut(&uhf_hk->pckts_out);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getPcktsIn(&uhf_hk->pckts_in);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getPcktsInCRC16(&uhf_hk->pckts_in_crc16);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getPipeT(&uhf_hk->pipe_t);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getBeaconT(&uhf_hk->beacon_t);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getAudioT(&uhf_hk->audio_t);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
+
+    temp = HAL_UHF_getTemp(&uhf_hk->temperature);
+    if (temp != U_GOOD_CONFIG) return_code = temp;
     
     return return_code;
 }
