@@ -66,7 +66,7 @@ class groundStation(object):
         elif opts.interface == 'fifo':
             self.__fifo__()
         elif opts.interface == 'sdr':
-            self.__sdr__()
+            self.__sdr__(opts.device, libcsp.SDR_UHF_9600_BAUD)
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
@@ -94,9 +94,10 @@ class groundStation(object):
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         libcsp.rtable_load('1 uart, 4 uart 1')
         return ser
-    def __sdr__(self):
+
+    def __sdr__(self, device, uhf_baudrate):
         """ Initialize SDR interface """
-        libcsp.sdr_init()
+        libcsp.sdr_init(device, 115200, uhf_baudrate, "UHF")
         libcsp.rtable_load('1 UHF')
 
     def __setPIPE__(self):
@@ -124,7 +125,7 @@ class groundStation(object):
                 if server == 4:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
-                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_O_NONE)
             except Exception as e:
                 print(e)
                 return None
