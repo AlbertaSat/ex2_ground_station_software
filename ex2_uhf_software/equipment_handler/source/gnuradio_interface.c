@@ -17,8 +17,10 @@
   * @date 2022-03-16
   */
 
-#include "i2c_dummy.h"
+//#include "i2c_dummy.h"
 #include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 uint16_t crc16(char* pData, int length)

@@ -23,10 +23,12 @@
 
 #include <stdint.h>
 #include <string.h>
+#ifdef IS_SATELLITE
 #include "uhf_uart.h"
 #include "uhf_i2c.h"
-#include "uhf.h"
 #include "logger/logger.h"
+#endif
+#include "uhf.h"
 
 // Max lengths for ESTTC strings
 #define MAX_UHF_W_CMDLEN 120
@@ -143,6 +145,7 @@
 #define UHF_READ_ANSLEN_BCNMSG 160
 #define UHF_READ_ANSLEN_FRAM 43
 #define UHF_READ_ANSLEN_SECURE 21
+
 
 typedef struct {
     uint8_t len;

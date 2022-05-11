@@ -24,7 +24,9 @@
 #include <csp/csp.h>
 #include <inttypes.h>
 
+#ifdef IS_SATELLITE
 #include "services.h"
+#endif
 
 #define MAX_W_CMDLEN 120
 #define SCW_LEN 12
