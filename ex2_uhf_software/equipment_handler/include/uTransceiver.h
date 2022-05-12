@@ -161,7 +161,7 @@ typedef struct {
 
 void convHexToASCII(int length, uint8_t *arr);
 void convHexFromASCII(int length, uint8_t *arr);
-uint32_t crc32_calc(size_t length, uint8_t *cmd);
+uint32_t crc32_calc(size_t length, char *cmd);
 int find_blankSpace(int length, uint8_t *string);
 
 // Read and Write command functions

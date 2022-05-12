@@ -152,9 +152,8 @@ class groundStation(object):
             inStr = input(prompt)#TODO maybe add uhf-checker here!
             try:
                 if(inStr.split("_")[0] == 'UHFDIR'): #UHF-direct command, not using CSP
-                    print(type(inStr))
-                    print(inStr)
                     self.uTrns.UHFDIRCommand(inStr)
+                    return None, None, None
                 command = self.parser.parseInputValue(inStr)
             except Exception as e:
                 print(e + '\n')
@@ -163,7 +162,7 @@ class groundStation(object):
             print('invalid call to getInput')
             return
         if command is None:
-            print('Error: Command was not parsed')
+            print('Command was not parsed')
             return
         toSend = libcsp.buffer_get(len(command['args']))
         if len(command['args']) > 0:

@@ -430,6 +430,7 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
      *    - Send the command and receive the answer
      *    - Handle errors
      */
+    crc32_calc(find_blankSpace(command_length, command_to_send), command_to_send);
 
 /* Send the command and receive the answer */
 #ifndef IS_SATELLITE
@@ -438,7 +439,6 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
 #else
 
    /* Calculate the crc32 of the command*/
-    crc32_calc(find_blankSpace(command_length, command_to_send), command_to_send);
     uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
     UHF_return return_val;
 
@@ -678,6 +678,7 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     default:
         return U_BAD_PARAM;
     }
+
 
     crc32_calc(find_blankSpace(strlen((char *)command_to_send), command_to_send), command_to_send);
 
@@ -1009,7 +1010,7 @@ void convHexFromASCII(int length, uint8_t *arr) {
  *      crc32 value (not used)
  */
 
-uint32_t crc32_calc(size_t length, uint8_t *command_to_send) {
+uint32_t crc32_calc(size_t length, char *command_to_send) {
     int count = length;
     const uint32_t POLY = 0xEDB88320;
     const unsigned char *buffer = (const unsigned char *)command_to_send;

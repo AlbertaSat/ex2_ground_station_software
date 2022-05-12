@@ -34,11 +34,15 @@ def cli():
             return
         try:
             server, port, toSend = gs.getInput(prompt='to send: ')
+
             if server == 24:
                 # This is a direct UART command to a ground station EnduroSat transceiver to enter PIPE
                 # Can be deleted for flight
                 gs.__setPIPE__()
+            elif server == None:
+                pass#UHFDIR command
             else:
+
                 resp = gs.transaction(server, port, toSend)
 
                 #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
@@ -51,7 +55,7 @@ def cli():
                     [print(key,':',value) for key, value in resp.items()]
             
         except Exception as e:
-            traceback.print_tb()
+            #traceback.print_tb()
             print(e)
 
 if __name__ == '__main__':

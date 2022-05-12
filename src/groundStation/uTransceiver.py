@@ -4,6 +4,8 @@ import sys
 import zmq
 import threading
 import os.path
+import socket
+import time
 
 
 
@@ -15,7 +17,7 @@ import os.path
 class uTransceiver(object):
 
     def __init__(self, opt):
-        self.listentimeout_s = 1.0
+        self.listentimeout_s = 2.0
         self.pipetimeout_s = 30.0
         self.listen_en = False
         self.pipe_en = False
@@ -27,25 +29,46 @@ class uTransceiver(object):
     def resetPipeTimer(self):
         self.pipe_en = False
     def listen(self):
-        port = "0002"
+        port = 4321
 
         context = zmq.Context()
         socket = context.socket(zmq.SUB)
         socket.connect("tcp://localhost:%s" % port)
         socket.setsockopt(zmq.SUBSCRIBE, b"")
+        #socket.RCVTIMEO = 100
 
-        while self.listen_en == True:
-            print(socket.recv())
+        # Initialize poll set
+        poller = zmq.Poller()
+        poller.register(socket, zmq.POLLIN)
+        
+        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # s.connect(("127.0.0.1", port))
+        
+        
+        print('Received from UHF:') 
+        self.listen_en = True
+        start = time.time()
+        while (time.time() - start) < self.listentimeout_s:
+            #print('here')
+            # data = s.recv(10000)
+            # print(repr(data))
+            
+
+            if dict(poller.poll())[socket] == zmq.POLLIN:
+                print('here')
+                #print(socket.recv(zmq.DONTWAIT))
+            
 
         socket.disconnect("tcp://localhost:%s" % port)
+        # s.close()
 
     def enterPipeMode(self):
         if self.u == True:
             if self.pipe_en == False:
                 #current config is for RF mode 5, baudrate = 115200
-                self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 0 0 0 0 1 1)')
+                self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 1 0 0 0 1 1)')
                 self.pipe_en = True
-                timer = threading.Timer(self.pipetimeout_s, self.resetPipeTimer())
+                timer = threading.Timer(self.pipetimeout_s, self.resetPipeTimer)
 
                 #TODO: send "tell Athena pipe mode is enabled" command here once implemented
         else:
@@ -55,33 +78,35 @@ class uTransceiver(object):
         if self.u == True:
             cmd = (string.split('_')[1]).split('(')[0]
             cmdcode = string.split(',')[0]
-            cmdcode = cmdcode.split('(')[1]
-            print("cmdcode = " + cmdcode)
+            cmdcode = int(cmdcode.split('(')[1])
 
             param = string.split(',')[1]
             param = param.split(')')[0]
 
             #parse param into correct ctypes based on cmdcode
-            if cmdcode == '0':
+            if cmdcode == 0:
                 paramlist = param.split()
                 paramlist = list(map(int, paramlist))
-                arg = (ctypes.c_ubyte * 12)(*paramlist)#is this a pointer or just a list?
-                #args = ctypes.cast(args, ctypes.POINTER(ctypes.c_ubyte))
-            if cmdcode == '6':
+                arg = (ctypes.c_ubyte * len(paramlist))(*paramlist)#is this a pointer or just a list?
+                
+                #arg = ctypes.cast(args, ctypes.POINTER(ctypes.c_ubyte))
+            if cmdcode == 6:
                 param = ctypes.c_uint16(param) #TODO check that this works with space after comma in command
                 arg = ctypes.cast(param, ctypes.POINTER(ctypes.c_uint16))
-            if cmdcode == '253':
+            if cmdcode == 253:
                 pass
                 #TODO someday (FRAM usage)
                 
+            #cmdcode = ctypes.cast(cmdcode, ctypes.c_ubyte)#move to function call
+            
             #check command and call relevant functions with args
             if self.pipe_en == False:
                 retval = 0
                 if cmd == 'genericWrite':
-                    retval = self.uhf.UHF_genericWrite(cmd, arg)
+                    retval = self.uhf.UHF_genericWrite(ctypes.c_ubyte(cmdcode), arg)
                 if cmd == 'genericRead':
                     voidptr = (ctypes.c_void_p * len(objs))()
-                    self.uhf.UHF_genericRead(cmd, voidptr)
+                    self.uhf.UHF_genericRead(cmdcode, voidptr)
                 if cmd == 'genericI2C':
                     pass
                     #TODO someday
@@ -92,9 +117,7 @@ class uTransceiver(object):
                 if retval != 0:
                     print('UHF Equipment Handler error ' + str(retval))
 
-                self.listen_en = True
-                timer = threading.Timer(self.listentimeout_s, self.resetListenTimer())
-                self.listen()
+                #self.listen()
             else:
                 print('Error: Command not sent. Wait for pipe mode to expire')
                 print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
