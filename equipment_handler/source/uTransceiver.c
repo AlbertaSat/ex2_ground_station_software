@@ -27,6 +27,7 @@
 // TODO: Combine send code into single function?
 // TODO: Add error logging
 
+
 bool enter_pipe_mode = false;
 
 static void convHexToASCII(int length, uint8_t *arr);
@@ -478,6 +479,7 @@ static UHF_return UHF_write_command_parse(uint8_t code, void *param, char *comma
         char command_assembly[30] = {'E',    'S',    '+',    'W',    '2',         '2',        '0', '0',
                                      hex[0], hex[1], hex[2], hex[3], BLANK_SPACE, 'C',        'C', 'C',
                                      'C',    'C',    'C',    'C',    'C',         CARRIAGE_R, 0};
+
         strcpy(command_to_send, command_assembly);
         break;
     }
@@ -540,10 +542,11 @@ static UHF_return UHF_write_command_parse(uint8_t code, void *param, char *comma
     }
 
     case UHF_AX25_CMD: { // Enable/Disable AX.25 Automatic Decoding
-        uint8_t *state = (uint8_t *)param;
+        char *state = (char *)param;
         convHexToASCII(1, state);
         char command_assembly[21] = {'E', 'S', '+', 'W', '2', '2', 'E', 'F', '0',        *state, BLANK_SPACE,
                                      'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', CARRIAGE_R, 0};
+
         strcpy(command_to_send, command_assembly);
         break;
     }
@@ -622,7 +625,7 @@ static UHF_return UHF_write_command_parse(uint8_t code, void *param, char *comma
         uhf_configStruct *beacon = (uhf_configStruct *)param;
         uint8_t len[2] = {(beacon->len - (beacon->len % 10)) / 10, beacon->len % 10};
         convHexToASCII(2, len);
-        char command_assembly[120] = {'E', 'S', '+', 'W', '2', '2', 'F', '8', len[0], len[1], 0};
+        char command_assembly[121] = {'E', 'S', '+', 'W', '2', '2', 'F', '8', len[0], len[1]};
         uint8_t j = 0;
         for (; j < (3 * beacon->len); j++) {
             command_assembly[10 + j] = beacon->message[j];
@@ -647,7 +650,7 @@ static UHF_return UHF_write_command_parse(uint8_t code, void *param, char *comma
         uint8_t len[2] = {(beacon->len) >> 4, (beacon->len) & 15};
         convHexToASCII(2, len);
 
-        uint8_t command_assembly[120] = {'E', 'S', '+', 'W', '2', '2', 'F', 'B', len[0], len[1]};
+        char command_assembly[120] = {'E', 'S', '+', 'W', '2', '2', 'F', 'B', len[0], len[1]};
         int k = 0;
         for (; k < beacon->len; k++) {
             command_assembly[10 + k] = beacon->message[k];
@@ -662,6 +665,7 @@ static UHF_return UHF_write_command_parse(uint8_t code, void *param, char *comma
         command_assembly[17 + k] = 'C';
         command_assembly[18 + k] = 'C';
         command_assembly[19 + k] = CARRIAGE_R;
+        command_assembly[20 + k] = 0;
 
         *command_length = beacon->len + 20;
         memcpy(command_to_send, command_assembly, command_length);
@@ -676,7 +680,6 @@ static UHF_return UHF_write_command_parse(uint8_t code, void *param, char *comma
             return U_BAD_PARAM;
         if (add >= 0x83FE && add <= 0x24000)
             return U_BAD_PARAM;
-
         uint8_t chadd[8] = {add >> 28,        (add >> 24) & 15, (add >> 20) & 15, (add >> 16) & 15,
                             (add >> 12) & 15, (add >> 8) & 15,  (add >> 4) & 15,  add & 15};
         convHexToASCII(8, chadd);
@@ -905,11 +908,9 @@ static UHF_return UHF_read_command_parse(uint8_t code, void *param, uint8_t *ans
 
     case UHF_PLDSZ_CMD: { // Get Device Payload Size
         uint16_t *p_size = (uint16_t *)param;
-
         uint8_t hex[4] = {ans[blankspace_index - 4], ans[blankspace_index - 3], ans[blankspace_index - 2],
                           ans[blankspace_index - 1]};
         convHexFromASCII(4, hex);
-
         *p_size = (hex[0] << 12) | (hex[1] << 8) | (hex[2] << 4) | hex[3];
         break;
     }
@@ -975,6 +976,7 @@ static UHF_return UHF_read_command_parse(uint8_t code, void *param, uint8_t *ans
  * @return
  *      UHF_return
  */
+
 static UHF_return UHF_fram_read_command_assembly(uint8_t *command_to_send, uhf_framStruct *fram_struct) {
     uint32_t add = fram_struct->add;
     if (add >= 0x8000 && add <= 0x83A4)

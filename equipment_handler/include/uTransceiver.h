@@ -23,10 +23,12 @@
 
 #include <stdint.h>
 #include <string.h>
+#ifdef IS_SATELLITE
 #include "uhf_uart.h"
 #include "uhf_i2c.h"
-#include "uhf.h"
 #include "logger/logger.h"
+#endif
+#include "uhf.h"
 
 // Max lengths for ESTTC strings
 #define MAX_UHF_W_CMDLEN 120
