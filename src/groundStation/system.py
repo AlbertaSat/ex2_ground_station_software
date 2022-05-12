@@ -84,10 +84,9 @@ class SystemValues(object):
                     'SET_SCHEDULE': {
                         'subPort': 0,
                         'inoutInfo': {
-                            'args': None,  # schedule file name, ex. schedule.txt. All scheduled commands should be stored here
+                            'args': None,  # All scheduled commands should be stored in schedule.txt
                             'returns': {
-                                'err': '>b',
-                                'timestamp': '<u4'
+                                'err': '>b'
                             }
                         }
                     },
@@ -100,7 +99,7 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'RESET_SCHEDULE': {
+                    'REPLACE_SCHEDULE': {
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,

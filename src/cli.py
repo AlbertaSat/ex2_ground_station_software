@@ -42,20 +42,31 @@ def cli():
                 # Can be deleted for flight
                 print("calling __setPIPE")
                 gs.__setPIPE__()
-            else:
-                print("the server is: ", server)
-                print("the port is: ", port)
-                resp = gs.transaction(server, port, toSend)
+                data = bytearray(libcsp.packet_get_data(toSend))
 
-                #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
-                if type(resp) == list:
-                    for rxData in resp:
-                        print("--------------------------------------------------------------------------")
-                        [print(key,':',value) for key, value in rxData.items()]
-                #else, only a single dictionary is returned
-                else:
-                    [print(key,':',value) for key, value in resp.items()]
-            
+            if (
+                server == sysVals.APP_DICT.get('OBC') and 
+                port == sysVals.SERVICES.get('SCHEDULER').get('port') and
+                (data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort') or
+                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('REPLACE_SCHEDULE').get('subPort'))
+                ):
+
+                embeddedCSPObj = groundStation.getEmbededCSPData(data)
+                embeddedCSP = embeddedCSPObj.embedCSP()
+                libcsp.packet_set_data(toSend, embeddedCSP)
+                resp = gs.transaction(server, port, toSend)
+                
+            else:
+                resp = gs.transaction(server, port, toSend)
+            #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
+            if type(resp) == list:
+                for rxData in resp:
+                    print("--------------------------------------------------------------------------")
+                    [print(key,':',value) for key, value in rxData.items()]
+            #else, only a single dictionary is returned
+            else:
+                [print(key,':',value) for key, value in resp.items()]
+                print("\r\n")
         except Exception as e:
             print(e)
 

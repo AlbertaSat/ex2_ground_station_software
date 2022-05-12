@@ -396,13 +396,13 @@ class options(object):
         return self.parser.parse_args(sys.argv[1:])
 
 
-class embedCSP:
+class getEmbededCSPData:
     def __init__(self, data):
         self.data = data
         self.opts = options()
         self.csp = groundStation(self.opts.getOptions())
-        # open the scheduler text file as an array of strings
-        with open('schedule.txt') as f:
+        self.filename = input("enter file name: ")
+        with open(self.filename) as f:
             self.cmdList = f.readlines()
         #create an empty list, and create another list of csp objects
         self.schedule = list()
@@ -411,7 +411,6 @@ class embedCSP:
         # for each line of command, parse the packet
         if len(self.cmdList) > 0:
             for i in range(0, len(self.cmdList)):
-                print("entered embedCSP\n")
                 # parse the time and command, then embed the command as a CSP packet
                 cmdStart = re.search(r'[a-z]', self.cmdList[i], re.I)
                 if cmdStart is not None:
@@ -419,7 +418,6 @@ class embedCSP:
                 scheduledTime = self.cmdList[i][:cmdStart]
                 ascii_values = [ord(character) for character in scheduledTime]
                 scheduledCmd = self.cmdList[i][cmdStart:]
-                print("scheduledCmd is: ", scheduledCmd)
                 self._command = {}
                 self._command['time'] = ascii_values
 
@@ -445,7 +443,6 @@ class embedCSP:
                 self.data.extend(dport)
                 self.data.extend((len(packetContent)).to_bytes(2, byteorder='big'))
                 self.data.extend(packetContent)
-            print("data is: ", self.data)
 
         return self.data
 
