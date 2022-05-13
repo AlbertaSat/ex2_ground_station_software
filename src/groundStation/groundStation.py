@@ -74,6 +74,7 @@ class groundStation(object):
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
         self.uTrns = uTransceiver(opts.u)
+        self.uTrns_enable = opts.u
 
 
     """ Private Methods """
@@ -178,6 +179,7 @@ class groundStation(object):
         return command['dst'], command['dport'], toSend
 
     def transaction(self, server, port, buf):
+
         """ Execute CSP transaction - send and receive on one RDP connection and
         return parsed packet """
         conn = self.__connectionManager__(server, port)
@@ -282,6 +284,18 @@ class groundStation(object):
                     print('ERROR: bad response data')
                 print(rxData)
 
+    def handlePipeMode(self):
+        if self.uTrns_enable == True:
+            if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
+                self.uTrns.enterPipeMode()
+                #may need to add delay here?
+                command = self.parser.parseInputValue('obc.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
+                toSend = libcsp.buffer_get(len(command['args']))
+                if len(command['args']) > 0:
+                    libcsp.packet_set_data(toSend, command['args'])
+                self.transaction(command['dst'], command['dport'], toSend)
+            self.uTrns.last_tx_time = time.time()
+
 
 class GracefulExiter():
     """
@@ -338,6 +352,7 @@ class options(object):
         return self.parser.parse_args(sys.argv[1:])
 
 
+
 if __name__ == '__main__':
     opts = options()
     csp = groundStation(opts.getOptions())
@@ -345,6 +360,7 @@ if __name__ == '__main__':
     while True:
         try:
             server, port, toSend = csp.getInput(prompt='to send: ')
+            csp.handlePipeMode()
             csp.transaction(server, port, toSend)
             # receive()
         except Exception as e:

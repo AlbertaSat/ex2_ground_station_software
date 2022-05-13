@@ -19,6 +19,7 @@ class uTransceiver(object):
     def __init__(self, opt):
         self.listentimeout_s = 2.0
         self.pipetimeout_s = 30.0
+        self.last_tx_time = 0
         self.listen_en = False
         self.pipe_en = False
         self.u = opt
@@ -26,8 +27,6 @@ class uTransceiver(object):
 
     def resetListenTimer(self):
         self.listen_en = False
-    def resetPipeTimer(self):
-        self.pipe_en = False
     def listen(self):
         port = 4321
 
@@ -63,16 +62,9 @@ class uTransceiver(object):
         # s.close()
 
     def enterPipeMode(self):
-        if self.u == True:
-            if self.pipe_en == False:
-                #current config is for RF mode 5, baudrate = 115200
-                self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 1 0 0 0 1 1)')
-                self.pipe_en = True
-                timer = threading.Timer(self.pipetimeout_s, self.resetPipeTimer)
+            #current config is for RF mode 5, baudrate = 115200
+            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 1 0 0 0 1 1)')
 
-                #TODO: send "tell Athena pipe mode is enabled" command here once implemented
-        else:
-            print('UHF functionality not enabled. Please run CLI with -u flag to enable.')
 
     def UHFDIRCommand(self, string):
         if self.u == True:
@@ -96,16 +88,14 @@ class uTransceiver(object):
             if cmdcode == 253:
                 pass
                 #TODO someday (FRAM usage)
-                
-            #cmdcode = ctypes.cast(cmdcode, ctypes.c_ubyte)#move to function call
-            
+                            
             #check command and call relevant functions with args
-            if self.pipe_en == False:
+            if (time.time() - self.last_tx_time) > self.pipetimeout_s:
                 retval = 0
                 if cmd == 'genericWrite':
                     retval = self.uhf.UHF_genericWrite(ctypes.c_ubyte(cmdcode), arg)
                 if cmd == 'genericRead':
-                    voidptr = (ctypes.c_void_p * len(objs))()
+                    voidptr = (ctypes.c_void_p * 1)()
                     self.uhf.UHF_genericRead(cmdcode, voidptr)
                 if cmd == 'genericI2C':
                     pass
