@@ -51,7 +51,7 @@ def cli():
                     [print(key,':',value) for key, value in resp.items()]
             
         except Exception as e:
-            traceback.print_tb()
+            #traceback.print_tb()
             print(e)
 
 if __name__ == '__main__':
