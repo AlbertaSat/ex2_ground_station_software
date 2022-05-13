@@ -31,7 +31,7 @@ share/python-wheels/
 *.egg
 *.bin
 MANIFEST
-.bin
+*.bin
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
