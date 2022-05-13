@@ -20,6 +20,7 @@ lib/
 lib64/
 parts/
 sdist/
+ex2_uhf_software/
 var/
 .vscode/
 wheels/
@@ -28,6 +29,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.bin
 MANIFEST
 
 # PyInstaller
