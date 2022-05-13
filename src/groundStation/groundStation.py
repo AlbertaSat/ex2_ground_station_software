@@ -36,6 +36,8 @@ import os
 import re
 import serial
 from collections import defaultdict
+from .uTransceiver import uTransceiver
+
 
 # if __name__ == '__main__':
 # We're running this file directly, not as a module.
@@ -71,6 +73,8 @@ class groundStation(object):
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
+        self.uTrns = uTransceiver(opts.u)
+
 
     """ Private Methods """
 
@@ -144,13 +148,18 @@ class groundStation(object):
         and parse the input to CSP packet information """
         if inVal is not None:
             try:
+                if(inVal.split('_')[0] == 'UHFDIR'): #UHF-direct command, not using CSP
+                    self.uTrns.UHFDIRCommand(inVal)
                 command = self.parser.parseInputValue(inVal)
             except Exception as e:
                 print(e + '\n')
                 return
         elif prompt is not None:
-            inStr = input(prompt)
+            inStr = input(prompt)#TODO maybe add uhf-checker here!
             try:
+                if(inStr.split("_")[0] == 'UHFDIR'): #UHF-direct command, not using CSP
+                    self.uTrns.UHFDIRCommand(inStr)
+                    return None, None, None
                 command = self.parser.parseInputValue(inStr)
             except Exception as e:
                 print(e + '\n')
@@ -324,6 +333,8 @@ class options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
+
+        self.parser.add_argument('-u', action='store_true')#UHF connection (not uart) enabled
         return self.parser.parse_args(sys.argv[1:])
 
 
