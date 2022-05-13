@@ -83,14 +83,13 @@ UHF_return UHF_genericWrite(uint8_t code, void *param) {
     /* Calculate the crc32 of the command*/
     crc32_calc(find_blankSpace(command_length, command_to_send), command_to_send);
 
-    /* Send the command and receive the answer */
-    uint8_t answer_length = UHF_write_ans_len_table[code];
-    uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
-
 #ifndef IS_SATELLITE
     i2c_package_for_radio(command_to_send, strlen((char *)command_to_send));
     return U_GOOD_CONFIG;
 #else
+    /* Send the command and receive the answer */
+    uint8_t answer_length = UHF_write_ans_len_table[code];
+    uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
 
 #ifndef UHF_USE_I2C_CMDS
     return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, command_length, ans, answer_length);
@@ -142,14 +141,14 @@ UHF_return UHF_genericRead(uint8_t code, void *param) {
     /* Calculate the crc32 of the command*/
     crc32_calc(find_blankSpace(strlen(command_to_send), command_to_send), command_to_send);
 
-    /* Send the command and receive the answer */
-    uint8_t answer_length = UHF_read_ans_len_table[code];
-    uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
-
 #ifndef IS_SATELLITE
     i2c_package_for_radio(command_to_send, strlen((char *)command_to_send));
     return U_GOOD_CONFIG;
 #else
+
+    /* Send the command and receive the answer */
+    uint8_t answer_length = UHF_read_ans_len_table[code];
+    uint8_t *ans = pvPortMalloc(answer_length * sizeof(uint8_t));
 
 #ifndef UHF_USE_I2C_CMDS
     return_val = uhf_uart_sendAndReceive((uint8_t *)command_to_send, strlen(command_to_send), ans, answer_length);
@@ -217,6 +216,8 @@ UHF_return UHF_genericI2C(uint8_t format, uint8_t s_address, uint8_t len, uint8_
     return U_GOOD_CONFIG;
 }
 
+#ifdef IS_SATELLITE
+
 /**
  * @brief
  *      Sends a firmware update command to the UHF
@@ -267,7 +268,7 @@ UHF_return UHF_firmwareUpdate(uint8_t *line, uint8_t line_length) {
 
     return return_val;
 }
-
+#endif //IS_SATELLITE
 /******************* Internal functions *********************/
 
 /**
@@ -360,6 +361,8 @@ static uint32_t crc32_calc(size_t length, char *command_to_send) {
     return crc;
 }
 
+#ifdef IS_SATELLITE
+
 /**
  * @brief
  *      Check a receive response from the UHF for errors
@@ -417,6 +420,7 @@ static UHF_return UHF_error_check(uint8_t *ans, uint8_t answer_length) {
     vPortFree(ans_str);
     return return_val;
 }
+#endif //IS_SATELLITE
 
 /**
  * @brief
