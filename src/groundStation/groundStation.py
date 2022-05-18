@@ -47,7 +47,6 @@ import libcsp_py3 as libcsp
 #     from ex2_ground_station_software.src.system import SystemValues
 #     import libcsp.build.libcsp_py3 as libcsp
 
-
 class groundStation(object):
     """ Constructor """
 
@@ -66,6 +65,8 @@ class groundStation(object):
             self.ser = self.__uart__(opts.device)
         elif opts.interface == 'fifo':
             self.__fifo__()
+        elif opts.interface == 'sdr':
+            self.__sdr__(opts.device, libcsp.SDR_UHF_9600_BAUD)
         libcsp.route_start_task()
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
@@ -94,6 +95,11 @@ class groundStation(object):
         libcsp.rtable_load('1 uart, 4 uart 1')
         return ser
 
+    def __sdr__(self, device, uhf_baudrate):
+        """ Initialize SDR interface """
+        libcsp.sdr_init(device, 115200, uhf_baudrate, "UHF")
+        libcsp.rtable_load('1 UHF')
+
     def __setPIPE__(self):
         # Make a python byte array with the command that needs to be sent to set pipe mode
         self.ser.write(b'ES+W2206000000B4 D35F70CF\r')
@@ -119,7 +125,7 @@ class groundStation(object):
                 if server == 4:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
-                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_RDP)
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_O_NONE)
             except Exception as e:
                 print(e)
                 return None
@@ -152,9 +158,11 @@ class groundStation(object):
         else:
             print('invalid call to getInput')
             return
+
         if command is None:
             print('Error: Command was not parsed')
             return
+
         toSend = libcsp.buffer_get(len(command['args']))
         if len(command['args']) > 0:
             libcsp.packet_set_data(toSend, command['args'])
