@@ -70,12 +70,12 @@ class updater(groundStation):
         return rxDataList
 
     def get_conn(self):
-        server = self.vals.APP_DICT.get('OBC')
+        server = self.vals.APP_DICT.get(self.satellite)
         port = self.vals.SERVICES.get('UPDATER').get('port')
         return self.__connectionManager__(server,port)
 
     def get_init_packet(self):
-        server, port, toSend = self.getInput(None, inVal="obc.updater.INITIALIZE_UPDATE({},{},{})".format(self.address, self.filesize, self.file_crc))
+        server, port, toSend = self.getInput(None, inVal="{}.updater.INITIALIZE_UPDATE({},{},{})".format(self.satellite, self.address, self.filesize, self.file_crc))
         return toSend
 
     def get_block_update_packet(self, data):
@@ -91,7 +91,7 @@ class updater(groundStation):
         return toSend
 
     def get_resume_packet(self):
-        server, port, toSend = self.getInput(None, inVal="obc.updater.GET_PROGRESS()")
+        server, port, toSend = self.getInput(None, inVal="{}.updater.GET_PROGRESS()".format(self.satellite))
         return toSend
 
     def send_update(self):
