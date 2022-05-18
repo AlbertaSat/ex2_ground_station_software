@@ -20,7 +20,7 @@
 '''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
 import time
 from groundStation import groundStation
-import traceback
+import traceback #for testing purposes
 
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
@@ -49,9 +49,9 @@ def cli():
                 #else, only a single dictionary is returned
                 else:
                     [print(key,':',value) for key, value in resp.items()]
-            
+
         except Exception as e:
-            #traceback.print_tb()
+            #traceback.print_tb() #for testing purposes
             print(e)
 
 if __name__ == '__main__':
