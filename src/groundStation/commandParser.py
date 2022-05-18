@@ -21,10 +21,10 @@
 import numpy as np
 import re
 
-try:
-    from groundStation.system import SystemValues
-except ModuleNotFoundError: # For comm.py
+try: # When running from website
     from ex2_ground_station_software.src.groundStation.system import SystemValues
+except ImportError: # When running from this repo's cli
+    from groundStation.system import SystemValues
 
 
 class CommandParser(object):
