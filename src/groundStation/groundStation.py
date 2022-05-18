@@ -71,6 +71,7 @@ class groundStation(object):
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
+        self.satellite = opts.satellite
 
     """ Private Methods """
 
@@ -324,6 +325,11 @@ class options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
+        self.parser.add_argument(
+            '--satellite',
+            type=str,
+            default="EX2",
+            help='Satellite parameter for automatic programs (e.g FTP)')
         return self.parser.parse_args(sys.argv[1:])
 
 
