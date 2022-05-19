@@ -330,7 +330,7 @@ class options(object):
             '-I',
             '--interface',
             type=str,
-            default='zmq',
+            default='uart',
             help='CSP interface to use')
 
         self.parser.add_argument(
