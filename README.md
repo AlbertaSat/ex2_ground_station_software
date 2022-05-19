@@ -30,17 +30,19 @@ sudo apt-get install yarn -y
 Step 2: install dependencies and run the ground station (may need to run with `sudo`).
 
 ```
+yarn install_dependencies
+yarn csp:clone
 yarn build
-yarn run:cli <options>
+yarn cli <options>
 ```
 
-e.g. `yarn run:cli -I uart -d /dev/ttyUSB0`
+e.g. `yarn cli -I uart -d /dev/ttyUSB0`
 
 Step 3: before and after development, the existing tests should be run:
 
 ```
-yarn run:test_uhf <options>
-yarn run:test_sband <options>
+yarn test_uhf <options>
+yarn test_sband <options>
 ```
 
 ### Troubleshooting
