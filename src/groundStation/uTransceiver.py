@@ -85,7 +85,6 @@ class uTransceiver(object):
 
             param = string.split(',')[1]
             param = param.split(')')[0]
-
             #parse param into correct ctypes based on cmdcode
             if cmdcode == 0:
                 paramlist = param.split()
