@@ -73,6 +73,7 @@ class groundStation(object):
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
+        self.set_satellite(opts.satellite)
 
     """ Private Methods """
 
@@ -215,9 +216,9 @@ class groundStation(object):
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or
-            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or
-            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or
+            libcsp.conn_src(conn) != self.vals.APP_DICT.get(self.satellite) or 
+            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
+            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]
@@ -290,6 +291,14 @@ class groundStation(object):
                     print('ERROR: bad response data')
                 print(rxData)
 
+    def get_satellite(self):
+        return self.satellite
+
+    def set_satellite(self, name):
+        if name not in self.apps.keys():
+            raise ValueError("Satellite \'{}\' not in {}".format(name, str(self.apps.keys())))
+        else:
+            self.satellite = name;
 
 class GracefulExiter():
     """
@@ -325,7 +334,7 @@ class options(object):
             '-I',
             '--interface',
             type=str,
-            default='zmq',
+            default='uart',
             help='CSP interface to use')
 
         self.parser.add_argument(
@@ -341,6 +350,13 @@ class options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
+
+        self.parser.add_argument(
+            '-s',
+            '--satellite',
+            type=str,
+            default="EX2",
+            help='Satellite parameter for automatic programs (e.g FTP)')
         return self.parser.parse_args(sys.argv[1:])
 
 
