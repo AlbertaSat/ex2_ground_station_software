@@ -333,7 +333,9 @@ class options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
+
         self.parser.add_argument(
+            '-s',
             '--satellite',
             type=str,
             default="EX2",
