@@ -264,6 +264,15 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'UHF_IS_IN_PIPE_NOTIFICATION': {
+                        'subPort': 11,
+                        'inoutInfo': {
+                            'args': ['>B'], 
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
                 }
             },
             'COMMUNICATION': {
