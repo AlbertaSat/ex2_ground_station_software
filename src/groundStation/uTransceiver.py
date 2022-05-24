@@ -36,22 +36,19 @@ class uTransceiver(object):
         self.pipe_en = False
         self.u = opt
         self.uhf = cdll.LoadLibrary("./ex2_uhf_software/uTransceiver.so")#consider making an env var for this?
+        self.port = 4321
+        self.context = zmq.Context()
+        self.socket = context.socket(zmq.SUB)
+        self.socket.connect("tcp://localhost:%s" % port)
+        self.socket.setsockopt(zmq.SUBSCRIBE, b"")
+        #socket.RCVTIMEO = 100 #for testing purposes
+        # Initialize poll set
+        self.poller = zmq.Poller()
+        self.poller.register(socket, zmq.POLLIN)
 
     def resetListenTimer(self):
         self.listen_en = False
     def listen(self):
-        port = 4321
-
-        context = zmq.Context()
-        socket = context.socket(zmq.SUB)
-        socket.connect("tcp://localhost:%s" % port)
-        socket.setsockopt(zmq.SUBSCRIBE, b"")
-        #socket.RCVTIMEO = 100 #for testing purposes
-
-        # Initialize poll set
-        poller = zmq.Poller()
-        poller.register(socket, zmq.POLLIN)
-
         #for testing purposes
         # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # s.connect(("127.0.0.1", port))
@@ -66,11 +63,35 @@ class uTransceiver(object):
             # data = s.recv(10000)
             # print(repr(data))
 
-            if dict(poller.poll())[socket] == zmq.POLLIN:
+            if dict(self.poller.poll())[self.socket] == zmq.POLLIN:
                 print('here')
-                #print(socket.recv(zmq.DONTWAIT))#for testing purposes
+                print(self.socket.recv(zmq.DONTWAIT))#for testing purposes
 
-        socket.disconnect("tcp://localhost:%s" % port)
+        self.socket.disconnect("tcp://localhost:%s" % port)
+        # s.close() #for testing purposes
+
+    #TODO add delay to break if nothing received
+    def listenIfUpdating(self):
+        #for testing purposes
+        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # s.connect(("127.0.0.1", port))
+
+        print('Received from UHF:')
+        self.listen_en = True
+        start = time.time()
+        while (time.time() - start) < self.listentimeout_s:
+
+            #for testing purposes
+            #print('here')
+            # data = s.recv(10000)
+            # print(repr(data))
+
+            if dict(self.poller.poll())[self.socket] == zmq.POLLIN:
+                print('here')
+                self.response = self.socket.recv(zmq.DONTWAIT)
+                print(self.response)#for testing purposes
+
+        self.socket.disconnect("tcp://localhost:%s" % port)
         # s.close() #for testing purposes
 
     def enterPipeMode(self):
@@ -123,3 +144,37 @@ class uTransceiver(object):
                 print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
         else:
             print('UHF functionality not enabled. Please run CLI with -u flag to enable.')
+
+#TODO make command interface
+#TODO convert types from args to use hex for xors
+#TODO implement equipment handler func for no 256 = firmware update
+    def updateFirmware(self, filename, uplink_xor, downlink_xor):
+        #step 1
+        cmd = 'UHFDIR_genericRead(255, 0)'
+        self.UHFDIRCommand(cmd)
+        self.listenIfUpdating()#verify if blocking or not
+
+        #step 2
+        seedkey = self.response ^ downlink_xor
+        up_seedkey = seedkey ^ uplink_xor
+        up_seedkey = hex(up_seedkey)
+        self.UHFDIRCommand("UHFDIR_genericWrite(255, " + up_seedkey + ")")
+        self.listenIfUpdating()#verify if blocking or not
+        input("If response OK, press Enter to continue...")
+
+        file1 = open(filename, 'r')
+        Lines = file1.readlines()
+        numlines = len(Lines)
+
+        #step 3+4
+        for line in Lines:
+            print("sending line", line, "of", numlines)
+            self.UHFDIRCommand("UHFDIR_genericWrite(256, " + Lines[line] + ")")
+            self.listenIfUpdating()#verify if blocking or not
+            if self.response != "OK":
+                if self.response == "OK+F1F1":
+                    print("Firmware update complete. Transceiver rebooting...")
+                else:
+                    input("Error sending line", line, ", press Enter to retry this line...")
+
+        file1.close()
