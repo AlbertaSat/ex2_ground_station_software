@@ -114,6 +114,27 @@ GENERAL.SET_CHARON_WATCHDOG_TIMEOUT:
 		port: 11		subport: 8
 
 
+GENERAL.GET_ADCS_WATCHDOG_TIMEOUT:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'timeout_ms': '>u4'}
+		port: 11		subport: 9
+
+
+GENERAL.SET_ADCS_WATCHDOG_TIMEOUT:
+		About: None
+		Arguments: [>u4]
+		return values: {'err': '>b'}
+		port: 11		subport: 10
+
+
+GENERAL.UHF_IS_IN_PIPE_NOTIFICATION:
+		About: None
+		Arguments: [>B]
+		return values: {'err': '>b'}
+		port: 11		subport: 11
+
+
 COMMUNICATION.S_GET_FREQ:
 		About: Gets the S-band frequency (MHz)
 		Arguments: [None]
