@@ -33,7 +33,7 @@ def cli():
             return
         try:
             cmd = input("$ ")
-            server, port, toSend = gs.getInput(cmd, inVal="obc.cli.send_cmd({},{})".format(len(cmd), cmd))
+            server, port, toSend = gs.getInput(cmd, inVal="{}.cli.send_cmd({},{})".format(gs.satellite, len(cmd), cmd))
             gs.transaction(server, port, toSend)
             
         except Exception as e:

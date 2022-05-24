@@ -1,0 +1,30 @@
+name: Generate Command Docs
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'src/groundStation/system.py'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.10'
+          architecture: 'x64'
+      - name: Install numpy
+        run: python3 -m pip install numpy
+      - name: Generate Docs
+        run: python3 src/docGen.py
+      - name: Commit and Push CommandDocs.txt
+        run:
+          git config --global user.name github-actions &&
+          git config --global user.email github-actions@github.com &&
+          git add CommandDocs.txt &&
+          git commit -m "Auto-updating CommandDocs.txt" &&
+          git push

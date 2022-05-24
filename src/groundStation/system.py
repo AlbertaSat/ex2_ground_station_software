@@ -67,15 +67,12 @@ class SystemValues(object):
         }
 
         self.APP_DICT = {
-            'OBC': 1,
+            'EX2': 1,
+            "YUK": 2,
+            "ARI": 3,
             'EPS': 4,  # hard coded by manufacturer
-            'ADCS': 2,
-            'COMMS': 3,
-            'IAC': 5,
-            'DBG': 7,
             'GND': 16,
             'PIPE': 24,
-            'DEMO': 30,
             'LAST': 31
         }
         self.SERVICES = {

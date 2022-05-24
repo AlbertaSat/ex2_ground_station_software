@@ -34,6 +34,8 @@ for services in system.SERVICES:
         f.write(services + '.' + subName + ':\n')
 
         sub = subservice[subName]
+        # FIXME: ADCS commands in system.py have 'subport' instead of 'subPort'
+        subport = sub['subPort'] if 'subPort' in sub else sub['subport']
         inoutInfo = sub['inoutInfo']
 
         args = 'None' if inoutInfo['args'] is None else ', '.join(map(str, inoutInfo['args']))
@@ -44,4 +46,4 @@ for services in system.SERVICES:
         '\t\tArguments: [' + args + ']\n' +
         '\t\treturn values: ' + returns + '\n'
         '\t\tport: ' + str(system.SERVICES[services]['port']) +
-        '\t\tsubport: ' + str(sub['subPort']) + '\n\n\n')
+        '\t\tsubport: ' + str(subport) + '\n\n\n')

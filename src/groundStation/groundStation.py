@@ -39,15 +39,14 @@ from collections import defaultdict
 from .uTransceiver import uTransceiver
 
 
-# if __name__ == '__main__':
-# We're running this file directly, not as a module.
-from groundStation.commandParser import CommandParser
-from groundStation.system import SystemValues
-import libcsp_py3 as libcsp
-# else:
-#     # We're importing this file as a module to use in the website
-#     from ex2_ground_station_software.src.system import SystemValues
-#     import libcsp.build.libcsp_py3 as libcsp
+try: # We are importing this file for use on the website (comm.py)
+    from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
+    from ex2_ground_station_software.src.groundStation.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
+except ImportError: # We are using this file directly or through cli.py
+    from groundStation.commandParser import CommandParser
+    from groundStation.system import SystemValues
+    import libcsp_py3 as libcsp
 
 class groundStation(object):
     """ Constructor """
@@ -60,6 +59,7 @@ class groundStation(object):
         self.server_connection = defaultdict(dict)
         self.number_of_buffers = 100
         self.buffer_size = 1024 #This is max size of an incoming packet
+        self.dummy = False # Use dummy responses instead
         libcsp.init(self.myAddr, 'host', 'model', '1.2.3', self.number_of_buffers, self.buffer_size)
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
@@ -67,6 +67,8 @@ class groundStation(object):
             self.ser = self.__uart__(opts.device)
         elif opts.interface == 'fifo':
             self.__fifo__()
+        elif opts.interface == 'dummy':
+            self.dummy = True
         elif opts.interface == 'sdr':
             self.__sdr__(opts.device, libcsp.SDR_UHF_9600_BAUD)
         libcsp.route_start_task()
@@ -75,7 +77,7 @@ class groundStation(object):
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
         self.uTrns = uTransceiver(opts.u)
         self.uTrns_enable = opts.u
-
+        self.set_satellite(opts.satellite)
 
     """ Private Methods """
 
@@ -142,6 +144,19 @@ class groundStation(object):
 
         return self.server_connection[server][port]['conn']
 
+    def __dummy_resp__(self, server, port, buf):
+        """ Generates a dummy response for a command, returning
+        its intended server, port, and a bytestring representing the libcsp
+        packet.
+        """
+        return [
+            {
+                'Server': server,
+                'Port': port,
+                'Buffer': libcsp.packet_get_data(buf)
+            }
+        ]
+
     """ Public Methods """
 
     def getInput(self, prompt=None, inVal=None):
@@ -181,6 +196,8 @@ class groundStation(object):
     def transaction(self, server, port, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
         return parsed packet """
+        if self.dummy:
+            return self.__dummy_resp__(server, port, buf)
         conn = self.__connectionManager__(server, port)
         if conn is None:
             print('Error: Could not connect')
@@ -208,9 +225,9 @@ class groundStation(object):
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != self.vals.APP_DICT.get('OBC') or
-            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or
-            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or
+            libcsp.conn_src(conn) != self.vals.APP_DICT.get(self.satellite) or 
+            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
+            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]
@@ -282,7 +299,7 @@ class groundStation(object):
                 if rxData is None:
                     print('ERROR: bad response data')
                 print(rxData)
-
+    
     def handlePipeMode(self):
         if self.uTrns_enable == True:
             if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
@@ -295,6 +312,14 @@ class groundStation(object):
                 self.transaction(command['dst'], command['dport'], toSend)
             self.uTrns.last_tx_time = time.time()
 
+    def get_satellite(self):
+        return self.satellite
+
+    def set_satellite(self, name):
+        if name not in self.apps.keys():
+            raise ValueError("Satellite \'{}\' not in {}".format(name, str(self.apps.keys())))
+        else:
+            self.satellite = name;
 
 class GracefulExiter():
     """
@@ -348,6 +373,14 @@ class options(object):
             help='RDP connection timeout')
 
         self.parser.add_argument('-u', action='store_true')#UHF connection (not uart) enabled
+        
+        self.parser.add_argument(
+            '-s',
+            '--satellite',
+            type=str,
+            default="EX2",
+            help='Satellite parameter for automatic programs (e.g FTP)')
+        
         return self.parser.parse_args(sys.argv[1:])
 
 
