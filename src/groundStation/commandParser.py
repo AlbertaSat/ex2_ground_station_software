@@ -113,8 +113,8 @@ class CommandParser(object):
         args = subservice['inoutInfo']['args']
         for retVal in returns:
             if returns[retVal] == 'var':
-            #Variable size config return
-                outputObj[retVal] = np.frombuffer( data, dtype = self.vals.varTypes[outputObj['type']], count=1, offset=idx)[0]
+                #Variable size config return
+                outputObj[retVal] = np.frombuffer( data, dtype = "b", count=-1, offset=idx)
                 return outputObj
 
             else:
