@@ -3132,5 +3132,44 @@ class SystemValues(object):
                         }
                     }
                 }
+            },
+            "FTP_COMMAND": {
+                'port': 20,
+                'subservice': {
+                    'GET_FILE_SIZE': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>b'], # dummy byte, overwritten by program
+                            'returns': {
+                                'err': '>b',
+                                'size': '>u8',
+                            }
+                        }
+                    },
+                    'REQUEST_BURST_DOWNLOAD': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': ['>b'], # dummy byte, overwritten by program
+                            'returns': {
+                                'err': '>b',
+                                'mtime': '>u4',
+                                'ctime': '>u4',
+                            }
+                        }
+                    },
+                    'FTP_DATA_PACKET': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'req_id': '>u4',
+                                'size': '>u4',
+                                'blocknum': '>u2',
+                                'data': 'var'
+                            }
+                        }
+                    },
+                }
             }
         }
