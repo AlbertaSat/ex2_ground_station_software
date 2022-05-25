@@ -1521,3 +1521,17 @@ FTP_COMMAND.FTP_DATA_PACKET:
 		port: 20		subport: 2
 
 
+FTP_COMMAND.FTP_START_UPLOAD:
+		About: None
+		Arguments: [>b]
+		return values: {'err': '>b'}
+		port: 20		subport: 3
+
+
+FTP_COMMAND.FTP_UPLOAD_PACKET:
+		About: None
+		Arguments: [>b]
+		return values: {'err': '>b'}
+		port: 20		subport: 4
+
+
