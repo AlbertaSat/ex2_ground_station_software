@@ -1500,3 +1500,24 @@ DFGM.DFGM_GET_HK:
 		port: 19		subport: 3
 
 
+FTP_COMMAND.GET_FILE_SIZE:
+		About: None
+		Arguments: [>b]
+		return values: {'err': '>b', 'size': '>u8'}
+		port: 20		subport: 0
+
+
+FTP_COMMAND.REQUEST_BURST_DOWNLOAD:
+		About: None
+		Arguments: [>b]
+		return values: {'err': '>b', 'mtime': '>u4', 'ctime': '>u4'}
+		port: 20		subport: 1
+
+
+FTP_COMMAND.FTP_DATA_PACKET:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'req_id': '>u4', 'size': '>u4', 'blocknum': '>u2', 'data': 'var'}
+		port: 20		subport: 2
+
+
