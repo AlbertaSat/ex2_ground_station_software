@@ -90,7 +90,7 @@ class ftp(groundStation):
 
     def receive_burst(self, req_id, skip, count):
         conn = self.get_command_conn()
-        f = open("test.dat", "wb")
+        f = open(self.outfile, "wb")
         f.seek(skip * self.blocksize)
         blockcount = 0;
         missing_blocks = list()
