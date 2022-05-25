@@ -118,7 +118,6 @@ class ftp(groundStation):
             # I know it's not good to hardcode the byte I want like this
             # but there's too much legacy so it won't change
             if data[0] == self.vals.SERVICES.get("FTP_COMMAND").get('subservice').get('FTP_DATA_PACKET').get('subPort'):
-                print("Expecting blocK: {}, Got block: {}".format(blockcount, rxDataList[0]['blocknum']))
                 if rxDataList[0]['blocknum'] != blockcount:
                     missing_blocks.append(blockcount)
                     print("missed block {}".format(blockcount))
@@ -135,14 +134,17 @@ class ftp(groundStation):
         f.close()
 
     def do_get_request(self):
+        print("Requesting file {} from satellite".format(self.infile))
         size_packet = self.get_file_size_packet()
         data = self.transaction(size_packet)
         if (data is None):
             print("Did not receive response from file size packet")
-            return False
+            return
         if data[0]['err'] != 0:
             print("error from file size packet")
             return
+        if os.path.exists(self.outfile):
+            os.remove(self.outfile)
         req_id = randint(0,1652982075)
         file_size = data[0]['size']
         received = 0
@@ -151,8 +153,8 @@ class ftp(groundStation):
             download_packet = self.get_burst_download_packet(req_id, int(received/self.blocksize), burst_size)
             conn = self.get_command_conn();
             if conn is None:
-                print('Error: Could not connection')
-                return {}
+                print('Error: Could not get connection')
+                return
             print("Sending new burst request")
             libcsp.send(conn, download_packet)
             libcsp.buffer_free(download_packet)
@@ -161,8 +163,68 @@ class ftp(groundStation):
             received += bytes
             print("Received {} of {} bytes".format(received, file_size))
 
+    def get_start_upload_packet(self, req_id, filesize):
+        subservice = self.vals.SERVICES.get('FTP_COMMAND').get('subservice').get('FTP_START_UPLOAD').get('subPort')
+        out = bytearray()
+        out.extend(subservice.to_bytes(1, byteorder='big'))
+        out.extend(req_id.to_bytes(4, byteorder='big'))
+        out.extend(filesize.to_bytes(8, byteorder='big'))
+        out.extend(self.blocksize.to_bytes(4, byteorder='big'))
+        out.extend(bytes(self.outfile.encode("ascii")))
+        out.extend(int(0).to_bytes(1, byteorder='big'))
+        toSend = libcsp.buffer_get(len(out))
+        libcsp.packet_set_data(toSend, out)
+        return toSend
+
+    def get_data_upload_packet(self, req_id, data, count):
+        subservice = self.vals.SERVICES.get('FTP_COMMAND').get('subservice').get('FTP_UPLOAD_PACKET').get('subPort')
+        out = bytearray()
+        out.extend(subservice.to_bytes(1, byteorder='big'))
+        out.extend(req_id.to_bytes(4, byteorder='big'))
+        out.extend(count.to_bytes(4, byteorder='big'))
+        out.extend(len(data).to_bytes(4, byteorder='big'))
+        out.extend(bytearray(data))
+        toSend = libcsp.buffer_get(len(out))
+        libcsp.packet_set_data(toSend, out)
+        return toSend
+
     def do_post_request(self):
-        pass
+        f = open(self.infile, "rb")
+        filesize = os.path.getsize(self.infile)
+        req_id = randint(0, 1653514975);
+        print("Sending file {} to satellite".format(self.infile))
+        packet = self.get_start_upload_packet(req_id, filesize);
+        data = self.transaction(packet)
+        if (data is None):
+            print("Did not receive response from upload start packet")
+            f.close()
+            return
+        if data[0]['err'] != 0:
+            print("error from upload start packet")
+            f.close()
+            return
+        done = False
+        count = 0
+        while not done:
+            print("Sending packet {}/{}".format(count, int(filesize/self.blocksize)))
+            data = f.read(self.blocksize)
+            packet = self.get_data_upload_packet(req_id, data, count)
+            count += 1
+            resp = self.transaction(packet)
+            if (resp is None):
+                print("Did not receive response from upload data packet")
+                done = True
+                continue
+            if resp[0]['err'] != 0:
+                print("error from upload data packet")
+                done = True
+                continue
+
+            if len(data) < self.blocksize:
+                done = True
+        f.close()
+
+        
 
     def start_transfer(self):
         if self.operation == "get":

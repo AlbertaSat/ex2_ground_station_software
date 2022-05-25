@@ -3170,6 +3170,24 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'FTP_START_UPLOAD': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': ['>b'], # dummy byte, overwritten by program
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'FTP_UPLOAD_PACKET': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['>b'], # dummy byte, overwritten by program
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
                 }
             }
         }
