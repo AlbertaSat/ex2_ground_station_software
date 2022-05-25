@@ -114,6 +114,13 @@ GENERAL.SET_CHARON_WATCHDOG_TIMEOUT:
 		port: 11		subport: 8
 
 
+GENERAL.UHF_IS_IN_PIPE_NOTIFICATION:
+		About: None
+		Arguments: [>B]
+		return values: {'err': '>b'}
+		port: 11		subport: 11
+
+
 COMMUNICATION.S_GET_FREQ:
 		About: Gets the S-band frequency (MHz)
 		Arguments: [None]
