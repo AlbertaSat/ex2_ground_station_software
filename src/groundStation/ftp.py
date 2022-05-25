@@ -142,6 +142,7 @@ class ftp(groundStation):
             return False
         if data[0]['err'] != 0:
             print("error from file size packet")
+            return
         req_id = randint(0,1652982075)
         file_size = data[0]['size']
         received = 0
