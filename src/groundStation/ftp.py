@@ -2,6 +2,7 @@ from groundStation.groundStation import groundStation, options
 from groundStation.system import SystemValues
 import libcsp_py3 as libcsp
 from random import randint
+import os
 
 class ftp(groundStation):
     def __init__(self, opts):
@@ -90,7 +91,11 @@ class ftp(groundStation):
 
     def receive_burst(self, req_id, skip, count):
         conn = self.get_command_conn()
-        f = open(self.outfile, "wb")
+        if not os.path.exists(self.outfile):
+            mode = "wb"
+        else :
+            mode = "ab"
+        f = open(self.outfile, mode)
         f.seek(skip * self.blocksize)
         blockcount = 0;
         missing_blocks = list()
@@ -99,6 +104,7 @@ class ftp(groundStation):
             packet = libcsp.read(conn, 10000)
             if packet is None:
                 print('Did not receive response')
+                f.close()
                 return None
             rxDataList = []
             data = bytearray(libcsp.packet_get_data(packet))
@@ -112,6 +118,7 @@ class ftp(groundStation):
             # I know it's not good to hardcode the byte I want like this
             # but there's too much legacy so it won't change
             if data[0] == self.vals.SERVICES.get("FTP_COMMAND").get('subservice').get('FTP_DATA_PACKET').get('subPort'):
+                print("Expecting blocK: {}, Got block: {}".format(blockcount, rxDataList[0]['blocknum']))
                 if rxDataList[0]['blocknum'] != blockcount:
                     missing_blocks.append(blockcount)
                     print("missed block {}".format(blockcount))
@@ -123,7 +130,9 @@ class ftp(groundStation):
 
             else:
                 # Received service reply (final packet of burst download)
+                f.close()
                 return rxDataList, missing_blocks, received
+        f.close()
 
     def do_get_request(self):
         size_packet = self.get_file_size_packet()
@@ -151,6 +160,9 @@ class ftp(groundStation):
             received += bytes
             print("Received {} of {} bytes".format(received, file_size))
 
+    def do_post_request(self):
+        pass
+
     def start_transfer(self):
         if self.operation == "get":
             self.do_get_request()
@@ -159,9 +171,6 @@ class ftp(groundStation):
         else:
             raise ValueError("Not doing get or post request? What is my purpose?")
         
-        
-
-
 class ftp_options(options):
     def __init__(self):
         super().__init__();
