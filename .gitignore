@@ -20,6 +20,7 @@ lib/
 lib64/
 parts/
 sdist/
+ex2_uhf_software/
 var/
 .vscode/
 wheels/
@@ -28,7 +29,9 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.bin
 MANIFEST
+*.bin
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
