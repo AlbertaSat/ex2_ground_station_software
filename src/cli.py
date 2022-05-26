@@ -33,6 +33,7 @@ def cli():
             return
         try:
             server, port, toSend = gs.getInput(prompt='to send: ')
+            gs.handlePipeMode()
             if server == 24:
                 # This is a direct UART command to a ground station EnduroSat transceiver to enter PIPE
                 # Can be deleted for flight

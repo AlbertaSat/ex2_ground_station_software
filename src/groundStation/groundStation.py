@@ -305,11 +305,8 @@ class groundStation(object):
             if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
                 self.uTrns.enterPipeMode()
                 #may need to add delay here?
-                command = self.parser.parseInputValue('obc.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
-                toSend = libcsp.buffer_get(len(command['args']))
-                if len(command['args']) > 0:
-                    libcsp.packet_set_data(toSend, command['args'])
-                self.transaction(command['dst'], command['dport'], toSend)
+                command, port, toSend = self.getInput(inVal='obc.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
+                self.transaction(command, port, toSend)
             self.uTrns.last_tx_time = time.time()
 
     def get_satellite(self):
