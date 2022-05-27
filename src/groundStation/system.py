@@ -717,7 +717,7 @@ class SystemValues(object):
                                 'MIDI': '>S60',
                             }
                         }
-                    },
+                    },                  
                     'UHF_GET_BEACON_MSG': {
                         'what': 'Gets the beacon message',
                         'subPort': 40,
@@ -778,6 +778,28 @@ class SystemValues(object):
                             'returns': {
                                 'err': '>b',
                                 'Secure Key': '>u4',
+                            }
+                        }
+                    },
+                    'UHF_GET_SWVER': {
+                        'what': 'Gets the UHF firmware version',
+                        'subPort': 46,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'ver_XYZ': '>u2',
+                            }
+                        }
+                    },
+                    'UHF_GET_PLDSZ': {
+                        'what': 'Gets UHF device payload size',
+                        'subPort': 47,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'size_B': '>u2',
                             }
                         }
                     },
