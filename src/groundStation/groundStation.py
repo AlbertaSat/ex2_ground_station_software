@@ -36,8 +36,6 @@ import os
 import re
 import serial
 from collections import defaultdict
-from .uTransceiver import uTransceiver
-
 
 try: # We are importing this file for use on the website (comm.py)
     from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
@@ -75,8 +73,6 @@ class groundStation(object):
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
-        self.uTrns = uTransceiver(opts.u)
-        self.uTrns_enable = opts.u
         self.set_satellite(opts.satellite)
 
     """ Private Methods """
@@ -164,18 +160,13 @@ class groundStation(object):
         and parse the input to CSP packet information """
         if inVal is not None:
             try:
-                if(inVal.split('_')[0] == 'UHFDIR'): #UHF-direct command, not using CSP
-                    self.uTrns.UHFDIRCommand(inVal)
                 command = self.parser.parseInputValue(inVal)
             except Exception as e:
                 print(e + '\n')
                 return
         elif prompt is not None:
-            inStr = input(prompt)#TODO maybe add uhf-checker here!
+            inStr = input(prompt)
             try:
-                if(inStr.split("_")[0] == 'UHFDIR'): #UHF-direct command, not using CSP
-                    self.uTrns.UHFDIRCommand(inStr)
-                    return None, None, None
                 command = self.parser.parseInputValue(inStr)
             except Exception as e:
                 print(e + '\n')
@@ -299,15 +290,6 @@ class groundStation(object):
                 if rxData is None:
                     print('ERROR: bad response data')
                 print(rxData)
-    
-    def handlePipeMode(self):
-        if self.uTrns_enable == True:
-            if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
-                self.uTrns.enterPipeMode()
-                #may need to add delay here?
-                command, port, toSend = self.getInput(inVal='obc.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
-                self.transaction(command, port, toSend)
-            self.uTrns.last_tx_time = time.time()
 
     def get_satellite(self):
         return self.satellite
@@ -369,15 +351,12 @@ class options(object):
             default='15000', # 15 seconds
             help='RDP connection timeout')
 
-        self.parser.add_argument('-u', action='store_true')#UHF connection (not uart) enabled
-        
         self.parser.add_argument(
             '-s',
             '--satellite',
             type=str,
             default="EX2",
             help='Satellite parameter for automatic programs (e.g FTP)')
-        
         return self.parser.parse_args(sys.argv[1:])
 
 
@@ -388,7 +367,6 @@ if __name__ == '__main__':
     while True:
         try:
             server, port, toSend = csp.getInput(prompt='to send: ')
-            csp.handlePipeMode()
             csp.transaction(server, port, toSend)
             # receive()
         except Exception as e:
