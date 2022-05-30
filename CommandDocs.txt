@@ -422,6 +422,20 @@ COMMUNICATION.UHF_GET_SECURE_KEY:
 		port: 10		subport: 45
 
 
+COMMUNICATION.UHF_GET_SWVER:
+		About: Gets the UHF firmware version
+		Arguments: [None]
+		return values: {'err': '>b', 'ver_XYZ': '>u2'}
+		port: 10		subport: 46
+
+
+COMMUNICATION.UHF_GET_PLDSZ:
+		About: Gets UHF device payload size
+		Arguments: [None]
+		return values: {'err': '>b', 'size_B': '>u2'}
+		port: 10		subport: 47
+
+
 CONFIGURATION.GET_ACTIVE_CONFIG:
 		About: Gets config values in active mode for a specific type
 		Arguments: [<u2, <u1]
