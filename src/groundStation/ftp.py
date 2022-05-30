@@ -16,12 +16,9 @@ class ftp(groundStation):
         
         if opts.get:
             self.operation = "get"
+            self.infile = opts.get
         elif opts.post:
             self.operation = "post"
-
-        if self.operation == "get":
-            self.infile = opts.get
-        elif self.operation == "post":
             self.infile = opts.post
 
         if opts.outfile:
