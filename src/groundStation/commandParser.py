@@ -122,7 +122,7 @@ class CommandParser(object):
                     outputObj[retVal] = np.frombuffer(
                         data, dtype=returns[retVal], count=1, offset=idx)[0]
                 except:
-                    return outputObj
+                    outputObj[retVal] = None
                 idx += np.dtype(returns[retVal]).itemsize
 
         return outputObj
