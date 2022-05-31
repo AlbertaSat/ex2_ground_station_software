@@ -264,6 +264,25 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'GET_ADCS_WATCHDOG_TIMEOUT': {
+                        'subPort': 9,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'timeout_ms': '>u4'
+                            }
+                        }
+                    },
+                    'SET_ADCS_WATCHDOG_TIMEOUT': {
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': ['>u4'], 
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
                     'UHF_IS_IN_PIPE_NOTIFICATION': {
                         'subPort': 11,
                         'inoutInfo': {
