@@ -1764,7 +1764,7 @@ class SystemValues(object):
                     },
                     'VERIFY_APP' : {
                         'what' : 'Verify crc of working image',
-                        'c' : 4,
+                        'subPort' : 4,
                         'inoutInfo' : {
                             'args' : None,
                             'returns' : {
