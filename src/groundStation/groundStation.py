@@ -50,6 +50,9 @@ class groundStation(object):
     """ Constructor """
 
     def __init__(self, opts):
+        keyfile = open(opts.hkeyfile, "r")
+        hkey = keyfile.read().strip()
+        libcsp.hmac_set_key(hkey, len(hkey))
         self.vals = SystemValues()
         self.apps = self.vals.APP_DICT
         self.myAddr = self.apps['GND']
@@ -128,7 +131,7 @@ class groundStation(object):
                 if server == 4:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
-                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_O_NONE)
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ)
             except Exception as e:
                 print(e)
                 return None
@@ -330,6 +333,11 @@ class options(object):
         self.parser = argparse.ArgumentParser(description='Parses command.')
 
     def getOptions(self):
+        self.parser.add_argument(
+            '--hkeyfile',
+            type=str,
+            default="test_key.dat",
+            help='Key to use for CSP HMAC')
         self.parser.add_argument(
             '-I',
             '--interface',
