@@ -1494,15 +1494,15 @@ ADCS.ADCS_GET_FULL_CONFIG:
 
 
 ADCS.ADCS_DOWNLOAD_FILE_LIST_TO_OBC:
-		About: None
+		About: Saves information about files stored on the ADCS to the OBC. File name VOL0:/adcs/adcs_file_list.txt
 		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 18		subport: 108
 
 
 ADCS.ADCS_DOWNLOAD_FILE_TO_OBC:
-		About: None
-		Arguments: [>B, B]
+		About: Saves a specified file from the ADCS to the OBC. Inputs args type, counter, size, and OBC file name.
+		Arguments: [>B, B, >u4, >S30]
 		return values: {'err': '>b'}
 		port: 18		subport: 109
 
