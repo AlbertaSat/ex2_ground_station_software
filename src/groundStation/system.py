@@ -3117,6 +3117,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_DOWNLOAD_FILE_LIST_TO_OBC': {
+                        'what': 'Saves information about files stored on the ADCS to the OBC. File name VOL0:/adcs/adcs_file_list.txt',
                         'subPort': 108,
                         'inoutInfo': {
                             'args': None,
@@ -3126,9 +3127,10 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_DOWNLOAD_FILE_TO_OBC': {
+                        'what': 'Saves a specified file from the ADCS to the OBC. Inputs args type, counter, size, and OBC file name.',
                         'subPort': 109,
                         'inoutInfo': {
-                            'args': ['>B', 'B'],
+                            'args': ['>B', 'B', '>u4', '>S30'], 
                             'returns': {
                                 'err': '>b',
                             }
