@@ -18,7 +18,6 @@
     "csp:install": "cd libcsp &&  python3 waf install",
     "full_build": "yarn install_dependencies && yarn csp:clone && yarn build",
     "cli": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/cli.py",
-    "cli_gdb": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build gdb python3",
     "sat_cli": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/sat_cli.py",
     "sat_update": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/updater.py",
     "ftp": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 src/ftp.py",

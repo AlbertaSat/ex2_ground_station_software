@@ -310,7 +310,7 @@ class groundStation(object):
             if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
                 self.uTrns.enterPipeMode()
                 #may need to add delay here?
-                command, port, toSend = self.getInput(inVal='ex2.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
+                command, port, toSend = self.getInput(inVal= self.satellite +'.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
                 self.transaction(command, port, toSend)
             self.uTrns.last_tx_time = time.time()
 
