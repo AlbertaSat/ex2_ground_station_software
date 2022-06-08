@@ -37,6 +37,7 @@ import re
 import serial
 from collections import defaultdict
 from .uTransceiver import uTransceiver
+from time import sleep
 
 try: # We are importing this file for use on the website (comm.py)
     from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
@@ -168,6 +169,7 @@ class groundStation(object):
             try:
                 if(inVal.split('_')[0] == 'UHFDIR'): #UHF-direct command, not using CSP
                     self.uTrns.UHFDIRCommand(inVal)
+                    return None, None, None
                 command = self.parser.parseInputValue(inVal)
             except Exception as e:
                 print(e + '\n')
@@ -188,6 +190,7 @@ class groundStation(object):
 
         if command is None:
             print('Error: Command was not parsed')
+            print(inVal)
             return
 
         toSend = libcsp.buffer_get(len(command['args']))
@@ -307,7 +310,7 @@ class groundStation(object):
             if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
                 self.uTrns.enterPipeMode()
                 #may need to add delay here?
-                command, port, toSend = self.getInput(inVal='obc.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
+                command, port, toSend = self.getInput(inVal='ex2.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
                 self.transaction(command, port, toSend)
             self.uTrns.last_tx_time = time.time()
 
@@ -394,6 +397,7 @@ if __name__ == '__main__':
     while True:
         try:
             server, port, toSend = csp.getInput(prompt='to send: ')
+            csp.handlePipeMode()
             csp.transaction(server, port, toSend)
             # receive()
         except Exception as e:

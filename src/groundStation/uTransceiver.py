@@ -30,7 +30,7 @@ class uTransceiver(object):
 
     def __init__(self, opt):
         self.listentimeout_s = 2.0
-        self.pipetimeout_s = 30.0
+        self.pipetimeout_s = 20.0
         self.last_tx_time = 0
         self.listen_en = False
         self.pipe_en = False
@@ -67,18 +67,19 @@ class uTransceiver(object):
             # print(repr(data))
 
             if dict(poller.poll())[socket] == zmq.POLLIN:
-                print('here')
-                #print(socket.recv(zmq.DONTWAIT))#for testing purposes
+                print(socket.recv(zmq.DONTWAIT))#for testing purposes
 
         socket.disconnect("tcp://localhost:%s" % port)
         # s.close() #for testing purposes
 
     def enterPipeMode(self):
             #current config is for RF mode 5, baudrate = 115200
+            print("sending pipe cmd")
             self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 1 0 0 0 1 1)')
 
     def UHFDIRCommand(self, string):
         if self.u == True:
+            print("sending UHFDIRcommand: " + string)
             cmd = (string.split('_')[1]).split('(')[0]
             cmdcode = string.split(',')[0]
             cmdcode = int(cmdcode.split('(')[1])
@@ -100,7 +101,7 @@ class uTransceiver(object):
                 #TODO someday (FRAM usage)
 
             #check command and call relevant functions with args
-            if (time.time() - self.last_tx_time) > self.pipetimeout_s:
+            if (time.time() - self.last_tx_time) > 0:# change 0 to self.pipetimeout_s
                 retval = 0
                 if cmd == 'genericWrite':
                     retval = self.uhf.UHF_genericWrite(ctypes.c_ubyte(cmdcode), arg)
@@ -116,7 +117,7 @@ class uTransceiver(object):
                 #TODO: make more robust handler for incorrect inputs to prevent erronious commands being sent?
                 if retval != 0:
                     print('UHF Equipment Handler error ' + UHF_return(retval).name)
-
+                time.sleep(0.5)
                 #self.listen()
             else:
                 print('Error: Command not sent. Wait for pipe mode to expire')
