@@ -14,6 +14,7 @@ dist/
 downloads/
 eggs/
 libcsp/
+ex2_uhf_software/
 node_modules/
 .eggs/
 lib/
@@ -28,6 +29,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.bin
 MANIFEST
 
 # PyInstaller
