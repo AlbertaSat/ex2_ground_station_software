@@ -13,7 +13,7 @@
 '''
 '''
  * @file test.py
- * @author Andrew Rooney
+ * @author Andrew Rooney, Grace Yi
  * @date 2020-11-20
 '''
 
@@ -44,6 +44,7 @@ def cli():
                 server == sysVals.APP_DICT.get('OBC') and 
                 port == sysVals.SERVICES.get('SCHEDULER').get('port') and
                 (data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort') or
+                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('DELETE_SCHEDULE').get('subPort') or
                 data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('REPLACE_SCHEDULE').get('subPort'))
                 ):
 

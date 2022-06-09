@@ -88,7 +88,8 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,  # All scheduled commands should be stored in schedule.txt
                             'returns': {
-                                'err': '>b'
+                                'err': '>b', # Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+                                'number of cmds scheduled': '>b'    #Returns the number of cmds left in the schedule file. Returns -1 if an error occurred. 
                             }
                         }
                     },
@@ -97,7 +98,7 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b'  # err
+                                'err': '>b'  # Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
                             }
                         }
                     },
@@ -106,7 +107,8 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b'  # err
+                                'err': '>b', # Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+                                'number of cmds scheduled': '>b'    # Returns the number of cmds left in the schedule file. Returns -1 if an error occurred.
                             }
                         }
                     },
@@ -115,7 +117,8 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b'  # err
+                                'err': '>b', # Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+                                'number of cmds scheduled': '>b'    #Returns the number of cmds left in the schedule file. Returns -1 if an error occurred.
                             }
                         }
                     },
@@ -124,7 +127,8 @@ class SystemValues(object):
                         'inoutInfo': {
                             'args': None,
                             'returns': {
-                                'err': '>b'  # err
+                                'err': '>b', # Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+                                'number of cmds scheduled': '>b'    #Returns the number of cmds left in the schedule file. Returns -1 if an error occurred.
                             }
                         }
                     },
