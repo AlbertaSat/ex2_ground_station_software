@@ -36,7 +36,11 @@ import os
 import re
 import serial
 from collections import defaultdict
-from .uTransceiver import uTransceiver
+try:
+    from .uTransceiver import uTransceiver
+except:
+    print("uTranceiver module not built!")
+
 from time import sleep
 
 try: # We are importing this file for use on the website (comm.py)
@@ -78,7 +82,13 @@ class groundStation(object):
         time.sleep(0.2)  # allow router task startup
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
-        self.uTrns = uTransceiver(opts.u)
+        self.uTrns = None
+        try:
+            self.uTrns = uTransceiver(opts.u)
+        except:
+            print("uTranceiver module not built!!")
+            self.uTrns = None
+
         self.uTrns_enable = opts.u
         self.set_satellite(opts.satellite)
 
