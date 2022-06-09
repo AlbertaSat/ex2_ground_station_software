@@ -8,7 +8,7 @@
   "private": false,
   "scripts": {
     "install_dependencies": "sudo apt-get install libzmq3-dev -y && sudo apt install libsocketcan-dev -y && sudo apt install pkg-config -y && sudo apt install python3-dev -y && sudo apt install python3-pip -y && sudo pip3 install numpy",
-    "csp:clone": "rm -rf libcsp && git clone https://github.com/Albertasat/libcsp.git && cd libcsp && git clone git@github.com:AlbertaSat/ex2_sdr.git",
+    "csp:clone": "rm -rf libcsp && git clone https://github.com/Albertasat/libcsp.git && cd libcsp && git clone --branch master git@github.com:AlbertaSat/ex2_sdr.git",
     "uhf:clone": "rm -rf ex2_uhf_software && git clone https://github.com/AlbertaSat/ex2_uhf_software",
     "csp:configure": "cd libcsp && python3 waf configure --with-os=posix --enable-SDR --enable-rdp --enable-crc32 --enable-hmac --enable-xtea --with-loglevel=debug --enable-debug-timestamp --enable-python3-bindings --with-driver-usart=linux --enable-examples --enable-can-socketcan --enable-if-zmqhub",
     "csp:build": "cd libcsp && python3 waf build",
