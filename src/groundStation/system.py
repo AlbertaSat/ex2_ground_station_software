@@ -3214,7 +3214,7 @@ class SystemValues(object):
                     'DFGM_GET_HK': {
                         'subPort': 3,
                         'inoutInfo': {
-                            'what': 'Fetch housekeeping data for the DFGM payload.'
+                            'what': 'Fetch housekeeping data for the DFGM payload.',
                             'args': None,
                             'returns': {
                                 'err': '>b',
