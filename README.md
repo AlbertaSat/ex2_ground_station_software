@@ -42,6 +42,7 @@ Step 2: install dependencies and run the ground station (may need to run with `s
 ```
 yarn install_dependencies
 yarn csp:clone
+yarn uhf:clone
 yarn build:gnuradio
 yarn cli -I SDR -u
 ```
