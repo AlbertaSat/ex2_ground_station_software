@@ -1,3 +1,5 @@
-30 54 23 4 14 4 52  obc.time_management.set_time(1649980800)
-30 15 01 5 15 4 52  obc.time_management.get_time()
-0 01 00 5 15 4 52  obc.time_management.set_time(1649980800)
+100 40 0 7 4 5 5 52  obc.time_management.set_time(1651734000)
+100 40 0 7 4 5 5 52  obc.time_management.set_time(1651734000)
+100 40 0 7 4 5 5 52  obc.time_management.set_time(1651734000)
+0 50 1 7 4 5 5 52  obc.time_management.get_time()
+0 40 0 7 4 5 5 52  obc.time_management.set_time(1651734000)
