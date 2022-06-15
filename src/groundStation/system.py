@@ -3156,18 +3156,9 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_UPLOAD_FIRMWARE': {
-                        'subport': 110,
+                        'subPort': 110,
                         'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b',    # missing firmware file: -2, calloc failed: -3
-                            }
-                        }
-                    },
-                    'ADCS_UPLOAD_FIRMWARE': {
-                        'subport': 110,
-                        'inoutInfo': {
-                            'args': None,
+                            'args': ['>u1'],    # 3-9 corresponds to external flash program 1-7
                             'returns': {
                                 'err': '>b',    # missing firmware file: -2, calloc failed: -3
                             }
