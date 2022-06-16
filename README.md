@@ -1,3 +1,5 @@
+Note: this repository uses yarn for run and build scripts. Scripts can be created and modified within package.json.
+
 # Installation Instructions
 
 ## Prerequisites
@@ -35,15 +37,38 @@ yarn test_sband <options>
 
 If using this repository for FlatSat testing or deployment, follow these slightly different instructions. Hardware setup steps are excluded.
 
-Step 1: Follow [Ground Station Software Setup Guide](https://docs.google.com/document/d/1-BGoCOlOCisQk08cB9kHaWAGk-gdsx6xPlfZvo5EFBs/edit). Run the GNURadio flow graph you will be using for testing or operations.
+Step 1: Check if you have conda installed by running `conda`. If not installed, follow the [conda installation instructions](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages).
 
-Step 2: install dependencies and run the ground station (may need to run with `sudo`).
+Step 2: Set up GNURadio
+
+```
+conda create -n gnuradio-3.9.4
+conda activate gnuradio-3.9.4
+conda config --env --add channels conda-forge
+conda config --env --set channel_priority strict
+conda install gnuradio python=3.9.4
+sudo apt install liblog4cpp5v5 liblog4cpp5-dev
+conda install -c conda-forge gnuradio-satellites
+sudo apt install libuhd-dev uhd-host
+git clone https://github.com/AlbertaSat/ex2_sdr
+```
+
+Step 3: Install dependencies and build the ground station.
 
 ```
 yarn install_dependencies
 yarn csp:clone
 yarn uhf:clone
 yarn build:gnuradio
+```
+
+Step 4: Run the ground station. This must be done every new session.
+```
+conda activate gnuradio-3.9.4
+gnuradio-companion
+```
+In GNURadio, open and run `ex2_sdr/gnuradio/uhf/duplex_uhf_mode5_csp_interface.grc`. Note: the first time this is run on a new machine, gnuradio will prompt you to run uhd_images_downloader.py from the proper directory path. Do that, and then try running the flow graph again.
+```
 yarn cli -I SDR -u
 ```
 
