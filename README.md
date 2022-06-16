@@ -15,7 +15,7 @@ sudo apt-get install yarn -y
 
 ## Basic Functionality
 
-Step 1: install dependencies and run the ground station (may need to run with `sudo`).
+Step 1: install dependencies and run the ground station. In order to run as a user process your user may need to be in the `dialout` group
 
 ```
 yarn install_dependencies
