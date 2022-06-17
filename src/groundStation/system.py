@@ -2035,7 +2035,9 @@ class SystemValues(object):
                                 'Mcu_Reset_Cause': '>u1',
                                 'Boot_Cause': '>u1',
                                 'Boot_Count': '>u2',
-                                'Boot_Idx': '>u1'
+                                'Boot_Idx': '>u1',
+                                'Major_Firm_Ver': '>u1',
+                                'Minor_Firm_Ver': '>u1'
                             }
                         }
                     },
@@ -2183,7 +2185,15 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Comm_Status': '>u2',
+                                'TC_num': '>u2',
+                                'TM_num': '>u2',
+                                'CommsStat_flags_1': '<B',
+                                'CommsStat_flags_2': '<B',
+                                'CommsStat_flags_3': '<B',
+                                'CommsStat_flags_4': '<B',
+                                'CommsStat_flags_5': '<B',
+                                'CommsStat_flags_6': '<B',      
+
                             }
                         }
                     },
@@ -2491,6 +2501,93 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'ADCS_GET_CURRENT_STATE': {
+                        'subPort': 63,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'att_estimate_mode': '>B',
+                                'att_ctrl_mode': '>B',
+                                'run_mode': '>B',
+                                'ASGP4_mode': '>B',
+                                'flags_arr_1': '>B',
+                                'flags_arr_2': '>B',
+                                'flags_arr_3': '>B',
+                                'flags_arr_4': '>B',
+                                'flags_arr_5': '>B',
+                                'flags_arr_6': '>B',
+                                'flags_arr_7': '>B',
+                                'flags_arr_8': '>B',
+                                'flags_arr_9': '>B',
+                                'flags_arr_10': '>B',
+                                'flags_arr_11': '>B',
+                                'flags_arr_12': '>B',
+                                'flags_arr_13': '>B',
+                                'flags_arr_14': '>B',
+                                'flags_arr_15': '>B',
+                                'flags_arr_16': '>B',
+                                'flags_arr_17': '>B',
+                                'flags_arr_18': '>B',
+                                'flags_arr_19': '>B',
+                                'flags_arr_20': '>B',
+                                'flags_arr_21': '>B',
+                                'flags_arr_22': '>B',
+                                'flags_arr_23': '>B',
+                                'flags_arr_24': '>B',
+                                'flags_arr_25': '>B',
+                                'flags_arr_26': '>B',
+                                'flags_arr_27': '>B',
+                                'flags_arr_28': '>B',
+                                'flags_arr_29': '>B',
+                                'flags_arr_30': '>B',
+                                'flags_arr_31': '>B',
+                                'flags_arr_32': '>B',
+                                'flags_arr_33': '>B',
+                                'flags_arr_34': '>B',
+                                'flags_arr_35': '>B',
+                                'flags_arr_36': '>B',
+                                'flags_arr_37': '>B',
+                                'flags_arr_38': '>B',
+                                'flags_arr_39': '>B',
+                                'flags_arr_40': '>B',
+                                'flags_arr_41': '>B',
+                                'flags_arr_42': '>B',
+                                'flags_arr_43': '>B',
+                                'flags_arr_44': '>B',
+                                'flags_arr_45': '>B',
+                                'flags_arr_46': '>B',
+                                'flags_arr_47': '>B',
+                                'flags_arr_48': '>B',
+                                'flags_arr_49': '>B',
+                                'flags_arr_50': '>B',
+                                'flags_arr_51': '>B',
+                                'flags_arr_52': '>B',
+                                'MTM_sample_mode': '>B',
+                                'est_angle_x': '>f4',
+                                'est_angle_y': '>f4',
+                                'est_angle_z': '>f4',
+                                'est_quaternion_x': '>i2',
+                                'est_quaternion_y': '>i2',
+                                'est_quaternion_z': '>i2',
+                                'est_angular_rate_x': '>f4',
+                                'est_angular_rate_y': '>f4',
+                                'est_angular_rate_z': '>f4',
+                                'ECI_pos_x': '>f4',
+                                'ECI_pos_y': '>f4',
+                                'ECI_pos_z': '>f4',
+                                'ECI_vel_x': '>f4',
+                                'ECI_vel_y': '>f4',
+                                'ECI_vel_z': '>f4',
+                                'Latitude': '>f4',
+                                'Longitude': '>f4',
+                                'Altitude': '>f4',
+                                'ecef_pos_x': '>i2',
+                                'ecef_pos_y': '>i2',
+                                'ecef_pos_z': '>i2'                                             
+                            }
+                        }
+                    },
                     'ADCS_GET_JPG_CNV_PROGESS': {
                         'subPort': 64,
                         'inoutInfo': {
@@ -2533,8 +2630,8 @@ class SystemValues(object):
                                 'err': '>b',
                                 'Adcs_Update': '>u2',
                                 'Sensor_Comm': '>u2',
-                                'Sgp4_propag': '>u2',
-                                'Igrf_model': '>u2'
+                                'SGP4_propag': '>u2',
+                                'IGRF_model': '>u2'
                             }
                         }
                     },
@@ -2681,13 +2778,22 @@ class SystemValues(object):
                                 'Cam2_Centroid_Y': '>i2',
                                 'Cam2_Capture_Stat': '>u1',
                                 'Cam2_Detect_Result': '>u1',
-                                'Css': '>O20',
-                                'MTM_X': 'f8',
-                                'MTM_Y': 'f8',
-                                'MTM_Z': 'f8',
-                                'Rate_X': 'f8',
-                                'Rate_Y': 'f8',
-                                'Rate_Z': 'f8',
+                                'Css_1': '>u1',
+                                'Css_2': '>u1',
+                                'Css_3': '>u1',
+                                'Css_4': '>u1',
+                                'Css_5': '>u1',
+                                'Css_6': '>u1',
+                                'Css_7': '>u1',
+                                'Css_8': '>u1',
+                                'Css_9': '>u1',
+                                'Css_10': '>u1',
+                                'MTM_X': '>i2',
+                                'MTM_Y': '>i2',
+                                'MTM_Z': '>i2',
+                                'Rate_X': '>i2',
+                                'Rate_Y': '>i2',
+                                'Rate_Z': '>i2',
 
                             }
                         }
@@ -2805,10 +2911,9 @@ class SystemValues(object):
                     'ADCS_SET_POWER_CONTROL': {
                         'subPort': 79,
                         'inoutInfo': {
-                            'args': ['>u1'],
+                            'args': ['>u1','u1','>u1', 'u1','>u1', 'u1','>u1', 'u1','>u1', 'u1',],
                             'returns': {
                                 'err': '>b',
-                                'Control': '>u1'
                             }
                         }
                     },
@@ -2818,7 +2923,16 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Control': '>u1'
+                                'CubeCTRLSgn': '>u1',
+                                'CubeCTRLMtr': '>u1',
+                                'CubeSense1': '>u1',
+                                'CubeSense2': '>u1',
+                                'CubeStar': '>u1',
+                                'CubeWheel1': '>u1',
+                                'CubeWheel2': '>u1',
+                                'CubeWheel3': '>u1',
+                                'Motor': '>u1',
+                                'GPS': '>u1',
                             }
                         }
                     },
