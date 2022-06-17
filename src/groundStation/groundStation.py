@@ -397,15 +397,22 @@ class options(object):
             type=str,
             default="EX2",
             help='Satellite parameter for automatic programs (e.g FTP)')
+
+        self.parser.add_argument(
+            '-f',
+            '--file',
+            type=str,
+            default='schedule.txt',
+            help='Schedule file name')
         return self.parser.parse_args(sys.argv[1:])
 
 
 class getEmbededCSPData:
-    def __init__(self, data):
+    def __init__(self, filename, data):
         self.data = data
         self.opts = options()
         self.csp = groundStation(self.opts.getOptions())
-        self.filename = input("enter file name: ")
+        self.filename = filename
         with open(self.filename) as f:
             self.cmdList = f.readlines()
         #create an empty list, and create another list of csp objects

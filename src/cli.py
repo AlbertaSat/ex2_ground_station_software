@@ -53,8 +53,8 @@ def cli():
                 data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('DELETE_SCHEDULE').get('subPort') or
                 data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('REPLACE_SCHEDULE').get('subPort'))
                 ):
-
-                embeddedCSPObj = groundStation.getEmbededCSPData(data)
+                filename = opts.getOptions()
+                embeddedCSPObj = groundStation.getEmbededCSPData(filename, data)
                 embeddedCSP = embeddedCSPObj.embedCSP()
                 libcsp.packet_set_data(toSend, embeddedCSP)
                 resp = gs.transaction(server, port, toSend)
