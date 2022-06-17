@@ -42,28 +42,31 @@ class testLib(object):
         self.passed = 0
         self.response = None
         self.expected_EPS_HK = {
-            'vBatt_mv': [7400, 7800], # Battery Voltage in mV
-            'curBattIn_mA': [1100, 1100], # Battery Input Current in mA
-            'currBattOut_mA': [1, 400], # Battery Output Current in mA
-            # Battery State
-            'battHeaterMode': [1,1], # Battery Heater Mode (Should be Auto, which is 1)
+            'vBatt_mv': [7400, 8400], # Battery Voltage in mV, 7400 is the threshold for passing from safe to normal mode, 8400 is full
+            'curBattIn_mA': [0, 1100], # Battery Input Current in mA, 0 when not being charged, not sure what the max should be 
+            'currBattOut_mA': [0, 400], # Battery Output Current in mA, 0 when no outputs are on
+            'battMode': [0, 3], # Battery State, 0 for critical, 1 for safe, 2 for normal, 3 for full
+            'battHeaterMode': [0,1], # Battery Heater Mode (Should be Auto, which is 1, switches to 0 after reset)
             'battHeaterState': [0, 0], # Battery Heater State (Should be OFF, which is 0)
-            'curSolarPanels1_mA': [0, 0], # MPPT Panel X Current (4 values) in mA
-            'curSolarPanels2_mA': [0, 0],
-            'curSolarPanels3_mA': [0, 0],
-            'curSolarPanels4_mA': [0, 0],
-            'curSolarPanels5_mA': [0, 0], # MPPT Panel Y Current (4 values) in mA
-            'curSolarPanels6_mA': [0, 0],
-            'curSolarPanels7_mA': [0, 0],
-            'curSolarPanels8_mA': [0, 0],
-            # Solar Panel Voltage (4 values)
-            # Solar panel X Power (4 values)
-            # Solar panel Y Power (4 values)
-            # Charge Current (4 values)
-            # Charge Voltage (4 values)
-            'mpptMode': 'AUTO', # MPPT Mode
-            # Output State (12 values) = outputStatus...?
-            # Output Latch-up (12 values)
+            'curSolarPanels1_mA': [0, 500], # MPPT Panel X Current (4 values) in mA, could go up to 500mA (estimate) if solar panels are plugged in and charging
+            'curSolarPanels2_mA': [0, 500],
+            'curSolarPanels3_mA': [0, 500],
+            'curSolarPanels4_mA': [0, 500],
+            'curSolarPanels5_mA': [0, 500], # MPPT Panel Y Current (4 values) in mA
+            'curSolarPanels6_mA': [0, 500],
+            'curSolarPanels7_mA': [0, 500],
+            'curSolarPanels8_mA': [0, 500],
+            'mpptConverterVoltage1_mV': [0, 16000], # Solar Panel Voltage (4 values) max seen during testing was 15.4V
+            'mpptConverterVoltage2_mV': [0, 16000],
+            'mpptConverterVoltage3_mV': [0, 16000],
+            'mpptConverterVoltage4_mV': [0, 16000],
+            # Solar panel X Power (4 values), N/A
+            # Solar panel Y Power (4 values), N/A
+            'curSolar_mA': [0, 500], # Charge Current (4 values), maybe just 1 value for all solar panels summed up - not sure what max should be
+            # Charge Voltage (4 values), N/A or maybe equal to battery voltage
+            'mpptMode': [0, 3], # MPPT Mode, should be auto but could be HW after a reset, 0 for HW, 1 for manual, 2 for auto, 3 for auto w/ timeout 
+            # Output State (12 values) = outputStatus...?, N/A
+            # Output Latch-up (12 values), N/A
             'outputFaultCount1': [0, 0], # Output Faults (12 values)
             'outputFaultCount2': [0, 0],
             'outputFaultCount3': [0, 0],
@@ -105,21 +108,21 @@ class testLib(object):
             'curOutput3_mA': [0, 0],
             'curOutput4_mA': [0, 0],
             'curOutput5_mA': [0, 0],
-            'curOutput6_mA': [118, 550],
+            'curOutput6_mA': [118, 550], # Current for OBC which must be on for these tests, didn't touch max/min
             'curOutput7_mA': [0, 0],
             'curOutput8_mA': [0, 0],
-            'curOutput9_mA': [36, 232],
+            'curOutput9_mA': [36, 232], # # Current for OBC which must be on for these tests, didn't touch max/min
             'curOutput10_mA': [0, 0],
             'curOutput11_mA': [0, 0],
             'curOutput12_mA': [0, 0],
             # Output converters (12 values) = OutputConverterVoltage	There is AOcurOutput...?
             # converter Voltage (4 values) = N/A... 		There is output converter voltage?
-            'outputConverterState': [1,1], # Converter state (Should be ON, which is assumed to be 1)
+            'outputConverterState': [0,15], # Converter state, 4 bit binary number in decimal where XXXX represents the states of each of the 4 converters
             'temp1_c': [17, 35], # MPPT converter temps (4 values) in deg C
             'temp2_c': [17, 35],
             'temp3_c': [17, 35],
             'temp4_c': [17, 35],
-            'temp5_c': [17, 35], # output covnerter temp (4 values) in deg C
+            'temp5_c': [17, 35], # output converter temp (4 values) in deg C
             'temp6_c': [17, 35],
             'temp7_c': [17, 35],
             'temp8_c': [17, 35],
@@ -127,10 +130,10 @@ class testLib(object):
             'temp10_c': [17, 25],
             'temp11_c': [17, 25],
             'temp12_c': [17, 25],
-            'wdt_gs_counter': [0, 10], # GS WDT Reboot count
-            'wdt_gs_time_left': [1, 86400], # GS WDT Remaining time
+            'wdt_gs_counter': [0, 1000], # GS WDT Reboot count, made the max really large due to EPS issues
+            'wdt_gs_time_left': [1, 86400], # GS WDT Remaining time, max is 24 hours 
             # Last reset reason = last_reset_reason (in Athena HK?)
-            'bootCnt': [0, 50]# boot counter = bootCnt
+            'bootCnt': [0, 500]# boot counter = bootCnt, made max large due to EPS issues
         }
        
         self.expected_OBC_HK = {
@@ -496,7 +499,7 @@ class testLib(object):
         testPassed = 'Pass'
 
         if (EPS):
-            checkPassed = self.check_OBC_HK()
+            checkPassed = self.check_EPS_HK()
             if not checkPassed:
                 testPassed = 'Fail'
         
