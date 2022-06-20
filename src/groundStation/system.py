@@ -3845,6 +3845,78 @@ class SystemValues(object):
                         }
                     },
                 }
+            },
+            'IRIS': {
+                'port': 22,
+                'subservice': {
+                    'IRIS_POWER_ON': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'IRIS_POWER_OFF': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'IRIS_TAKE_IMAGE': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'IRIS_DELIVER_IMAGE': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'IRIS_PROGRAM_FLASH': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'IRIS_GET_HK': {
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'VIS Temperature': '>u2',
+                                'NIR Temperature': '>u2',
+                                'Flash Temperature': '>u2',
+                                'Gate Temperature': '>u2',
+                                'Image number': '>u',
+                                'Software Version': '>u',
+                                'Error number': '>u',
+                                'MAX 5V voltage': '>u2',
+                                'MAX 5V power': '>u2',
+                                'MAX 3V voltage': '>u2',
+                                'MAX 3V power': '>u2',
+                                'MIN 5V voltage': '>u2',
+                                'MIN 3V voltage': '>u2',
+                            }
+                        }
+                    }
+                }
             }
         }
 
