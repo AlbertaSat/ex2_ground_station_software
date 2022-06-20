@@ -3299,7 +3299,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_DOWNLOAD_FILE_TO_OBC': {
-                        'what': 'Saves a specified file from the ADCS to the OBC. Inputs args type, counter, size, and OBC file name.',
+                        'what': 'Saves a file from the ADCS to the OBC. Inputs: type, counter, size, and OBC file name. (Be patient and check the log for return.)',
                         'subPort': 109,
                         'inoutInfo': {
                             'args': ['>B', 'B', '>u4', '>S30'],
