@@ -391,8 +391,8 @@ class options(object):
         
         self.parser.add_argument(
             '-u', 
-            action='store_true'
-            help='Enable UHF SDR functionality (e.g automatic pipe mode commands)')#UHF connection (not uart) enabled
+            action='store_true',
+            help='Enable UHF SDR functionality (e.g automatic pipe mode commands)')
 
         self.parser.add_argument(
             '-s',
