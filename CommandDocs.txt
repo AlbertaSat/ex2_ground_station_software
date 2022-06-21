@@ -2,6 +2,41 @@
 Note: arguments and return types are given as numpy types
 
 
+SCHEDULER.SET_SCHEDULE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 0
+
+
+SCHEDULER.GET_SCHEDULE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 15		subport: 1
+
+
+SCHEDULER.REPLACE_SCHEDULE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 2
+
+
+SCHEDULER.DELETE_SCHEDULE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 3
+
+
+SCHEDULER.PING_SCHEDULE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 4
+
+
 SET_PIPE.UHF_GS_PIPE:
 		About: None
 		Arguments: [None]
