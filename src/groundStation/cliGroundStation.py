@@ -34,6 +34,7 @@ class cliGroundStation(groundStation.groundStation):
             return
         libcsp.send(conn, buf)
         libcsp.buffer_free(buf)
+        response = ''
 
         while True:
             packet = libcsp.read(conn, 10000)
@@ -43,8 +44,8 @@ class cliGroundStation(groundStation.groundStation):
 
             data = bytearray(libcsp.packet_get_data(packet))
             length = libcsp.packet_get_length(packet)
-            print("{}".format(data[2:].decode()), end='')
+            response += "{}".format(data[2:].decode("ascii").rstrip("\x00"))
             if data[1] == 0:
                 break
-        return
+        return response.strip()
         
