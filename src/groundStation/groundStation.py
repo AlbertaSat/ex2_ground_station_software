@@ -145,7 +145,7 @@ class groundStation(object):
                 if server == 4:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
-                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ)
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_NONE)
             except Exception as e:
                 print(e)
                 return None
@@ -388,6 +388,7 @@ class options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
+<<<<<<< HEAD
         
         self.parser.add_argument('-u', action='store_true')#UHF connection (not uart) enabled
 
@@ -397,6 +398,8 @@ class options(object):
             type=str,
             default="EX2",
             help='Satellite parameter for automatic programs (e.g FTP)')
+=======
+>>>>>>> 71304683aaaab92cf987a856d68e7e0ce87e3d0d
 
         self.parser.add_argument(
             '-f',
