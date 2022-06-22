@@ -21,7 +21,7 @@
 
 import time
 import sys
-from testLib import testLib as test
+from testLib import testLib
 from os import path
 sys.path.append("./src")
 from groundStation import groundStation
@@ -31,7 +31,7 @@ import numpy as np
 opts = groundStation.options()
 gs = groundStation.groundStation(opts.getOptions())
 
-test = test() #call to initialize local test class
+test = testLib(gs) #call to initialize local test class
 
 # TODO - Automate the remaining steps in the EPS test - 2-4, 10, 12
 def test_EPS_pingWatchdog():
