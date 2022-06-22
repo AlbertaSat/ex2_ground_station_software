@@ -27,10 +27,6 @@ from os import path
 sys.path.append("./src")
 from groundStation import groundStation
 
-
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
-
 # TODO - Add in remaining HK variables and their expected values to the following dictionaries:
 #        expected_EPS_HK, expected_OBC_HK, expected_charon_HK, expected_sBand_HK, expected_DFGM_HK
 #        expected_NIM_HK, expected_yukon_HK, expected_adcs_HK
@@ -38,7 +34,8 @@ gs = groundStation.groundStation(opts.getOptions())
 
 
 class testLib(object):
-    def __init__(self):
+    def __init__(self, gs):
+        self.gs = gs;
         self.start = time.time()
         self.failed = 0
         self.passed = 0
@@ -586,8 +583,8 @@ class testLib(object):
 
     # Checks all HK data by default
     def testHousekeeping(self, EPS=1, OBC=1, UHF=1, solar=1, charon=1, sBand=1, iris=1, DFGM=1, NIM=1, yukon=1, ADCS=1):
-        server, port, toSend = gs.getInput(None,'ex2.housekeeping.get_hk(1, 0 ,0)')
-        self.response = gs.transaction(server, port, toSend)
+        server, port, toSend = self.gs.getInput(None,'ex2.housekeeping.get_hk(1, 0 ,0)')
+        self.response = self.gs.transaction(server, port, toSend)
         testPassed = 'Pass'
 
         if (EPS):
@@ -661,8 +658,8 @@ class testLib(object):
         return True
 
     def sendAndExpect(self, send, expect):
-        server, port, toSend = gs.getInput(inVal=send)
-        self.response = gs.transaction(server, port, toSend)
+        server, port, toSend = self.gs.getInput(inVal=send)
+        self.response = self.gs.transaction(server, port, toSend)
         if self.response == expect:
             testpassed = 'Pass'
             colour = '\033[92m'  # green
@@ -678,8 +675,8 @@ class testLib(object):
         return self.response == expect
 
     def send(self, send):
-        server, port, toSend = gs.getInput(inVal=send)
-        self.response = gs.transaction(server, port, toSend)
+        server, port, toSend = self.gs.getInput(inVal=send)
+        self.response = self.gs.transaction(server, port, toSend)
         if self.response != {}:
             testpassed = 'Pass'
             colour = '\033[92m'  # green
