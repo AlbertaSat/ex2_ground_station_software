@@ -42,11 +42,11 @@ class testLib(object):
         self.response = None
         self.expected_EPS_HK = {
             # Battery Voltage in mV, 7400 is the threshold for passing from safe to normal mode, 8400 is full
-            'vBatt_mv': [7400, 8400],
+            'vBatt_mV': [7400, 8400],
             # Battery Input Current in mA, 0 when not being charged, not sure what the max should be
             'curBattIn_mA': [0, 1100],
             # Battery Output Current in mA, 0 when no outputs are on
-            'currBattOut_mA': [0, 400],
+            'curBattOut_mA': [0, 400],
             # Battery State, 0 for critical, 1 for safe, 2 for normal, 3 for full
             'battMode': [0, 3],
             # Battery Heater Mode (Should be Auto, which is 1, switches to 0 after reset)
@@ -147,7 +147,7 @@ class testLib(object):
             # GS WDT Reboot count, made the max really large due to EPS issues
             'wdt_gs_counter': [0, 1000],
             # GS WDT Remaining time, max is 24 hours
-            'wdt_gs_time_left': [1, 86400],
+            'wdt_gs_time_left_s': [1, 86400],
             # Last reset reason = last_reset_reason (in Athena HK?)
             # boot counter = bootCnt, made max large due to EPS issues
             'bootCnt': [0, 500]

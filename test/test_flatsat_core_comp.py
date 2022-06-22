@@ -50,7 +50,7 @@ def test_EPS_pingWatchdog():
     # 5) Repeat the following every 10 seconds for 6 minutes:
     for i in range(36): 
         # Gather all EPS HK info
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
+        server, port, toSend = gs.getInput(None, 'eps.tm_cli.general_telemetry')
         response = gs.transaction(server, port, toSend)
         
         # Display data on ground station CLI
@@ -72,7 +72,7 @@ def test_EPS_pingWatchdog():
 
     # 7) Repeat step 5:
     for j in range(36): 
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
+        server, port, toSend = gs.getInput(None, 'eps.cli.general_telemetry')
         response = gs.transaction(server, port, toSend)
 
         for val in test.expected_EPS_HK:
@@ -101,7 +101,7 @@ def test_EPS_pingWatchdog():
 
     # 11) Repeat step 5:
     for k in range(36): 
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
+        server, port, toSend = gs.getInput(None, 'eps.cli.general_telemetry')
         response = gs.transaction(server, port, toSend)
 
         for val in test.expected_EPS_HK:
