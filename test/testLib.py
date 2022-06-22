@@ -21,11 +21,11 @@
 file also contains a function that runs the OBC system-wide housekeeping test'''
 
 import numpy as np
-from groundStation import groundStation
 import time
 import sys
 from os import path
 sys.path.append("./src")
+from groundStation import groundStation
 
 
 opts = groundStation.options()
