@@ -586,7 +586,7 @@ class testLib(object):
 
     # Checks all HK data by default
     def testHousekeeping(self, EPS=1, OBC=1, UHF=1, solar=1, charon=1, sBand=1, iris=1, DFGM=1, NIM=1, yukon=1, ADCS=1):
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput(None,'ex2.housekeeping.get_hk(1, 0 ,0)')
         self.response = gs.transaction(server, port, toSend)
         testPassed = 'Pass'
 
