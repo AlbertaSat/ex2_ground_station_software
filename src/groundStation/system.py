@@ -1111,17 +1111,25 @@ class SystemValues(object):
                                 '###############################\r\n'
                                 'Athena\r\n'+
                                 '###############################\r\n'+
-                                'temparray1': '>i4',
-                                'temparray2': '>i4',
-                                'boot_cnt': '>u2',
-                                'last_reset_reason': '<B',
-                                'OBC_mode': '<B',
+                                # The order and content of the following is based on the housekeeping data spreadsheet
+                                'temparray1': '>i4', # Assuming to be the MCU temperature 
+                                'OBC_software_ver': '<B', 
+                                'temparray2': '>i4', # Assuming to be the Converter temperature 
                                 'OBC_uptime': '>u2',
+<<<<<<< HEAD
                                 'solar_panel_supply_curr': '<B',
                                 'OBC_software_ver': '<B',
                                 'cmds_received': '>u2',
                                 'pckts_uncovered_by_FEC': '>u2',
 
+=======
+                                'SD_usage_1': '<B', # Assuming data type <B based on other hk values of same type
+                                'SD_usage_2': '<B', # Assuming data type <B based on other hk values of same type                              
+                                'boot_cnt': '>u2',
+                                'last_reset_source': '<B', # Boot sourse, assuming data type <B based on Boot reason
+                                'last_reset_reason': '<B', # Boot reason
+                                
+>>>>>>> Updated housekeeping parameters for OBC based on HK spreadsheet
                                 #EPS
                                 '###############################\r\n'
                                 'EPS\r\n'+
