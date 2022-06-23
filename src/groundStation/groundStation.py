@@ -118,7 +118,7 @@ class groundStation(object):
     def __sdr__(self, device, uhf_baudrate):
         """ Initialize SDR interface """
         libcsp.sdr_init(device, 115200, uhf_baudrate, "UHF")
-        libcsp.rtable_load('1 UHF')
+        libcsp.rtable_load('1 UHF, 4 UHF')
 
     def __setPIPE__(self):
         # Make a python byte array with the command that needs to be sent to set pipe mode
@@ -319,9 +319,6 @@ class groundStation(object):
         if self.uTrns_enable == True:
             if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
                 self.uTrns.enterPipeMode()
-                #may need to add delay here?
-                command, port, toSend = self.getInput(inVal= self.satellite +'.general.UHF_IS_IN_PIPE_NOTIFICATION(1)')
-                self.transaction(command, port, toSend)
             self.uTrns.last_tx_time = time.time()
 
     def get_satellite(self):
