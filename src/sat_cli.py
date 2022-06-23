@@ -34,6 +34,7 @@ def cli():
         try:
             cmd = input("$ ")
             server, port, toSend = gs.getInput(cmd, inVal="{}.cli.send_cmd({},{})".format(gs.satellite, len(cmd), cmd))
+            gs.handlePipeMode()
             ret = gs.transaction(server, port, toSend)
             print(ret)
             
