@@ -2999,7 +2999,7 @@ class SystemValues(object):
                     'ADCS_SET_LOG_CONFIG': {
                         'subPort': 85,
                         'inoutInfo': {
-                            'args': ['>O20', '>u2'], # array type?, period
+                            'args': ['>u2', '>B', '>B', '>S30'],
                             'returns': {
                                 'err': '>b'
                             }
@@ -3008,10 +3008,10 @@ class SystemValues(object):
                     'ADCS_GET_LOG_CONFIG': {
                         'subPort': 86,
                         'inoutInfo': {
-                            'args': None,
+                            'args': ['>B'],
                             'returns': {
                                 'err': '>b',
-                                'Flag_arr': '>O20',
+                                'Flags_arr': '>V80',
                                 'Period': '>u2',
                                 'Dest': '>u1',
                                 'Log': '>u1'
