@@ -58,6 +58,7 @@ class groundStation(object):
     def __init__(self, opts):
         keyfile = open(opts.hkeyfile, "r")
         hkey = keyfile.read().strip()
+        self.filename = opts.schedule_file
         libcsp.hmac_set_key(hkey, len(hkey))
         self.vals = SystemValues()
         self.apps = self.vals.APP_DICT
@@ -320,6 +321,9 @@ class groundStation(object):
     def get_satellite(self):
         return self.satellite
 
+    def get_filename(self):
+        return self.filename
+
     def set_satellite(self, name):
         if name not in self.apps.keys():
             raise ValueError("Satellite \'{}\' not in {}".format(name, str(self.apps.keys())))
@@ -396,7 +400,7 @@ class options(object):
 
         self.parser.add_argument(
             '-f',
-            '--file',
+            '--schedule_file',
             type=str,
             default='schedule.txt',
             help='Schedule file name')
