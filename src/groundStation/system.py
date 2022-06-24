@@ -3291,5 +3291,77 @@ class SystemValues(object):
                         }
                     },
                 }
+            },
+            'NS_PAYLOAD': {
+                'port': 22,
+                'subservice': {
+                    'UPLOAD_ARTWORK': {
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>S10'], # Filename
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'CAPTURE_IMAGE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'CONFIRM_DOWNLINK': {
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    
+                    'GET_HEARTBEAT': {
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                                'heartbeat': '>B'
+                            }
+                        }
+                    },
+                    'GET_FLAG': {
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['>B'], # flag char
+                            'returns': {
+                                'err': '>b',
+                                'flag_stat': '>B'
+                            }
+                        }
+                    },
+                    'GET_TELEMETRY': {
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'GET_SW_VERSION': {
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                }
             }
-        }
+        },
+
