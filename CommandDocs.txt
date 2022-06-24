@@ -1710,3 +1710,64 @@ NS_PAYLOAD.GET_SW_VERSION:
 		port: 22		subport: 7
 
 
+IRIS.IRIS_POWER_ON:
+		About: Send command to OBC to tell EPS to turn on power
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 0
+
+
+IRIS.IRIS_POWER_OFF:
+		About: Send command to OBC to tell EPS to turn off power
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 1
+
+
+IRIS.IRIS_TURN_SENSORS_ON:
+		About: Send command to OBC to tell Iris to turn on image sensors
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 2
+
+
+IRIS.IRIS_TURN_SENSORS_OFF:
+		About: Send command to OBC to tell Iris to turn on image sensors
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 3
+
+
+IRIS.IRIS_TAKE_IMAGE:
+		About: Tell Iris to take a picture
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 4
+
+
+IRIS.IRIS_DELIVER_IMAGE:
+		About: Tell OBC to perform image transfer from Iris and store those images into SD card
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 5
+
+
+IRIS.IRIS_PROGRAM_FLASH:
+		About: Tell OBC to start programming Iris using provided binary file on the SD card
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 23		subport: 6
+
+
+IRIS.IRIS_COUNT_IMAGES:
+		About: Tell Iris to send number of images stored in SD card
+		Arguments: [None]
+		return values: {'err': '>b', 'Number of Images': '>u'}
+		port: 23		subport: 7
+
+
+IRIS.IRIS_GET_HK:
+		About: Tell Iris to send housekeeping data
+		Arguments: [None]
+		return values: {'err': '>b', 'VIS Temperature': '>u2', 'NIR Temperature': '>u2', 'Flash Temperature': '>u2', 'Gate Temperature': '>u2', 'Image number': '>u1', 'Software Version': '>u1', 'Error number': '>u1', 'MAX 5V voltage': '>u2', 'MAX 5V power': '>u2', 'MAX 3V voltage': '>u2', 'MAX 3V power': '>u2', 'MIN 5V voltage': '>u2', 'MIN 3V voltage': '>u2'}
+		port: 23		subport: 8
