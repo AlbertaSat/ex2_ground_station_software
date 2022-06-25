@@ -3363,5 +3363,5 @@ class SystemValues(object):
                     },
                 }
             }
-        },
+        }
 
