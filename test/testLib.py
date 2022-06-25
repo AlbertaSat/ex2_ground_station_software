@@ -154,16 +154,39 @@ class testLib(object):
         }
 
         self.expected_OBC_HK = {
-            # MCU Temperature - in ADCS...?
-            # Converter Temperature
-            # Uptime
-            # Memory Usage
+            'temparray1': [17, 25], # MCU Temperature
+            'OBC_software_ver': [0, 3], # Assumed values for software version but range is likely off
+            'temparray2': [17, 25], # Converter Temperature
+            'OBC_uptime': [0, 28800], # Uptime, assumed in seconds up to 8 hours
+            'SD_usage_1': [0, 80], # Given in percentage, SD card #1
+            'SD_usage_2': [0, 80], # Given in percentage, SD card #2
+            'boot_cnt': [1, 4294967295], # Boot counter, max 4 bytes
+            'last_reset_reason': [0, 4], # Boot reason, 1 byte, only 4 or 5 options
+            'last_reset_source': [0, 65535] # Boot source, 2 bytes, lots of options
         }
 
         self.expected_UHF_HK = {
-            'freq': [436.5, 436.5],  # Radio frequency in MHz
-            'uptime': [1, 21600],  # Uptime in s
-            'temperature': [17, 25],  # Internal Temperature in deg C
+            'scw1': [0, 0], # Status control word #1
+            'scw2': [3,3],  # Status control word #2
+            'scw3': [0, 1],  # Status control word #3
+            'scw4': [5, 5],  # Status control word #4
+            'scw5': [0, 1],  # Status control word #5
+            'scw6': [0, 1],  # Status control word #6
+            'scw7': [0, 1],  # Status control word #7
+            'scw8': [0, 1],  # Status control word #8
+            'scw9': [0, 1],  # Status control word #9
+            'scw10': [0, 1],  # Status control word #10
+            'scw11': [1, 1],  # Status control word #11
+            'scw12': [1, 1],  # Status control word #12
+            'freq': [437875000, 437875000], 
+            'pipe_t': [0, 255],
+            'beacon_t': [1, 65535],
+            'audio_t': [0, 65535],
+            'uptime': [0, 28800], # Uptime, assumed in seconds up to 8 hours
+            'pckts_out': [1, 4294967295], # Packets out, max 4 bytes
+            'pckts_in': [1, 4294967295], # Packets in, max 4 bytes
+            'pckts_in_crc16': [1, 4294967295], # Packets in with CRC error, max 4 bytes
+            'temperature': [17, 25] # Internal temperature
         }
 
         self.expected_solarPanel_HK = {
@@ -218,8 +241,15 @@ class testLib(object):
         }
 
         self.expected_charon_HK = {
-            # GPS CRC
-            # Temperature Sensors 1-8 in deg C
+            'crc' : [0, 65535], # GPS CRC, Assuming max 2 bytes
+            'temp1' : '>b', # Temperature Sensors 1-8 in deg C
+            'temp2' : '>b',
+            'temp3' : '>b',
+            'temp4' : '>b',
+            'temp5' : '>b',
+            'temp6' : '>b',
+            'temp7' : '>b',
+            'temp8' : '>b'   
         }
 
         self.expected_sBand_HK = {
