@@ -3310,6 +3310,7 @@ class SystemValues(object):
                             'args': None, 
                             'returns': {
                                 'err': '>b',
+                                'confirmation_err': '>B'
                             }
                         }
                     },
@@ -3329,35 +3330,56 @@ class SystemValues(object):
                             'args': None, 
                             'returns': {
                                 'err': '>b',
-                                'heartbeat': '>B'
+                                'heartbeat': '>S1'
                             }
                         }
                     },
                     'GET_FLAG': {
                         'subPort': 4,
                         'inoutInfo': {
-                            'args': ['>B'], # flag char
+                            'args': ['>B'], # flag/subcode BYTE! Do not use a char
                             'returns': {
                                 'err': '>b',
                                 'flag_stat': '>B'
                             }
                         }
                     },
-                    'GET_TELEMETRY': {
+                    'GET_FILENAME': {
                         'subPort': 5,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': ['>B'], # subcode BYTE! Do not use a char
                             'returns': {
                                 'err': '>b',
+                                'filename': '>S11'
                             }
                         }
                     },
-                    'GET_SW_VERSION': {
+                    'GET_TELEMETRY': {
                         'subPort': 6,
                         'inoutInfo': {
                             'args': None, 
                             'returns': {
                                 'err': '>b',
+                                'temp0': '>i2',
+                                'temp1': '>i2',
+                                'temp2': '>i2',
+                                'temp3': '>i2',
+                                'eNIM0_lux': '>i2',
+                                'eNIM1_lux': '>i2',
+                                'eNIM2_lux': '>i2',
+                                'ram_avail': '>i2',
+                                'lowest_img_num': '>i2',
+                                'first_blank_img_num': '>i2'
+                            }
+                        }
+                    },
+                    'GET_SW_VERSION': {
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                                'version': '>S7'
                             }
                         }
                     },
