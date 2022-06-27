@@ -735,3 +735,7 @@ class testLib(object):
         else:
             colour = '\033[91m'  # red
         print(colour + '\t' + str(success) + '%' + ' Success\n' + '\033[0m')
+    
+    def sendSatCliCmd(self, gs, cmd):
+            server, port, toSend = gs.getInput(cmd, inVal="{}.cli.send_cmd({},{})".format(gs.satellite, len(cmd), cmd))
+            gs.transaction(server, port, toSend)
