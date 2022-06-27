@@ -22,6 +22,7 @@
 import time
 import sys
 from testLib import testLib
+from os import system
 from os import path
 sys.path.append("./src")
 from groundStation import groundStation
@@ -192,13 +193,20 @@ def test_GS_pingWatchdog():
 
 # TODO - Automate the remaining steps in the OBC Firmware Update test - 3, 4, 6
 def test_OBC_firmwareUpdate():
+    print('Before continuing, flash the ex2_bootloader project to athena and run it via CCS.')
+    input('Press enter to continue.')
+
+    print('Flashing testimg_a.out to OBC')
+    system("yarn updater -f ./test/testimg_a.out -c ")
+
+
     testPassed = "Pass"
     goldenImage_ID = 1 # TODO - Replace the current value here with the actual golden image version ID
 
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
     # 2) Retrieve the current firmware version ID and display it on the ground station CLI
-    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
     response = gs.transaction(server, port, toSend)
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
@@ -207,12 +215,24 @@ def test_OBC_firmwareUpdate():
         testPassed = "Fail"
 
     # 3) Reset the OBC into a mode in which the working firmware image can be updated
+    print('Resetting OBC into bootloader')
+    server, port, toSend = gs.getInput('ex2.general.reboot(B)')
+    response = gs.transaction(server, port, toSend)
 
     # 4) Update the working firmware image by uploading a new image
     # New image should have identical functionality to the one being replaced, but with a unique firmware version ID
+    test.sendSatCliCmd(gs, 'address A 0x00200000')#not sure if '0x' necessary
+
+    print('Flashing testimg_b.out to OBC')
+    system("yarn updater -f ./test/testimg_b.out -c ")
+    #TODO add its crc here
+    #this -c arg is specifically for this image
+    #assuming updater gives status updates throughout process
+
+    test.sendSatCliCmd(gs, 'reboot A')
 
     # 5) Repeat step 2
-    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
     response = gs.transaction(server, port, toSend)
     lastVersion = currentVersion
     currentVersion = response['OBC_software_ver']
@@ -224,7 +244,7 @@ def test_OBC_firmwareUpdate():
     # 6) Repeat steps 3 & 4, but with a new firmware image having a unique version ID number and incorrect CRC bits
 
     # 7) Repeat step 2
-    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
     response = gs.transaction(server, port, toSend)
     lastVersion = currentVersion
     currentVersion = response['OBC_software_ver']
@@ -256,7 +276,7 @@ def test_OBC_goldenFirmwareUpdate():
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
     # 2) Retrieve the current firmware version ID and display it on the ground station CLI
-    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
     response = gs.transaction(server, port, toSend)
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
@@ -267,7 +287,7 @@ def test_OBC_goldenFirmwareUpdate():
     # 3) Reset the OBC and have it boot the "golden" firmware image
 
     # 4) Repeat step 2
-    server, port, toSend = gs.getInput('OBC.housekeeping.get_hk(1, 0, 0)')
+    server, port, toSend = gs.getInput('exhousekeeping.get_hk(1, 0, 0)')
     response = gs.transaction(server, port, toSend)
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
