@@ -172,6 +172,7 @@ class SystemValues(object):
                 'port' : 11,
                 'subservice' : {
                     'REBOOT': {
+                        'What': "Command OBC to reboot to a given more, B, A, or G for bootloader, application, or golden image respectively",
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>B'],  # mode. Can be 'A', 'B', 'G'
