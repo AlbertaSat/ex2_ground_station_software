@@ -4,19 +4,12 @@ import os
 from groundStation.groundStation import groundStation, options
 from groundStation.system import SystemValues
 import libcsp_py3 as libcsp
+import binascii
 
-def crc16(data : bytearray, offset , length):
-    if data is None or offset < 0 or offset > len(data)- 1 and offset+length > len(data):
+def crc16(data : bytes):
+    if data is None:
         return 0
-    crc = 0
-    for i in range(0, length):
-        crc ^= data[offset + i] << 8
-        for j in range(0,8):
-            if (crc & 0x8000) > 0:
-                crc =(crc << 1) ^ 0x1021
-            else:
-                crc = crc << 1
-    return crc & 0xFFFF
+    return binascii.crc_hqx(data, 0)
 
 class updater(groundStation):
     def __init__(self, opts):
@@ -39,7 +32,7 @@ class updater(groundStation):
 
 
     def crc(self, data):
-        return crc16(data, 0, len(data))
+        return crc16(data)
 
     def transaction(self, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
