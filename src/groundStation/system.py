@@ -305,6 +305,25 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'GET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
+                        'subPort': 9,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'timeout_ms': '>u4'
+                            }
+                        }
+                    },
+                    'SET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': ['>u4'], 
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
                 }
             },
             'COMMUNICATION': {
@@ -1020,6 +1039,7 @@ class SystemValues(object):
                             'args': ['>u2', '>u2', '>u4'], #limit, before_id, before_time
                             'returns' : {
                                 'err': '>b',
+                                # WARNING: Avoid duplicate names in the return items below!
                                 #packet meta
                                 '###############################\r\n'+
                                 'packet meta\r\n'+
@@ -1327,15 +1347,15 @@ class SystemValues(object):
                                 '###############################\r\n'
                                 'Charon Interfacing Board\r\n'+
                                 '###############################\r\n'+
-                                'crc' : '>u2',
-                                'temp1' : '>b',
-                                'temp2' : '>b',
-                                'temp3' : '>b',
-                                'temp4' : '>b',
-                                'temp5' : '>b',
-                                'temp6' : '>b',
-                                'temp7' : '>b',
-                                'temp8' : '>b',
+                                'gps_crc' : '>u2',
+                                'charon_temp1' : '>b',
+                                'charon_temp2' : '>b',
+                                'charon_temp3' : '>b',
+                                'charon_temp4' : '>b',
+                                'charon_temp5' : '>b',
+                                'charon_temp6' : '>b',
+                                'charon_temp7' : '>b',
+                                'charon_temp8' : '>b',
                                 #DFGM
                                 '###############################\r\n'
                                 'DFGM Board\r\n'+
@@ -1352,6 +1372,20 @@ class SystemValues(object):
                                 'Reserved_2': '>u2',
                                 'Reserved_3': '>u2',
                                 'Reserved_4': '>u2',
+                                #Northern SPIRIT Payloads
+                                '###############################\r\n'
+                                'Northern SPIRIT\r\n'+
+                                '###############################\r\n'+
+                                'ns_temp0': '>i2',
+                                'ns_temp1': '>i2',
+                                'ns_temp2': '>i2',
+                                'ns_temp3': '>i2',
+                                'eNIM0_lux': '>i2',
+                                'eNIM1_lux': '>i2',
+                                'eNIM2_lux': '>i2',
+                                'ram_avail': '>i2',
+                                'lowest_img_num': '>i2',
+                                'first_blank_img_num': '>i2'
                             }
                         }
                     },
