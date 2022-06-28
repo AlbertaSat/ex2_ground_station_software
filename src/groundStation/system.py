@@ -3258,7 +3258,7 @@ class SystemValues(object):
                                 'ctime': '>u4',
                             }
                         }
-                    },UFH
+                    },
                     'FTP_DATA_PACKET': {
                         'subPort': 2,
                         'inoutInfo': {
