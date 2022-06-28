@@ -18,6 +18,8 @@
 '''
 
 '''Please note that many of the ground station commands and housekeeping variables needed in this file do not yet exist at the time of last edit'''
+'''Run this script with the -I SDR argument to use it over UHF'''
+
 
 import time
 import sys
@@ -197,8 +199,10 @@ def test_OBC_firmwareUpdate():
     input('Press enter to continue.')
 
     print('Flashing testimg_a.out to OBC')
-    system("yarn updater -f ./test/testimg_a.out -c ")
-
+    system("yarn sat_update -f ./test/testimg_a.out [-I sdr]")
+    test.sendSatCliCmd(gs, 'verifyapp')
+    print('Rebooting into new image')
+    test.sendSatCliCmd(gs, 'reboot A')
 
     testPassed = "Pass"
     goldenImage_ID = 1 # TODO - Replace the current value here with the actual golden image version ID
@@ -215,20 +219,13 @@ def test_OBC_firmwareUpdate():
         testPassed = "Fail"
 
     # 3) Reset the OBC into a mode in which the working firmware image can be updated
-    print('Resetting OBC into bootloader')
-    server, port, toSend = gs.getInput('ex2.general.reboot(B)')
-    response = gs.transaction(server, port, toSend)
-
     # 4) Update the working firmware image by uploading a new image
     # New image should have identical functionality to the one being replaced, but with a unique firmware version ID
-    test.sendSatCliCmd(gs, 'address A 0x00200000')#not sure if '0x' necessary
 
     print('Flashing testimg_b.out to OBC')
-    system("yarn updater -f ./test/testimg_b.out -c ")
-    #TODO add its crc here
-    #this -c arg is specifically for this image
-    #assuming updater gives status updates throughout process
-
+    system("yarn sat_update -f ./test/testimg_b.out [-I sdr]")
+    test.sendSatCliCmd(gs, 'verifyapp')
+    print('Rebooting into new image')
     test.sendSatCliCmd(gs, 'reboot A')
 
     # 5) Repeat step 2
@@ -242,16 +239,17 @@ def test_OBC_firmwareUpdate():
         testPassed = "Fail"
 
     # 6) Repeat steps 3 & 4, but with a new firmware image having a unique version ID number and incorrect CRC bits
+    # NOT SURE HOW TO DO THIS
 
-    # 7) Repeat step 2
-    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
-    response = gs.transaction(server, port, toSend)
-    lastVersion = currentVersion
-    currentVersion = response['OBC_software_ver']
-    print("Current firmware/software version ID: " + str(currentVersion))
-    # To pass test, current version should be the same as the version retrieved in step 5
-    if (currentVersion != lastVersion):
-        testPassed = "Fail"
+    # # 7) Repeat step 2
+    # server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
+    # response = gs.transaction(server, port, toSend)
+    # lastVersion = currentVersion
+    # currentVersion = response['OBC_software_ver']
+    # print("Current firmware/software version ID: " + str(currentVersion))
+    # # To pass test, current version should be the same as the version retrieved in step 5
+    # if (currentVersion != lastVersion):
+    #     testPassed = "Fail"
 
     # Take note of the test results
     if (testPassed == "Pass"):
@@ -324,9 +322,9 @@ def testAllCommandsToOBC():
     print("\n---------- OBC FIRMWARE UPDATE TEST ----------\n")
     test_OBC_firmwareUpdate()
 
-    # TODO - Finish function implementation
-    print("\n---------- OBC GOLDEN FIRMWARE UPDATE TEST ----------\n")
-    test_OBC_goldenFirmwareUpdate()
+    # # TODO - Determine if golden image still being used
+    # print("\n---------- OBC GOLDEN FIRMWARE UPDATE TEST ----------\n")
+    # test_OBC_goldenFirmwareUpdate()
 
     test.summary() #call when done to print summary of tests
 
