@@ -2624,7 +2624,12 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Flags_Arr': '>u1'
+                                'Flags_Arr_1': '>u1',
+                                'Flags_Arr_2': '>u1',
+                                'Flags_Arr_3': '>u1',
+                                'Flags_Arr_4': '>u1',
+                                'Flags_Arr_5': '>u1',
+                                'Flags_Arr_6': '>u1',
                             }
                         }
                     },
@@ -2634,9 +2639,9 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'X': '>f4',
-                                'Y': '>f4',
-                                'Z': '>f4',
+                                'X': '>i2',
+                                'Y': '>i2',
+                                'Z': '>u2',
                             }
                         }
                     },
@@ -3181,6 +3186,7 @@ class SystemValues(object):
                     'ADCS_SET_CSS_CONFIG': {
                         'subPort': 96,
                         'inoutInfo': {
+                            # CSS relative scale floats cannot be negative!
                             'args': ['>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>B'],
                             'returns': {
                                 'err': '>b',
@@ -3232,8 +3238,17 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'ADCS_SET_TRACKING_CONFIG': {
+                    'ADCS_SET_RWHEEL_CONFIG': {
                         'subPort': 102,
+                        'inoutInfo': {
+                            'args': ['>f4', '>f4', '>f4', '>B', '>B'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'ADCS_SET_TRACKING_CONFIG': {
+                        'subPort': 103,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>u1'],
                             'returns': {
@@ -3242,7 +3257,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_MOI_MAT': {
-                        'subPort': 103,
+                        'subPort': 104,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4'],
                             'returns': {
@@ -3251,7 +3266,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_ESTIMATION_CONFIG': {
-                        'subPort': 104,
+                        'subPort': 105,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                             'returns': {
@@ -3260,7 +3275,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_USERCODED_SETTING': {
-                        'subPort': 105,
+                        'subPort': 106,
                         'inoutInfo': {
                             'args': ['>O20', '>O20'],
                             'returns': {
@@ -3269,7 +3284,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_ASGP4_SETTING': {
-                        'subPort': 106,
+                        'subPort': 107,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>f4', '>f4', '>u1', '>f4', '>f4', '>u1', '>f4', '>f4', '>u2'],
                             'returns': {
@@ -3278,7 +3293,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_GET_FULL_CONFIG': {
-                        'subPort': 107,
+                        'subPort': 108,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3500,7 +3515,7 @@ class SystemValues(object):
                     },
                     'ADCS_DOWNLOAD_FILE_LIST_TO_OBC': {
                         'what': 'Saves information about files stored on the ADCS to the OBC. File name VOL0:/adcs/adcs_file_list.txt',
-                        'subPort': 108,
+                        'subPort': 109,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3510,7 +3525,7 @@ class SystemValues(object):
                     },
                     'ADCS_DOWNLOAD_FILE_TO_OBC': {
                         'what': 'Saves a file from the ADCS to the OBC. Inputs: type, counter, size, and OBC file name. (Be patient and check the log for return.)',
-                        'subPort': 109,
+                        'subPort': 110,
                         'inoutInfo': {
                             'args': ['>B', 'B', '>u4', '>S30'],
                             'returns': {
