@@ -3330,6 +3330,7 @@ class SystemValues(object):
                 'port': 22,
                 'subservice': {
                     'UPLOAD_ARTWORK': {
+                        'what': 'Send artwork from the OBC to the payload. Input: file name, limited to 7 chars!',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>S10'], # Filename
@@ -3339,6 +3340,7 @@ class SystemValues(object):
                         }
                     },
                     'CAPTURE_IMAGE': {
+                        'what': 'Tell the payload to display artwork and capture an image.',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None, 
@@ -3349,6 +3351,7 @@ class SystemValues(object):
                         }
                     },
                     'CONFIRM_DOWNLINK': {
+                        'what': 'Let the payload know that the last image it took was received by the ground and can be deleted.',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None, 
@@ -3359,6 +3362,7 @@ class SystemValues(object):
                     },
                     
                     'GET_HEARTBEAT': {
+                        'what': 'Receive a ping (char h) from the payload',
                         'subPort': 3,
                         'inoutInfo': {
                             'args': None, 
@@ -3369,6 +3373,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_FLAG': {
+                        'what': 'Get the status of a payload flag. Input: flag/subcode decimal value.',
                         'subPort': 4,
                         'inoutInfo': {
                             'args': ['>B'], # flag/subcode BYTE! Do not use a char
@@ -3379,6 +3384,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_FILENAME': {
+                        'what': 'Get a desired image/artwork file name. Input: subcode demimal value.',
                         'subPort': 5,
                         'inoutInfo': {
                             'args': ['>B'], # subcode BYTE! Do not use a char
@@ -3389,6 +3395,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_TELEMETRY': {
+                        'what': 'Get telemetry data from the payload',
                         'subPort': 6,
                         'inoutInfo': {
                             'args': None, 
@@ -3408,6 +3415,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_SW_VERSION': {
+                        'what': 'Get payload software version.'
                         'subPort': 7,
                         'inoutInfo': {
                             'args': None, 
