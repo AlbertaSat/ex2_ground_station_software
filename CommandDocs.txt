@@ -1599,56 +1599,56 @@ FTP_COMMAND.FTP_UPLOAD_PACKET:
 
 
 NS_PAYLOAD.UPLOAD_ARTWORK:
-		About: None
+		About: Send artwork from the OBC to the payload. Input: file name, limited to 7 chars!
 		Arguments: [>S10]
 		return values: {'err': '>b'}
 		port: 22		subport: 0
 
 
 NS_PAYLOAD.CAPTURE_IMAGE:
-		About: None
+		About: Tell the payload to display artwork and capture an image.
 		Arguments: [None]
-		return values: {'err': '>b'}
+		return values: {'err': '>b', 'confirmation_err': '>B'}
 		port: 22		subport: 1
 
 
 NS_PAYLOAD.CONFIRM_DOWNLINK:
-		About: None
+		About: Let the payload know that the last image it took was received by the ground and can be deleted.
 		Arguments: [None]
-		return values: {'err': '>b', 'confirmation_err': '>B'}
+		return values: {'err': '>b'}
 		port: 22		subport: 2
 
 
 NS_PAYLOAD.GET_HEARTBEAT:
-		About: None
+		About: Receive a ping (char h) from the payload
 		Arguments: [None]
 		return values: {'err': '>b', 'heartbeat': '>S1'}
 		port: 22		subport: 3
 
 
 NS_PAYLOAD.GET_FLAG:
-		About: None
+		About: Get the status of a payload flag. Input: flag/subcode decimal value.
 		Arguments: [>B]
 		return values: {'err': '>b', 'flag_stat': '>B'}
 		port: 22		subport: 4
 
 
 NS_PAYLOAD.GET_FILENAME:
-		About: None
+		About: Get a desired image/artwork file name. Input: subcode demimal value.
 		Arguments: [>B]
 		return values: {'err': '>b', 'filename': '>S11'}
 		port: 22		subport: 5
 
 
 NS_PAYLOAD.GET_TELEMETRY:
-		About: None
+		About: Get telemetry data from the payload
 		Arguments: [None]
 		return values: {'err': '>b', 'temp0': '>i2', 'temp1': '>i2', 'temp2': '>i2', 'temp3': '>i2', 'eNIM0_lux': '>i2', 'eNIM1_lux': '>i2', 'eNIM2_lux': '>i2', 'ram_avail': '>i2', 'lowest_img_num': '>i2', 'first_blank_img_num': '>i2'}
 		port: 22		subport: 6
 
 
 NS_PAYLOAD.GET_SW_VERSION:
-		About: None
+		About: Get payload software version.
 		Arguments: [None]
 		return values: {'err': '>b', 'version': '>S7'}
 		port: 22		subport: 7
