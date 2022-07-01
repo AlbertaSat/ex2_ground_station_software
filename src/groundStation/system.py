@@ -3415,7 +3415,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_SW_VERSION': {
-                        'what': 'Get payload software version.'
+                        'what': 'Get payload software version.',
                         'subPort': 7,
                         'inoutInfo': {
                             'args': None, 
