@@ -3223,6 +3223,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_MTM_CONFIG': {
+                        'what': 'Sets the magnetometer configuration parameters. Input: Angle xyz (floats), channel_offset xyz (floats), sensitivity matrix (s11,s22,s33,s12,s13,s21,s23,s31,s32)',
                         'subPort': 99,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4'],
