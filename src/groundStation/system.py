@@ -2218,7 +2218,7 @@ class SystemValues(object):
                     'ADCS_SET_UNIXTIME_SAVE_CONFIG': {
                         'subPort': 31,
                         'inoutInfo': {
-                            'args': ['>u1', '>u1'],
+                            'args': ['>u1', '>u1'], # when: [1 = now, 2 = on update, 4 = periodically], period
                             'returns': {
                                 'err': '>b',
                             }
@@ -2347,7 +2347,18 @@ class SystemValues(object):
                             'returns': {
                                 'err': '>b',
                                 'Uptime': '>u2',
-                                'Flags_arr': '>u1'
+                                'Flags_arr_1': '>u1',
+                                'Flags_arr_2': '>u1',
+                                'Flags_arr_3': '>u1',
+                                'Flags_arr_4': '>u1',
+                                'Flags_arr_5': '>u1',
+                                'Flags_arr_6': '>u1',
+                                'Flags_arr_7': '>u1',
+                                'Flags_arr_8': '>u1',
+                                'Flags_arr_9': '>u1',
+                                'Flags_arr_10': '>u1',
+                                'Flags_arr_11': '>u1',
+                                'Flags_arr_12': '>u1'
                             }
                         }
                     },
@@ -2378,7 +2389,7 @@ class SystemValues(object):
                     'ADCS_DEPLOY_MAGNETOMETER_BOOM': {
                         'subPort': 47,
                         'inoutInfo': {
-                            'args': ['>u1'],
+                            'args': ['>u1'], # Actuation timeout (s)
                             'returns': {
                                 'err': '>b',
                             }
@@ -2402,10 +2413,10 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'ADCS_SET_ATTITUDE_CTR_MODE': {
+                    'ADCS_SET_ATTITUDE_CONTROL_MODE': {
                         'subPort': 50,
                         'inoutInfo': {
-                            'args': ['>u1', '>u2'],
+                            'args': ['>u1', '>u2'], # control mode, timeout
                             'returns': {
                                 'err': '>b',
                             }
