@@ -57,7 +57,7 @@ class SystemValues(object):
         self.appIdx = 0
         self.serviceIdx = 2
         self.subserviceIdx = 4
-        
+
         self.varTypes = {
             0: '<u1',
             1: '<i1',
@@ -77,11 +77,10 @@ class SystemValues(object):
         }
         self.SERVICES = {
             'SET_PIPE': {
-                # This service is used to tell the GS UHF to get into pipe mode, 
-                # then to tell the satellite's UHF to get into PIPE mode. Port does not matter in this case. 
                 'port': 0,
-                'subservice' : { #this is a service written to write the GS UHF into pipe mode
+                'subservice' : {
                     'UHF_GS_PIPE': {
+                        'what': 'Testing function to put an EndurSat radio being used as the ground station radio into PIPE mode',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': None,  # test
@@ -91,13 +90,14 @@ class SystemValues(object):
                         }
                     }
                 }
-            
+
             },
             'TIME_MANAGEMENT': {
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value
                 'subservice': {
                     'GET_EPS_TIME': {
+                        'what': 'Get the current unix time on the EPS',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': None,  # SID
@@ -108,6 +108,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_EPS_TIME': {
+                    'what': 'Set the current unix time on the EPS',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u4'],  # timestamp
@@ -148,6 +149,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_TIME': { # OBC time
+                        'what': 'Get the current unix time on the OBC',
                         'subPort': 10,
                         'inoutInfo': {
                             'args': None,
@@ -158,6 +160,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_TIME': { # OBC time
+                    'what': 'Set the current unix time on the OBC',
                         'subPort': 11,
                         'inoutInfo': {
                             'args': ['>u4'],  # timestamp
@@ -182,19 +185,21 @@ class SystemValues(object):
                         }
                     },
                     'DEPLOY_DEPLOYABLES': {
+                        'what': 'Trigger burnwire. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7. Returns instantaneous current consumption',
                         'subPort': 1,
                         'inoutInfo': {
-                            'args': ['>B'],  # switch #. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7.
+                            'args': ['>B'],
                             'returns': {
                                 'err': '>b',  # switch status
-                                'current_mA': '>u2'
+                                'current_mA': '>u2' # current consumed during burning
                             }
                         }
                     },
                     'GET_SWITCH_STATUS': {
+                    'what': 'Query the status of all deployment switches. Returns 1 = Deployed, 0 = Undeployed',
                         'subPort': 2,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'switch_DFGM' : '>b',
@@ -209,9 +214,10 @@ class SystemValues(object):
                         }
                     },
                     'GET_UHF_WATCHDOG_TIMEOUT': {
+                        'what': 'Get the period (in ticks) of the UHF watchdog timer on the OBC',
                         'subPort': 3,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -219,18 +225,20 @@ class SystemValues(object):
                         }
                     },
                     'SET_UHF_WATCHDOG_TIMEOUT': {
+                        'what': 'Set the period (in ms) of the UHF watchdog timer on the OBC',
                         'subPort': 4,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
                         }
                     },
                     'GET_SBAND_WATCHDOG_TIMEOUT': {
+                        'what': 'Get the period (in ticks) of the S-band watchdog timer on the OBC',
                         'subPort': 5,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -238,18 +246,20 @@ class SystemValues(object):
                         }
                     },
                     'SET_SBAND_WATCHDOG_TIMEOUT': {
+                        'what': 'Set the period (in ms) of the S-band watchdog timer on the OBC',
                         'subPort': 6,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
                         }
                     },
                     'GET_CHARON_WATCHDOG_TIMEOUT': {
+                        'what': 'Get the period (in ticks) of the Charon watchdog timer on the OBC',
                         'subPort': 7,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -257,9 +267,10 @@ class SystemValues(object):
                         }
                     },
                     'SET_CHARON_WATCHDOG_TIMEOUT': {
+                        'what': 'Set the period (in ms) of the Charon watchdog timer on the OBC.',
                         'subPort': 8,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
@@ -268,7 +279,7 @@ class SystemValues(object):
                     'GET_ADCS_WATCHDOG_TIMEOUT': {
                         'subPort': 9,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -278,16 +289,17 @@ class SystemValues(object):
                     'SET_ADCS_WATCHDOG_TIMEOUT': {
                         'subPort': 10,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
                         }
                     },
                     'UHF_IS_IN_PIPE_NOTIFICATION': {
+                    'what': 'Tell Athena the UHF is in PIPE after radio command.',
                         'subPort': 11,
                         'inoutInfo': {
-                            'args': ['>B'], 
+                            'args': ['>B'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
@@ -737,7 +749,7 @@ class SystemValues(object):
                                 'MIDI': '>S60',
                             }
                         }
-                    },                  
+                    },
                     'UHF_GET_BEACON_MSG': {
                         'what': 'Gets the beacon message',
                         'subPort': 40,
@@ -825,7 +837,7 @@ class SystemValues(object):
                     },
                 }
             },
-            
+
             'CONFIGURATION': {
                 'port': 9,  # As per EPS docs
                 'subservice': {
@@ -840,7 +852,7 @@ class SystemValues(object):
                                 'Value': 'var' #In command parser it gets the data type from the return value for 'type'
                             }
                         }
-                    },   
+                    },
                     'GET_MAIN_CONFIG': {
                         'what': 'Gets config values in main mode for a specific type',
                         'subPort': 1,
@@ -852,7 +864,7 @@ class SystemValues(object):
                                 'Value': 'var' #See comment for active
                             }
                         }
-                    },  
+                    },
                     'GET_FALLBACK_CONFIG': {
                         'what': 'Gets config values in fallback mode for a specific type',
                         'subPort': 2,
@@ -876,7 +888,7 @@ class SystemValues(object):
                                 'Value': 'var' #See comment for active
                             }
                         }
-                    },                                                                                                                      
+                    },
                     'SET_CONFIG': {
                         'what': 'Sets the configuration',
                         'subPort': 4,
@@ -886,7 +898,7 @@ class SystemValues(object):
                                 'err': '>B',
                             }
                         }
-                    },   
+                    },
                     'LOAD_MAIN2ACTIVE': {
                         'what': 'Load main configuration from file into active',
                         'subPort': 5,
@@ -906,7 +918,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },        
+                    },
                     'LOAD_DEFAULT2ACTIVE': {
                         'what': 'Load default configuration from file into active',
                         'subPort': 7,
@@ -916,7 +928,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },   
+                    },
                     'UNLOCK_CONFIG': {
                         'what': 'Unlock configuration for saving',
                         'subPort': 8,
@@ -926,7 +938,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },  
+                    },
                     'LOCK_CONFIG': {
                         'what': 'Lock configuration from saving',
                         'subPort': 9,
@@ -936,7 +948,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    }, 
+                    },
                     'SAVE_ACTIVE2MAIN': {
                         'what': 'Save active configuration to main file',
                         'subPort': 10,
@@ -946,7 +958,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },      
+                    },
                     'SAVE_ACTIVE2FALLBACK': {
                         'what': 'Save active configuration to fallback file',
                         'subPort': 11,
@@ -956,7 +968,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },                                                                                                                              
+                    },
                     'ELEVATE_ACCESS': {
                         'what': 'Elevates access role',
                         'subPort': 12,
@@ -966,7 +978,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },                
+                    },
                     'GET_STATUS': {
                         'what': 'Gets status and errors info',
                         'subPort': 13,
@@ -994,14 +1006,15 @@ class SystemValues(object):
                                 'numOfUnknownErrors': '<u1',
                             }
                         }
-                    },  
+                    },
                 }
-            },  
-                       
+            },
+
             'HOUSEKEEPING': {
                 'port': 17,
                 'subservice': {
                     'GET_HK': {
+                        'what': 'Fetch system-wide housekeeping. Input: limit, before_id, before_time',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>u2', '>u2', '>u4'], #limit, before_id, before_time
@@ -1058,7 +1071,7 @@ class SystemValues(object):
                                 'CommsStat_flags_3': '<B',
                                 'CommsStat_flags_4': '<B',
                                 'CommsStat_flags_5': '<B',
-                                'CommsStat_flags_6': '<B',                                
+                                'CommsStat_flags_6': '<B',
                                 'Wheel1_Current': '>f4',
                                 'Wheel2_Current': '>f4',
                                 'Wheel3_Current': '>f4',
@@ -1087,7 +1100,7 @@ class SystemValues(object):
                                 'OBC_software_ver': '<B',
                                 'cmds_received': '>u2',
                                 'pckts_uncovered_by_FEC': '>u2',
-                                
+
                                 #EPS
                                 '###############################\r\n'
                                 'EPS\r\n'+
@@ -1338,11 +1351,12 @@ class SystemValues(object):
                                 'Reserved_1': '>u2',
                                 'Reserved_2': '>u2',
                                 'Reserved_3': '>u2',
-                                'Reserved_4': '>u2',  
+                                'Reserved_4': '>u2',
                             }
                         }
                     },
                     'SET_MAX_FILES': {
+                        'what': 'Set max number of hk entries to store',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u2'], #number of hk entries to store
@@ -1352,6 +1366,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_MAX_FILES': {
+                        'what': 'Get max number of hk entries to store',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -1434,7 +1449,7 @@ class SystemValues(object):
                 # Not recommended to use by the operator
                 # no subPort (command ID) needed.
                 'subservice':{
-                    'SOFT': {                	
+                    'SOFT': {
                         'what': 'Does a soft reset on EPS (reboot)',
                         'subPort': 128,
                         'inoutInfo': {
@@ -1809,6 +1824,7 @@ class SystemValues(object):
                 'port': 13,
                 'subservice': {
                     'GET_FILE': {
+                        'what': 'Get contents of log file',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': [],
@@ -1819,6 +1835,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_OLD_FILE': {
+                        'what': 'Get contents of old log file',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -1829,6 +1846,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_FILE_SIZE': {
+                        'what': 'Set the size of the logger files.',
                         'subPort': 3,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -1838,6 +1856,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_FILE_SIZE': {
+                        'what': 'Get the size of the logger files.',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -1853,6 +1872,7 @@ class SystemValues(object):
                 'port': 14,
                 'subservice': {
                     'SEND_CMD': {
+                        'what': 'Send command over the sat_cli.',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ["B", "a128"],
@@ -2925,7 +2945,7 @@ class SystemValues(object):
                     'ADCS_GET_SYSTEM_CONFIG': {
                         'subPort': 92,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',
                                 'Acp_Type': '>u1',
@@ -3150,7 +3170,7 @@ class SystemValues(object):
                         'what': 'Saves a specified file from the ADCS to the OBC. Inputs args type, counter, size, and OBC file name.',
                         'subPort': 109,
                         'inoutInfo': {
-                            'args': ['>B', 'B', '>u4', '>S30'], 
+                            'args': ['>B', 'B', '>u4', '>S30'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -3162,6 +3182,7 @@ class SystemValues(object):
                 'port': 19,
                 'subservice': {
                     'DFGM_RUN': {
+                        'what': 'Record DFGM data for specified number of seconds.',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -3171,6 +3192,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_START': {
+                        'what': 'Start recording DFGM data',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -3180,6 +3202,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_STOP': {
+                        'what': 'Stop recording DFGM data.',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -3191,6 +3214,7 @@ class SystemValues(object):
                     'DFGM_GET_HK': {
                         'subPort': 3,
                         'inoutInfo': {
+                            'what': 'Fetch housekeeping data for the DFGM payload.',
                             'args': None,
                             'returns': {
                                 'err': '>b',
