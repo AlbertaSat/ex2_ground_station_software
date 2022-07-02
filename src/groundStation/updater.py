@@ -1,10 +1,16 @@
 
 import time
 import os
-from groundStation.groundStation import groundStation, options
-from groundStation.system import SystemValues
-import libcsp_py3 as libcsp
 import binascii
+
+try: # We are importing this file for use on the website (comm.py)
+    from ex2_ground_station_software.src.groundStation.groundStation import groundStation, options
+    from ex2_ground_station_software.src.groundStation.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
+except ImportError: # We are using this file directly or through cli.py
+    from groundStation.groundStation import groundStation, options
+    from groundStation.system import SystemValues
+    import libcsp_py3 as libcsp
 
 def crc16(data : bytes):
     if data is None:
