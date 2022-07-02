@@ -6,6 +6,11 @@ from groundStation.system import SystemValues
 import libcsp_py3 as libcsp
 import binascii
 
+try:
+    from .uTransceiver import uTransceiver
+except:
+    print("uTranceiver module not built!")
+
 def crc16(data : bytes):
     if data is None:
         return 0
@@ -29,7 +34,9 @@ class updater(groundStation):
         self.file.seek(0)
         self.doresume = opts.resume
         self.address = opts.address
-
+        self.uTrns = None
+        if (opts.u):
+            self.uTrns = uTransceiver()
 
     def crc(self, data):
         return crc16(data)
@@ -37,6 +44,7 @@ class updater(groundStation):
     def transaction(self, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
         return parsed packet """
+        self.handlePipeMode()
         conn = self.get_conn();
         if conn is None:
             print('Error: Could not connection')

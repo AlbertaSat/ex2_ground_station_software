@@ -79,6 +79,7 @@ class uTransceiver(object):
     def handlePipeMode(self):
         if (time.time() - self.last_tx_time) > self.pipetimeout_s:
             self.enterPipeMode()
+            self.last_tx_time = time.time()
             return True
         self.last_tx_time = time.time()
         return False
