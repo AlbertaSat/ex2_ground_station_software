@@ -1436,6 +1436,23 @@ class SystemValues(object):
                                 'ram_avail': '>i2',
                                 'lowest_img_num': '>i2',
                                 'first_blank_img_num': '>i2'
+                                #IRIS
+                                '###############################\r\n'
+                                'Iris Board\r\n'+
+                                '###############################\r\n'+
+                                'VIS Temperature': '>u2',
+                                'NIR Temperature': '>u2',
+                                'Flash Temperature': '>u2',
+                                'Gate Temperature': '>u2',
+                                'Image number': '>u1',
+                                'Software Version': '>u1',
+                                'Error number': '>u1',
+                                'MAX 5V voltage': '>u2',
+                                'MAX 5V power': '>u2',
+                                'MAX 3V voltage': '>u2',
+                                'MAX 3V power': '>u2',
+                                'MIN 5V voltage': '>u2',
+                                'MIN 3V voltage': '>u2',    
                             }
                         }
                     },
