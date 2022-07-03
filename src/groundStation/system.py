@@ -3894,8 +3894,18 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'IRIS_GET_HK': {
+                    'IRIS_COUNT_IMAGES': {
                         'subPort': 5,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'Number of Images': '>u',
+                            }
+                        }
+                    },
+                    'IRIS_GET_HK': {
+                        'subPort': 6,
                         'inoutInfo': {
                             'args': None,
                             'returns': {

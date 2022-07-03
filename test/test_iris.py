@@ -13,11 +13,11 @@
 '''
 '''
  * @file test_iris.py
- * @author Daniel Sacro
+ * @author Jenish Patel
  * @date 2022-06-21
 '''
 
-'''  to run > yarn run:test_iris -I uart -d /dev/ttyUSB0 '''
+'''  to run > yarn test_iris -I uart -d /dev/ttyUSB0 '''
 
 import numpy as np
 
