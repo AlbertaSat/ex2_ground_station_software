@@ -36,8 +36,8 @@ def testAllCommandsToOBC():
     test.sendAndExpect('obc.iris.iris_power_on', {'err': 0}) # Turn on Iris
     time.sleep(5)
     test.sendAndExpect('obc.iris.iris_get_hk', {'err': 0}) # Check error status
-    time.sleep(5)
-    test.sendAndExpect('obc.iris.iris_power_on', {'err': 0}) # Turn off Iris
+
+    # TODO: Populate tests once housekeeping test is completed and verified
 
     test.summary() #call when done to print summary of tests
 
