@@ -3,6 +3,11 @@ import time
 import os
 import binascii
 
+try:
+    from .uTransceiver import uTransceiver
+except:
+    print("uTranceiver module not built!")
+
 try: # We are importing this file for use on the website (comm.py)
     from ex2_ground_station_software.src.groundStation.groundStation import groundStation, options
     from ex2_ground_station_software.src.groundStation.system import SystemValues
@@ -35,7 +40,9 @@ class updater(groundStation):
         self.file.seek(0)
         self.doresume = opts.resume
         self.address = opts.address
-
+        self.uTrns = None
+        if (opts.u):
+            self.uTrns = uTransceiver()
 
     def crc(self, data):
         return crc16(data)
@@ -43,6 +50,7 @@ class updater(groundStation):
     def transaction(self, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
         return parsed packet """
+        self.handlePipeMode()
         conn = self.get_conn();
         if conn is None:
             print('Error: Could not connection')

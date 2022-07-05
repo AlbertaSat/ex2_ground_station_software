@@ -29,13 +29,12 @@ class UHF_return(Enum):
 
 class uTransceiver(object):
 
-    def __init__(self, opt):
+    def __init__(self):
         self.listentimeout_s = 2.0
         self.pipetimeout_s = 20.0
         self.last_tx_time = 0
         self.listen_en = False
         self.pipe_en = False
-        self.u = opt
         self.rxport = 4321
         os.environ['UTRANSCEIVER_LIB'] = './ex2_uhf_software/uTransceiver.so'
         self.uhf = cdll.LoadLibrary(os.environ.get('UTRANSCEIVER_LIB'))
@@ -77,54 +76,58 @@ class uTransceiver(object):
 
         socket.disconnect("tcp://localhost:%s" % self.rxport)
 
+    def handlePipeMode(self):
+        if (time.time() - self.last_tx_time) > self.pipetimeout_s:
+            self.enterPipeMode()
+            self.last_tx_time = time.time()
+            return True
+        self.last_tx_time = time.time()
+        return False
 
     def enterPipeMode(self):
             #current config is for RF mode 5, baudrate = 115200
             self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 1 0 0 0 1 1)')
 
     def UHFDIRCommand(self, string):
-        if self.u == True:
-            print("sending UHFDIRcommand: " + string)
-            cmd = (string.split('_')[1]).split('(')[0]
-            cmdcode = string.split(',')[0]
-            cmdcode = int(cmdcode.split('(')[1])
+        print("sending UHFDIRcommand: " + string)
+        cmd = (string.split('_')[1]).split('(')[0]
+        cmdcode = string.split(',')[0]
+        cmdcode = int(cmdcode.split('(')[1])
 
-            param = string.split(',')[1]
-            param = param.split(')')[0]
+        param = string.split(',')[1]
+        param = param.split(')')[0]
 
-            #parse param into correct ctypes based on cmdcode
-            if cmdcode == 0:
-                paramlist = param.split()
-                paramlist = list(map(int, paramlist))
-                arg = (ctypes.c_ubyte * len(paramlist))(*paramlist)
-            if cmdcode == 6:
-                param = ctypes.c_uint16(param) #TODO check that this works with space after comma in command
-                arg = ctypes.cast(param, ctypes.POINTER(ctypes.c_uint16))
-            if cmdcode == 253:
+        #parse param into correct ctypes based on cmdcode
+        if cmdcode == 0:
+            paramlist = param.split()
+            paramlist = list(map(int, paramlist))
+            arg = (ctypes.c_ubyte * len(paramlist))(*paramlist)
+        if cmdcode == 6:
+            param = ctypes.c_uint16(param) #TODO check that this works with space after comma in command
+            arg = ctypes.cast(param, ctypes.POINTER(ctypes.c_uint16))
+        if cmdcode == 253:
+            pass
+            #TODO implement someday if desired (FRAM usage)
+
+        #check command and call relevant functions with args
+        if (time.time() - self.last_tx_time) > self.pipetimeout_s:
+            retval = 0
+            if cmd == 'genericWrite':
+                retval = self.uhf.UHF_genericWrite(ctypes.c_ubyte(cmdcode), arg)
+            if cmd == 'genericRead':
+                voidptr = (ctypes.c_void_p * 1)()
+                self.uhf.UHF_genericRead(cmdcode, voidptr)
+            if cmd == 'genericI2C':
                 pass
-                #TODO implement someday if desired (FRAM usage)
+                #TODO implement someday
+                #retval = uhf.UHF_genericI2C(cmd, ...)
 
-            #check command and call relevant functions with args
-            if (time.time() - self.last_tx_time) > self.pipetimeout_s:
-                retval = 0
-                if cmd == 'genericWrite':
-                    retval = self.uhf.UHF_genericWrite(ctypes.c_ubyte(cmdcode), arg)
-                if cmd == 'genericRead':
-                    voidptr = (ctypes.c_void_p * 1)()
-                    self.uhf.UHF_genericRead(cmdcode, voidptr)
-                if cmd == 'genericI2C':
-                    pass
-                    #TODO implement someday
-                    #retval = uhf.UHF_genericI2C(cmd, ...)
+            #This should be a catch-all for any syntax errors as-is
+            #TODO: make more robust handler for incorrect inputs to prevent erronious commands being sent?
+            if retval != 0:
+                print('UHF Equipment Handler error ' + UHF_return(retval).name)
+            time.sleep(0.2)#to prevent csp packet transmission interrupting UHFDIR command transmission (sleeping length not yet optimized)
 
-                #This should be a catch-all for any syntax errors as-is
-                #TODO: make more robust handler for incorrect inputs to prevent erronious commands being sent?
-                if retval != 0:
-                    print('UHF Equipment Handler error ' + UHF_return(retval).name)
-                time.sleep(0.2)#to prevent csp packet transmission interrupting UHFDIR command transmission (sleeping length not yet optimized)
-
-            else:
-                print('Error: Command not sent. Wait for pipe mode to expire')
-                print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
         else:
-            print('UHF functionality not enabled. Please run CLI with -u flag to enable.')
+            print('Error: Command not sent. Wait for pipe mode to expire')
+            print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
