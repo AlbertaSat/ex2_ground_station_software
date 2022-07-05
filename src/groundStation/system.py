@@ -3867,6 +3867,7 @@ class SystemValues(object):
                 'port': 22,
                 'subservice': {
                     'IRIS_POWER_ON': {
+                        'what': "Send command to OBC to tell EPS to turn on power",
                         'subPort': 0,
                         'inoutInfo': {
                             'args': None,
@@ -3876,6 +3877,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_POWER_OFF': {
+                        'what': "Send command to OBC to tell EPS to turn off power",
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -3885,6 +3887,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_TAKE_IMAGE': {
+                        'what': "Tell Iris to take a picture",
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -3894,6 +3897,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_DELIVER_IMAGE': {
+                        'what': "Tell OBC to perform image transfer from Iris and store those images into SD card",
                         'subPort': 3,
                         'inoutInfo': {
                             'args': None,
@@ -3903,6 +3907,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_PROGRAM_FLASH': {
+                        'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
                         'subPort': 4,
                         'inoutInfo': {
                             'args': None,
@@ -3912,6 +3917,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_COUNT_IMAGES': {
+                        'what': "Tell Iris to send number of images stored in SD card",
                         'subPort': 5,
                         'inoutInfo': {
                             'args': None,
@@ -3922,6 +3928,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_GET_HK': {
+                        'what': "Tell Iris to send housekeeping data",
                         'subPort': 6,
                         'inoutInfo': {
                             'args': None,
