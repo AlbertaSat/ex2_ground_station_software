@@ -141,7 +141,7 @@ class groundStation(object):
                 if server == 4:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
-                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ)
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ | libcsp.CSP_SO_CRC32REQ)
             except Exception as e:
                 print(e)
                 return None
