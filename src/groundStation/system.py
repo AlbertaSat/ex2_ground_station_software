@@ -72,6 +72,7 @@ class SystemValues(object):
             "ARI": 3,
             'EPS': 4,  # hard coded by manufacturer
             'GND': 16,
+            'SBAND': 17,
             'PIPE': 24,
             'LAST': 31
         }
