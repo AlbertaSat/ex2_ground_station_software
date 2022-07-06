@@ -6,6 +6,8 @@ import os
 
 class ftp(groundStation):
     def __init__(self, opts):
+        super(ftp, self).__init__(opts)
+
         self.operation = ''
         self.infile = ''
         self.outfile = ''
@@ -29,8 +31,10 @@ class ftp(groundStation):
         self.blocksize = 512 # There's really no reason to change it..
 
         self.burst_size = opts.burst_size
-
-        super(ftp, self).__init__(opts)
+        if (opts.sband):
+            self.dest_addr = self.apps["SBAND"];
+        else:
+            self.dest_addr = self.apps["GND"]; 
 
     def transaction(self, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
@@ -80,6 +84,7 @@ class ftp(groundStation):
         out.extend(self.blocksize.to_bytes(4, byteorder='big'))
         out.extend(int(skip).to_bytes(4, byteorder='big'))
         out.extend(int(count).to_bytes(4, byteorder='big'))
+        out.extend(int(self.dest_addr).to_bytes(4, byteorder='big'))
         out.extend(bytes(self.infile.encode("ascii")))
         out.extend(int(0).to_bytes(1, byteorder='big'))
         toSend = libcsp.buffer_get(len(out))
@@ -146,6 +151,7 @@ class ftp(groundStation):
         file_size = data[0]['size']
         received = 0
         burst_size = self.burst_size;
+        print("here")
         while (received < file_size):
             download_packet = self.get_burst_download_packet(req_id, int(received/self.blocksize), burst_size)
             conn = self.get_command_conn();
@@ -260,4 +266,9 @@ class ftp_options(options):
             type=int,
             default='100',
             help='Number of packets to receive in a single burst download')
+        self.parser.add_argument(
+            '--sband',
+            action='store_true',
+            help="Download over sband instead of UHF"
+        )
         return super().getOptions();
