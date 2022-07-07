@@ -83,13 +83,9 @@ class groundStation(object):
         self.rdp_timeout = opts.timeout  # 10 seconds
         libcsp.rdp_set_opt(4, self.rdp_timeout, 2000, 0, 1500, 0)
         self.uTrns = None
-        try:
-            self.uTrns = uTransceiver(opts.u)
-        except:
-            print("uTranceiver module not built!!")
-            self.uTrns = None
+        if (opts.u):
+            self.uTrns = uTransceiver()
 
-        self.uTrns_enable = opts.u
         self.set_satellite(opts.satellite)
 
     """ Private Methods """
@@ -145,7 +141,7 @@ class groundStation(object):
                 if server == 4:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
-                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ)
+                    conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ | libcsp.CSP_SO_CRC32REQ)
             except Exception as e:
                 print(e)
                 return None
@@ -316,10 +312,10 @@ class groundStation(object):
                 print(rxData)
 
     def handlePipeMode(self):
-        if self.uTrns_enable == True:
-            if (time.time() - self.uTrns.last_tx_time) > self.uTrns.pipetimeout_s:
-                self.uTrns.enterPipeMode()
-            self.uTrns.last_tx_time = time.time()
+        if self.uTrns is not None:
+            if self.uTrns.handlePipeMode():
+                command, port, toSend = self.getInput(inVal= '{}.general.UHF_IS_IN_PIPE_NOTIFICATION(1)'.format(self.satellite))
+                self.transaction(command, port, toSend)
 
     def get_satellite(self):
         return self.satellite

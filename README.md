@@ -9,8 +9,7 @@ If you're installing for the first time on a given machine, run `bash install.sh
 Also, you will need to make sure that you have yarn.
 
 ```
-sudo apt-get update
-sudo apt-get install yarn -y
+sudo npm install --global yarn
 ```
 
 ## Basic Functionality

@@ -1,22 +1,26 @@
 
 import time
 import os
-from groundStation.groundStation import groundStation, options
-from groundStation.system import SystemValues
-import libcsp_py3 as libcsp
+import binascii
 
-def crc16(data : bytearray, offset , length):
-    if data is None or offset < 0 or offset > len(data)- 1 and offset+length > len(data):
+try:
+    from .uTransceiver import uTransceiver
+except:
+    print("uTranceiver module not built!")
+
+try: # We are importing this file for use on the website (comm.py)
+    from ex2_ground_station_software.src.groundStation.groundStation import groundStation, options
+    from ex2_ground_station_software.src.groundStation.system import SystemValues
+    import libcsp.build.libcsp_py3 as libcsp
+except ImportError: # We are using this file directly or through cli.py
+    from groundStation.groundStation import groundStation, options
+    from groundStation.system import SystemValues
+    import libcsp_py3 as libcsp
+
+def crc16(data : bytes):
+    if data is None:
         return 0
-    crc = 0
-    for i in range(0, length):
-        crc ^= data[offset + i] << 8
-        for j in range(0,8):
-            if (crc & 0x8000) > 0:
-                crc =(crc << 1) ^ 0x1021
-            else:
-                crc = crc << 1
-    return crc & 0xFFFF
+    return binascii.crc_hqx(data, 0)
 
 class updater(groundStation):
     def __init__(self, opts):
@@ -36,14 +40,17 @@ class updater(groundStation):
         self.file.seek(0)
         self.doresume = opts.resume
         self.address = opts.address
-
+        self.uTrns = None
+        if (opts.u):
+            self.uTrns = uTransceiver()
 
     def crc(self, data):
-        return crc16(data, 0, len(data))
+        return crc16(data)
 
     def transaction(self, buf):
         """ Execute CSP transaction - send and receive on one RDP connection and
         return parsed packet """
+        self.handlePipeMode()
         conn = self.get_conn();
         if conn is None:
             print('Error: Could not connection')

@@ -57,7 +57,7 @@ class SystemValues(object):
         self.appIdx = 0
         self.serviceIdx = 2
         self.subserviceIdx = 4
-        
+
         self.varTypes = {
             0: '<u1',
             1: '<i1',
@@ -77,11 +77,10 @@ class SystemValues(object):
         }
         self.SERVICES = {
             'SET_PIPE': {
-                # This service is used to tell the GS UHF to get into pipe mode, 
-                # then to tell the satellite's UHF to get into PIPE mode. Port does not matter in this case. 
                 'port': 0,
-                'subservice' : { #this is a service written to write the GS UHF into pipe mode
+                'subservice' : {
                     'UHF_GS_PIPE': {
+                        'what': 'Testing function to put an EndurSat radio being used as the ground station radio into PIPE mode',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': None,  # test
@@ -91,13 +90,14 @@ class SystemValues(object):
                         }
                     }
                 }
-            
+
             },
             'TIME_MANAGEMENT': {
                 'port': 8,  # share a port with EPS time service
                 # TODO: these need a error response value
                 'subservice': {
                     'GET_EPS_TIME': {
+                        'what': 'Get the current unix time on the EPS',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': None,  # SID
@@ -108,6 +108,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_EPS_TIME': {
+                    'what': 'Set the current unix time on the EPS',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u4'],  # timestamp
@@ -148,6 +149,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_TIME': { # OBC time
+                        'what': 'Get the current unix time on the OBC',
                         'subPort': 10,
                         'inoutInfo': {
                             'args': None,
@@ -158,6 +160,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_TIME': { # OBC time
+                    'what': 'Set the current unix time on the OBC',
                         'subPort': 11,
                         'inoutInfo': {
                             'args': ['>u4'],  # timestamp
@@ -172,6 +175,7 @@ class SystemValues(object):
                 'port' : 11,
                 'subservice' : {
                     'REBOOT': {
+                        'What': "Command OBC to reboot to a given more, B, A, or G for bootloader, application, or golden image respectively",
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>B'],  # mode. Can be 'A', 'B', 'G'
@@ -181,19 +185,21 @@ class SystemValues(object):
                         }
                     },
                     'DEPLOY_DEPLOYABLES': {
+                        'what': 'Trigger burnwire. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7. Returns instantaneous current consumption',
                         'subPort': 1,
                         'inoutInfo': {
-                            'args': ['>B'],  # switch #. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7.
+                            'args': ['>B'],
                             'returns': {
                                 'err': '>b',  # switch status
-                                'current_mA': '>u2'
+                                'current_mA': '>u2' # current consumed during burning
                             }
                         }
                     },
                     'GET_SWITCH_STATUS': {
+                    'what': 'Query the status of all deployment switches. Returns 1 = Deployed, 0 = Undeployed',
                         'subPort': 2,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'switch_DFGM' : '>b',
@@ -208,9 +214,10 @@ class SystemValues(object):
                         }
                     },
                     'GET_UHF_WATCHDOG_TIMEOUT': {
+                        'what': 'Get the period (in ticks) of the UHF watchdog timer on the OBC',
                         'subPort': 3,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -218,18 +225,20 @@ class SystemValues(object):
                         }
                     },
                     'SET_UHF_WATCHDOG_TIMEOUT': {
+                        'what': 'Set the period (in ms) of the UHF watchdog timer on the OBC',
                         'subPort': 4,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
                         }
                     },
                     'GET_SBAND_WATCHDOG_TIMEOUT': {
+                        'what': 'Get the period (in ticks) of the S-band watchdog timer on the OBC',
                         'subPort': 5,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -237,18 +246,20 @@ class SystemValues(object):
                         }
                     },
                     'SET_SBAND_WATCHDOG_TIMEOUT': {
+                        'what': 'Set the period (in ms) of the S-band watchdog timer on the OBC',
                         'subPort': 6,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
                         }
                     },
                     'GET_CHARON_WATCHDOG_TIMEOUT': {
+                        'what': 'Get the period (in ticks) of the Charon watchdog timer on the OBC',
                         'subPort': 7,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -256,9 +267,10 @@ class SystemValues(object):
                         }
                     },
                     'SET_CHARON_WATCHDOG_TIMEOUT': {
+                        'what': 'Set the period (in ms) of the Charon watchdog timer on the OBC.',
                         'subPort': 8,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
@@ -267,7 +279,7 @@ class SystemValues(object):
                     'GET_ADCS_WATCHDOG_TIMEOUT': {
                         'subPort': 9,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',  # err status
                                 'timeout_ms': '>u4'
@@ -277,16 +289,36 @@ class SystemValues(object):
                     'SET_ADCS_WATCHDOG_TIMEOUT': {
                         'subPort': 10,
                         'inoutInfo': {
-                            'args': ['>u4'], 
+                            'args': ['>u4'],
                             'returns': {
                                 'err': '>b',  # err status
                             }
                         }
                     },
                     'UHF_IS_IN_PIPE_NOTIFICATION': {
+                    'what': 'Tell Athena the UHF is in PIPE after radio command.',
                         'subPort': 11,
                         'inoutInfo': {
-                            'args': ['>B'], 
+                            'args': ['>B'],
+                            'returns': {
+                                'err': '>b',  # err status
+                            }
+                        }
+                    },
+                    'GET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
+                        'subPort': 9,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',  # err status
+                                'timeout_ms': '>u4'
+                            }
+                        }
+                    },
+                    'SET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
+                        'subPort': 10,
+                        'inoutInfo': {
+                            'args': ['>u4'], 
                             'returns': {
                                 'err': '>b',  # err status
                             }
@@ -736,7 +768,7 @@ class SystemValues(object):
                                 'MIDI': '>S60',
                             }
                         }
-                    },                  
+                    },
                     'UHF_GET_BEACON_MSG': {
                         'what': 'Gets the beacon message',
                         'subPort': 40,
@@ -824,7 +856,7 @@ class SystemValues(object):
                     },
                 }
             },
-            
+
             'CONFIGURATION': {
                 'port': 9,  # As per EPS docs
                 'subservice': {
@@ -839,7 +871,7 @@ class SystemValues(object):
                                 'Value': 'var' #In command parser it gets the data type from the return value for 'type'
                             }
                         }
-                    },   
+                    },
                     'GET_MAIN_CONFIG': {
                         'what': 'Gets config values in main mode for a specific type',
                         'subPort': 1,
@@ -851,7 +883,7 @@ class SystemValues(object):
                                 'Value': 'var' #See comment for active
                             }
                         }
-                    },  
+                    },
                     'GET_FALLBACK_CONFIG': {
                         'what': 'Gets config values in fallback mode for a specific type',
                         'subPort': 2,
@@ -875,7 +907,7 @@ class SystemValues(object):
                                 'Value': 'var' #See comment for active
                             }
                         }
-                    },                                                                                                                      
+                    },
                     'SET_CONFIG': {
                         'what': 'Sets the configuration',
                         'subPort': 4,
@@ -885,7 +917,7 @@ class SystemValues(object):
                                 'err': '>B',
                             }
                         }
-                    },   
+                    },
                     'LOAD_MAIN2ACTIVE': {
                         'what': 'Load main configuration from file into active',
                         'subPort': 5,
@@ -905,7 +937,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },        
+                    },
                     'LOAD_DEFAULT2ACTIVE': {
                         'what': 'Load default configuration from file into active',
                         'subPort': 7,
@@ -915,7 +947,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },   
+                    },
                     'UNLOCK_CONFIG': {
                         'what': 'Unlock configuration for saving',
                         'subPort': 8,
@@ -925,7 +957,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },  
+                    },
                     'LOCK_CONFIG': {
                         'what': 'Lock configuration from saving',
                         'subPort': 9,
@@ -935,7 +967,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    }, 
+                    },
                     'SAVE_ACTIVE2MAIN': {
                         'what': 'Save active configuration to main file',
                         'subPort': 10,
@@ -945,7 +977,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },      
+                    },
                     'SAVE_ACTIVE2FALLBACK': {
                         'what': 'Save active configuration to fallback file',
                         'subPort': 11,
@@ -955,7 +987,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },                                                                                                                              
+                    },
                     'ELEVATE_ACCESS': {
                         'what': 'Elevates access role',
                         'subPort': 12,
@@ -965,7 +997,7 @@ class SystemValues(object):
                                 'err': '>B'
                             }
                         }
-                    },                
+                    },
                     'GET_STATUS': {
                         'what': 'Gets status and errors info',
                         'subPort': 13,
@@ -993,19 +1025,21 @@ class SystemValues(object):
                                 'numOfUnknownErrors': '<u1',
                             }
                         }
-                    },  
+                    },
                 }
-            },  
-                       
+            },
+
             'HOUSEKEEPING': {
                 'port': 17,
                 'subservice': {
                     'GET_HK': {
+                        'what': 'Fetch system-wide housekeeping. Input: limit, before_id, before_time',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>u2', '>u2', '>u4'], #limit, before_id, before_time
                             'returns' : {
                                 'err': '>b',
+                                # WARNING: Avoid duplicate names in the return items below!
                                 #packet meta
                                 '###############################\r\n'+
                                 'packet meta\r\n'+
@@ -1057,7 +1091,7 @@ class SystemValues(object):
                                 'CommsStat_flags_3': '<B',
                                 'CommsStat_flags_4': '<B',
                                 'CommsStat_flags_5': '<B',
-                                'CommsStat_flags_6': '<B',                                
+                                'CommsStat_flags_6': '<B',
                                 'Wheel1_Current': '>f4',
                                 'Wheel2_Current': '>f4',
                                 'Wheel3_Current': '>f4',
@@ -1086,7 +1120,7 @@ class SystemValues(object):
                                 'OBC_software_ver': '<B',
                                 'cmds_received': '>u2',
                                 'pckts_uncovered_by_FEC': '>u2',
-                                
+
                                 #EPS
                                 '###############################\r\n'
                                 'EPS\r\n'+
@@ -1313,15 +1347,15 @@ class SystemValues(object):
                                 '###############################\r\n'
                                 'Charon Interfacing Board\r\n'+
                                 '###############################\r\n'+
-                                'crc' : '>u2',
-                                'temp1' : '>b',
-                                'temp2' : '>b',
-                                'temp3' : '>b',
-                                'temp4' : '>b',
-                                'temp5' : '>b',
-                                'temp6' : '>b',
-                                'temp7' : '>b',
-                                'temp8' : '>b',
+                                'gps_crc' : '>u2',
+                                'charon_temp1' : '>b',
+                                'charon_temp2' : '>b',
+                                'charon_temp3' : '>b',
+                                'charon_temp4' : '>b',
+                                'charon_temp5' : '>b',
+                                'charon_temp6' : '>b',
+                                'charon_temp7' : '>b',
+                                'charon_temp8' : '>b',
                                 #DFGM
                                 '###############################\r\n'
                                 'DFGM Board\r\n'+
@@ -1337,11 +1371,26 @@ class SystemValues(object):
                                 'Reserved_1': '>u2',
                                 'Reserved_2': '>u2',
                                 'Reserved_3': '>u2',
-                                'Reserved_4': '>u2',  
+                                'Reserved_4': '>u2',
+                                #Northern SPIRIT Payloads
+                                '###############################\r\n'
+                                'Northern SPIRIT\r\n'+
+                                '###############################\r\n'+
+                                'ns_temp0': '>i2',
+                                'ns_temp1': '>i2',
+                                'ns_temp2': '>i2',
+                                'ns_temp3': '>i2',
+                                'eNIM0_lux': '>i2',
+                                'eNIM1_lux': '>i2',
+                                'eNIM2_lux': '>i2',
+                                'ram_avail': '>i2',
+                                'lowest_img_num': '>i2',
+                                'first_blank_img_num': '>i2'
                             }
                         }
                     },
                     'SET_MAX_FILES': {
+                        'what': 'Set max number of hk entries to store',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': ['<u2'], #number of hk entries to store
@@ -1351,6 +1400,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_MAX_FILES': {
+                        'what': 'Get max number of hk entries to store',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -1433,7 +1483,7 @@ class SystemValues(object):
                 # Not recommended to use by the operator
                 # no subPort (command ID) needed.
                 'subservice':{
-                    'SOFT': {                	
+                    'SOFT': {
                         'what': 'Does a soft reset on EPS (reboot)',
                         'subPort': 128,
                         'inoutInfo': {
@@ -1808,6 +1858,7 @@ class SystemValues(object):
                 'port': 13,
                 'subservice': {
                     'GET_FILE': {
+                        'what': 'Get contents of log file',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': [],
@@ -1818,6 +1869,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_OLD_FILE': {
+                        'what': 'Get contents of old log file',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -1828,6 +1880,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_FILE_SIZE': {
+                        'what': 'Set the size of the logger files.',
                         'subPort': 3,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -1837,6 +1890,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_FILE_SIZE': {
+                        'what': 'Get the size of the logger files.',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -1852,6 +1906,7 @@ class SystemValues(object):
                 'port': 14,
                 'subservice': {
                     'SEND_CMD': {
+                        'what': 'Send command over the sat_cli.',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ["B", "a128"],
@@ -2014,7 +2069,9 @@ class SystemValues(object):
                                 'Mcu_Reset_Cause': '>u1',
                                 'Boot_Cause': '>u1',
                                 'Boot_Count': '>u2',
-                                'Boot_Idx': '>u1'
+                                'Boot_Idx': '>u1',
+                                'Major_Firm_Ver': '>u1',
+                                'Minor_Firm_Ver': '>u1'
                             }
                         }
                     },
@@ -2162,7 +2219,15 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Comm_Status': '>u2',
+                                'TC_num': '>u2',
+                                'TM_num': '>u2',
+                                'CommsStat_flags_1': '<B',
+                                'CommsStat_flags_2': '<B',
+                                'CommsStat_flags_3': '<B',
+                                'CommsStat_flags_4': '<B',
+                                'CommsStat_flags_5': '<B',
+                                'CommsStat_flags_6': '<B',      
+
                             }
                         }
                     },
@@ -2187,7 +2252,7 @@ class SystemValues(object):
                     'ADCS_SET_UNIXTIME_SAVE_CONFIG': {
                         'subPort': 31,
                         'inoutInfo': {
-                            'args': ['>u1', '>u1'],
+                            'args': ['>u1', '>u1'], # when: [1 = now, 2 = on update, 4 = periodically], period
                             'returns': {
                                 'err': '>b',
                             }
@@ -2316,7 +2381,18 @@ class SystemValues(object):
                             'returns': {
                                 'err': '>b',
                                 'Uptime': '>u2',
-                                'Flags_arr': '>u1'
+                                'Flags_arr_1': '>u1',
+                                'Flags_arr_2': '>u1',
+                                'Flags_arr_3': '>u1',
+                                'Flags_arr_4': '>u1',
+                                'Flags_arr_5': '>u1',
+                                'Flags_arr_6': '>u1',
+                                'Flags_arr_7': '>u1',
+                                'Flags_arr_8': '>u1',
+                                'Flags_arr_9': '>u1',
+                                'Flags_arr_10': '>u1',
+                                'Flags_arr_11': '>u1',
+                                'Flags_arr_12': '>u1'
                             }
                         }
                     },
@@ -2347,7 +2423,7 @@ class SystemValues(object):
                     'ADCS_DEPLOY_MAGNETOMETER_BOOM': {
                         'subPort': 47,
                         'inoutInfo': {
-                            'args': ['>u1'],
+                            'args': ['>u1'], # Actuation timeout (s)
                             'returns': {
                                 'err': '>b',
                             }
@@ -2371,10 +2447,10 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'ADCS_SET_ATTITUDE_CTR_MODE': {
+                    'ADCS_SET_ATTITUDE_CONTROL_MODE': {
                         'subPort': 50,
                         'inoutInfo': {
-                            'args': ['>u1', '>u2'],
+                            'args': ['>u1', '>u2'], # control mode, timeout
                             'returns': {
                                 'err': '>b',
                             }
@@ -2452,6 +2528,24 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'ADCS_SET_MAGNETORQUER_OUTPUT': {
+                        'subPort': 59,
+                        'inoutInfo': {
+                            'args': ['>u2', '>u2', '>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'ADCS_SET_WHEEL_SPEED': {
+                        'subPort': 60,
+                        'inoutInfo': {
+                            'args': ['>u2', '>u2', '>u2'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },                    
                     'ADCS_SAVE_CONFIG': {
                         'subPort': 61,
                         'inoutInfo': {
@@ -2467,6 +2561,93 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
+                            }
+                        }
+                    },
+                    'ADCS_GET_CURRENT_STATE': {
+                        'subPort': 63,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b',
+                                'att_estimate_mode': '>B',
+                                'att_ctrl_mode': '>B',
+                                'run_mode': '>B',
+                                'ASGP4_mode': '>B',
+                                'flags_arr_1': '>B',
+                                'flags_arr_2': '>B',
+                                'flags_arr_3': '>B',
+                                'flags_arr_4': '>B',
+                                'flags_arr_5': '>B',
+                                'flags_arr_6': '>B',
+                                'flags_arr_7': '>B',
+                                'flags_arr_8': '>B',
+                                'flags_arr_9': '>B',
+                                'flags_arr_10': '>B',
+                                'flags_arr_11': '>B',
+                                'flags_arr_12': '>B',
+                                'flags_arr_13': '>B',
+                                'flags_arr_14': '>B',
+                                'flags_arr_15': '>B',
+                                'flags_arr_16': '>B',
+                                'flags_arr_17': '>B',
+                                'flags_arr_18': '>B',
+                                'flags_arr_19': '>B',
+                                'flags_arr_20': '>B',
+                                'flags_arr_21': '>B',
+                                'flags_arr_22': '>B',
+                                'flags_arr_23': '>B',
+                                'flags_arr_24': '>B',
+                                'flags_arr_25': '>B',
+                                'flags_arr_26': '>B',
+                                'flags_arr_27': '>B',
+                                'flags_arr_28': '>B',
+                                'flags_arr_29': '>B',
+                                'flags_arr_30': '>B',
+                                'flags_arr_31': '>B',
+                                'flags_arr_32': '>B',
+                                'flags_arr_33': '>B',
+                                'flags_arr_34': '>B',
+                                'flags_arr_35': '>B',
+                                'flags_arr_36': '>B',
+                                'flags_arr_37': '>B',
+                                'flags_arr_38': '>B',
+                                'flags_arr_39': '>B',
+                                'flags_arr_40': '>B',
+                                'flags_arr_41': '>B',
+                                'flags_arr_42': '>B',
+                                'flags_arr_43': '>B',
+                                'flags_arr_44': '>B',
+                                'flags_arr_45': '>B',
+                                'flags_arr_46': '>B',
+                                'flags_arr_47': '>B',
+                                'flags_arr_48': '>B',
+                                'flags_arr_49': '>B',
+                                'flags_arr_50': '>B',
+                                'flags_arr_51': '>B',
+                                'flags_arr_52': '>B',
+                                'MTM_sample_mode': '>B',
+                                'est_angle_x': '>f4',
+                                'est_angle_y': '>f4',
+                                'est_angle_z': '>f4',
+                                'est_quaternion_x': '>i2',
+                                'est_quaternion_y': '>i2',
+                                'est_quaternion_z': '>i2',
+                                'est_angular_rate_x': '>f4',
+                                'est_angular_rate_y': '>f4',
+                                'est_angular_rate_z': '>f4',
+                                'ECI_pos_x': '>f4',
+                                'ECI_pos_y': '>f4',
+                                'ECI_pos_z': '>f4',
+                                'ECI_vel_x': '>f4',
+                                'ECI_vel_y': '>f4',
+                                'ECI_vel_z': '>f4',
+                                'Latitude': '>f4',
+                                'Longitude': '>f4',
+                                'Altitude': '>f4',
+                                'ecef_pos_x': '>i2',
+                                'ecef_pos_y': '>i2',
+                                'ecef_pos_z': '>i2'                                             
                             }
                         }
                     },
@@ -2488,7 +2669,12 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Flags_Arr': '>u1'
+                                'Flags_Arr_1': '>u1',
+                                'Flags_Arr_2': '>u1',
+                                'Flags_Arr_3': '>u1',
+                                'Flags_Arr_4': '>u1',
+                                'Flags_Arr_5': '>u1',
+                                'Flags_Arr_6': '>u1',
                             }
                         }
                     },
@@ -2498,9 +2684,9 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'X': '>f4',
-                                'Y': '>f4',
-                                'Z': '>f4',
+                                'X': '>i2',
+                                'Y': '>i2',
+                                'Z': '>u2',
                             }
                         }
                     },
@@ -2512,8 +2698,8 @@ class SystemValues(object):
                                 'err': '>b',
                                 'Adcs_Update': '>u2',
                                 'Sensor_Comm': '>u2',
-                                'Sgp4_propag': '>u2',
-                                'Igrf_model': '>u2'
+                                'SGP4_propag': '>u2',
+                                'IGRF_model': '>u2'
                             }
                         }
                     },
@@ -2545,42 +2731,42 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Magnetic_field_X': 'f4',
-                                'Magnetic_field_Y': 'f4',
-                                'Magnetic_field_Z': 'f4',
-                                'Coarse_Sun_X': 'f4',
-                                'Coarse_Sun_Y': 'f4',
-                                'Coarse_Sun_Z': 'f4',
-                                'Sun_X': 'f4',
-                                'Sun_Y': 'f4',
-                                'Sun_Z': 'f4',
-                                'Nadir_X': 'f4',
-                                'Nadir_Y': 'f4',
-                                'Nadir_Z': 'f4',
-                                'Angular_Rate_X': 'f4',
-                                'Angular_Rate_Y': 'f4',
-                                'Angular_Rate_Z': 'f4',
-                                'Wheel_Speed_X': 'f4',
-                                'Wheel_Speed_Y': 'f4',
-                                'Wheel_Speed_Z': 'f4',
-                                'Star1b_X': 'f4',
-                                'Star1b_Y': 'f4',
-                                'Star1b_Z': 'f4',
-                                'Star1o_X': 'f4',
-                                'Star1o_Y': 'f4',
-                                'Star1o_Z': 'f4',
-                                'Star2b_X': 'f4',
-                                'Star2b_Y': 'f4',
-                                'Star2b_Z': 'f4',
-                                'Star2o_X': 'f4',
-                                'Star2o_Y': 'f4',
-                                'Star2o_Z': 'f4',
-                                'Star3b_X': 'f4',
-                                'Star3b_Y': 'f4',
-                                'Star3b_Z': 'f4',
-                                'Star3o_X': 'f4',
-                                'Star3o_Y': 'f4',
-                                'Star3o_Z': 'f4',
+                                'Magnetic_field_X': '>f4',
+                                'Magnetic_field_Y': '>f4',
+                                'Magnetic_field_Z': '>f4',
+                                'Coarse_Sun_X': '>f4',
+                                'Coarse_Sun_Y': '>f4',
+                                'Coarse_Sun_Z': '>f4',
+                                'Sun_X': '>f4',
+                                'Sun_Y': '>f4',
+                                'Sun_Z': '>f4',
+                                'Nadir_X': '>f4',
+                                'Nadir_Y': '>f4',
+                                'Nadir_Z': '>f4',
+                                'Angular_Rate_X': '>f4',
+                                'Angular_Rate_Y': '>f4',
+                                'Angular_Rate_Z': '>f4',
+                                'Wheel_Speed_X': '>f4',
+                                'Wheel_Speed_Y': '>f4',
+                                'Wheel_Speed_Z': '>f4',
+                                'Star1b_X': '>f4',
+                                'Star1b_Y': '>f4',
+                                'Star1b_Z': '>f4',
+                                'Star1o_X': '>f4',
+                                'Star1o_Y': '>f4',
+                                'Star1o_Z': '>f4',
+                                'Star2b_X': '>f4',
+                                'Star2b_Y': '>f4',
+                                'Star2b_Z': '>f4',
+                                'Star2o_X': '>f4',
+                                'Star2o_Y': '>f4',
+                                'Star2o_Z': '>f4',
+                                'Star3b_X': '>f4',
+                                'Star3b_Y': '>f4',
+                                'Star3b_Z': '>f4',
+                                'Star3o_X': '>f4',
+                                'Star3o_Y': '>f4',
+                                'Star3o_Z': '>f4',
                             }
                         }
                     },
@@ -2590,9 +2776,9 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Magnetorquer_X': '>f4',
-                                'Magnetorquer_Y': '>f4',
-                                'Magnetorquer_Z': '>f4',
+                                'Magnetorquer_X_ms/1000': '>f4',
+                                'Magnetorquer_Y_ms/1000': '>f4',
+                                'Magnetorquer_Z_ms/1000': '>f4',
                                 'Wheel_Speed_X': '>f4',
                                 'Wheel_Speed_Y': '>f4',
                                 'Wheel_Speed_Z': '>f4',
@@ -2605,27 +2791,27 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Igrf_magnetic_field_X': 'f4',
-                                'Igrf_magnetic_field_Y': 'f4',
-                                'Igrf_magnetic_field_Z': 'f4',
-                                'Sun_X': 'f4',
-                                'Sun_Y': 'f4',
-                                'Sun_Z': 'f4',
-                                'Gyro_bias_X': 'f4',
-                                'Gyro_bias_Y': 'f4',
-                                'Gyro_bias_Z': 'f4',
-                                'Innovation_X': 'f4',
-                                'Innovation_Y': 'f4',
-                                'Innovation_Z': 'f4',
-                                'Quaternion_Err_X': 'f4',
-                                'Quaternion_Err_Y': 'f4',
-                                'Quaternion_Err_Z': 'f4',
-                                'Quaternion_Covar_X': 'f4',
-                                'Quaternion_Covar_X': 'f4',
-                                'Quaternion_Covar_X': 'f4',
-                                'Angular_Rate_Covar_X': 'f4',
-                                'Angular_Rate_Covar_Y': 'f4',
-                                'Angular_Rate_Covar_Z': 'f4',
+                                'Igrf_magnetic_field_X': '>f4',
+                                'Igrf_magnetic_field_Y': '>f4',
+                                'Igrf_magnetic_field_Z': '>f4',
+                                'Sun_X': '>f4',
+                                'Sun_Y': '>f4',
+                                'Sun_Z': '>f4',
+                                'Gyro_bias_X': '>f4',
+                                'Gyro_bias_Y': '>f4',
+                                'Gyro_bias_Z': '>f4',
+                                'Innovation_X': '>f4',
+                                'Innovation_Y': '>f4',
+                                'Innovation_Z': '>f4',
+                                'Quaternion_Err_X': '>f4',
+                                'Quaternion_Err_Y': '>f4',
+                                'Quaternion_Err_Z': '>f4',
+                                'Quaternion_Covar_X': '>f4',
+                                'Quaternion_Covar_X': '>f4',
+                                'Quaternion_Covar_X': '>f4',
+                                'Angular_Rate_Covar_X': '>f4',
+                                'Angular_Rate_Covar_Y': '>f4',
+                                'Angular_Rate_Covar_Z': '>f4',
                             }
                         }
                     },
@@ -2635,14 +2821,14 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Epoch': 'f4',
-                                'Inclination': 'f4',
-                                'RAAN': 'f4',
-                                'ECC': 'f4',
-                                'AOP': 'f4',
-                                'MA': 'f4',
-                                'MM': 'f4',
-                                'Bstar': 'f4',
+                                'Epoch': '>f4',
+                                'Inclination': '>f4',
+                                'RAAN': '>f4',
+                                'ECC': '>f4',
+                                'AOP': '>f4',
+                                'MA': '>f4',
+                                'MM': '>f4',
+                                'Bstar': '>f4',
                             }
                         }
                     },
@@ -2660,13 +2846,22 @@ class SystemValues(object):
                                 'Cam2_Centroid_Y': '>i2',
                                 'Cam2_Capture_Stat': '>u1',
                                 'Cam2_Detect_Result': '>u1',
-                                'Css': '>O20',
-                                'MTM_X': 'f8',
-                                'MTM_Y': 'f8',
-                                'MTM_Z': 'f8',
-                                'Rate_X': 'f8',
-                                'Rate_Y': 'f8',
-                                'Rate_Z': 'f8',
+                                'Css_1': '>u1',
+                                'Css_2': '>u1',
+                                'Css_3': '>u1',
+                                'Css_4': '>u1',
+                                'Css_5': '>u1',
+                                'Css_6': '>u1',
+                                'Css_7': '>u1',
+                                'Css_8': '>u1',
+                                'Css_9': '>u1',
+                                'Css_10': '>u1',
+                                'MTM_X': '>i2',
+                                'MTM_Y': '>i2',
+                                'MTM_Z': '>i2',
+                                'Rate_X': '>i2',
+                                'Rate_Y': '>i2',
+                                'Rate_Z': '>i2',
 
                             }
                         }
@@ -2784,10 +2979,9 @@ class SystemValues(object):
                     'ADCS_SET_POWER_CONTROL': {
                         'subPort': 79,
                         'inoutInfo': {
-                            'args': ['>u1'],
+                            'args': ['>u1','u1','>u1', 'u1','>u1', 'u1','>u1', 'u1','>u1', 'u1',],
                             'returns': {
                                 'err': '>b',
-                                'Control': '>u1'
                             }
                         }
                     },
@@ -2797,7 +2991,16 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'Control': '>u1'
+                                'CubeCTRLSgn': '>u1',
+                                'CubeCTRLMtr': '>u1',
+                                'CubeSense1': '>u1',
+                                'CubeSense2': '>u1',
+                                'CubeStar': '>u1',
+                                'CubeWheel1': '>u1',
+                                'CubeWheel2': '>u1',
+                                'CubeWheel3': '>u1',
+                                'Motor': '>u1',
+                                'GPS': '>u1',
                             }
                         }
                     },
@@ -2846,7 +3049,7 @@ class SystemValues(object):
                     'ADCS_SET_LOG_CONFIG': {
                         'subPort': 85,
                         'inoutInfo': {
-                            'args': ['>O20', '>u2'], # array type?, period
+                            'args': ['>u2', '>B', '>B', '>S30'], # period, destination, log, flag file name (.hex assumed)
                             'returns': {
                                 'err': '>b'
                             }
@@ -2855,10 +3058,10 @@ class SystemValues(object):
                     'ADCS_GET_LOG_CONFIG': {
                         'subPort': 86,
                         'inoutInfo': {
-                            'args': None,
+                            'args': ['>B'], #log
                             'returns': {
                                 'err': '>b',
-                                'Flag_arr': '>O20',
+                                'Flags_arr': '>V80',
                                 'Period': '>u2',
                                 'Dest': '>u1',
                                 'Log': '>u1'
@@ -2924,7 +3127,7 @@ class SystemValues(object):
                     'ADCS_GET_SYSTEM_CONFIG': {
                         'subPort': 92,
                         'inoutInfo': {
-                            'args': None, 
+                            'args': None,
                             'returns': {
                                 'err': '>b',
                                 'Acp_Type': '>u1',
@@ -3010,10 +3213,9 @@ class SystemValues(object):
                     'ADCS_SET_RW_CONFIG': {
                         'subPort': 94,
                         'inoutInfo': {
-                            'args': ['>u1'],
+                            'args': ['>u1', '>u1', '>u1', '>u1'],
                             'returns': {
                                 'err': '>b',
-                                'RW': '>u1'
                             }
                         }
                     },
@@ -3029,7 +3231,8 @@ class SystemValues(object):
                     'ADCS_SET_CSS_CONFIG': {
                         'subPort': 96,
                         'inoutInfo': {
-                            'args': ['>O20', '>O20', '>u1'],
+                            # CSS relative scale floats cannot be negative!
+                            'args': ['>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>B'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -3047,16 +3250,17 @@ class SystemValues(object):
                     'ADCS_SET_CUBESENSE_CONFIG': {
                         'subPort': 98,
                         'inoutInfo': {
-                            'args': None, #TODO: finish args, why does this have so many args ~.~
+                            'args': ['>S30'],
                             'returns': {
                                 'err': '>b',
                             }
                         }
                     },
                     'ADCS_SET_MTM_CONFIG': {
+                        'what': 'Sets the magnetometer configuration parameters. Input: Angle xyz (floats), channel_offset xyz (floats), sensitivity matrix (s11,s22,s33,s12,s13,s21,s23,s31,s32)',
                         'subPort': 99,
                         'inoutInfo': {
-                            'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>O20'],
+                            'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -3080,8 +3284,17 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'ADCS_SET_TRACKING_CONFIG': {
+                    'ADCS_SET_RWHEEL_CONFIG': {
                         'subPort': 102,
+                        'inoutInfo': {
+                            'args': ['>f4', '>f4', '>f4', '>B', '>B'],
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'ADCS_SET_TRACKING_CONFIG': {
+                        'subPort': 103,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>u1'],
                             'returns': {
@@ -3090,7 +3303,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_MOI_MAT': {
-                        'subPort': 103,
+                        'subPort': 104,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4'],
                             'returns': {
@@ -3099,16 +3312,16 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_ESTIMATION_CONFIG': {
-                        'subPort': 104,
+                        'subPort': 105,
                         'inoutInfo': {
-                            'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>u1', '>u1', '>u1'],
+                            'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                             'returns': {
                                 'err': '>b',
                             }
                         }
                     },
                     'ADCS_SET_USERCODED_SETTING': {
-                        'subPort': 105,
+                        'subPort': 106,
                         'inoutInfo': {
                             'args': ['>O20', '>O20'],
                             'returns': {
@@ -3117,7 +3330,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_SET_ASGP4_SETTING': {
-                        'subPort': 106,
+                        'subPort': 107,
                         'inoutInfo': {
                             'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>f4', '>f4', '>u1', '>f4', '>f4', '>u1', '>f4', '>f4', '>u2'],
                             'returns': {
@@ -3126,18 +3339,229 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_GET_FULL_CONFIG': {
-                        'subPort': 107,
+                        'subPort': 108,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'ADCS_config': '>O20'
+                                'MTQ_x': '>B',
+                                'MTQ_y': '>B',
+                                'MTQ_z': '>B',
+                                'RW1': '>B',
+                                'RW2': '>B',
+                                'RW3': '>B',
+                                'RW4': '>B',
+                                'gyro_x': '>B',
+                                'gyro_y': '>B',
+                                'gyro_z': '>B',
+                                'sensor_offset_x': '>f4',
+                                'sensor_offset_y': '>f4',
+                                'sensor_offset_z': '>f4',
+                                'rate_sensor_mult': '>B',
+                                'css_config1': '>B',
+                                'css_config2': '>B',
+                                'css_config3': '>B',
+                                'css_config4': '>B',
+                                'css_config5': '>B',
+                                'css_config6': '>B',
+                                'css_config7': '>B',
+                                'css_config8': '>B',
+                                'css_config9': '>B',
+                                'css_config10': '>B',
+                                'css_relscale1': '>f4',
+                                'css_relscale2': '>f4',
+                                'css_relscale3': '>f4',
+                                'css_relscale4': '>f4',
+                                'css_relscale5': '>f4',
+                                'css_relscale6': '>f4',
+                                'css_relscale7': '>f4',
+                                'css_relscale8': '>f4',
+                                'css_relscale9': '>f4',
+                                'css_relscale10': '>f4',
+                                'css_threshold': '>B',
+                                'cs1_mnt_angle_x': '>f4',
+                                'cs1_mnt_angle_y': '>f4',
+                                'cs1_mnt_angle_z': '>f4',
+                                'cs1_detect_th': '>B',
+                                'cs1_auto_adjust': '>?',
+                                'cs1_exposure_t': '>u2',
+                                'cs1_boresight_x': '>f4',
+                                'cs1_boresight_y': '>f4',
+                                'cs2_mnt_angle_x': '>f4',
+                                'cs2_mnt_angle_y': '>f4',
+                                'cs2_mnt_angle_z': '>f4',
+                                'cs2_detect_th': '>B',
+                                'cs2_auto_adjust': '>?',
+                                'cs2_exposure_t': '>u2',
+                                'cs2_boresight_x': '>f4',
+                                'cs2_boresight_y': '>f4',
+                                'nadir_max_deviate': '>B',
+                                'nadir_max_bad_edge': '>B',
+                                'nadir_max_radius': '>B',
+                                'nadir_min_radius': '>B',
+                                'cam1_area_1_x_min': '>u2',
+                                'cam1_area_1_x_max': '>u2',
+                                'cam1_area_1_y_min': '>u2',
+                                'cam1_area_1_y_max': '>u2',
+                                'cam1_area_2_x_min': '>u2',
+                                'cam1_area_2_x_max': '>u2',
+                                'cam1_area_2_y_min': '>u2',
+                                'cam1_area_2_y_max': '>u2',
+                                'cam1_area_3_x_min': '>u2',
+                                'cam1_area_3_x_max': '>u2',
+                                'cam1_area_3_y_min': '>u2',
+                                'cam1_area_3_y_max': '>u2',
+                                'cam1_area_4_x_min': '>u2',
+                                'cam1_area_4_x_max': '>u2',
+                                'cam1_area_4_y_min': '>u2',
+                                'cam1_area_4_y_max': '>u2',
+                                'cam1_area_5_x_min': '>u2',
+                                'cam1_area_5_x_max': '>u2',
+                                'cam1_area_5_y_min': '>u2',
+                                'cam1_area_5_y_max': '>u2',
+                                'cam2_area_1_x_min': '>u2',
+                                'cam2_area_1_x_max': '>u2',
+                                'cam2_area_1_y_min': '>u2',
+                                'cam2_area_1_y_max': '>u2',
+                                'cam2_area_2_x_min': '>u2',
+                                'cam2_area_2_x_max': '>u2',
+                                'cam2_area_2_y_min': '>u2',
+                                'cam2_area_2_y_max': '>u2',
+                                'cam2_area_3_x_min': '>u2',
+                                'cam2_area_3_x_max': '>u2',
+                                'cam2_area_3_y_min': '>u2',
+                                'cam2_area_3_y_max': '>u2',
+                                'cam2_area_4_x_min': '>u2',
+                                'cam2_area_4_x_max': '>u2',
+                                'cam2_area_4_y_min': '>u2',
+                                'cam2_area_4_y_max': '>u2',
+                                'cam2_area_5_x_min': '>u2',
+                                'cam2_area_5_x_max': '>u2',
+                                'cam2_area_5_y_min': '>u2',
+                                'cam2_area_5_y_max': '>u2',
+                                'MTM1_mount_angle_x': '>f4',
+                                'MTM1_mount_angle_y': '>f4',
+                                'MTM1_mount_angle_z': '>f4',
+                                'MTM1_channel_offset_x': '>f4',
+                                'MTM1_channel_offset_y': '>f4',
+                                'MTM1_channel_offset_z': '>f4',
+                                'MTM1_sensitivity_mat_1': '>f4',
+                                'MTM1_sensitivity_mat_2': '>f4',
+                                'MTM1_sensitivity_mat_3': '>f4',
+                                'MTM1_sensitivity_mat_4': '>f4',
+                                'MTM1_sensitivity_mat_5': '>f4',
+                                'MTM1_sensitivity_mat_6': '>f4',
+                                'MTM1_sensitivity_mat_7': '>f4',
+                                'MTM1_sensitivity_mat_8': '>f4',
+                                'MTM1_sensitivity_mat_9': '>f4',
+                                'MTM2_mount_angle_x': '>f4',
+                                'MTM2_mount_angle_y': '>f4',
+                                'MTM2_mount_angle_z': '>f4',
+                                'MTM2_channel_offset_x': '>f4',
+                                'MTM2_channel_offset_y': '>f4',
+                                'MTM2_channel_offset_z': '>f4',
+                                'MTM2_sensitivity_mat_1': '>f4',
+                                'MTM2_sensitivity_mat_2': '>f4',
+                                'MTM2_sensitivity_mat_3': '>f4',
+                                'MTM2_sensitivity_mat_4': '>f4',
+                                'MTM2_sensitivity_mat_5': '>f4',
+                                'MTM2_sensitivity_mat_6': '>f4',
+                                'MTM2_sensitivity_mat_7': '>f4',
+                                'MTM2_sensitivity_mat_8': '>f4',
+                                'MTM2_sensitivity_mat_9': '>f4',
+                                'cubestar_mounting_angle_x': '>f4',
+                                'cubestar_mounting_angle_y': '>f4',
+                                'cubestar_mounting_angle_z': '>f4',
+                                'cubestar_exposure_t': '>u2',
+                                'cubestar_analog_gain': '>u2',
+                                'cubestar_detect_th': '>B',
+                                'cubestar_star_th': '>B',
+                                'cubestar_max_star_matched': '>B',
+                                'cubestar_detect_timeout_t': '>u2',
+                                'cubestar_max_pixel': '>B',
+                                'cubestar_min_pixel': '>B',
+                                'cubestar_err_margin': '>B',
+                                'cubestar_delay_t': '>u2',
+                                'cubestar_centroid_x': '>f4',
+                                'cubestar_centroid_y': '>f4',    
+                                'cubestar_focal_len': '>f4', 
+                                'cubestar_radical_distor_1': '>f4',
+                                'cubestar_radical_distor_2': '>f4',
+                                'cubestar_tangent_distor_1': '>f4',
+                                'cubestar_tangent_distor_2': '>f4',
+                                'cubestar_window_wid': '>B',
+                                'cubestar_track_margin': '>B',
+                                'cubestar_valid_margin': '>B',
+                                'cubestar_module_en': '>?',
+                                'cubestar_loc_predict_en': '>?',
+                                'cubestar_search_wid': '>B',
+                                'detumble_spin_gain': '>f4',
+                                'detumble_damping_gain': '>f4',
+                                'detumble_spin_rate': '>f4',
+                                'detumble_fast_bDot': '>f4',
+                                'ywheel_control_gain': '>f4',
+                                'ywheel_damping_gain': '>f4',
+                                'ywheel_proportional_gain': '>f4',
+                                'ywheel_derivative_gain': '>f4',
+                                'ywheel_reference': '>f4',
+                                'rwheel_proportional_gain': '>f4',
+                                'rwheel_derivative_gain': '>f4',
+                                'rwheel_bias_moment': '>f4',
+                                'rwheel_sun_point_facet': '>B',
+                                'rwheel_auto_transit': '>?',
+                                'tracking_proportional_gain': '>f4',
+                                'tracking_derivative_gain': '>f4',
+                                'tracking_integral_gain': '>f4',
+                                'tracking_target_facet': '>B',
+                                'MoI_config_diag_x': '>f4',
+                                'MoI_config_diag_y': '>f4',
+                                'MoI_config_diag_z': '>f4',
+                                'MoI_config_nondiag_x': '>f4',
+                                'MoI_config_nondiag_y': '>f4',
+                                'MoI_config_nondiag_z': '>f4',
+                                'est_MTM_rate_noise': '>f4',
+                                'est_EKF_noise': '>f4',
+                                'est_CSS_noise': '>f4',
+                                'est_sun_sensor_noise': '>f4',
+                                'est_nadir_sensor_noise': '>f4',
+                                'est_MTM_noise': '>f4',
+                                'est_star_track_noise': '>f4',
+                                'est_select_arr_1': '>B',
+                                'est_select_arr_2': '>B',
+                                'est_select_arr_3': '>B',
+                                'est_select_arr_4': '>B',
+                                'est_select_arr_5': '>B',
+                                'est_select_arr_6': '>B',
+                                'est_select_arr_7': '>B',
+                                'est_select_arr_8': '>B',
+                                'est_MTM_mode': '>B',
+                                'est_MTM_select': '>B',
+                                'est_cam_sample_period': '>B',                          
+                                'asgp4_inclination': '>f4',
+                                'asgp4_RAAN': '>f4',
+                                'asgp4_ECC': '>f4',
+                                'asgp4_AoP': '>f4',
+                                'asgp4_time': '>f4',
+                                'asgp4_pos': '>f4',
+                                'asgp4_max_pos_err': '>f4',
+                                'asgp4_filter': '>B',
+                                'asgp4_xp': '>f4',
+                                'asgp4_yp': '>f4',
+                                'asgp4_gps_rollover': '>B',
+                                'asgp4_pos_sd': '>f4',
+                                'asgp4_vel_sd': '>f4',
+                                'asgp4_min_stat': '>B',
+                                'asgp4_time_gain': '>f4',
+                                'asgp4_max_lag': '>f4',
+                                'asgp4_min_samples': '>u2',
+                                'usercoded_controller': '>V48',
+                                'usercoded_estimator': '>V48'
                             }
                         }
                     },
                     'ADCS_DOWNLOAD_FILE_LIST_TO_OBC': {
                         'what': 'Saves information about files stored on the ADCS to the OBC. File name VOL0:/adcs/adcs_file_list.txt',
-                        'subPort': 108,
+                        'subPort': 109,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3146,10 +3570,10 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_DOWNLOAD_FILE_TO_OBC': {
-                        'what': 'Saves a specified file from the ADCS to the OBC. Inputs args type, counter, size, and OBC file name.',
-                        'subPort': 109,
+                        'what': 'Saves a file from the ADCS to the OBC. Inputs: type, counter, size, and OBC file name. (Be patient and check the log for return.)',
+                        'subPort': 110,
                         'inoutInfo': {
-                            'args': ['>B', 'B', '>u4', '>S30'], 
+                            'args': ['>B', 'B', '>u4', '>S30'],
                             'returns': {
                                 'err': '>b',
                             }
@@ -3161,6 +3585,7 @@ class SystemValues(object):
                 'port': 19,
                 'subservice': {
                     'DFGM_RUN': {
+                        'what': 'Record DFGM data for specified number of seconds.',
                         'subPort': 0,
                         'inoutInfo': {
                             'args': ['>u4'],
@@ -3170,6 +3595,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_START': {
+                        'what': 'Start recording DFGM data',
                         'subPort': 1,
                         'inoutInfo': {
                             'args': None,
@@ -3179,6 +3605,7 @@ class SystemValues(object):
                         }
                     },
                     'DFGM_STOP': {
+                        'what': 'Stop recording DFGM data.',
                         'subPort': 2,
                         'inoutInfo': {
                             'args': None,
@@ -3190,6 +3617,7 @@ class SystemValues(object):
                     'DFGM_GET_HK': {
                         'subPort': 3,
                         'inoutInfo': {
+                            'what': 'Fetch housekeeping data for the DFGM payload.',
                             'args': None,
                             'returns': {
                                 'err': '>b',
@@ -3266,5 +3694,107 @@ class SystemValues(object):
                         }
                     },
                 }
+            },
+            'NS_PAYLOAD': {
+                'port': 22,
+                'subservice': {
+                    'UPLOAD_ARTWORK': {
+                        'what': 'Send artwork from the OBC to the payload. Input: file name, limited to 7 chars!',
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': ['>S10'], # Filename
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    'CAPTURE_IMAGE': {
+                        'what': 'Tell the payload to display artwork and capture an image.',
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                                'confirmation_err': '>B'
+                            }
+                        }
+                    },
+                    'CONFIRM_DOWNLINK': {
+                        'what': 'Let the payload know that the last image it took was received by the ground and can be deleted.',
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                            }
+                        }
+                    },
+                    
+                    'GET_HEARTBEAT': {
+                        'what': 'Receive a ping (char h) from the payload',
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                                'heartbeat': '>S1'
+                            }
+                        }
+                    },
+                    'GET_FLAG': {
+                        'what': 'Get the status of a payload flag. Input: flag/subcode decimal value.',
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': ['>B'], # flag/subcode BYTE! Do not use a char
+                            'returns': {
+                                'err': '>b',
+                                'flag_stat': '>B'
+                            }
+                        }
+                    },
+                    'GET_FILENAME': {
+                        'what': 'Get a desired image/artwork file name. Input: subcode demimal value.',
+                        'subPort': 5,
+                        'inoutInfo': {
+                            'args': ['>B'], # subcode BYTE! Do not use a char
+                            'returns': {
+                                'err': '>b',
+                                'filename': '>S11'
+                            }
+                        }
+                    },
+                    'GET_TELEMETRY': {
+                        'what': 'Get telemetry data from the payload',
+                        'subPort': 6,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                                'temp0': '>i2',
+                                'temp1': '>i2',
+                                'temp2': '>i2',
+                                'temp3': '>i2',
+                                'eNIM0_lux': '>i2',
+                                'eNIM1_lux': '>i2',
+                                'eNIM2_lux': '>i2',
+                                'ram_avail': '>i2',
+                                'lowest_img_num': '>i2',
+                                'first_blank_img_num': '>i2'
+                            }
+                        }
+                    },
+                    'GET_SW_VERSION': {
+                        'what': 'Get payload software version.',
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None, 
+                            'returns': {
+                                'err': '>b',
+                                'version': '>S7'
+                            }
+                        }
+                    },
+                }
             }
         }
+

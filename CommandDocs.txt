@@ -3,21 +3,21 @@ Note: arguments and return types are given as numpy types
 
 
 SET_PIPE.UHF_GS_PIPE:
-		About: None
+		About: Testing function to put an EndurSat radio being used as the ground station radio into PIPE mode
 		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 0		subport: 0
 
 
 TIME_MANAGEMENT.GET_EPS_TIME:
-		About: None
+		About: Get the current unix time on the EPS
 		Arguments: [None]
 		return values: {'err': '>b', 'timestamp': '<u4'}
 		port: 8		subport: 0
 
 
 TIME_MANAGEMENT.SET_EPS_TIME:
-		About: None
+		About: Set the current unix time on the EPS
 		Arguments: [<u4]
 		return values: {'err': '>b'}
 		port: 8		subport: 1
@@ -38,14 +38,14 @@ TIME_MANAGEMENT.GET_PRECISE_TIME:
 
 
 TIME_MANAGEMENT.GET_TIME:
-		About: None
+		About: Get the current unix time on the OBC
 		Arguments: [None]
 		return values: {'err': '>b', 'timestamp': '>u4'}
 		port: 8		subport: 10
 
 
 TIME_MANAGEMENT.SET_TIME:
-		About: None
+		About: Set the current unix time on the OBC
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 8		subport: 11
@@ -59,56 +59,56 @@ GENERAL.REBOOT:
 
 
 GENERAL.DEPLOY_DEPLOYABLES:
-		About: None
+		About: Trigger burnwire. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7. Returns instantaneous current consumption
 		Arguments: [>B]
 		return values: {'err': '>b', 'current_mA': '>u2'}
 		port: 11		subport: 1
 
 
 GENERAL.GET_SWITCH_STATUS:
-		About: None
+		About: Query the status of all deployment switches. Returns 1 = Deployed, 0 = Undeployed
 		Arguments: [None]
 		return values: {'err': '>b', 'switch_DFGM': '>b', 'switch_UHF_P': '>b', 'switch_UHF_Z': '>b', 'switch_UHF_S': '>b', 'switch_UHF_N': '>b', 'switch_Port': '>b', 'switch_Payload': '>b', 'switch_Starboard': '>b'}
 		port: 11		subport: 2
 
 
 GENERAL.GET_UHF_WATCHDOG_TIMEOUT:
-		About: None
+		About: Get the period (in ticks) of the UHF watchdog timer on the OBC
 		Arguments: [None]
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 3
 
 
 GENERAL.SET_UHF_WATCHDOG_TIMEOUT:
-		About: None
+		About: Set the period (in ms) of the UHF watchdog timer on the OBC
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 11		subport: 4
 
 
 GENERAL.GET_SBAND_WATCHDOG_TIMEOUT:
-		About: None
+		About: Get the period (in ticks) of the S-band watchdog timer on the OBC
 		Arguments: [None]
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 5
 
 
 GENERAL.SET_SBAND_WATCHDOG_TIMEOUT:
-		About: None
+		About: Set the period (in ms) of the S-band watchdog timer on the OBC
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 11		subport: 6
 
 
 GENERAL.GET_CHARON_WATCHDOG_TIMEOUT:
-		About: None
+		About: Get the period (in ticks) of the Charon watchdog timer on the OBC
 		Arguments: [None]
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 7
 
 
 GENERAL.SET_CHARON_WATCHDOG_TIMEOUT:
-		About: None
+		About: Set the period (in ms) of the Charon watchdog timer on the OBC.
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 11		subport: 8
@@ -129,10 +129,24 @@ GENERAL.SET_ADCS_WATCHDOG_TIMEOUT:
 
 
 GENERAL.UHF_IS_IN_PIPE_NOTIFICATION:
-		About: None
+		About: Tell Athena the UHF is in PIPE after radio command.
 		Arguments: [>B]
 		return values: {'err': '>b'}
 		port: 11		subport: 11
+
+
+GENERAL.GET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'timeout_ms': '>u4'}
+		port: 11		subport: 9
+
+
+GENERAL.SET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
+		About: None
+		Arguments: [>u4]
+		return values: {'err': '>b'}
+		port: 11		subport: 10
 
 
 COMMUNICATION.S_GET_FREQ:
@@ -549,21 +563,21 @@ CONFIGURATION.GET_STATUS:
 
 
 HOUSEKEEPING.GET_HK:
-		About: None
+		About: Fetch system-wide housekeeping. Input: limit, before_id, before_time
 		Arguments: [>u2, >u2, >u4]
-		return values: {'err': '>b', '###############################\r\npacket meta\r\n###############################\r\nfinal': '<B', 'UNIXtimestamp': '>u4', 'dataPosition': '>u2', '###############################\r\nADCS\r\n###############################\r\nEstimated_Angular_Rate_X': '>f4', 'Estimated_Angular_Rate_Y': '>f4', 'Estimated_Angular_Rate_Z': '>f4', 'Estimated_Angular_Angle_X': '>f4', 'Estimated_Angular_Angle_Y': '>f4', 'Estimated_Angular_Angle_Z': '>f4', 'Sat_Position_ECI_X': '>f4', 'Sat_Position_ECI_Y': '>f4', 'Sat_Position_ECI_Z': '>f4', 'Sat_Velocity_ECI_X': '>f4', 'Sat_Velocity_ECI_Y': '>f4', 'Sat_Velocity_ECI_Z': '>f4', 'Sat_Position_LLH_X': '>f4', 'Sat_Position_LLH_Y': '>f4', 'Sat_Position_LLH_Z': '>f4', 'ECEF_Position_X': '>i2', 'ECEF_Position_Y': '>i2', 'ECEF_Position_Z': '>i2', 'Coarse_Sun_Vector_X': '>f4', 'Coarse_Sun_Vector_Y': '>f4', 'Coarse_Sun_Vector_Z': '>f4', 'Fine_Sun_Vector_X': '>f4', 'Fine_Sun_Vector_Y': '>f4', 'Fine_Sun_Vector_Z': '>f4', 'Nadir_Vector_X': '>f4', 'Nadir_Vector_Y': '>f4', 'Nadir_Vector_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4', 'Mag_Field_Vector_X': '>f4', 'Mag_Field_Vector_Y': '>f4', 'Mag_Field_Vector_Z': '>f4', 'TC_num': '>i2', 'TM_num': '>i2', 'CommsStat_flags_1': '<B', 'CommsStat_flags_2': '<B', 'CommsStat_flags_3': '<B', 'CommsStat_flags_4': '<B', 'CommsStat_flags_5': '<B', 'CommsStat_flags_6': '<B', 'Wheel1_Current': '>f4', 'Wheel2_Current': '>f4', 'Wheel3_Current': '>f4', 'CubeSense1_Current': '>f4', 'CubeSense2_Current': '>f4', 'CubeControl_Current3v3': '>f4', 'CubeControl_Current5v0': '>f4', 'CubeStar_Current': '>f4', 'CubeStar_Temp': '>f4', 'Magnetorquer_Current': '>f4', 'MCU_Temp': '>f4', 'Rate_Sensor_Temp_X': '>i2', 'Rate_Sensor_Temp_Y': '>i2', 'Rate_Sensor_Temp_Z': '>i2', '###############################\r\nAthena\r\n###############################\r\ntemparray1': '>i4', 'temparray2': '>i4', 'boot_cnt': '>u2', 'last_reset_reason': '<B', 'OBC_mode': '<B', 'OBC_uptime': '>u2', 'solar_panel_supply_curr': '<B', 'OBC_software_ver': '<B', 'cmds_received': '>u2', 'pckts_uncovered_by_FEC': '>u2', '###############################\r\nEPS\r\n###############################\r\ncmd': '<B', 'status': '<b', 'timestamp': '<f8', 'uptimeInS': '<u4', 'bootCnt': '<u4', 'wdt_gs_time_left_s': '<u4', 'wdt_gs_counter': '<u4', 'mpptConverterVoltage1_mV': '<u2', 'mpptConverterVoltage2_mV': '<u2', 'mpptConverterVoltage3_mV': '<u2', 'mpptConverterVoltage4_mV': '<u2', 'curSolarPanels1_mA': '<u2', 'curSolarPanels2_mA': '<u2', 'curSolarPanels3_mA': '<u2', 'curSolarPanels4_mA': '<u2', 'curSolarPanels5_mA': '<u2', 'curSolarPanels6_mA': '<u2', 'curSolarPanels7_mA': '<u2', 'curSolarPanels8_mA': '<u2', 'vBatt_mV': '<u2', 'curSolar_mA': '<u2', 'curBattIn_mA': '<u2', 'curBattOut_mA': '<u2', 'curOutput1_mA': '<u2', 'curOutput2_mA': '<u2', 'curOutput3_mA': '<u2', 'curOutput4_mA': '<u2', 'curOutput5_mA': '<u2', 'curOutput6_mA': '<u2', 'curOutput7_mA': '<u2', 'curOutput8_mA': '<u2', 'curOutput9_mA': '<u2', 'curOutput10_mA': '<u2', 'curOutput11_mA': '<u2', 'curOutput12_mA': '<u2', 'curOutput13_mA': '<u2', 'curOutput14_mA': '<u2', 'curOutput15_mA': '<u2', 'curOutput16_mA': '<u2', 'curOutput17_mA': '<u2', 'curOutput18_mA': '<u2', 'AOcurOutput1_mA': '<u2', 'AOcurOutput2_mA': '<u2', 'outputConverterVoltage1': '<u2', 'outputConverterVoltage2': '<u2', 'outputConverterVoltage3': '<u2', 'outputConverterVoltage4': '<u2', 'outputConverterVoltage5': '<u2', 'outputConverterVoltage6': '<u2', 'outputConverterVoltage7': '<u2', 'outputConverterVoltage8': '<u2', 'outputConverterState': '<B', 'outputStatus': '<u4', 'outputFaultStatus': '<u4', 'protectedOutputAccessCnt': '>u2', 'outputOnDelta1': '<u2', 'outputOnDelta2': '<u2', 'outputOnDelta3': '<u2', 'outputOnDelta4': '<u2', 'outputOnDelta5': '<u2', 'outputOnDelta6': '<u2', 'outputOnDelta7': '<u2', 'outputOnDelta8': '<u2', 'outputOnDelta9': '<u2', 'outputOnDelta10': '<u2', 'outputOnDelta11': '<u2', 'outputOnDelta12': '<u2', 'outputOnDelta13': '<u2', 'outputOnDelta14': '<u2', 'outputOnDelta15': '<u2', 'outputOnDelta16': '<u2', 'outputOnDelta17': '<u2', 'outputOnDelta18': '<u2', 'outputOffDelta1': '<u2', 'outputOffDelta2': '<u2', 'outputOffDelta3': '<u2', 'outputOffDelta4': '<u2', 'outputOffDelta5': '<u2', 'outputOffDelta6': '<u2', 'outputOffDelta7': '<u2', 'outputOffDelta8': '<u2', 'outputOffDelta9': '<u2', 'outputOffDelta10': '<u2', 'outputOffDelta11': '<u2', 'outputOffDelta12': '<u2', 'outputOffDelta13': '<u2', 'outputOffDelta14': '<u2', 'outputOffDelta15': '<u2', 'outputOffDelta16': '<u2', 'outputOffDelta17': '<u2', 'outputOffDelta18': '<u2', 'outputFaultCount1': '<B', 'outputFaultCount2': '<B', 'outputFaultCount3': '<B', 'outputFaultCount4': '<B', 'outputFaultCount5': '<B', 'outputFaultCount6': '<B', 'outputFaultCount7': '<B', 'outputFaultCount8': '<B', 'outputFaultCount9': '<B', 'outputFaultCount10': '<B', 'outputFaultCount11': '<B', 'outputFaultCount12': '<B', 'outputFaultCount13': '<B', 'outputFaultCount14': '<B', 'outputFaultCount15': '<B', 'outputFaultCount16': '<B', 'outputFaultCount17': '<B', 'outputFaultCount18': '<B', 'temp1_c': '<b', 'temp2_c': '<b', 'temp3_c': '<b', 'temp4_c': '<b', 'temp5_c': '<b', 'temp6_c': '<b', 'temp7_c': '<b', 'temp8_c': '<b', 'temp9_c': '<b', 'temp10_c': '<b', 'temp11_c': '<b', 'temp12_c': '<b', 'temp13_c': '<b', 'temp14_c': '<b', 'battMode': '<B', 'mpptMode': '<B', 'battHeaterMode': '<B', 'battHeaterState': '<B', 'PingWdt_toggles': '<u2', 'PingWdt_turnOffs': '<B', '###############################\r\nUHF\r\n###############################\r\nscw1': '<B', 'scw2': '<B', 'scw3': '<B', 'scw4': '<B', 'scw5': '<B', 'scw6': '<B', 'scw7': '<B', 'scw8': '<B', 'scw9': '<B', 'scw10': '<B', 'scw11': '<B', 'scw12': '<B', 'freq': '>u4', 'pipe_t': '>u4', 'beacon_t': '>u4', 'audio_t': '>u4', 'uptime': '>u4', 'pckts_out': '>u4', 'pckts_in': '>u4', 'pckts_in_crc16': '>u4', 'temperature': '>f4', '###############################\r\nSband\r\n###############################\r\nOutput_Power': '>f4', 'PA_Temp': '>f4', 'Top_Temp': '>f4', 'Bottom_Temp': '>f4', 'Bat_Current': '>f4', 'Bat_Voltage': '>f4', 'PA_Current': '>f4', 'PA_Voltage': '>f4', '###############################\r\nHyperion Panels\r\n###############################\r\nNadir_Temp1': '>b', 'Nadir_Temp_Adc': '>b', 'Port_Temp1': '>b', 'Port_Temp2': '>b', 'Port_Temp3': '>b', 'Port_Temp_Adc': '>b', 'Port_Dep_Temp1': '>b', 'Port_Dep_Temp2': '>b', 'Port_Dep_Temp3': '>b', 'Port_Dep_Temp_Adc': '>b', 'Star_Temp1': '>b', 'Star_Temp2': '>b', 'Star_Temp3': '>b', 'Star_Temp_Adc': '>b', 'Star_Dep_Temp1': '>b', 'Star_Dep_Temp2': '>b', 'Star_Dep_Temp3': '>b', 'Star_Dep_Temp_Adc': '>b', 'Zenith_Temp1': '>b', 'Zenith_Temp2': '>b', 'Zenith_Temp3': '>b', 'Zenith_Temp_Adc': '>b', 'Nadir_Pd1': '>B', 'Port_Pd1': '>B', 'Port_Pd2': '>B', 'Port_Pd3': '>B', 'Port_Dep_Pd1': '>B', 'Port_Dep_Pd2': '>B', 'Port_Dep_Pd3': '>B', 'Star_Pd1': '>B', 'Star_Pd2': '>B', 'Star_Pd3': '>B', 'Star_Dep_Pd1': '>B', 'Star_Dep_Pd2': '>B', 'Star_Dep_Pd3': '>B', 'Zenith_Pd1': '>B', 'Zenith_Pd2': '>B', 'Zenith_Pd3': '>B', 'Port_Voltage': '>u2', 'Port_Dep_Voltage': '>u2', 'Star_Voltage': '>u2', 'Star_Dep_Voltage': '>u2', 'Zenith_Voltage': '>u2', 'Port_Current': '>u2', 'Port_Dep_Current': '>u2', 'Star_Current': '>u2', 'Star_Dep_Current': '>u2', 'Zenith_Current': '>u2', '###############################\r\nCharon Interfacing Board\r\n###############################\r\ncrc': '>u2', 'temp1': '>b', 'temp2': '>b', 'temp3': '>b', 'temp4': '>b', 'temp5': '>b', 'temp6': '>b', 'temp7': '>b', 'temp8': '>b', '###############################\r\nDFGM Board\r\n###############################\r\nCore_Voltage': '>u2', 'Sensor_Temperature': '>u2', 'Reference_Temperature': '>u2', 'Board_Temperature': '>u2', 'Positive_Rail_Voltage': '>u2', 'Input_Voltage': '>u2', 'Reference_Voltage': '>u2', 'Input_Current': '>u2', 'Reserved_1': '>u2', 'Reserved_2': '>u2', 'Reserved_3': '>u2', 'Reserved_4': '>u2'}
+		return values: {'err': '>b', '###############################\r\npacket meta\r\n###############################\r\nfinal': '<B', 'UNIXtimestamp': '>u4', 'dataPosition': '>u2', '###############################\r\nADCS\r\n###############################\r\nEstimated_Angular_Rate_X': '>f4', 'Estimated_Angular_Rate_Y': '>f4', 'Estimated_Angular_Rate_Z': '>f4', 'Estimated_Angular_Angle_X': '>f4', 'Estimated_Angular_Angle_Y': '>f4', 'Estimated_Angular_Angle_Z': '>f4', 'Sat_Position_ECI_X': '>f4', 'Sat_Position_ECI_Y': '>f4', 'Sat_Position_ECI_Z': '>f4', 'Sat_Velocity_ECI_X': '>f4', 'Sat_Velocity_ECI_Y': '>f4', 'Sat_Velocity_ECI_Z': '>f4', 'Sat_Position_LLH_X': '>f4', 'Sat_Position_LLH_Y': '>f4', 'Sat_Position_LLH_Z': '>f4', 'ECEF_Position_X': '>i2', 'ECEF_Position_Y': '>i2', 'ECEF_Position_Z': '>i2', 'Coarse_Sun_Vector_X': '>f4', 'Coarse_Sun_Vector_Y': '>f4', 'Coarse_Sun_Vector_Z': '>f4', 'Fine_Sun_Vector_X': '>f4', 'Fine_Sun_Vector_Y': '>f4', 'Fine_Sun_Vector_Z': '>f4', 'Nadir_Vector_X': '>f4', 'Nadir_Vector_Y': '>f4', 'Nadir_Vector_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4', 'Mag_Field_Vector_X': '>f4', 'Mag_Field_Vector_Y': '>f4', 'Mag_Field_Vector_Z': '>f4', 'TC_num': '>i2', 'TM_num': '>i2', 'CommsStat_flags_1': '<B', 'CommsStat_flags_2': '<B', 'CommsStat_flags_3': '<B', 'CommsStat_flags_4': '<B', 'CommsStat_flags_5': '<B', 'CommsStat_flags_6': '<B', 'Wheel1_Current': '>f4', 'Wheel2_Current': '>f4', 'Wheel3_Current': '>f4', 'CubeSense1_Current': '>f4', 'CubeSense2_Current': '>f4', 'CubeControl_Current3v3': '>f4', 'CubeControl_Current5v0': '>f4', 'CubeStar_Current': '>f4', 'CubeStar_Temp': '>f4', 'Magnetorquer_Current': '>f4', 'MCU_Temp': '>f4', 'Rate_Sensor_Temp_X': '>i2', 'Rate_Sensor_Temp_Y': '>i2', 'Rate_Sensor_Temp_Z': '>i2', '###############################\r\nAthena\r\n###############################\r\ntemparray1': '>i4', 'temparray2': '>i4', 'boot_cnt': '>u2', 'last_reset_reason': '<B', 'OBC_mode': '<B', 'OBC_uptime': '>u2', 'solar_panel_supply_curr': '<B', 'OBC_software_ver': '<B', 'cmds_received': '>u2', 'pckts_uncovered_by_FEC': '>u2', '###############################\r\nEPS\r\n###############################\r\ncmd': '<B', 'status': '<b', 'timestamp': '<f8', 'uptimeInS': '<u4', 'bootCnt': '<u4', 'wdt_gs_time_left_s': '<u4', 'wdt_gs_counter': '<u4', 'mpptConverterVoltage1_mV': '<u2', 'mpptConverterVoltage2_mV': '<u2', 'mpptConverterVoltage3_mV': '<u2', 'mpptConverterVoltage4_mV': '<u2', 'curSolarPanels1_mA': '<u2', 'curSolarPanels2_mA': '<u2', 'curSolarPanels3_mA': '<u2', 'curSolarPanels4_mA': '<u2', 'curSolarPanels5_mA': '<u2', 'curSolarPanels6_mA': '<u2', 'curSolarPanels7_mA': '<u2', 'curSolarPanels8_mA': '<u2', 'vBatt_mV': '<u2', 'curSolar_mA': '<u2', 'curBattIn_mA': '<u2', 'curBattOut_mA': '<u2', 'curOutput1_mA': '<u2', 'curOutput2_mA': '<u2', 'curOutput3_mA': '<u2', 'curOutput4_mA': '<u2', 'curOutput5_mA': '<u2', 'curOutput6_mA': '<u2', 'curOutput7_mA': '<u2', 'curOutput8_mA': '<u2', 'curOutput9_mA': '<u2', 'curOutput10_mA': '<u2', 'curOutput11_mA': '<u2', 'curOutput12_mA': '<u2', 'curOutput13_mA': '<u2', 'curOutput14_mA': '<u2', 'curOutput15_mA': '<u2', 'curOutput16_mA': '<u2', 'curOutput17_mA': '<u2', 'curOutput18_mA': '<u2', 'AOcurOutput1_mA': '<u2', 'AOcurOutput2_mA': '<u2', 'outputConverterVoltage1': '<u2', 'outputConverterVoltage2': '<u2', 'outputConverterVoltage3': '<u2', 'outputConverterVoltage4': '<u2', 'outputConverterVoltage5': '<u2', 'outputConverterVoltage6': '<u2', 'outputConverterVoltage7': '<u2', 'outputConverterVoltage8': '<u2', 'outputConverterState': '<B', 'outputStatus': '<u4', 'outputFaultStatus': '<u4', 'protectedOutputAccessCnt': '>u2', 'outputOnDelta1': '<u2', 'outputOnDelta2': '<u2', 'outputOnDelta3': '<u2', 'outputOnDelta4': '<u2', 'outputOnDelta5': '<u2', 'outputOnDelta6': '<u2', 'outputOnDelta7': '<u2', 'outputOnDelta8': '<u2', 'outputOnDelta9': '<u2', 'outputOnDelta10': '<u2', 'outputOnDelta11': '<u2', 'outputOnDelta12': '<u2', 'outputOnDelta13': '<u2', 'outputOnDelta14': '<u2', 'outputOnDelta15': '<u2', 'outputOnDelta16': '<u2', 'outputOnDelta17': '<u2', 'outputOnDelta18': '<u2', 'outputOffDelta1': '<u2', 'outputOffDelta2': '<u2', 'outputOffDelta3': '<u2', 'outputOffDelta4': '<u2', 'outputOffDelta5': '<u2', 'outputOffDelta6': '<u2', 'outputOffDelta7': '<u2', 'outputOffDelta8': '<u2', 'outputOffDelta9': '<u2', 'outputOffDelta10': '<u2', 'outputOffDelta11': '<u2', 'outputOffDelta12': '<u2', 'outputOffDelta13': '<u2', 'outputOffDelta14': '<u2', 'outputOffDelta15': '<u2', 'outputOffDelta16': '<u2', 'outputOffDelta17': '<u2', 'outputOffDelta18': '<u2', 'outputFaultCount1': '<B', 'outputFaultCount2': '<B', 'outputFaultCount3': '<B', 'outputFaultCount4': '<B', 'outputFaultCount5': '<B', 'outputFaultCount6': '<B', 'outputFaultCount7': '<B', 'outputFaultCount8': '<B', 'outputFaultCount9': '<B', 'outputFaultCount10': '<B', 'outputFaultCount11': '<B', 'outputFaultCount12': '<B', 'outputFaultCount13': '<B', 'outputFaultCount14': '<B', 'outputFaultCount15': '<B', 'outputFaultCount16': '<B', 'outputFaultCount17': '<B', 'outputFaultCount18': '<B', 'temp1_c': '<b', 'temp2_c': '<b', 'temp3_c': '<b', 'temp4_c': '<b', 'temp5_c': '<b', 'temp6_c': '<b', 'temp7_c': '<b', 'temp8_c': '<b', 'temp9_c': '<b', 'temp10_c': '<b', 'temp11_c': '<b', 'temp12_c': '<b', 'temp13_c': '<b', 'temp14_c': '<b', 'battMode': '<B', 'mpptMode': '<B', 'battHeaterMode': '<B', 'battHeaterState': '<B', 'PingWdt_toggles': '<u2', 'PingWdt_turnOffs': '<B', '###############################\r\nUHF\r\n###############################\r\nscw1': '<B', 'scw2': '<B', 'scw3': '<B', 'scw4': '<B', 'scw5': '<B', 'scw6': '<B', 'scw7': '<B', 'scw8': '<B', 'scw9': '<B', 'scw10': '<B', 'scw11': '<B', 'scw12': '<B', 'freq': '>u4', 'pipe_t': '>u4', 'beacon_t': '>u4', 'audio_t': '>u4', 'uptime': '>u4', 'pckts_out': '>u4', 'pckts_in': '>u4', 'pckts_in_crc16': '>u4', 'temperature': '>f4', '###############################\r\nSband\r\n###############################\r\nOutput_Power': '>f4', 'PA_Temp': '>f4', 'Top_Temp': '>f4', 'Bottom_Temp': '>f4', 'Bat_Current': '>f4', 'Bat_Voltage': '>f4', 'PA_Current': '>f4', 'PA_Voltage': '>f4', '###############################\r\nHyperion Panels\r\n###############################\r\nNadir_Temp1': '>b', 'Nadir_Temp_Adc': '>b', 'Port_Temp1': '>b', 'Port_Temp2': '>b', 'Port_Temp3': '>b', 'Port_Temp_Adc': '>b', 'Port_Dep_Temp1': '>b', 'Port_Dep_Temp2': '>b', 'Port_Dep_Temp3': '>b', 'Port_Dep_Temp_Adc': '>b', 'Star_Temp1': '>b', 'Star_Temp2': '>b', 'Star_Temp3': '>b', 'Star_Temp_Adc': '>b', 'Star_Dep_Temp1': '>b', 'Star_Dep_Temp2': '>b', 'Star_Dep_Temp3': '>b', 'Star_Dep_Temp_Adc': '>b', 'Zenith_Temp1': '>b', 'Zenith_Temp2': '>b', 'Zenith_Temp3': '>b', 'Zenith_Temp_Adc': '>b', 'Nadir_Pd1': '>B', 'Port_Pd1': '>B', 'Port_Pd2': '>B', 'Port_Pd3': '>B', 'Port_Dep_Pd1': '>B', 'Port_Dep_Pd2': '>B', 'Port_Dep_Pd3': '>B', 'Star_Pd1': '>B', 'Star_Pd2': '>B', 'Star_Pd3': '>B', 'Star_Dep_Pd1': '>B', 'Star_Dep_Pd2': '>B', 'Star_Dep_Pd3': '>B', 'Zenith_Pd1': '>B', 'Zenith_Pd2': '>B', 'Zenith_Pd3': '>B', 'Port_Voltage': '>u2', 'Port_Dep_Voltage': '>u2', 'Star_Voltage': '>u2', 'Star_Dep_Voltage': '>u2', 'Zenith_Voltage': '>u2', 'Port_Current': '>u2', 'Port_Dep_Current': '>u2', 'Star_Current': '>u2', 'Star_Dep_Current': '>u2', 'Zenith_Current': '>u2', '###############################\r\nCharon Interfacing Board\r\n###############################\r\ngps_crc': '>u2', 'charon_temp1': '>b', 'charon_temp2': '>b', 'charon_temp3': '>b', 'charon_temp4': '>b', 'charon_temp5': '>b', 'charon_temp6': '>b', 'charon_temp7': '>b', 'charon_temp8': '>b', '###############################\r\nDFGM Board\r\n###############################\r\nCore_Voltage': '>u2', 'Sensor_Temperature': '>u2', 'Reference_Temperature': '>u2', 'Board_Temperature': '>u2', 'Positive_Rail_Voltage': '>u2', 'Input_Voltage': '>u2', 'Reference_Voltage': '>u2', 'Input_Current': '>u2', 'Reserved_1': '>u2', 'Reserved_2': '>u2', 'Reserved_3': '>u2', 'Reserved_4': '>u2', '###############################\r\nNorthern SPIRIT\r\n###############################\r\nns_temp0': '>i2', 'ns_temp1': '>i2', 'ns_temp2': '>i2', 'ns_temp3': '>i2', 'eNIM0_lux': '>i2', 'eNIM1_lux': '>i2', 'eNIM2_lux': '>i2', 'ram_avail': '>i2', 'lowest_img_num': '>i2', 'first_blank_img_num': '>i2'}
 		port: 17		subport: 0
 
 
 HOUSEKEEPING.SET_MAX_FILES:
-		About: None
+		About: Set max number of hk entries to store
 		Arguments: [<u2]
 		return values: {'err': '>b'}
 		port: 17		subport: 1
 
 
 HOUSEKEEPING.GET_MAX_FILES:
-		About: None
+		About: Get max number of hk entries to store
 		Arguments: [None]
 		return values: {'err': '>b', 'max': '>u2'}
 		port: 17		subport: 2
@@ -738,35 +752,35 @@ UPDATER.VERIFY_GOLDEN:
 
 
 LOGGER.GET_FILE:
-		About: None
+		About: Get contents of log file
 		Arguments: []
 		return values: {'err': '>b', 'log': '>S500'}
 		port: 13		subport: 0
 
 
 LOGGER.GET_OLD_FILE:
-		About: None
+		About: Get contents of old log file
 		Arguments: [None]
 		return values: {'err': '>b', 'log': '>S500'}
 		port: 13		subport: 1
 
 
 LOGGER.SET_FILE_SIZE:
-		About: None
+		About: Set the size of the logger files.
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 13		subport: 3
 
 
 LOGGER.GET_FILE_SIZE:
-		About: None
+		About: Get the size of the logger files.
 		Arguments: [None]
 		return values: {'err': '>b', 'size': '>u4'}
 		port: 13		subport: 2
 
 
 CLI.SEND_CMD:
-		About: None
+		About: Send command over the sat_cli.
 		Arguments: [B, a128]
 		return values: None
 		port: 14		subport: 0
@@ -880,7 +894,7 @@ ADCS.ADCS_GET_NODE_IDENTIFICATION:
 ADCS.ADCS_GET_BOOT_PROGRAM_STAT:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Mcu_Reset_Cause': '>u1', 'Boot_Cause': '>u1', 'Boot_Count': '>u2', 'Boot_Idx': '>u1'}
+		return values: {'err': '>b', 'Mcu_Reset_Cause': '>u1', 'Boot_Cause': '>u1', 'Boot_Count': '>u2', 'Boot_Idx': '>u1', 'Major_Firm_Ver': '>u1', 'Minor_Firm_Ver': '>u1'}
 		port: 18		subport: 15
 
 
@@ -971,7 +985,7 @@ ADCS.ADCS_GET_EDAC_ERR_COUNT:
 ADCS.ADCS_GET_COMMS_STAT:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Comm_Status': '>u2'}
+		return values: {'err': '>b', 'TC_num': '>u2', 'TM_num': '>u2', 'CommsStat_flags_1': '<B', 'CommsStat_flags_2': '<B', 'CommsStat_flags_3': '<B', 'CommsStat_flags_4': '<B', 'CommsStat_flags_5': '<B', 'CommsStat_flags_6': '<B'}
 		port: 18		subport: 28
 
 
@@ -1083,7 +1097,7 @@ ADCS.ADCS_COPY_PROGRAM_INTERNAL_FLASH:
 ADCS.ADCS_GET_BOOTLOADER_STATE:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Uptime': '>u2', 'Flags_arr': '>u1'}
+		return values: {'err': '>b', 'Uptime': '>u2', 'Flags_arr_1': '>u1', 'Flags_arr_2': '>u1', 'Flags_arr_3': '>u1', 'Flags_arr_4': '>u1', 'Flags_arr_5': '>u1', 'Flags_arr_6': '>u1', 'Flags_arr_7': '>u1', 'Flags_arr_8': '>u1', 'Flags_arr_9': '>u1', 'Flags_arr_10': '>u1', 'Flags_arr_11': '>u1', 'Flags_arr_12': '>u1'}
 		port: 18		subport: 44
 
 
@@ -1122,7 +1136,7 @@ ADCS.ADCS_CLEAR_LATCHED_ERRS:
 		port: 18		subport: 49
 
 
-ADCS.ADCS_SET_ATTITUDE_CTR_MODE:
+ADCS.ADCS_SET_ATTITUDE_CONTROL_MODE:
 		About: None
 		Arguments: [>u1, >u2]
 		return values: {'err': '>b'}
@@ -1185,6 +1199,20 @@ ADCS.ADCS_SAVE_IMG:
 		port: 18		subport: 58
 
 
+ADCS.ADCS_SET_MAGNETORQUER_OUTPUT:
+		About: None
+		Arguments: [>u2, >u2, >u2]
+		return values: {'err': '>b'}
+		port: 18		subport: 59
+
+
+ADCS.ADCS_SET_WHEEL_SPEED:
+		About: None
+		Arguments: [>u2, >u2, >u2]
+		return values: {'err': '>b'}
+		port: 18		subport: 60
+
+
 ADCS.ADCS_SAVE_CONFIG:
 		About: None
 		Arguments: [None]
@@ -1199,6 +1227,13 @@ ADCS.ADCS_SAVE_ORBIT_PARAMS:
 		port: 18		subport: 62
 
 
+ADCS.ADCS_GET_CURRENT_STATE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'att_estimate_mode': '>B', 'att_ctrl_mode': '>B', 'run_mode': '>B', 'ASGP4_mode': '>B', 'flags_arr_1': '>B', 'flags_arr_2': '>B', 'flags_arr_3': '>B', 'flags_arr_4': '>B', 'flags_arr_5': '>B', 'flags_arr_6': '>B', 'flags_arr_7': '>B', 'flags_arr_8': '>B', 'flags_arr_9': '>B', 'flags_arr_10': '>B', 'flags_arr_11': '>B', 'flags_arr_12': '>B', 'flags_arr_13': '>B', 'flags_arr_14': '>B', 'flags_arr_15': '>B', 'flags_arr_16': '>B', 'flags_arr_17': '>B', 'flags_arr_18': '>B', 'flags_arr_19': '>B', 'flags_arr_20': '>B', 'flags_arr_21': '>B', 'flags_arr_22': '>B', 'flags_arr_23': '>B', 'flags_arr_24': '>B', 'flags_arr_25': '>B', 'flags_arr_26': '>B', 'flags_arr_27': '>B', 'flags_arr_28': '>B', 'flags_arr_29': '>B', 'flags_arr_30': '>B', 'flags_arr_31': '>B', 'flags_arr_32': '>B', 'flags_arr_33': '>B', 'flags_arr_34': '>B', 'flags_arr_35': '>B', 'flags_arr_36': '>B', 'flags_arr_37': '>B', 'flags_arr_38': '>B', 'flags_arr_39': '>B', 'flags_arr_40': '>B', 'flags_arr_41': '>B', 'flags_arr_42': '>B', 'flags_arr_43': '>B', 'flags_arr_44': '>B', 'flags_arr_45': '>B', 'flags_arr_46': '>B', 'flags_arr_47': '>B', 'flags_arr_48': '>B', 'flags_arr_49': '>B', 'flags_arr_50': '>B', 'flags_arr_51': '>B', 'flags_arr_52': '>B', 'MTM_sample_mode': '>B', 'est_angle_x': '>f4', 'est_angle_y': '>f4', 'est_angle_z': '>f4', 'est_quaternion_x': '>i2', 'est_quaternion_y': '>i2', 'est_quaternion_z': '>i2', 'est_angular_rate_x': '>f4', 'est_angular_rate_y': '>f4', 'est_angular_rate_z': '>f4', 'ECI_pos_x': '>f4', 'ECI_pos_y': '>f4', 'ECI_pos_z': '>f4', 'ECI_vel_x': '>f4', 'ECI_vel_y': '>f4', 'ECI_vel_z': '>f4', 'Latitude': '>f4', 'Longitude': '>f4', 'Altitude': '>f4', 'ecef_pos_x': '>i2', 'ecef_pos_y': '>i2', 'ecef_pos_z': '>i2'}
+		port: 18		subport: 63
+
+
 ADCS.ADCS_GET_JPG_CNV_PROGESS:
 		About: None
 		Arguments: [None]
@@ -1209,21 +1244,21 @@ ADCS.ADCS_GET_JPG_CNV_PROGESS:
 ADCS.ADCS_GET_CUBEACP_STATE:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Flags_Arr': '>u1'}
+		return values: {'err': '>b', 'Flags_Arr_1': '>u1', 'Flags_Arr_2': '>u1', 'Flags_Arr_3': '>u1', 'Flags_Arr_4': '>u1', 'Flags_Arr_5': '>u1', 'Flags_Arr_6': '>u1'}
 		port: 18		subport: 65
 
 
 ADCS.ADCS_GET_SAT_POS_LLH:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'X': '>f4', 'Y': '>f4', 'Z': '>f4'}
+		return values: {'err': '>b', 'X': '>i2', 'Y': '>i2', 'Z': '>u2'}
 		port: 18		subport: 66
 
 
 ADCS.ADCS_GET_EXECUTION_TIMES:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Adcs_Update': '>u2', 'Sensor_Comm': '>u2', 'Sgp4_propag': '>u2', 'Igrf_model': '>u2'}
+		return values: {'err': '>b', 'Adcs_Update': '>u2', 'Sensor_Comm': '>u2', 'SGP4_propag': '>u2', 'IGRF_model': '>u2'}
 		port: 18		subport: 67
 
 
@@ -1244,35 +1279,35 @@ ADCS.ADCS_GET_IMG_SAVE_PROGRESS:
 ADCS.ADCS_GET_MEASUREMENTS:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Magnetic_field_X': 'f4', 'Magnetic_field_Y': 'f4', 'Magnetic_field_Z': 'f4', 'Coarse_Sun_X': 'f4', 'Coarse_Sun_Y': 'f4', 'Coarse_Sun_Z': 'f4', 'Sun_X': 'f4', 'Sun_Y': 'f4', 'Sun_Z': 'f4', 'Nadir_X': 'f4', 'Nadir_Y': 'f4', 'Nadir_Z': 'f4', 'Angular_Rate_X': 'f4', 'Angular_Rate_Y': 'f4', 'Angular_Rate_Z': 'f4', 'Wheel_Speed_X': 'f4', 'Wheel_Speed_Y': 'f4', 'Wheel_Speed_Z': 'f4', 'Star1b_X': 'f4', 'Star1b_Y': 'f4', 'Star1b_Z': 'f4', 'Star1o_X': 'f4', 'Star1o_Y': 'f4', 'Star1o_Z': 'f4', 'Star2b_X': 'f4', 'Star2b_Y': 'f4', 'Star2b_Z': 'f4', 'Star2o_X': 'f4', 'Star2o_Y': 'f4', 'Star2o_Z': 'f4', 'Star3b_X': 'f4', 'Star3b_Y': 'f4', 'Star3b_Z': 'f4', 'Star3o_X': 'f4', 'Star3o_Y': 'f4', 'Star3o_Z': 'f4'}
+		return values: {'err': '>b', 'Magnetic_field_X': '>f4', 'Magnetic_field_Y': '>f4', 'Magnetic_field_Z': '>f4', 'Coarse_Sun_X': '>f4', 'Coarse_Sun_Y': '>f4', 'Coarse_Sun_Z': '>f4', 'Sun_X': '>f4', 'Sun_Y': '>f4', 'Sun_Z': '>f4', 'Nadir_X': '>f4', 'Nadir_Y': '>f4', 'Nadir_Z': '>f4', 'Angular_Rate_X': '>f4', 'Angular_Rate_Y': '>f4', 'Angular_Rate_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4', 'Star1b_X': '>f4', 'Star1b_Y': '>f4', 'Star1b_Z': '>f4', 'Star1o_X': '>f4', 'Star1o_Y': '>f4', 'Star1o_Z': '>f4', 'Star2b_X': '>f4', 'Star2b_Y': '>f4', 'Star2b_Z': '>f4', 'Star2o_X': '>f4', 'Star2o_Y': '>f4', 'Star2o_Z': '>f4', 'Star3b_X': '>f4', 'Star3b_Y': '>f4', 'Star3b_Z': '>f4', 'Star3o_X': '>f4', 'Star3o_Y': '>f4', 'Star3o_Z': '>f4'}
 		port: 18		subport: 70
 
 
 ADCS.ADCS_GET_ACTUATOR:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Magnetorquer_X': '>f4', 'Magnetorquer_Y': '>f4', 'Magnetorquer_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4'}
+		return values: {'err': '>b', 'Magnetorquer_X_ms/1000': '>f4', 'Magnetorquer_Y_ms/1000': '>f4', 'Magnetorquer_Z_ms/1000': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4'}
 		port: 18		subport: 71
 
 
 ADCS.ADCS_GET_ESTIMATION:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Igrf_magnetic_field_X': 'f4', 'Igrf_magnetic_field_Y': 'f4', 'Igrf_magnetic_field_Z': 'f4', 'Sun_X': 'f4', 'Sun_Y': 'f4', 'Sun_Z': 'f4', 'Gyro_bias_X': 'f4', 'Gyro_bias_Y': 'f4', 'Gyro_bias_Z': 'f4', 'Innovation_X': 'f4', 'Innovation_Y': 'f4', 'Innovation_Z': 'f4', 'Quaternion_Err_X': 'f4', 'Quaternion_Err_Y': 'f4', 'Quaternion_Err_Z': 'f4', 'Quaternion_Covar_X': 'f4', 'Angular_Rate_Covar_X': 'f4', 'Angular_Rate_Covar_Y': 'f4', 'Angular_Rate_Covar_Z': 'f4'}
+		return values: {'err': '>b', 'Igrf_magnetic_field_X': '>f4', 'Igrf_magnetic_field_Y': '>f4', 'Igrf_magnetic_field_Z': '>f4', 'Sun_X': '>f4', 'Sun_Y': '>f4', 'Sun_Z': '>f4', 'Gyro_bias_X': '>f4', 'Gyro_bias_Y': '>f4', 'Gyro_bias_Z': '>f4', 'Innovation_X': '>f4', 'Innovation_Y': '>f4', 'Innovation_Z': '>f4', 'Quaternion_Err_X': '>f4', 'Quaternion_Err_Y': '>f4', 'Quaternion_Err_Z': '>f4', 'Quaternion_Covar_X': '>f4', 'Angular_Rate_Covar_X': '>f4', 'Angular_Rate_Covar_Y': '>f4', 'Angular_Rate_Covar_Z': '>f4'}
 		port: 18		subport: 72
 
 
 ADCS.ADCS_GET_ASGP4:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Epoch': 'f4', 'Inclination': 'f4', 'RAAN': 'f4', 'ECC': 'f4', 'AOP': 'f4', 'MA': 'f4', 'MM': 'f4', 'Bstar': 'f4'}
+		return values: {'err': '>b', 'Epoch': '>f4', 'Inclination': '>f4', 'RAAN': '>f4', 'ECC': '>f4', 'AOP': '>f4', 'MA': '>f4', 'MM': '>f4', 'Bstar': '>f4'}
 		port: 18		subport: 73
 
 
 ADCS.ADCS_GET_RAW_SENSOR:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Cam1_Centroid_X': '>i2', 'Cam1_Centroid_Y': '>i2', 'Cam1_Capture_Stat': '>u1', 'Cam1_Detect_Result': '>u1', 'Cam2_Centroid_X': '>i2', 'Cam2_Centroid_Y': '>i2', 'Cam2_Capture_Stat': '>u1', 'Cam2_Detect_Result': '>u1', 'Css': '>O20', 'MTM_X': 'f8', 'MTM_Y': 'f8', 'MTM_Z': 'f8', 'Rate_X': 'f8', 'Rate_Y': 'f8', 'Rate_Z': 'f8'}
+		return values: {'err': '>b', 'Cam1_Centroid_X': '>i2', 'Cam1_Centroid_Y': '>i2', 'Cam1_Capture_Stat': '>u1', 'Cam1_Detect_Result': '>u1', 'Cam2_Centroid_X': '>i2', 'Cam2_Centroid_Y': '>i2', 'Cam2_Capture_Stat': '>u1', 'Cam2_Detect_Result': '>u1', 'Css_1': '>u1', 'Css_2': '>u1', 'Css_3': '>u1', 'Css_4': '>u1', 'Css_5': '>u1', 'Css_6': '>u1', 'Css_7': '>u1', 'Css_8': '>u1', 'Css_9': '>u1', 'Css_10': '>u1', 'MTM_X': '>i2', 'MTM_Y': '>i2', 'MTM_Z': '>i2', 'Rate_X': '>i2', 'Rate_Y': '>i2', 'Rate_Z': '>i2'}
 		port: 18		subport: 74
 
 
@@ -1306,15 +1341,15 @@ ADCS.ADCS_GET_POWER_TEMP:
 
 ADCS.ADCS_SET_POWER_CONTROL:
 		About: None
-		Arguments: [>u1]
-		return values: {'err': '>b', 'Control': '>u1'}
+		Arguments: [>u1, u1, >u1, u1, >u1, u1, >u1, u1, >u1, u1]
+		return values: {'err': '>b'}
 		port: 18		subport: 79
 
 
 ADCS.ADCS_GET_POWER_CONTROL:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'Control': '>u1'}
+		return values: {'err': '>b', 'CubeCTRLSgn': '>u1', 'CubeCTRLMtr': '>u1', 'CubeSense1': '>u1', 'CubeSense2': '>u1', 'CubeStar': '>u1', 'CubeWheel1': '>u1', 'CubeWheel2': '>u1', 'CubeWheel3': '>u1', 'Motor': '>u1', 'GPS': '>u1'}
 		port: 18		subport: 80
 
 
@@ -1348,15 +1383,15 @@ ADCS.ADCS_GET_TRACK_CONTROLLER:
 
 ADCS.ADCS_SET_LOG_CONFIG:
 		About: None
-		Arguments: [>O20, >u2]
+		Arguments: [>u2, >B, >B, >S30]
 		return values: {'err': '>b'}
 		port: 18		subport: 85
 
 
 ADCS.ADCS_GET_LOG_CONFIG:
 		About: None
-		Arguments: [None]
-		return values: {'err': '>b', 'Flag_arr': '>O20', 'Period': '>u2', 'Dest': '>u1', 'Log': '>u1'}
+		Arguments: [>B]
+		return values: {'err': '>b', 'Flags_arr': '>V80', 'Period': '>u2', 'Dest': '>u1', 'Log': '>u1'}
 		port: 18		subport: 86
 
 
@@ -1411,8 +1446,8 @@ ADCS.ADCS_SET_MTQ_CONFIG:
 
 ADCS.ADCS_SET_RW_CONFIG:
 		About: None
-		Arguments: [>u1]
-		return values: {'err': '>b', 'RW': '>u1'}
+		Arguments: [>u1, >u1, >u1, >u1]
+		return values: {'err': '>b'}
 		port: 18		subport: 94
 
 
@@ -1425,7 +1460,7 @@ ADCS.ADCS_SET_RATE_GYRO:
 
 ADCS.ADCS_SET_CSS_CONFIG:
 		About: None
-		Arguments: [>O20, >O20, >u1]
+		Arguments: [>B, >B, >B, >B, >B, >B, >B, >B, >B, >B, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >B]
 		return values: {'err': '>b'}
 		port: 18		subport: 96
 
@@ -1439,14 +1474,14 @@ ADCS.ADCS_SET_STAR_TRACK_CONFIG:
 
 ADCS.ADCS_SET_CUBESENSE_CONFIG:
 		About: None
-		Arguments: [None]
+		Arguments: [>S30]
 		return values: {'err': '>b'}
 		port: 18		subport: 98
 
 
 ADCS.ADCS_SET_MTM_CONFIG:
-		About: None
-		Arguments: [>f4, >f4, >f4, >f4, >f4, >f4, >O20]
+		About: Sets the magnetometer configuration parameters. Input: Angle xyz (floats), channel_offset xyz (floats), sensitivity matrix (s11,s22,s33,s12,s13,s21,s23,s31,s32)
+		Arguments: [>f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4, >f4]
 		return values: {'err': '>b'}
 		port: 18		subport: 99
 
@@ -1465,78 +1500,85 @@ ADCS.ADCS_SET_YWHEEL_CONFIG:
 		port: 18		subport: 101
 
 
+ADCS.ADCS_SET_RWHEEL_CONFIG:
+		About: None
+		Arguments: [>f4, >f4, >f4, >B, >B]
+		return values: {'err': '>b'}
+		port: 18		subport: 102
+
+
 ADCS.ADCS_SET_TRACKING_CONFIG:
 		About: None
 		Arguments: [>f4, >f4, >f4, >u1]
 		return values: {'err': '>b'}
-		port: 18		subport: 102
+		port: 18		subport: 103
 
 
 ADCS.ADCS_SET_MOI_MAT:
 		About: None
 		Arguments: [>f4, >f4, >f4, >f4, >f4, >f4]
 		return values: {'err': '>b'}
-		port: 18		subport: 103
+		port: 18		subport: 104
 
 
 ADCS.ADCS_SET_ESTIMATION_CONFIG:
 		About: None
-		Arguments: [>f4, >f4, >f4, >f4, >f4, >f4, >f4, >u1, >u1, >u1, >u1]
+		Arguments: [>f4, >f4, >f4, >f4, >f4, >f4, >f4, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1, >u1]
 		return values: {'err': '>b'}
-		port: 18		subport: 104
+		port: 18		subport: 105
 
 
 ADCS.ADCS_SET_USERCODED_SETTING:
 		About: None
 		Arguments: [>O20, >O20]
 		return values: {'err': '>b'}
-		port: 18		subport: 105
+		port: 18		subport: 106
 
 
 ADCS.ADCS_SET_ASGP4_SETTING:
 		About: None
 		Arguments: [>f4, >f4, >f4, >f4, >f4, >f4, >f4, >u1, >f4, >f4, >u1, >f4, >f4, >u1, >f4, >f4, >u2]
 		return values: {'err': '>b'}
-		port: 18		subport: 106
+		port: 18		subport: 107
 
 
 ADCS.ADCS_GET_FULL_CONFIG:
 		About: None
 		Arguments: [None]
-		return values: {'err': '>b', 'ADCS_config': '>O20'}
-		port: 18		subport: 107
+		return values: {'err': '>b', 'MTQ_x': '>B', 'MTQ_y': '>B', 'MTQ_z': '>B', 'RW1': '>B', 'RW2': '>B', 'RW3': '>B', 'RW4': '>B', 'gyro_x': '>B', 'gyro_y': '>B', 'gyro_z': '>B', 'sensor_offset_x': '>f4', 'sensor_offset_y': '>f4', 'sensor_offset_z': '>f4', 'rate_sensor_mult': '>B', 'css_config1': '>B', 'css_config2': '>B', 'css_config3': '>B', 'css_config4': '>B', 'css_config5': '>B', 'css_config6': '>B', 'css_config7': '>B', 'css_config8': '>B', 'css_config9': '>B', 'css_config10': '>B', 'css_relscale1': '>f4', 'css_relscale2': '>f4', 'css_relscale3': '>f4', 'css_relscale4': '>f4', 'css_relscale5': '>f4', 'css_relscale6': '>f4', 'css_relscale7': '>f4', 'css_relscale8': '>f4', 'css_relscale9': '>f4', 'css_relscale10': '>f4', 'css_threshold': '>B', 'cs1_mnt_angle_x': '>f4', 'cs1_mnt_angle_y': '>f4', 'cs1_mnt_angle_z': '>f4', 'cs1_detect_th': '>B', 'cs1_auto_adjust': '>?', 'cs1_exposure_t': '>u2', 'cs1_boresight_x': '>f4', 'cs1_boresight_y': '>f4', 'cs2_mnt_angle_x': '>f4', 'cs2_mnt_angle_y': '>f4', 'cs2_mnt_angle_z': '>f4', 'cs2_detect_th': '>B', 'cs2_auto_adjust': '>?', 'cs2_exposure_t': '>u2', 'cs2_boresight_x': '>f4', 'cs2_boresight_y': '>f4', 'nadir_max_deviate': '>B', 'nadir_max_bad_edge': '>B', 'nadir_max_radius': '>B', 'nadir_min_radius': '>B', 'cam1_area_1_x_min': '>u2', 'cam1_area_1_x_max': '>u2', 'cam1_area_1_y_min': '>u2', 'cam1_area_1_y_max': '>u2', 'cam1_area_2_x_min': '>u2', 'cam1_area_2_x_max': '>u2', 'cam1_area_2_y_min': '>u2', 'cam1_area_2_y_max': '>u2', 'cam1_area_3_x_min': '>u2', 'cam1_area_3_x_max': '>u2', 'cam1_area_3_y_min': '>u2', 'cam1_area_3_y_max': '>u2', 'cam1_area_4_x_min': '>u2', 'cam1_area_4_x_max': '>u2', 'cam1_area_4_y_min': '>u2', 'cam1_area_4_y_max': '>u2', 'cam1_area_5_x_min': '>u2', 'cam1_area_5_x_max': '>u2', 'cam1_area_5_y_min': '>u2', 'cam1_area_5_y_max': '>u2', 'cam2_area_1_x_min': '>u2', 'cam2_area_1_x_max': '>u2', 'cam2_area_1_y_min': '>u2', 'cam2_area_1_y_max': '>u2', 'cam2_area_2_x_min': '>u2', 'cam2_area_2_x_max': '>u2', 'cam2_area_2_y_min': '>u2', 'cam2_area_2_y_max': '>u2', 'cam2_area_3_x_min': '>u2', 'cam2_area_3_x_max': '>u2', 'cam2_area_3_y_min': '>u2', 'cam2_area_3_y_max': '>u2', 'cam2_area_4_x_min': '>u2', 'cam2_area_4_x_max': '>u2', 'cam2_area_4_y_min': '>u2', 'cam2_area_4_y_max': '>u2', 'cam2_area_5_x_min': '>u2', 'cam2_area_5_x_max': '>u2', 'cam2_area_5_y_min': '>u2', 'cam2_area_5_y_max': '>u2', 'MTM1_mount_angle_x': '>f4', 'MTM1_mount_angle_y': '>f4', 'MTM1_mount_angle_z': '>f4', 'MTM1_channel_offset_x': '>f4', 'MTM1_channel_offset_y': '>f4', 'MTM1_channel_offset_z': '>f4', 'MTM1_sensitivity_mat_1': '>f4', 'MTM1_sensitivity_mat_2': '>f4', 'MTM1_sensitivity_mat_3': '>f4', 'MTM1_sensitivity_mat_4': '>f4', 'MTM1_sensitivity_mat_5': '>f4', 'MTM1_sensitivity_mat_6': '>f4', 'MTM1_sensitivity_mat_7': '>f4', 'MTM1_sensitivity_mat_8': '>f4', 'MTM1_sensitivity_mat_9': '>f4', 'MTM2_mount_angle_x': '>f4', 'MTM2_mount_angle_y': '>f4', 'MTM2_mount_angle_z': '>f4', 'MTM2_channel_offset_x': '>f4', 'MTM2_channel_offset_y': '>f4', 'MTM2_channel_offset_z': '>f4', 'MTM2_sensitivity_mat_1': '>f4', 'MTM2_sensitivity_mat_2': '>f4', 'MTM2_sensitivity_mat_3': '>f4', 'MTM2_sensitivity_mat_4': '>f4', 'MTM2_sensitivity_mat_5': '>f4', 'MTM2_sensitivity_mat_6': '>f4', 'MTM2_sensitivity_mat_7': '>f4', 'MTM2_sensitivity_mat_8': '>f4', 'MTM2_sensitivity_mat_9': '>f4', 'cubestar_mounting_angle_x': '>f4', 'cubestar_mounting_angle_y': '>f4', 'cubestar_mounting_angle_z': '>f4', 'cubestar_exposure_t': '>u2', 'cubestar_analog_gain': '>u2', 'cubestar_detect_th': '>B', 'cubestar_star_th': '>B', 'cubestar_max_star_matched': '>B', 'cubestar_detect_timeout_t': '>u2', 'cubestar_max_pixel': '>B', 'cubestar_min_pixel': '>B', 'cubestar_err_margin': '>B', 'cubestar_delay_t': '>u2', 'cubestar_centroid_x': '>f4', 'cubestar_centroid_y': '>f4', 'cubestar_focal_len': '>f4', 'cubestar_radical_distor_1': '>f4', 'cubestar_radical_distor_2': '>f4', 'cubestar_tangent_distor_1': '>f4', 'cubestar_tangent_distor_2': '>f4', 'cubestar_window_wid': '>B', 'cubestar_track_margin': '>B', 'cubestar_valid_margin': '>B', 'cubestar_module_en': '>?', 'cubestar_loc_predict_en': '>?', 'cubestar_search_wid': '>B', 'detumble_spin_gain': '>f4', 'detumble_damping_gain': '>f4', 'detumble_spin_rate': '>f4', 'detumble_fast_bDot': '>f4', 'ywheel_control_gain': '>f4', 'ywheel_damping_gain': '>f4', 'ywheel_proportional_gain': '>f4', 'ywheel_derivative_gain': '>f4', 'ywheel_reference': '>f4', 'rwheel_proportional_gain': '>f4', 'rwheel_derivative_gain': '>f4', 'rwheel_bias_moment': '>f4', 'rwheel_sun_point_facet': '>B', 'rwheel_auto_transit': '>?', 'tracking_proportional_gain': '>f4', 'tracking_derivative_gain': '>f4', 'tracking_integral_gain': '>f4', 'tracking_target_facet': '>B', 'MoI_config_diag_x': '>f4', 'MoI_config_diag_y': '>f4', 'MoI_config_diag_z': '>f4', 'MoI_config_nondiag_x': '>f4', 'MoI_config_nondiag_y': '>f4', 'MoI_config_nondiag_z': '>f4', 'est_MTM_rate_noise': '>f4', 'est_EKF_noise': '>f4', 'est_CSS_noise': '>f4', 'est_sun_sensor_noise': '>f4', 'est_nadir_sensor_noise': '>f4', 'est_MTM_noise': '>f4', 'est_star_track_noise': '>f4', 'est_select_arr_1': '>B', 'est_select_arr_2': '>B', 'est_select_arr_3': '>B', 'est_select_arr_4': '>B', 'est_select_arr_5': '>B', 'est_select_arr_6': '>B', 'est_select_arr_7': '>B', 'est_select_arr_8': '>B', 'est_MTM_mode': '>B', 'est_MTM_select': '>B', 'est_cam_sample_period': '>B', 'asgp4_inclination': '>f4', 'asgp4_RAAN': '>f4', 'asgp4_ECC': '>f4', 'asgp4_AoP': '>f4', 'asgp4_time': '>f4', 'asgp4_pos': '>f4', 'asgp4_max_pos_err': '>f4', 'asgp4_filter': '>B', 'asgp4_xp': '>f4', 'asgp4_yp': '>f4', 'asgp4_gps_rollover': '>B', 'asgp4_pos_sd': '>f4', 'asgp4_vel_sd': '>f4', 'asgp4_min_stat': '>B', 'asgp4_time_gain': '>f4', 'asgp4_max_lag': '>f4', 'asgp4_min_samples': '>u2', 'usercoded_controller': '>V48', 'usercoded_estimator': '>V48'}
+		port: 18		subport: 108
 
 
 ADCS.ADCS_DOWNLOAD_FILE_LIST_TO_OBC:
 		About: Saves information about files stored on the ADCS to the OBC. File name VOL0:/adcs/adcs_file_list.txt
 		Arguments: [None]
 		return values: {'err': '>b'}
-		port: 18		subport: 108
-
-
-ADCS.ADCS_DOWNLOAD_FILE_TO_OBC:
-		About: Saves a specified file from the ADCS to the OBC. Inputs args type, counter, size, and OBC file name.
-		Arguments: [>B, B, >u4, >S30]
-		return values: {'err': '>b'}
 		port: 18		subport: 109
 
 
+ADCS.ADCS_DOWNLOAD_FILE_TO_OBC:
+		About: Saves a file from the ADCS to the OBC. Inputs: type, counter, size, and OBC file name. (Be patient and check the log for return.)
+		Arguments: [>B, B, >u4, >S30]
+		return values: {'err': '>b'}
+		port: 18		subport: 110
+
+
 DFGM.DFGM_RUN:
-		About: None
+		About: Record DFGM data for specified number of seconds.
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 19		subport: 0
 
 
 DFGM.DFGM_START:
-		About: None
+		About: Start recording DFGM data
 		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 19		subport: 1
 
 
 DFGM.DFGM_STOP:
-		About: None
+		About: Stop recording DFGM data.
 		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 19		subport: 2
@@ -1582,5 +1624,61 @@ FTP_COMMAND.FTP_UPLOAD_PACKET:
 		Arguments: [>b]
 		return values: {'err': '>b'}
 		port: 20		subport: 4
+
+
+NS_PAYLOAD.UPLOAD_ARTWORK:
+		About: Send artwork from the OBC to the payload. Input: file name, limited to 7 chars!
+		Arguments: [>S10]
+		return values: {'err': '>b'}
+		port: 22		subport: 0
+
+
+NS_PAYLOAD.CAPTURE_IMAGE:
+		About: Tell the payload to display artwork and capture an image.
+		Arguments: [None]
+		return values: {'err': '>b', 'confirmation_err': '>B'}
+		port: 22		subport: 1
+
+
+NS_PAYLOAD.CONFIRM_DOWNLINK:
+		About: Let the payload know that the last image it took was received by the ground and can be deleted.
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 22		subport: 2
+
+
+NS_PAYLOAD.GET_HEARTBEAT:
+		About: Receive a ping (char h) from the payload
+		Arguments: [None]
+		return values: {'err': '>b', 'heartbeat': '>S1'}
+		port: 22		subport: 3
+
+
+NS_PAYLOAD.GET_FLAG:
+		About: Get the status of a payload flag. Input: flag/subcode decimal value.
+		Arguments: [>B]
+		return values: {'err': '>b', 'flag_stat': '>B'}
+		port: 22		subport: 4
+
+
+NS_PAYLOAD.GET_FILENAME:
+		About: Get a desired image/artwork file name. Input: subcode demimal value.
+		Arguments: [>B]
+		return values: {'err': '>b', 'filename': '>S11'}
+		port: 22		subport: 5
+
+
+NS_PAYLOAD.GET_TELEMETRY:
+		About: Get telemetry data from the payload
+		Arguments: [None]
+		return values: {'err': '>b', 'temp0': '>i2', 'temp1': '>i2', 'temp2': '>i2', 'temp3': '>i2', 'eNIM0_lux': '>i2', 'eNIM1_lux': '>i2', 'eNIM2_lux': '>i2', 'ram_avail': '>i2', 'lowest_img_num': '>i2', 'first_blank_img_num': '>i2'}
+		port: 22		subport: 6
+
+
+NS_PAYLOAD.GET_SW_VERSION:
+		About: Get payload software version.
+		Arguments: [None]
+		return values: {'err': '>b', 'version': '>S7'}
+		port: 22		subport: 7
 
 
