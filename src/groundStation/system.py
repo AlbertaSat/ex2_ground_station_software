@@ -1435,7 +1435,7 @@ class SystemValues(object):
                                 'eNIM2_lux': '>i2',
                                 'ram_avail': '>i2',
                                 'lowest_img_num': '>i2',
-                                'first_blank_img_num': '>i2'
+                                'first_blank_img_num': '>i2',
                                 #IRIS
                                 '###############################\r\n'
                                 'Iris Board\r\n'+
@@ -3897,7 +3897,7 @@ class SystemValues(object):
                         }
                     },
                     'IRIS_TURN_SENSORS_OFF': {
-                        'what': "Send command to OBC to tell Iris to turn on image sensors",
+                        'what': "Send command to OBC to tell Iris to turn off image sensors",
                         'subPort': 3,
                         'inoutInfo': {
                             'args': None,
