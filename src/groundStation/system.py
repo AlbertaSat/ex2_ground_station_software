@@ -3738,7 +3738,7 @@ class SystemValues(object):
                                 'req_id': '>u4',
                                 'size': '>u4',
                                 'blocknum': '>u2',
-                                'data': 'var'
+                                'data': 'var',
                             }
                         }
                     },
@@ -3864,7 +3864,7 @@ class SystemValues(object):
                 }
             },
             'IRIS': {
-                'port': 22,
+                'port': 23,
                 'subservice': {
                     'IRIS_POWER_ON': {
                         'what': "Send command to OBC to tell EPS to turn on power",
@@ -3886,9 +3886,29 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'IRIS_TURN_SENSORS_ON': {
+                        'what': "Send command to OBC to tell Iris to turn on image sensors",
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
+                    'IRIS_TURN_SENSORS_OFF': {
+                        'what': "Send command to OBC to tell Iris to turn on image sensors",
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
+                            }
+                        }
+                    },
                     'IRIS_TAKE_IMAGE': {
                         'what': "Tell Iris to take a picture",
-                        'subPort': 2,
+                        'subPort': 4,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3898,7 +3918,7 @@ class SystemValues(object):
                     },
                     'IRIS_DELIVER_IMAGE': {
                         'what': "Tell OBC to perform image transfer from Iris and store those images into SD card",
-                        'subPort': 3,
+                        'subPort': 5,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3908,7 +3928,7 @@ class SystemValues(object):
                     },
                     'IRIS_PROGRAM_FLASH': {
                         'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
-                        'subPort': 4,
+                        'subPort': 6,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3918,7 +3938,7 @@ class SystemValues(object):
                     },
                     'IRIS_COUNT_IMAGES': {
                         'what': "Tell Iris to send number of images stored in SD card",
-                        'subPort': 5,
+                        'subPort': 7,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3929,7 +3949,7 @@ class SystemValues(object):
                     },
                     'IRIS_GET_HK': {
                         'what': "Tell Iris to send housekeeping data",
-                        'subPort': 6,
+                        'subPort': 8,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
@@ -3938,9 +3958,9 @@ class SystemValues(object):
                                 'NIR Temperature': '>u2',
                                 'Flash Temperature': '>u2',
                                 'Gate Temperature': '>u2',
-                                'Image number': '>u',
-                                'Software Version': '>u',
-                                'Error number': '>u',
+                                'Image number': '>u1',
+                                'Software Version': '>u1',
+                                'Error number': '>u1',
                                 'MAX 5V voltage': '>u2',
                                 'MAX 5V power': '>u2',
                                 'MAX 3V voltage': '>u2',
