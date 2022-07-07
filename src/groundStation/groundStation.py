@@ -114,7 +114,7 @@ class groundStation(object):
     def __sdr__(self, device, uhf_baudrate):
         """ Initialize SDR interface """
         libcsp.sdr_init(device, 115200, uhf_baudrate, "UHF")
-        libcsp.rtable_load('1 UHF')
+        libcsp.rtable_load('1 UHF, 4 UHF')
 
     def __setPIPE__(self):
         # Make a python byte array with the command that needs to be sent to set pipe mode
