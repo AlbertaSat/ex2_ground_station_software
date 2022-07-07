@@ -29,6 +29,7 @@
     "test_sband_hardware": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/sband/test_sband_hardware.py",
     "test_eps": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_eps.py",
     "test_eps_hk_only": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_eps_hk_only.py",
-    "test_dfgm": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_dfgm.py"
+    "test_dfgm": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_dfgm.py",
+    "test_iris": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_iris.py"
   }
 }
