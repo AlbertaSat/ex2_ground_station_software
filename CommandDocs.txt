@@ -1769,7 +1769,7 @@ IRIS.IRIS_COUNT_IMAGES:
 IRIS.IRIS_GET_HK:
 		About: Tell Iris to send housekeeping data
 		Arguments: [None]
-		return values: {'err': '>b', 'VIS Temperature': '>u2', 'NIR Temperature': '>u2', 'Flash Temperature': '>u2', 'Gate Temperature': '>u2', 'Image number': '>u1', 'Software Version': '>u1', 'Error number': '>u1', 'MAX 5V voltage': '>u2', 'MAX 5V power': '>u2', 'MAX 3V voltage': '>u2', 'MAX 3V power': '>u2', 'MIN 5V voltage': '>u2', 'MIN 3V voltage': '>u2'}
+		return values: {'err': '>b', 'VIS_Temperature': '>u2', 'NIR_Temperature': '>u2', 'Flash_Temperature': '>u2', 'Gate_Temperature': '>u2', 'Image_number': '>u1', 'Software_Version': '>u1', 'Error_number': '>u1', 'MAX_5V_voltage': '>u2', 'MAX_5V_power': '>u2', 'MAX_3V_voltage': '>u2', 'MAX_3V_power': '>u2', 'MIN_5V_voltage': '>u2', 'MIN_3V_voltage': '>u2'}
 		port: 23		subport: 8
 
 
