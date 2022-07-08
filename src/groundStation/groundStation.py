@@ -51,11 +51,13 @@ except ImportError: # We are using this file directly or through cli.py
     from groundStation.commandParser import CommandParser
     from groundStation.system import SystemValues
     import libcsp_py3 as libcsp
+    import sys, tty, termios
 
 class groundStation(object):
     """ Constructor """
 
     def __init__(self, opts):
+        self.historyfile = open(opts.history, "a")
         keyfile = open(opts.hkeyfile, "r")
         hkey = keyfile.read().strip()
         libcsp.hmac_set_key(hkey, len(hkey))
@@ -172,6 +174,7 @@ class groundStation(object):
         """ Take input (either prompt user or take input from funtion call)
         and parse the input to CSP packet information """
         if inVal is not None:
+            self.historyfile.write(inVal + '\n')
             try:
                 if(inVal.split('_')[0] == 'UHFDIR'): #UHF-direct command, not using CSP
                     self.uTrns.UHFDIRCommand(inVal)
@@ -181,7 +184,8 @@ class groundStation(object):
                 print(e + '\n')
                 return
         elif prompt is not None:
-            inStr = input(prompt)
+            inCh = input(prompt)
+            self.historyfile.write(inStr + "\n")
             try:
                 if(inStr.split("_")[0] == 'UHFDIR'): #UHF-direct command, not using CSP
                     self.uTrns.UHFDIRCommand(inStr)
@@ -326,6 +330,16 @@ class groundStation(object):
         else:
             self.satellite = name;
 
+    def _getch():
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(fd)
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
 class GracefulExiter():
     """
     Allows us to exit while loops with CTRL+C.
@@ -349,13 +363,17 @@ class GracefulExiter():
     def exit(self):
         return self.state
 
-
 class options(object):
 
     def __init__(self):
         self.parser = argparse.ArgumentParser(description='Parses command.')
 
     def getOptions(self):
+        self.parser.add_argument(
+            '--history',
+            type=str,
+            default=".command_history",
+            help='Specify history file')
         self.parser.add_argument(
             '--hkeyfile',
             type=str,
