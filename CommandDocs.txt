@@ -3,7 +3,7 @@ Note: arguments and return types are given as numpy types
 
 
 SCHEDULER.SET_SCHEDULE:
-		About: None
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 15		subport: 0
@@ -17,21 +17,21 @@ SCHEDULER.GET_SCHEDULE:
 
 
 SCHEDULER.REPLACE_SCHEDULE:
-		About: None
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 15		subport: 2
 
 
 SCHEDULER.DELETE_SCHEDULE:
-		About: None
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 15		subport: 3
 
 
 SCHEDULER.PING_SCHEDULE:
-		About: None
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 15		subport: 4
