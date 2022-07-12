@@ -3961,24 +3961,24 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'IRIS_PROGRAM_FLASH': {
-                        'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
-                        'subPort': 6,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
                     'IRIS_COUNT_IMAGES': {
                         'what': "Tell Iris to send number of images stored in SD card",
-                        'subPort': 7,
+                        'subPort': 6,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
                                 'err': '>b',
                                 'Number of Images': '>u',
+                            }
+                        }
+                    },
+                    'IRIS_PROGRAM_FLASH': {
+                        'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
                             }
                         }
                     },
