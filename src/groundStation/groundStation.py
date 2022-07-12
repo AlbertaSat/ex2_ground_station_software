@@ -399,7 +399,7 @@ class options(object):
             help='Satellite parameter for automatic programs (e.g FTP)')
 
         self.parser.add_argument(
-            '-f',
+            '-sched',
             '--schedule_file',
             type=str,
             default='schedule.txt',
