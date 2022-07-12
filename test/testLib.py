@@ -165,6 +165,19 @@ class testLib(object):
             'last_reset_source': [0, 65535] # Boot source, 2 bytes, lots of options
         }
 
+        self.expected_OBC_HK_old = {
+            #'temparray1': [17, 25],
+            'temparray2': [17, 25],
+            'boot_cnt': [1, 4294967295],#max 4 bytes
+            'last_reset_reason': [0, 4],
+            'OBC_mode': [0, 256],#max byte
+            'OBC_uptime': [0, 28800], # Uptime, assumed in seconds up to 8 hours
+            'solar_panel_supply_curr': [0, 256],#max byte
+            'OBC_software_ver': [0, 3],
+            'cmds_received': [1, 4294967295],#max 4 bytes
+            'pckts_uncovered_by_FEC': [1, 4294967295],#max 4 bytes
+        }
+
         self.expected_UHF_HK = {
             'scw1': [0, 0], # Status control word #1
             'scw2': [3,3],  # Status control word #2
@@ -391,23 +404,23 @@ class testLib(object):
 
     def check_OBC_HK(self):
         checkPassed = True
-        for val in self.expected_OBC_HK:
-            if (self.response[val] > (self.expected_OBC_HK[val])[1]):
+        for val in self.expected_OBC_HK_old:
+            if (self.response[val] > (self.expected_OBC_HK_old[val])[1]):
                 # Greater than Max
                 colour = '\033[91m'  # red
                 checkPassed = False
                 print(colour + str(val) + ': ' +
-                      str(self.response[val]) + ' > ' + str(self.expected_OBC_HK[val][1]))
-            elif (self.response[val] < (self.expected_OBC_HK[val])[0]):
+                      str(self.response[val]) + ' > ' + str(self.expected_OBC_HK_old[val][1]))
+            elif (self.response[val] < (self.expected_OBC_HK_old[val])[0]):
                 # Less than min
                 colour = '\033[91m'  # red
                 checkPassed = False
                 print(colour + str(val) + ': ' +
-                      str(self.response[val]) + ' < ' + str(self.expected_OBC_HK[val][0]))
+                      str(self.response[val]) + ' < ' + str(self.expected_OBC_HK_old[val][0]))
             else:
                 colour = '\033[0m'  # white
-                print(colour + str(val) + ': ' + str(self.expected_OBC_HK[val][0]) + ' <= ' + str(
-                    self.response[val]) + ' <= ' + str(self.expected_OBC_HK[val][1]))
+                print(colour + str(val) + ': ' + str(self.expected_OBC_HK_old[val][0]) + ' <= ' + str(
+                    self.response[val]) + ' <= ' + str(self.expected_OBC_HK_old[val][1]))
         return checkPassed
 
     def check_UHF_HK(self):
@@ -613,9 +626,12 @@ class testLib(object):
 
     # Checks all HK data by default
     def testHousekeeping(self, EPS=1, OBC=1, UHF=1, solar=1, charon=1, sBand=1, iris=1, DFGM=1, NIM=1, yukon=1, ADCS=1):
-        server, port, toSend = self.gs.getInput(None,'ex2.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = self.gs.getInput(inVal='ex2.housekeeping.get_hk(1, 0 ,0)')
         self.response = self.gs.transaction(server, port, toSend)
         testPassed = 'Pass'
+        #if type(self.response) == list:
+        [print(key,':',value) for key, value in self.response.items()]
+
 
         if (EPS):
             checkPassed = self.check_EPS_HK()
@@ -631,6 +647,10 @@ class testLib(object):
             checkPassed = self.check_UHF_HK()
             if not checkPassed:
                 testPassed = 'Fail'
+
+
+
+
 
         if (solar):
             # if NIM + yukon > 0, certain HK values will be ignored in the test since the AuroraSat and YukonSat payloads don't require them

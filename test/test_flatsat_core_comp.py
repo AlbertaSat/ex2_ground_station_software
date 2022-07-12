@@ -198,8 +198,8 @@ def test_OBC_firmwareUpdate():
     print('Before continuing, flash the ex2_bootloader project to athena and run it via CCS.')
     input('Press enter to continue.')
 
-    print('Flashing testimg_a.out to OBC')
-    system("yarn sat_update -f ./test/testimg_a.out [-I sdr]")
+    print('Flashing testimg_a.bin to OBC')
+    system("yarn sat_update -f ./test/testimg_a.bin -I sdr")
     test.sendSatCliCmd(gs, 'verifyapp')
     print('Rebooting into new image')
     test.sendSatCliCmd(gs, 'reboot A')
@@ -222,8 +222,8 @@ def test_OBC_firmwareUpdate():
     # 4) Update the working firmware image by uploading a new image
     # New image should have identical functionality to the one being replaced, but with a unique firmware version ID
 
-    print('Flashing testimg_b.out to OBC')
-    system("yarn sat_update -f ./test/testimg_b.out [-I sdr]")
+    print('Flashing testimg_b.bin to OBC')
+    system("yarn sat_update -f ./test/testimg_b.bin -I sdr")
     test.sendSatCliCmd(gs, 'verifyapp')
     print('Rebooting into new image')
     test.sendSatCliCmd(gs, 'reboot A')
@@ -311,16 +311,16 @@ def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
     test.testHousekeeping(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0)
 
-    # TODO - Finish function implementation
-    print("\n---------- EPS PING WATCHDOG TEST ----------\n")
-    test_EPS_pingWatchdog()
+    # # TODO - Finish function implementation
+    # print("\n---------- EPS PING WATCHDOG TEST ----------\n")
+    # test_EPS_pingWatchdog()
 
-    print("\n---------- GROUND STATION PING WATCHDOG TEST ----------\n")
-    test_GS_pingWatchdog()
+    # print("\n---------- GROUND STATION PING WATCHDOG TEST ----------\n")
+    # test_GS_pingWatchdog()
 
-    # TODO - Finish function implementation
-    print("\n---------- OBC FIRMWARE UPDATE TEST ----------\n")
-    test_OBC_firmwareUpdate()
+    # # TODO - Finish function implementation
+    # print("\n---------- OBC FIRMWARE UPDATE TEST ----------\n")
+    # test_OBC_firmwareUpdate()
 
     # # TODO - Determine if golden image still being used
     # print("\n---------- OBC GOLDEN FIRMWARE UPDATE TEST ----------\n")
