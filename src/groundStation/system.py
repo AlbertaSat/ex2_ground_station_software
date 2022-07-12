@@ -78,7 +78,7 @@ class SystemValues(object):
         }
         self.SERVICES = {
             'SCHEDULER': {
-                'port': 15,  # share a port with EPS time service
+                'port': 15,
                 # TODO: these need a error response value
                 'subservice': {
                     'SET_SCHEDULE': {
