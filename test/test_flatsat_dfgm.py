@@ -42,7 +42,7 @@ def test_DFGM_dataAcquisitionAndSBandDownlink():
 
     # 2) Turn the DFGM on for 10 seconds and have the OBC process the data output by the DFGM into 1 Hz, 10 Hz, and 100 Hz data. Store them as separate
     # files on the SD card. This data will just be used for testing, and will consist of background magnetic signatures
-    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(10)')
+    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(10)')
     response = gs.transaction(server, port, toSend)
     if (response['err'] != 0):
         testPassed = "Fail"
@@ -75,7 +75,7 @@ def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
 
     # 2) Turn the DFGM on for 10 seconds and have the OBC process the data output by the DFGM into 1 Hz, 10 Hz, and 100 Hz data. Store them as separate
     # files on the SD card
-    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(10)')
+    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(10)')
     response = gs.transaction(server, port, toSend)
     if (response['err'] != 0):
         testPassed = "Fail"
