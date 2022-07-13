@@ -60,11 +60,11 @@ class functionalTestLib(object):
         time.sleep(1)
 
         # 1c) Verify results in Table 2 from the Full and Partial Functional Test Plan
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_bootloader_state")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_bootloader_state")
         response = gs.transaction(server, port, toSend)
         startTime = response['Uptime']
         time.sleep(1)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_bootloader_state")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_bootloader_state")
         response = gs.transaction(server, port, toSend)
         endTime = response['Uptime']
         # To pass test, uptime should increment every second
@@ -83,7 +83,7 @@ class functionalTestLib(object):
                 testPassed = "Fail"
             flagIndex += 1
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_boot_program_stat")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_boot_program_stat")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Cause of Reset must be "PowerOnReset" (0) or "SystemReqReset" (8)
@@ -98,7 +98,7 @@ class functionalTestLib(object):
         if (response['Boot_Cause'] != 0 or response['Boot_Idx'] != 2): # TODO - Add in check for Firmware Versions
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_boot_index")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_boot_index")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Program Index must be "RunInternalFlashProgram" (1)
@@ -109,7 +109,7 @@ class functionalTestLib(object):
         if not (response['Boot_Stat'] == 1 or response['Boot_Stat'] == 0):
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_comms_stat")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_comms_stat")
         response = gs.transaction(server, port, toSend)
 
         # Comms_Status is uint16 containing information that must be split into 2 uint8 variables
@@ -130,7 +130,7 @@ class functionalTestLib(object):
         time.sleep(5)
 
         # 1f) Verify results in Table 3 from the Full and Partial Functional Test Plan
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_acp_loop_stat")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_acp_loop_stat")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, time since iteration start should be between 0 and 1000 ms
@@ -141,7 +141,7 @@ class functionalTestLib(object):
         if (response['Execution_point'] != 1):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_boot_program_stat")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_boot_program_stat")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Cause of Reset must be "PowerOnReset" (0) or "SystemReqReset" (8), or "Unknown" (15)
@@ -157,21 +157,21 @@ class functionalTestLib(object):
         if (response['Boot_Cause'] != 0 or response['Boot_Idx'] != 1): # TODO - Add in check for Firmware Versions
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_node_identification")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_node_identification")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Node Type must be 10, Interface Version must be 7, and Runtime should be between 0 and 1000 ms
         if (response['Node_Type'] != 10 or response['Interface_Ver'] != 7 or response['Runtime_Ms'] < 0 or response['Runtime_Ms'] > 1000):
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_boot_index")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_boot_index")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Program Index must be "RunInternalFlashProgram" (1) and Boot Status must be "BootSuccess" (1)
         if (response['Program_Idx'] != 1 or response['Boot_Stat'] != 1):
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_comms_stat")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_comms_stat")
         response = gs.transaction(server, port, toSend)
 
         # Comms_Status is uint16 containing information that must be split into 2 uint8 variables
@@ -187,11 +187,11 @@ class functionalTestLib(object):
             testPassed = "Fail"
         # oldTelemetryRequestCounter = telemetryRequestCounter # May or may not be needed for other steps in the test
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_unix_t")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_unix_t")
         response = gs.transaction(server, port, toSend)
         startTime = response["Unix_t"]
         time.sleep(2)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_unix_t")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_unix_t")
         response = gs.transaction(server, port, toSend)
         endTime = response['Unix_t']
 
@@ -199,21 +199,21 @@ class functionalTestLib(object):
         if (endTime - startTime <= 0):
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_sram_latchup_count")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_sram_latchup_count")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, the number of SRAM latchups for both 1 and 2 should be 0
         if (response['Sram1'] != 0 or response['Sram2'] != 0):
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_edac_err_count")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_edac_err_count")
         response = gs.transaction(server, port, toSend)
         
         # To pass test, Single, Double, and Multi SRAM should be 0
         if (response['Single_Sram'] != 0 or response['Double_Sram'] != 0 or response['Multi_Sram'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_control")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_control")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, all nodes indicate "PowOff" (0)
@@ -221,17 +221,17 @@ class functionalTestLib(object):
             testPassed = "Fail"
 
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # server, port, toSend = gs.getInput("obc.adcs.adcs_get_current_state")
+        # server, port, toSend = gs.getInput("ex2.adcs.adcs_get_current_state")
         # response = gs.transaction(server, port, toSend)
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsOff"
         # and all other states should be "No" (0)
 
         # 1g) Use the command "ADCS_set_enabled_state(1)" to swtich the run mode to "AdcsEnabled"
-        server, port, toSend = gs.getInput("obc.adcs.adcs_set_enabled_state(1)")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_set_enabled_state(1)")
         response = gs.transaction(server, port, toSend)
 
         # 1h) Verify results in Table 4 from the Full and Partial Functional Test Plan
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_comms_stat")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_comms_stat")
         response = gs.transaction(server, port, toSend)
 
         # Comms_Status is uint16 containing information that must be split into 2 uint8 variables
@@ -243,7 +243,7 @@ class functionalTestLib(object):
         if telecommandCounter != 1:
             testPassed = "Fail"
 
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_execution_times")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_execution_times")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Time to Perform ADCS Update is between 80-130 ms, Time to Perform Sensor/Act Communication is between 0-6 ms, Time to execute
@@ -261,7 +261,7 @@ class functionalTestLib(object):
             testPassed = "Fail"
         
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # server, port, toSend = gs.getInput("obc.adcs.adcs_get_current_state")
+        # server, port, toSend = gs.getInput("ex2.adcs.adcs_get_current_state")
         # response = gs.transaction(server, port, toSend)
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # Sun is Above Local Horizon should be "Yes" (1), and all other states should be "No" (0)
@@ -276,10 +276,10 @@ class functionalTestLib(object):
 
         # 4) Perform the reaction wheels health check for CubeWheel1
         # 4a) Using command ADCS_get_power_control(), ensure that all nodes are selected as "PowOff" (0)
-        server, port, toSend = gs.getInput("obc.adcs.get_power_control")
+        server, port, toSend = gs.getInput("ex2.adcs.get_power_control")
         response = gs.transaction(server, port, toSend)
         if response['Control'] != 0:
-            server, port, toSend = gs.getInput("obc.adcs.set_power_control(0)")
+            server, port, toSend = gs.getInput("ex2.adcs.set_power_control(0)")
             response = gs.transaction(server, port, toSend)
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -289,7 +289,7 @@ class functionalTestLib(object):
 
         # 4c) Verify Results in Table 8
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # server, port, toSend = gs.getInput("obc.adcs.adcs_get_current_state")
+        # server, port, toSend = gs.getInput("ex2.adcs.adcs_get_current_state")
         # response = gs.transaction(server, port, toSend)
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # CubeWheel1 Enabled should be "Yes" (1), and all other states should be "No" (0)
@@ -301,7 +301,7 @@ class functionalTestLib(object):
         time.sleep(10)
 
         # 4f) Verify results in Table 9
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, X Wheel Speed should be between 3995-4005 rpm, and Y and Z Wheel Speed should be 0 rpm
@@ -311,7 +311,7 @@ class functionalTestLib(object):
         if (response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel1Current should be between 9-17 mA, and Wheel2Current and Wheel3Current should be 0 mA
@@ -326,7 +326,7 @@ class functionalTestLib(object):
 
         # 4h) After 10 seconds, verify table 10
         time.sleep(10)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, X Wheel Speed should be between -2005 and -1995 rpm, and Y and Z Wheel Speed should be 0 rpm
@@ -336,7 +336,7 @@ class functionalTestLib(object):
         if (response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel1Current should be between 4-10 mA, and Wheel2Current and Wheel3Current should be 0 mA
@@ -351,14 +351,14 @@ class functionalTestLib(object):
 
         # 4j) After 10 seconds, verify table 11
         time.sleep(10)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, X, Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel1Current should be between 1-7 mA, and Wheel2Current and Wheel3Current should be 0 mA
@@ -369,7 +369,7 @@ class functionalTestLib(object):
             testPassed = "Fail"
 
         # 4k) Using command ADCS_set_power_control(), switch off CubeWheel1Power Power Selection by selecting "PowOff" (0)
-        server, port, toSend = gs.getInput("obc.adcs.set_power_control(0)")
+        server, port, toSend = gs.getInput("ex2.adcs.set_power_control(0)")
         response = gs.transaction(server, port, toSend)
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -377,10 +377,10 @@ class functionalTestLib(object):
         # 5a & b) Repeat steps 4a-4k for CubeWheel2, setting the commanded Y speed instead of the X speed, and using tables 12-15
 
         #Using command ADCS_get_power_control(), ensure that all nodes are selected as "PowOff" (0)
-        server, port, toSend = gs.getInput("obc.adcs.get_power_control")
+        server, port, toSend = gs.getInput("ex2.adcs.get_power_control")
         response = gs.transaction(server, port, toSend)
         if response['Control'] != 0:
-            server, port, toSend = gs.getInput("obc.adcs.set_power_control(0)")
+            server, port, toSend = gs.getInput("ex2.adcs.set_power_control(0)")
             response = gs.transaction(server, port, toSend)
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -390,7 +390,7 @@ class functionalTestLib(object):
 
         # Verify Results in Table 12
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # server, port, toSend = gs.getInput("obc.adcs.adcs_get_current_state")
+        # server, port, toSend = gs.getInput("ex2.adcs.adcs_get_current_state")
         # response = gs.transaction(server, port, toSend)
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # CubeWheel2 Enabled should be "Yes" (1), and all other states should be "No" (0)
@@ -402,7 +402,7 @@ class functionalTestLib(object):
         time.sleep(10)
 
         # Verify results in Table 13
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Y Wheel Speed should be between 3995-4005 rpm, and X and Z Wheel Speed should be 0 rpm
@@ -412,7 +412,7 @@ class functionalTestLib(object):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel2Current should be between 9-17 mA, and Wheel1Current and Wheel3Current should be 0 mA
@@ -427,7 +427,7 @@ class functionalTestLib(object):
 
         # After 10 seconds, verify table 14
         time.sleep(10)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Y Wheel Speed should be between -2005 and -1995 rpm, and X and Z Wheel Speed should be 0 rpm
@@ -437,7 +437,7 @@ class functionalTestLib(object):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel2Current should be between 4-10 mA, and Wheel1Current and Wheel3Current should be 0 mA
@@ -452,14 +452,14 @@ class functionalTestLib(object):
 
         # After 10 seconds, verify table 15
         time.sleep(10)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, X, Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel2Current should be between 1-7 mA, and Wheel1Current and Wheel3Current should be 0 mA
@@ -470,7 +470,7 @@ class functionalTestLib(object):
             testPassed = "Fail"
 
         # Using command ADCS_set_power_control(), switch off CubeWheel1Power Power Selection by selecting "PowOff" (0)
-        server, port, toSend = gs.getInput("obc.adcs.set_power_control(0)")
+        server, port, toSend = gs.getInput("ex2.adcs.set_power_control(0)")
         response = gs.transaction(server, port, toSend)
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -478,10 +478,10 @@ class functionalTestLib(object):
         # 6a & b) Repeat steps 4a-4k for CubeWheel3, setting the commanded Z speed instead of the X speed, and using tables 16-19
         
         # Using command ADCS_get_power_control(), ensure that all nodes are selected as "PowOff" (0)
-        server, port, toSend = gs.getInput("obc.adcs.get_power_control")
+        server, port, toSend = gs.getInput("ex2.adcs.get_power_control")
         response = gs.transaction(server, port, toSend)
         if response['Control'] != 0:
-            server, port, toSend = gs.getInput("obc.adcs.set_power_control(0)")
+            server, port, toSend = gs.getInput("ex2.adcs.set_power_control(0)")
             response = gs.transaction(server, port, toSend)
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -491,7 +491,7 @@ class functionalTestLib(object):
 
         # Verify Results in Table 16
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # server, port, toSend = gs.getInput("obc.adcs.adcs_get_current_state")
+        # server, port, toSend = gs.getInput("ex2.adcs.adcs_get_current_state")
         # response = gs.transaction(server, port, toSend)
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # CubeWheel3 Enabled should be "Yes" (1), and all other states should be "No" (0)
@@ -505,7 +505,7 @@ class functionalTestLib(object):
         # Verify results in Table 17
         # NOTE - There seems to be a typo in the document. Table 17 is completely the same as table 16. It is assumed that the table should
         # look similar to table 13, but with checks for Z Wheel Speed and Wheel3Current instead
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Z Wheel Speed should be between 3995-4005 rpm, and X and Y Wheel Speed should be 0 rpm
@@ -515,7 +515,7 @@ class functionalTestLib(object):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel3Current should be between 9-17 mA, and Wheel1Current and Wheel2Current should be 0 mA
@@ -530,7 +530,7 @@ class functionalTestLib(object):
 
         # After 10 seconds, verify table 18
         time.sleep(10)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Z Wheel Speed should be between -2005 and -1995 rpm, and X and Y Wheel Speed should be 0 rpm
@@ -540,7 +540,7 @@ class functionalTestLib(object):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel3Current should be between 4-10 mA, and Wheel1Current and Wheel2Current should be 0 mA
@@ -555,14 +555,14 @@ class functionalTestLib(object):
 
         # After 10 seconds, verify table 19
         time.sleep(10)
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_measurements")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_measurements")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, X, Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        server, port, toSend = gs.getInput("obc.adcs.adcs_get_power_temp")
+        server, port, toSend = gs.getInput("ex2.adcs.adcs_get_power_temp")
         response = gs.transaction(server, port, toSend)
 
         # To pass test, Wheel3Current should be between 1-7 mA, and Wheel1Current and Wheel2Current should be 0 mA
@@ -573,7 +573,7 @@ class functionalTestLib(object):
             testPassed = "Fail"
 
         # Using command ADCS_set_power_control(), switch off CubeWheel1Power Power Selection by selecting "PowOff" (0)
-        server, port, toSend = gs.getInput("obc.adcs.set_power_control(0)")
+        server, port, toSend = gs.getInput("ex2.adcs.set_power_control(0)")
         response = gs.transaction(server, port, toSend)
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -597,7 +597,7 @@ class functionalTestLib(object):
         # 1) Send a command over UHF to tell the OBC to synchronize all onboard clocks with the ground station's time
 
         # 2) Send a command to calculate the difference between the OBC time and the EPS and ADCS time
-        server, port, toSend = gs.getInput('obc.time_management.get_time')
+        server, port, toSend = gs.getInput('ex2.time_management.get_time')
         response = gs.transaction(server, port, toSend)
         OBC_time = response['timestamp']
         server, port, toSend = gs.getInput('eps.time_management.get_eps_time')
@@ -630,7 +630,7 @@ class functionalTestLib(object):
         testPassed = "Pass"
 
         # 1) Send a command to gather and downlink system-wide HK and display it on the terminal
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
         response = gs.transaction(server, port, toSend)
         for val in response:
             print(str(val) + ": " + str(response[val]))
@@ -639,7 +639,7 @@ class functionalTestLib(object):
 
         # 3) After 10 seconds, repeat step 1
         time.sleep(10)
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
         response = gs.transaction(server, port, toSend)
         for val in response:
             print(str(val) + ": " + str(response[val]))
@@ -702,7 +702,7 @@ class functionalTestLib(object):
 
         # 2) Put the transceiver into transparent (PIPE) mode using a radio command, and continuously send randomly generated 128 byte packets
         # from the ground for 1 minute
-        server, port, toSend = gs.getInput('obc.set_pipe.uhf_gs_pipe')
+        server, port, toSend = gs.getInput('ex2.set_pipe.uhf_gs_pipe')
         response = gs.transaction(server, port, toSend)        
 
         # 3) Store the data generated from step 2 into a file on the OBC
@@ -720,7 +720,7 @@ class functionalTestLib(object):
 
         # 2) Send a command over UHF to turn on the DFGM for 10 seconds and have the OBC process the data output
         # into 1 Hz, 10 Hz, and 100 Hz data. Also store this data into a file on the SD card
-        server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(10)')
+        server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(10)')
         response = gs.transaction(server, port, toSend)
 
         # 3) Send a command over UHF for the OBC to downlink a 1 Hz DFGM data file over UHF and save it on the PC
@@ -757,7 +757,7 @@ class functionalTestLib(object):
         
         # 3) Send a command from the OBC to the EPS to retrieve HK data and print it on the terminal display
         # To pass test, all output states should be on (= 1)
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
         response = gs.transaction(server, port, toSend)
         for val in response:
             colour = '\033[0m' #white
@@ -786,7 +786,7 @@ class functionalTestLib(object):
 
             # 6) Send a command from the OBC to the EPS to retrieve HK data and print it to the terminal display
             # To pass test, the channel switched on should actually be on (1)
-            server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+            server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
             response = gs.transaction(server, port, toSend)
             for val in response:
                 colour = '\033[0m' #white
@@ -805,7 +805,7 @@ class functionalTestLib(object):
 
             # 8) Send a command from the OBC to the EPS to retrieve HK data and print it to the terminal display
             # To pass test, the channel switched off should actually be off (0)
-            server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+            server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
             response = gs.transaction(server, port, toSend)
             for val in response:
                 colour = '\033[0m' #white
@@ -829,7 +829,7 @@ class functionalTestLib(object):
 
         # 11) Send a command from the OBC to the EPS to retrieve HK data and print it to the terminal display
         # To pass test, all channels should be off (0), except channel 6
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
         response = gs.transaction(server, port, toSend)
         for val in response:
             colour = '\033[0m' #white
@@ -868,7 +868,7 @@ class functionalTestLib(object):
         # 1) Ensure that the OBC, UHF, EPS, and Charon are turned on, and that the OBC has the msot up-to-date firmware installed
 
         # 2) Downlink all HK data, and verify that the time and date are correct to the current time and date
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
         response = gs.transaction(server, port, toSend)
         currtime = response['UNIXtimestamp']
         if (abs(currtime - time.time()) >= 1):
@@ -880,7 +880,7 @@ class functionalTestLib(object):
         time.sleep(30)
 
         # 5) Downlink all HK data
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
         response = gs.transaction(server, port, toSend)
         # To pass test, roughly 30 seconds should have passed on the OBC's time
         oldTime = currtime
@@ -898,7 +898,7 @@ class functionalTestLib(object):
         # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware
 
         # 2) Command the OBC to collect HK data
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
         response = gs.transaction(server, port, toSend)
         # To pass test, all solar panel currents should be with their expected value ranges (0-600 mA for all)
         solarPanelCurrents = ['Port_Current', 'Port_Dep_Current', 'Star_Current', 'Star_Dep_Current', 'Zenith_Current']
