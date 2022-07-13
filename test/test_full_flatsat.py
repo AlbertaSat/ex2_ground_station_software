@@ -99,7 +99,7 @@ def validatePowerBudget():
 
     # 2) Send a command every ~30 seconds for 1.5 hrs to the OBC to gather system-wide HK info that contains the power consumption of each component (30 sec, 180 times)
     for i in range(180):
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
         response = gs.transaction(server, port, toSend)
         time.sleep(30)
         # Sum up all power consumption values for each component
@@ -137,7 +137,7 @@ def testSafeModeBehaviourAndRecovery():
     input("\nPlease disconnect the EPS battery charger. Press enter to resume tests.\n") 
 
     # 2) Send a command to save a list of all tasks/processes that are running (Save list of all tasks/processes to a list)
-    server, port, toSend = gs.getInput('obc.obc.get_tasks') # TODO - Replace this command with the proper command
+    server, port, toSend = gs.getInput('ex2.ex2.get_tasks') # TODO - Replace this command with the proper command
     step2Tasks = gs.transaction(server, port, toSend)
 
     # 3) Deplete the battery until the EPS enters Safe Mode
@@ -148,7 +148,7 @@ def testSafeModeBehaviourAndRecovery():
     # 4) Continually query the system state with a ground station command every 10 seconds and display it on the terminal
     safeMode = -1 # TODO - Replace number with the actual value for "Safe Mode"
     while (True):
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
         response = gs.transaction(server, port, toSend)
 
         # 5) Continue running the system in this state until Safe Mode is displayed on the ground station PC
@@ -158,7 +158,7 @@ def testSafeModeBehaviourAndRecovery():
             time.sleep(10)  
 
     # 6) Send a command to save a list of all tasks/processes that are running in Safe Mode (Compare to step 2. Step 2's list should have more items)
-    server, port, toSend = gs.getInput('obc.obc.get_tasks') # TODO - Replace this command with the proper command that gets a list of all tasks
+    server, port, toSend = gs.getInput('ex2.ex2.get_tasks') # TODO - Replace this command with the proper command that gets a list of all tasks
     step6Tasks = gs.transaction(server, port, toSend)
     # To pass test, the list of tasks/processes in safe mode (step 6) should be less than that from the normal operations (step 2)
     if (len(step6Tasks) >= len(step2Tasks)):
@@ -174,7 +174,7 @@ def testSafeModeBehaviourAndRecovery():
     # To pass test, command response should return unsuccessful
 
     # 10) Send a command to take DFGM data (Shouldn't work)
-    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(1)')
+    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(1)')
     response = gs.transaction(server, port, toSend)
     # To pass test, command response should return unsuccessful
     if (response['err'] != 1):
@@ -182,7 +182,7 @@ def testSafeModeBehaviourAndRecovery():
 
     # 11) Send a command to override the safeguard and take DFGM data and save it to a file on the SD card (Should work)
     # TODO - Place a command to override the safeguard here
-    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(1)')
+    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(1)')
     response = gs.transaction(server, port, toSend)
     # To pass test, command response should return successful
     if (response['err'] != 0):
@@ -194,7 +194,7 @@ def testSafeModeBehaviourAndRecovery():
     # 13) Continually query the system state with a ground station command and display it on the terminal
     normalMode = -1 # TODO - Replace number with the actual value for "Normal Mode"
     while (True):
-        server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+        server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
         response = gs.transaction(server, port, toSend)
 
         # 14) Continue running the system in this state until the EPS enters Normal Mode as displayed on the ground station PC
@@ -204,14 +204,14 @@ def testSafeModeBehaviourAndRecovery():
             time.sleep(10) 
 
     # 15) Send a command to save a list of all tasks/processes that are running in Normal Mode (Compare to step 2. Both lists should be identical)
-    server, port, toSend = gs.getInput('obc.obc.get_tasks') # TODO - Replace this command with the proper command that gets a list of all tasks
+    server, port, toSend = gs.getInput('ex2.ex2.get_tasks') # TODO - Replace this command with the proper command that gets a list of all tasks
     step15Tasks = gs.transaction(server, port, toSend)
     # To pass test, the list of tasks/processes in normal mode (step 15) should be identical to the list from step 2
     if  (len(step15Tasks) != len(step2Tasks)):
         testPassed = "Fail"
 
     # 16) Send a command to take DFGM data and save it to a file on the SD card (Should work)
-    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(1)')
+    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(1)')
     response = gs.transaction(server, port, toSend)
     # To pass test, command response should return successful
     if (response['err'] != 0):
@@ -239,7 +239,7 @@ def testCharonPowerChannelForcedReset():
     testPassed = "Pass"
 
     # 1) Send a command to gather and downlink system-wide HK and display it on the terminal
-    server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0, 0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
     response = gs.transaction(server, port, toSend)
     for val in response:
         print(str(val) + ": " + str(response[val]))
@@ -248,7 +248,7 @@ def testCharonPowerChannelForcedReset():
 
     # 3) After 10 seconds, repeat step 1
     time.sleep(10)
-    server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
     response = gs.transaction(server, port, toSend)
     for val in response:
         print(str(val) + ": " + str(response[val]))
@@ -277,7 +277,7 @@ def testClockSynchronizationUsing_GS():
     # 1) Send a command over UHF to tell the OBC to synchronize all onboard clocks with the ground station's time
 
     # 2) Send a command to calculate the difference between the OBC time and the EPS and ADCS time
-    server, port, toSend = gs.getInput('obc.time_management.get_time')
+    server, port, toSend = gs.getInput('ex2.time_management.get_time')
     response = gs.transaction(server, port, toSend)
     OBC_time = response['timestamp']
     server, port, toSend = gs.getInput('eps.time_management.get_eps_time')
@@ -496,7 +496,7 @@ def testModeChangeDuringFlightScheduleActivityExecution():
 
     # 3) After 5 minutes, gather system wide HK on the GS PC
     time.sleep(300)
-    server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
     response = gs.transaction(server, port, toSend)
     # To pass test, satellite should be in safe mode, and only the UHF and OBC's power channels are enabled
     safeMode = -1 # TODO - Replace value with the actual value for the safeMode
@@ -505,7 +505,7 @@ def testModeChangeDuringFlightScheduleActivityExecution():
 
     # 4) After 7 minutes, gather system wide HK on the GS PC
     time.sleep(420)
-    server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
     response = gs.transaction(server, port, toSend)
     # To pass test, satellite should be in safe mode, and only the UHF and OBC's power channels are enabled
     if (response['mode'] != safeMode):
@@ -588,7 +588,7 @@ def testFullMemoryFill():
     # 1) Send a command to fill one OBC SD card 99.9% full with ~50 files of dummy data, at least one of which is a HK data file dated one month old
 
     # 2) Send a command to gather 2 minutes of raw DFGM data and save it to a file on the full SD card. Observe the command response
-    server, port, toSend = gs.getInput('obc.dfgm.dfgm_run(120)')
+    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(120)')
     response = gs.transaction(server, port, toSend)
     # To pass test, the command response should indicate that the data will not be recorded/saved due to a full SD card
 
@@ -596,7 +596,7 @@ def testFullMemoryFill():
     # To pass test, the command response should indicate that the data will not be recorded/saved due to a full SD card
 
     # 4) Send a command to gather full HK data and save it to a file on the full SD card. Observe the command response
-    server, port, toSend = gs.getInput('obc.housekeeping.get_hk(1, 0 ,0)')
+    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0 ,0)')
     response = gs.transaction(server, port, toSend)
     # To pass test, the command response should indicate that the data will not be recorded/saved due to a full SD card
 
