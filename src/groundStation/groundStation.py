@@ -58,6 +58,7 @@ class groundStation(object):
     def __init__(self, opts):
         keyfile = open(opts.hkeyfile, "r")
         hkey = keyfile.read().strip()
+        self.filename = opts.schedule_file
         libcsp.hmac_set_key(hkey, len(hkey))
         self.vals = SystemValues()
         self.apps = self.vals.APP_DICT
@@ -320,6 +321,9 @@ class groundStation(object):
     def get_satellite(self):
         return self.satellite
 
+    def get_filename(self):
+        return self.filename
+
     def set_satellite(self, name):
         if name not in self.apps.keys():
             raise ValueError("Satellite \'{}\' not in {}".format(name, str(self.apps.keys())))
@@ -393,7 +397,65 @@ class options(object):
             type=str,
             default="EX2",
             help='Satellite parameter for automatic programs (e.g FTP)')
+
+        self.parser.add_argument(
+            '-S',
+            '--schedule_file',
+            type=str,
+            default='schedule.txt',
+            help='Schedule file name')
         return self.parser.parse_args(sys.argv[1:])
+
+
+class getEmbededCSPData:
+    def __init__(self, filename, data):
+        self.data = data
+        self.opts = options()
+        self.csp = groundStation(self.opts.getOptions())
+        self.filename = filename
+        with open(self.filename) as f:
+            self.cmdList = f.readlines()
+        #create an empty list, and create another list of csp objects
+        self.schedule = list()
+
+    def embedCSP(self):
+        # for each line of command, parse the packet
+        if len(self.cmdList) > 0:
+            for i in range(0, len(self.cmdList)):
+                # parse the time and command, then embed the command as a CSP packet
+                cmdStart = re.search(r'[a-z]', self.cmdList[i], re.I)
+                if cmdStart is not None:
+                    cmdStart = cmdStart.start()
+                scheduledTime = self.cmdList[i][:cmdStart]
+                ascii_values = [ord(character) for character in scheduledTime]
+                scheduledCmd = self.cmdList[i][cmdStart:]
+                self._command = {}
+                self._command['time'] = ascii_values
+
+                # convert embeddedToSend into a byte array
+                embeddedServer, embeddedPort, embeddedToSend = self.csp.getInput(inVal = scheduledCmd)
+                data = bytearray(libcsp.packet_get_data(embeddedToSend))
+                self._command['dst'] = embeddedServer
+                self._command['dport'] = embeddedPort
+                self._command['subservice'] = embeddedToSend
+
+                # append the list
+                self.schedule.append(self._command)
+                scheduledTime = self.schedule[i]['time']
+                scheduledDst = self.schedule[i]['dst']
+                dst = (scheduledDst).to_bytes(1, byteorder='big')
+                scheduledDport = self.schedule[i]['dport']
+                dport = (scheduledDport).to_bytes(1, byteorder='big')
+                scheduleSubservice = self.schedule[i]['subservice']
+                packetContent = bytearray(libcsp.packet_get_data(scheduleSubservice))
+                packetLength = bytearray(libcsp.packet_get_length(scheduleSubservice))
+                self.data.extend(scheduledTime)
+                self.data.extend(dst)
+                self.data.extend(dport)
+                self.data.extend((len(packetContent)).to_bytes(2, byteorder='big'))
+                self.data.extend(packetContent)
+
+        return self.data
 
 
 if __name__ == '__main__':

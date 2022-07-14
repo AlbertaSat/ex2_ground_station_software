@@ -2,6 +2,41 @@
 Note: arguments and return types are given as numpy types
 
 
+SCHEDULER.SET_SCHEDULE:
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 0
+
+
+SCHEDULER.GET_SCHEDULE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 15		subport: 1
+
+
+SCHEDULER.REPLACE_SCHEDULE:
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 2
+
+
+SCHEDULER.DELETE_SCHEDULE:
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 3
+
+
+SCHEDULER.PING_SCHEDULE:
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Arguments: [None]
+		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
+		port: 15		subport: 4
+
+
 SET_PIPE.UHF_GS_PIPE:
 		About: Testing function to put an EndurSat radio being used as the ground station radio into PIPE mode
 		Arguments: [None]

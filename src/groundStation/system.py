@@ -77,6 +77,65 @@ class SystemValues(object):
             'LAST': 31
         }
         self.SERVICES = {
+            'SCHEDULER': {
+                'port': 15,
+                # TODO: these need a error response value
+                'subservice': {
+                    'SET_SCHEDULE': {
+                        'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                        'subPort': 0,
+                        'inoutInfo': {
+                            'args': None,  # All scheduled commands should be stored in schedule.txt
+                            'returns': {
+                                'err': '>b', 
+                                'number of cmds scheduled': '>b'  # Returns -1 if an error occurred. 
+                            }
+                        }
+                    },
+                    'GET_SCHEDULE': {
+                        'subPort': 1,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'  # Refer to rederrno.h for reliance edge error codes
+                            }
+                        }
+                    },
+                    'REPLACE_SCHEDULE': {
+                        'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                        'subPort': 2,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b', 
+                                'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                            }
+                        }
+                    },
+                    'DELETE_SCHEDULE': {
+                        'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                        'subPort': 3,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b', \
+                                'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                            }
+                        }
+                    },
+                    'PING_SCHEDULE': {
+                        'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                        'subPort': 4,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b', 
+                                'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                            }
+                        }
+                    },
+                }
+            },
             'SET_PIPE': {
                 'port': 0,
                 'subservice' : {
