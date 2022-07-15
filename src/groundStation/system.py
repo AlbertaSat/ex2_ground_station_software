@@ -1475,10 +1475,10 @@ class SystemValues(object):
                                 '###############################\r\n'
                                 'Iris Board\r\n'+
                                 '###############################\r\n'+
-                                'VIS_Temperature': '>u2',
-                                'NIR_Temperature': '>u2',
-                                'Flash_Temperature': '>u2',
-                                'Gate_Temperature': '>u2',
+                                'VIS_Temperature': '>f4',
+                                'NIR_Temperature': '>f4',
+                                'Flash_Temperature': '>f4',
+                                'Gate_Temperature': '>f4',
                                 'Image_number': '>u1',
                                 'Software_Version': '>u1',
                                 'Error_number': '>u1',
