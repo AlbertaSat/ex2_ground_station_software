@@ -174,14 +174,35 @@ GENERAL.GET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 		About: None
 		Arguments: [None]
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
-		port: 11		subport: 9
+		port: 11		subport: 12
 
 
 GENERAL.SET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 		About: None
 		Arguments: [>u4]
 		return values: {'err': '>b'}
-		port: 11		subport: 10
+		port: 11		subport: 13
+
+
+GENERAL.ENABLE_BEACON_TASK:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 11		subport: 14
+
+
+GENERAL.DISABLE_BEACON_TASK:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b'}
+		port: 11		subport: 15
+
+
+GENERAL.BEACON_TASK_GET_STATE:
+		About: None
+		Arguments: [None]
+		return values: {'err': '>b', 'state': '>?'}
+		port: 11		subport: 16
 
 
 COMMUNICATION.S_GET_FREQ:
