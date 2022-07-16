@@ -366,7 +366,7 @@ class SystemValues(object):
                         }
                     },
                     'GET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
-                        'subPort': 9,
+                        'subPort': 12,
                         'inoutInfo': {
                             'args': None, 
                             'returns': {
@@ -376,7 +376,7 @@ class SystemValues(object):
                         }
                     },
                     'SET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
-                        'subPort': 10,
+                        'subPort': 13,
                         'inoutInfo': {
                             'args': ['>u4'], 
                             'returns': {
@@ -384,6 +384,34 @@ class SystemValues(object):
                             }
                         }
                     },
+                    'ENABLE_BEACON_TASK': {
+                        'subPort': 14,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b', # err status
+                            }
+                        }
+                    },
+                    'DISABLE_BEACON_TASK': {
+                        'subPort': 15,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b', # err status
+                            }
+                        }
+                    },
+                    'BEACON_TASK_GET_STATE': {
+                        'subPort': 16,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b', # err status
+                                'state': '>?'
+                            }
+                        }
+                    }
                 }
             },
             'COMMUNICATION': {
