@@ -3156,7 +3156,7 @@ class SystemValues(object):
                         }
                     },
                     'ADCS_UPLOAD_FIRMWARE': {
-                        'subPort': 110,
+                        'subPort': 111,
                         'inoutInfo': {
                             'args': ['>u1'],    # 3-9 corresponds to external flash program 1-7
                             'returns': {
