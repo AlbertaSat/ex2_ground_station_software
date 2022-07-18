@@ -128,13 +128,6 @@ GENERAL.SET_ADCS_WATCHDOG_TIMEOUT:
 		port: 11		subport: 10
 
 
-GENERAL.UHF_IS_IN_PIPE_NOTIFICATION:
-		About: Tell Athena the UHF is in PIPE after radio command.
-		Arguments: [>B]
-		return values: {'err': '>b'}
-		port: 11		subport: 11
-
-
 GENERAL.GET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 		About: None
 		Arguments: [None]
