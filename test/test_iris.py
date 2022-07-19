@@ -60,11 +60,11 @@ def test_program_iris():
     raise NotImplementedError
 
 if __name__ == '__main__':
-    # test_iris_program_flash()
-    # time.sleep(8)
+    test_iris_program_flash()
+    time.sleep(8)
 
-    test_iris_init()
-    time.sleep(5)
+    # test_iris_init()
+    # time.sleep(5)
 
     test_iris_sensor_on()
     time.sleep(10)
