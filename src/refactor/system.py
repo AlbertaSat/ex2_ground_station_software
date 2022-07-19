@@ -64,6 +64,65 @@ class GroundNodes(Enum):
     PIPE= 24
 
 services = {
+    'SCHEDULER': {
+        'port': 15,
+        # TODO: these need a error response value
+        'subservice': {
+            'SET_SCHEDULE': {
+                'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                'subPort': 0,
+                'inoutInfo': {
+                    'args': None,  # All scheduled commands should be stored in schedule.txt
+                    'returns': {
+                        'err': '>b', 
+                        'number of cmds scheduled': '>b'  # Returns -1 if an error occurred. 
+                    }
+                }
+            },
+            'GET_SCHEDULE': {
+                'subPort': 1,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'  # Refer to rederrno.h for reliance edge error codes
+                    }
+                }
+            },
+            'REPLACE_SCHEDULE': {
+                'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                'subPort': 2,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b', 
+                        'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                    }
+                }
+            },
+            'DELETE_SCHEDULE': {
+                'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                'subPort': 3,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b', \
+                        'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                    }
+                }
+            },
+            'PING_SCHEDULE': {
+                'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                'subPort': 4,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b', 
+                        'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                    }
+                }
+            },
+        }
+    },
     'SET_PIPE': {
         'port': 0,
         'subservice' : {
@@ -278,16 +337,6 @@ services = {
                 'subPort': 10,
                 'inoutInfo': {
                     'args': ['>u4'],
-                    'returns': {
-                        'err': '>b',  # err status
-                    }
-                }
-            },
-            'UHF_IS_IN_PIPE_NOTIFICATION': {
-            'what': 'Tell Athena the UHF is in PIPE after radio command.',
-                'subPort': 11,
-                'inoutInfo': {
-                    'args': ['>B'],
                     'returns': {
                         'err': '>b',  # err status
                     }
@@ -1891,7 +1940,7 @@ services = {
         }
     },
     'CLI' : {
-        'port': 24,
+        'port': 14,
         'subservice': {
             'SEND_CMD': {
                 'what': 'Send command over the sat_cli.',
@@ -1899,8 +1948,8 @@ services = {
                 'inoutInfo': {
                     'args': ["B", "a128"],
                     'returns': {
-                        'status': '>b',
-                        'resp': 'a128'
+                        "status": '>b',
+                        "resp": "a128"
                     }
                 }
             }
@@ -3789,21 +3838,3 @@ services = {
     }
 }
 
-
-
-
-'''class SystemValues(object):
-    def __init__(self):
-        self.appIdx = 0
-        self.serviceIdx = 2
-        self.subserviceIdx = 4
-
-        self.varTypes = {
-            0: '<u1',
-            1: '<i1',
-            2: '<u2',
-            4: '<u4',
-            9: '<S16' #Empty means all zero or Use <V16
-        }
-
-        self.'''
