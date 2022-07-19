@@ -314,9 +314,7 @@ class groundStation(object):
 
     def handlePipeMode(self):
         if self.uTrns is not None:
-            if self.uTrns.handlePipeMode():
-                command, port, toSend = self.getInput(inVal= '{}.general.UHF_IS_IN_PIPE_NOTIFICATION(1)'.format(self.satellite))
-                self.transaction(command, port, toSend)
+            self.uTrns.handlePipeMode()
 
     def get_satellite(self):
         return self.satellite

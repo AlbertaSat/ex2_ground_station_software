@@ -355,16 +355,6 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'UHF_IS_IN_PIPE_NOTIFICATION': {
-                    'what': 'Tell Athena the UHF is in PIPE after radio command.',
-                        'subPort': 11,
-                        'inoutInfo': {
-                            'args': ['>B'],
-                            'returns': {
-                                'err': '>b',  # err status
-                            }
-                        }
-                    },
                     'GET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
                         'subPort': 9,
                         'inoutInfo': {
