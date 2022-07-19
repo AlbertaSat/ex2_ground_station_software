@@ -7,4 +7,5 @@ if __name__ == '__main__':
     opts = ftp_options()
     opts2 = opts.getOptions()
     csp = ftp(opts2)
+    csp.handlePipeMode()
     csp.start_transfer()
