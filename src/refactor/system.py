@@ -65,7 +65,7 @@ class GroundNodes(Enum):
 
 services = {
     'SCHEDULER': {
-        'port': 15,
+        'port': 25,
         # TODO: these need a error response value
         'subservice': {
             'SET_SCHEDULE': {
@@ -1940,7 +1940,7 @@ services = {
         }
     },
     'CLI' : {
-        'port': 14,
+        'port': 24,
         'subservice': {
             'SEND_CMD': {
                 'what': 'Send command over the sat_cli.',
