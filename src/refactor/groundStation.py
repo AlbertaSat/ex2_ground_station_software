@@ -16,13 +16,19 @@ class groundStation:
         keyfile.close()
         self.interactive = interactiveHandler()
         self.inputHandler = inputHandler()
-        self.satellite = opts.satellite
+        self.set_satellite(opts.satellite)
 
     def run(self):
         raise NotImplementedError("groundStation.run() must be overwritten by derived class")
 
     def set_satellite(self, name):
-        if name not in SatelliteNodes.__members__.keys():
-            raise ValueError("Satellite \'{}\' not in {}".format(name, str(self.apps.keys())))
-        else:
-            self.satellite = name;
+        satelliteAddr = 0
+        satelliteName = ''
+        for i in SatelliteNodes.__members__.values():
+            if i.name == name:
+                satelliteAddr = i.value
+                satelliteName = i.name
+        if satelliteAddr == 0:
+            raise Exception("Invalid satellite {}".format(name))
+        self.satelliteAddr = satelliteAddr
+        self.satellite = satelliteName
