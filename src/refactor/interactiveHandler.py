@@ -2,6 +2,7 @@
 from system import services
 from inputParser import inputParser
 from receiveParser import receiveParser
+from embedCSP import embedPacket
 
 class interactiveHandler:
     def __init__(self):
@@ -21,6 +22,8 @@ class interactiveHandler:
             transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
+            transactObj = schedulerTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -54,7 +57,14 @@ class baseTransaction:
 
 class schedulerTransaction(baseTransaction):
     def execute(self):
-        raise NotImplementedError("scheduler transactions not implemented")
+        tokens = self.inputParse.lexer(self.command)
+        file_param = tokens[-2]
+        f = open(file_param, "r")
+        cmdList = f.readlines()
+        packetEmbedder = embedPacket(cmdList, self.args)
+        self.args = packetEmbedder.embedCSP()
+        self.send()
+        return self.parseReturnValue(self.receive())
 
 class getHKTransaction(baseTransaction):
     def execute(self):
