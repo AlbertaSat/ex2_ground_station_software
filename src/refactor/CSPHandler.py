@@ -14,9 +14,12 @@ def getCSPHandler(addr, interface, device, hmacKey, protocol = None):
     else:
         raise ValueError("Protocol {} does not exist for CSP handlers".format(protocol))
 
-class CSPHandler:
-
-    #TODO: maybe a factory pattern here?
+class CSPHandler(object):
+    __instance = None
+    def __new__(cls, addr, interface, device, hmacKey):
+        if cls.__instance is None:
+            cls.__instance = super(CSPHandler, cls).__new__(cls)
+        return cls.__instance
 
     # 'addr' groundstation's address
     # 'interface' interface to use
@@ -36,7 +39,7 @@ class CSPHandler:
         self.interfaceName = ""
         if interface == 'uart':
             self.ser = self._uart(device)
-        elif interface == 'uhf':
+        elif interface == 'sdr':
             self._sdr(device, libcsp.SDR_UHF_9600_BAUD)
         elif interface == 'sband':
             raise NotImplementedError("Sband support not yet implemented")
@@ -47,7 +50,6 @@ class CSPHandler:
         libcsp.rtable_load(stringBuild)
 
         libcsp.route_start_task()
-
 
     def send(self, server, port, buf : bytearray):
         packet = self.packetBuilder.makePacket(buf)
@@ -91,6 +93,7 @@ class UHF_CSPHandler(CSPHandler):
             raise ValueError("UHF CSP handler works only with sdr interface")
         self.uTrns = uTransceiver()
         super().__init__(addr, interface, device, hmacKey)
+        
 
     def send(self, server, port, buf : bytearray):
         self.uTrns.handlePipeMode()
