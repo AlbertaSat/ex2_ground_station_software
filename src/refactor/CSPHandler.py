@@ -35,9 +35,9 @@ class CSPHandler:
 
         self.interfaceName = ""
         if interface == 'uart':
-            self.ser = self.__uart__(device)
+            self.ser = self._uart(device)
         elif interface == 'uhf':
-            self.__sdr__(device, libcsp.SDR_UHF_9600_BAUD)
+            self._sdr(device, libcsp.SDR_UHF_9600_BAUD)
         elif interface == 'sband':
             raise NotImplementedError("Sband support not yet implemented")
     
@@ -64,7 +64,7 @@ class CSPHandler:
             libcsp.buffer_free(packet)
         return data
 
-    def __uart__(self, device):
+    def _uart(self, device):
         """ initialize uart interface """
         ser = serial.Serial(device,
         baudrate=115200,
@@ -76,7 +76,7 @@ class CSPHandler:
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         self.interfaceName = "uart"
 
-    def __sdr__(self, device, uhf_baudrate):
+    def _sdr(self, device, uhf_baudrate):
         """ Initialize SDR interface """
         libcsp.sdr_init(device, 115200, uhf_baudrate, "UHF")
         self.interfaceName = "UHF"
