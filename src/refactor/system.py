@@ -3684,7 +3684,7 @@ services = {
             'GET_FILE_SIZE': {
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['>b'], # dummy byte, overwritten by program
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'size': '>u8',
@@ -3694,7 +3694,7 @@ services = {
             'REQUEST_BURST_DOWNLOAD': {
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['>b'], # dummy byte, overwritten by program
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'mtime': '>u4',
@@ -3718,7 +3718,7 @@ services = {
             'FTP_START_UPLOAD': {
                 'subPort': 3,
                 'inoutInfo': {
-                    'args': ['>b'], # dummy byte, overwritten by program
+                    'args': None,
                     'returns': {
                         'err': '>b',
                     }
@@ -3727,7 +3727,7 @@ services = {
             'FTP_UPLOAD_PACKET': {
                 'subPort': 4,
                 'inoutInfo': {
-                    'args': ['>b'], # dummy byte, overwritten by program
+                    'args': None,
                     'returns': {
                         'err': '>b',
                     }
