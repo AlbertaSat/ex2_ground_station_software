@@ -3,6 +3,7 @@ from system import services
 from inputParser import inputParser
 from receiveParser import receiveParser
 from embedCSP import embedPacket
+import time
 
 class interactiveHandler:
     def __init__(self):
@@ -24,6 +25,8 @@ class interactiveHandler:
             transactObj = satcliTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
             transactObj = schedulerTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
+            transactObj = setTimeTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -53,6 +56,20 @@ class baseTransaction:
         self.send()
         ret = self.receive()
         return self.parseReturnValue(ret)
+
+class setTimeTransaction(baseTransaction):
+    def execute(self):
+        tokens = self.inputParse.lexer(self.command)
+        time_param = tokens[-2]
+        now = (int(time_param))
+        if (now == 0):
+            now = int(time.time())
+
+        tokens[-2] = str(now)
+        self.pkt = self.inputParse.parseInput("".join(tokens))
+        self.args = self.pkt['args']
+        self.send()
+        return self.parseReturnValue(self.receive())
 
 
 class schedulerTransaction(baseTransaction):

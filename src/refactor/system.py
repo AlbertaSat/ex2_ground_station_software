@@ -207,7 +207,7 @@ services = {
                 }
             },
             'SET_TIME': { # OBC time
-            'what': 'Set the current unix time on the OBC',
+            'what': 'Set the current unix time on the OBC. Set parameter to 0 to use local unix time',
                 'subPort': 11,
                 'inoutInfo': {
                     'args': ['>u4'],  # timestamp
