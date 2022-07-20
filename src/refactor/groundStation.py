@@ -16,12 +16,12 @@ class groundStation:
         keyfile.close()
         self.interactive = interactiveHandler()
         self.inputHandler = inputHandler()
-        self.set_satellite(opts.satellite)
+        self.setSatellite(opts.satellite)
 
     def run(self):
         raise NotImplementedError("groundStation.run() must be overwritten by derived class")
 
-    def set_satellite(self, name):
+    def setSatellite(self, name):
         satelliteAddr = 0
         satelliteName = ''
         for i in SatelliteNodes.__members__.values():
