@@ -21,6 +21,7 @@ class embedPacket:
                 if cmdStart is not None:
                     cmdStart = cmdStart.start()
                 scheduledTime = self.cmdList[i][:cmdStart]
+                scheduledTime = " ".join(scheduledTime.strip().split())
                 ascii_values = [ord(character) for character in scheduledTime]
                 scheduledCmd = self.cmdList[i][cmdStart:]
 
