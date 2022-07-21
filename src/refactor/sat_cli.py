@@ -7,7 +7,11 @@ class sat_cli(groundStation):
         while(1):
             inStr = self.inputHandler.getInput("$ ")
             commandStr = "{}.cli.send_cmd({},{})".format(self.satellite, len(inStr), inStr)
-            transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
+            try:
+                transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
+            except Exception as e:
+                print(e)
+                continue
             print(transactObj.execute())
 
 

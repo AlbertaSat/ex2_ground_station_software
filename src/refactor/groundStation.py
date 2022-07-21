@@ -8,10 +8,14 @@ class groundStation:
     def __init__(self, opts):
         keyfile = open(opts.hkeyfile, "r")
         hkey = keyfile.read().strip()
-        if opts.u:
-            self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, "UHF")
-        else:
-            self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey)
+        try:
+            if opts.u:
+                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, "UHF")
+            else:
+                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey)
+        except Exception as e:
+            print(e)
+            exit(1)
 
         keyfile.close()
         self.interactive = interactiveHandler()

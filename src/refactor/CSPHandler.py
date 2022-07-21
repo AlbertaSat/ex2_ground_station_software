@@ -61,9 +61,10 @@ class CSPHandler(object):
         conn = self.connectionManager.getConn(server,port)
         packet = libcsp.read(conn, timeout)
         data = None
-        if packet is not None:
-            data = self.packetExtractor.breakPacket(packet)
-            libcsp.buffer_free(packet)
+        if packet is None:
+            raise Exception("No packet received after {} seconds".format(timeout // 1000))
+        data = self.packetExtractor.breakPacket(packet)
+        libcsp.buffer_free(packet)
         return data
 
     def _uart(self, device):

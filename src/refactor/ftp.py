@@ -71,9 +71,13 @@ class ftp(groundStation):
         self.infile = file
 
     def _transaction(self, data):
-        self.networkManager.send(self.satelliteAddr, self.destPort, data)
-        response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-        return self.receiveParse.parseReturnValue(self.destPort, response)
+        try:
+            self.networkManager.send(self.satelliteAddr, self.destPort, data)
+            response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
+            return self.receiveParse.parseReturnValue(self.destPort, response)
+        except Exception as e:
+            print(e)
+            exit(1)
 
     def _get_data_upload_packet(self, req_id, data, count):
         subservice = self.services.get('FTP_COMMAND').get('subservice').get('FTP_UPLOAD_PACKET').get('subPort')
