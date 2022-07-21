@@ -11,6 +11,7 @@ from receiveParser import receiveParser
 from system import services
 
 #TODO: not a fan of the level of object orientation here. FTP is responsible for too much
+#TODO: The naming conventions here are... interesting
 
 class ftp(groundStation):
     def __init__(self, opts):
