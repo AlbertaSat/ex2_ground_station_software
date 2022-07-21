@@ -91,6 +91,7 @@ class updater(groundStation):
         out.extend(subservice.to_bytes(1, byteorder='big'))
         out.extend(self.address.to_bytes(4, byteorder='big'))
         out.extend(len(data).to_bytes(2, byteorder='big'))
+        out.extend(crc16(data).to_bytes(2, byteorder='big'))
         out.extend(data)
         #print(out)
         toSend = libcsp.buffer_get(len(out))
@@ -103,7 +104,7 @@ class updater(groundStation):
 
     def send_update(self):
         skip = 0;
-
+        print("here")
         if self.doresume:
             resume_packet = self.get_resume_packet()
             data = self.transaction(resume_packet);
@@ -148,6 +149,7 @@ class updater(groundStation):
                 return False
             if data[0]['err'] != 0:
                 print("error from data packet")
+                return False;
             self.address += len(b)
         
         return True
