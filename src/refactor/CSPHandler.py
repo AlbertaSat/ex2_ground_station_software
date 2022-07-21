@@ -17,10 +17,8 @@
  * @date 2022-09-21
 '''
 
-from multiprocessing.sharedctypes import Value
 import libcsp_py3 as libcsp
-from packetMaker import packetMaker
-from packetBreaker import packetBreaker
+import packetUtils
 from connectionManager import connectionManager
 import serial
 from system import SatelliteNodes
@@ -45,8 +43,6 @@ class CSPHandler(object):
     # 'device' device file interface is to write to
     # 'hmacKey' key to use for HMAC authentication
     def __init__(self, addr, interface, device, hmacKey):
-        self.packetBuilder = packetMaker()
-        self.packetExtractor = packetBreaker()
         self.connectionManager = connectionManager()
 
         self.myAddr = addr;
@@ -71,7 +67,7 @@ class CSPHandler(object):
         libcsp.route_start_task()
 
     def send(self, server, port, buf : bytearray):
-        packet = self.packetBuilder.makePacket(buf)
+        packet = packetUtils.makePacket(buf)
         conn = self.connectionManager.getConn(server,port)
         libcsp.send(conn, packet)
         libcsp.buffer_free(packet)
@@ -82,7 +78,7 @@ class CSPHandler(object):
         data = None
         if packet is None:
             raise Exception("No packet received after {} seconds".format(timeout // 1000))
-        data = self.packetExtractor.breakPacket(packet)
+        data = packetUtils.breakPacket(packet)
         libcsp.buffer_free(packet)
         return data
 

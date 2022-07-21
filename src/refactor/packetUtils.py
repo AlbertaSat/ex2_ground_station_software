@@ -12,20 +12,20 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file packetMaker.py
+ * @file packetBreaker.py
  * @author Robert Taylor
  * @date 2022-09-21
 '''
 
 import libcsp_py3 as libcsp
 
-class packetMaker:
-    def __init__(self):
-        pass
-    def makePacket(self, data : bytearray):
-        packet = libcsp.buffer_get(len(data))
-        if len(data) > 0:
-            libcsp.packet_set_data(packet, data)
-            return packet
-        # TODO: use exceptions
-        return None
+def breakPacket(packet):
+    data = bytearray(libcsp.packet_get_data(packet))
+    return data
+
+def makePacket(data : bytearray):
+    packet = libcsp.buffer_get(len(data))
+    if len(data) > 0:
+        libcsp.packet_set_data(packet, data)
+        return packet
+    return None
