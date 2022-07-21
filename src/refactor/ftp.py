@@ -73,7 +73,7 @@ class ftp(groundStation):
     def _transaction(self, data):
         self.networkManager.send(self.satelliteAddr, self.destPort, data)
         response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-        return self.receiveParse.parseReturnValue(self.destPort, response, len(response))
+        return self.receiveParse.parseReturnValue(self.destPort, response)
 
     def _get_data_upload_packet(self, req_id, data, count):
         subservice = self.services.get('FTP_COMMAND').get('subservice').get('FTP_UPLOAD_PACKET').get('subPort')
@@ -133,7 +133,7 @@ class ftp(groundStation):
                 print('Did not receive response')
                 f.close()
                 return None
-            data = self.receiveParse.parseReturnValue(self.destPort, packet, len(packet))
+            data = self.receiveParse.parseReturnValue(self.destPort, packet)
             # I know it's not good to hardcode the byte I want like this
             # but there's too much legacy so it won't change
             if packet[0] == self.services.get("FTP_COMMAND").get('subservice').get('FTP_DATA_PACKET').get('subPort'):

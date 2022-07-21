@@ -40,7 +40,7 @@ class updater(groundStation):
         data = command['args']
         self.networkManager.send(dest, dport, data)
         response = self.networkManager.receive(dest, dport, 10000)
-        return self.receiveParse.parseReturnValue(dport, response, len(response))
+        return self.receiveParse.parseReturnValue(dport, response)
 
     def _crc(self, data):
         if data is None:

@@ -198,11 +198,11 @@ if __name__ == '__main__':
     cmd2 = parser.parseInputValue('OBC.TIME_MANAgemENT.GET_TIME')
     print(cmd2)
 
-    returnval = parser.parseReturnValue(0, 16, 8, bytearray(b'\x01\x00'), 2) # ba[0] = 01 (set time)
+    returnval = parser.parseReturnValue(0, 16, 8, bytearray(b'\x01\x00')) # ba[0] = 01 (set time)
     print(returnval)
 
-    returnval = parser.parseReturnValue(0, 16, 8, bytearray(b'\x00\x00@\xaa\xe1H@\x06ffA\x90\x14{'), 5) # ba[0] = 00 (set time)
+    returnval = parser.parseReturnValue(0, 16, 8, bytearray(b'\x00\x00@\xaa\xe1H@\x06ffA\x90\x14{')) # ba[0] = 00 (set time)
     print(returnval)
 
-    returnval = parser.parseReturnValue(0, 16, 10, bytearray(b'\x01\x00D|\x86w'), 5)
+    returnval = parser.parseReturnValue(0, 16, 10, bytearray(b'\x01\x00D|\x86w'))
     print(returnval)
