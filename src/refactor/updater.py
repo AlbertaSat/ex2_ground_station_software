@@ -36,18 +36,20 @@ class updater(groundStation):
         self.blocksize = opts.blocksize
         if self.blocksize % 32 != 0:
             raise ValueError("Blocksize must be a multiple of 32")
-        self.filename = opts.file
+        self.setFile(opts.file)
+        self.doresume = opts.resume
+        self.address = opts.address
+
+    def setFile(self, filename):
+        print(filename)
+        self.filename = filename
         self.file = open(self.filename, "rb")
         self.filesize = os.path.getsize(self.filename)
         if self.filesize == 0:
             raise ValueError("File size is null")
-        if opts.crc == None:
-            self.file_crc = self._crc(self.file.read())
-        else:
-            self.file_crc = opts.crc
+        self.file_crc = self._crc(self.file.read())
+
         self.file.seek(0)
-        self.doresume = opts.resume
-        self.address = opts.address
 
     def run(self):
         self._send_update()
