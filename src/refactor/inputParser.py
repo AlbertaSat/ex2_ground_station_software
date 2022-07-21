@@ -3,9 +3,7 @@ import re
 import numpy as np
 from enum import Enum
 
-
 # TODO: rework this whole class
-# TODO: Remove error prints and use exceptions
 
 class inputParser:
     def __init__(self):
@@ -25,11 +23,9 @@ class inputParser:
                 remote = member.value
                 break
         if remote is None:
-            print('No such remote or bad format')
-            return None
+            raise ValueError("No such remote or bad format")
         command['dst'] = remote
 
-        # TODO: shift responsibility of format checking to lexer
         if tokens[self.serviceIdx] in self.services:
             # Matches <service>
             service = self.services[tokens[self.serviceIdx]]
@@ -37,34 +33,30 @@ class inputParser:
             if 'subservice' not in service:
                 # Then there is no subservice, skip to arg check
                 if 'inoutInfo' not in service:
-                    print('No in/out info for service')
-                    return None
+                    raise ValueError('No in/out info for service')
                 if not self.__argCheck(
                         tokens[(self.serviceIdx + 1)::], service['inoutInfo'], command):
                     return None
             elif tokens[self.serviceIdx + 1] != '.':
                 # If there is a subservice, next token must be a '.'
-                print('Bad format')
-                return None
+                raise ValueError('Bad format')
 
         else:
-            print('No such service')
+            raise ValueError('No such service')
             return None
 
-        # TODO: wtf is going on here
+        # TODO: what is going on here
         if tokens[self.subserviceIdx] in service['subservice']:
             subservice = service['subservice'][tokens[self.subserviceIdx]]
             command['subservice'] = subservice['subPort']
 
             if 'inoutInfo' not in subservice:
-                print('No in/out info for subservice')
-                return None
+                raise ValueError('No in/out info for subservice')
             if not self.__argCheck(tokens[(
                     self.subserviceIdx + 1)::], subservice['inoutInfo'], command, subservice['subPort']):
                 return None
         else:
-            print('No such subservice')
-            return None
+            raise ValueError('No such subservice')
 
         return command
 
@@ -113,14 +105,12 @@ class inputParser:
             return True
 
         if args[0] != '(' and args[-1] != ')':
-            print('Bad format')
-            return None
+            raise ValueError('Bad format')
 
         args.pop(0)
         args.pop(-1)
         if len(args) != len(inoutInfo['args']):
-            print('Wrong # of args')
-            return None
+            raise ValueError('Wrong # of args')
         if subservice is not None:
             outArgs.extend([subservice])
 
