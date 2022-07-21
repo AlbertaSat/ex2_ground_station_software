@@ -17,17 +17,16 @@
  * @date 2022-09-21
 '''
 
-
 from system import services
-from inputParser import inputParser
-from receiveParser import receiveParser
-from embedCSP import embedPacket
+from inputParser import InputParser
+from receiveParser import ReceiveParser
+from embedCSP import EmbedPacket
 import time
 
-class interactiveHandler:
+class InteractiveHandler:
     def __init__(self):
         self.services = services
-        self.inParser = inputParser()
+        self.inParser = InputParser()
 
         # TODO: This is bad, make it good when fixing inputParser
         self.appIdx = 0
@@ -54,8 +53,8 @@ class interactiveHandler:
 class baseTransaction:
     def __init__(self, command, networkHandler):
         self.networkHandler = networkHandler
-        self.inputParse = inputParser()
-        self.returnParse = receiveParser()
+        self.inputParse = InputParser()
+        self.returnParse = ReceiveParser()
         self.command = command
         self.pkt = self.inputParse.parseInput(self.command)
         self.dst = self.pkt["dst"]
@@ -97,7 +96,7 @@ class schedulerTransaction(baseTransaction):
         file_param = tokens[-2]
         f = open(file_param, "r")
         cmdList = f.readlines()
-        packetEmbedder = embedPacket(cmdList, self.args)
+        packetEmbedder = EmbedPacket(cmdList, self.args)
         self.args = packetEmbedder.embedCSP()
         self.send()
         return self.parseReturnValue(self.receive())

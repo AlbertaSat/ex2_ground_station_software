@@ -17,10 +17,10 @@
  * @date 2022-09-21
 '''
 
-from groundStation import groundStation
+from groundStation import GroundStation
 from options import optionsFactory
 
-class cli(groundStation):
+class cli(GroundStation):
     def run(self):
         while(1):
             inStr = self.inputHandler.getInput("to send: ")

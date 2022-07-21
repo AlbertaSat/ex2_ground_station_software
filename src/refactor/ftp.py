@@ -17,26 +17,22 @@
  * @date 2022-09-21
 '''
 
-
-
-
-
-from groundStation import groundStation
+from groundStation import GroundStation
 from options import optionsFactory
-from system import GroundNodes, services, SatelliteNodes
+from system import GroundNodes, services
 import os
 from random import randint
-from receiveParser import receiveParser
+from receiveParser import ReceiveParser
 from system import services
 
 #TODO: not a fan of the level of object orientation here. FTP is responsible for too much
 #TODO: The naming conventions here are... interesting
 
-class ftp(groundStation):
+class ftp(GroundStation):
     def __init__(self, opts):
         super(ftp, self).__init__(opts)
         self.services = services
-        self.receiveParse = receiveParser()
+        self.receiveParse = ReceiveParser()
         self.operation = ''
         self.infile = ''
         self.outfile = ''

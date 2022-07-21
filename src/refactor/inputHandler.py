@@ -17,11 +17,7 @@
  * @date 2022-09-21
 '''
 
-
-
-
-
-class inputHandler():
+class InputHandler():
     def __init__(self):
         self.historyFile = open("command_history.log", "a")
     def getInput(self, prompt):

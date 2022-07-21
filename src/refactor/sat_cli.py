@@ -17,11 +17,10 @@
  * @date 2022-09-21
 '''
 
-from click import option
-from groundStation import groundStation
+from groundStation import GroundStation
 from options import optionsFactory
 
-class sat_cli(groundStation):
+class sat_cli(GroundStation):
     def run(self):
         while(1):
             inStr = self.inputHandler.getInput("$ ")

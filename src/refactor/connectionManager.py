@@ -21,7 +21,7 @@ import time
 import libcsp_py3 as libcsp
 from collections import defaultdict
 
-class connectionManager:
+class ConnectionManager:
     def __init__(self):
         self.server_connection = defaultdict(dict)
         self.rdp_timeout = 10000

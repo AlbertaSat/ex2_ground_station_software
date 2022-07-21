@@ -22,15 +22,15 @@ import sys
 
 def optionsFactory(kind : str):
     if (kind == "basic"):
-        return options()
+        return Options()
     elif (kind == "updater"):
-        return updateOptions()
+        return UpdateOptions()
     elif (kind == "ftp"):
-        return ftpOptions()
+        return FTPOptions()
     else:
         raise NotImplementedError("Options class type {} not implemented".format(type))
 
-class options(object):
+class Options(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description='Parses command.')
 
@@ -74,7 +74,7 @@ class options(object):
             help='Satellite parameter for automatic programs (e.g FTP)')
         return self.parser.parse_args(sys.argv[1:])
 
-class updateOptions(options):
+class UpdateOptions(Options):
     def __init__(self):
         super().__init__();
 
@@ -113,7 +113,7 @@ class updateOptions(options):
         return super().getOptions();
 
 
-class ftpOptions(options):
+class FTPOptions(Options):
     def __init__(self):
         super().__init__();
 

@@ -18,11 +18,11 @@
 '''
 
 import re
-from inputParser import inputParser
+from inputParser import InputParser
 
-class embedPacket:
+class EmbedPacket:
     def __init__(self, commandList, data):
-        self.inputParse = inputParser()
+        self.inputParse = InputParser()
         self.data = data
         self.cmdList = commandList
         self.schedule = list()
@@ -68,8 +68,8 @@ class embedPacket:
 
 if __name__ == "__main__":
     commandList = ["0        50      1     7   4       5        5    52     ex2.time_management.get_time()"]
-    parser = inputParser()
+    parser = InputParser()
     command = "EX2.SCHEDULER.SET_SCHEDULE()"
     commandDict = parser.parseInput(command)
-    embedObj = embedPacket(commandList, commandDict['args'])
+    embedObj = EmbedPacket(commandList, commandDict['args'])
     print(embedObj.embedCSP())

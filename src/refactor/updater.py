@@ -17,22 +17,22 @@
  * @date 2022-09-21
 '''
 
-from groundStation import groundStation
+from groundStation import GroundStation
 from options import optionsFactory
 import binascii
 import os
 
-from inputParser import inputParser
-from receiveParser import receiveParser
+from inputParser import InputParser
+from receiveParser import ReceiveParser
 from system import services
 
-class updater(groundStation):
+class updater(GroundStation):
     #TODO: Better object orientation, maybe a common class with FTP?
     def __init__(self, opts):
         super(updater, self).__init__(opts)
         self.services = services
-        self.inParse = inputParser()
-        self.receiveParse = receiveParser()
+        self.inParse = InputParser()
+        self.receiveParse = ReceiveParser()
         self.blocksize = opts.blocksize
         if self.blocksize % 32 != 0:
             raise ValueError("Blocksize must be a multiple of 32")

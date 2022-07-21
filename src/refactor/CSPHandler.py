@@ -19,7 +19,7 @@
 
 import libcsp_py3 as libcsp
 import packetUtils
-from connectionManager import connectionManager
+from connectionManager import ConnectionManager
 import serial
 from system import SatelliteNodes
 
@@ -43,7 +43,7 @@ class CSPHandler(object):
     # 'device' device file interface is to write to
     # 'hmacKey' key to use for HMAC authentication
     def __init__(self, addr, interface, device, hmacKey):
-        self.connectionManager = connectionManager()
+        self.connectionManager = ConnectionManager()
 
         self.myAddr = addr;
         self.numberOfBuffers = 100

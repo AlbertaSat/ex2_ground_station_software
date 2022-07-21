@@ -18,9 +18,9 @@
 '''
 
 import numpy as np
-from system import services, SatelliteNodes
+from system import services
 
-class receiveParser:
+class ReceiveParser:
     def __init__(self):
         self.services = services
 
@@ -61,7 +61,7 @@ class receiveParser:
         return outputObj
 
 if __name__ == '__main__':
-    parser = receiveParser()
+    parser = ReceiveParser()
     returnval = parser.parseReturnValue(8, bytearray(b'\x01\x00')) # ba[0] = 01 (set time)
     print(returnval)
 

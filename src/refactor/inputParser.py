@@ -18,13 +18,11 @@
 '''
 
 from system import services, SatelliteNodes
-import re
 import numpy as np
-from enum import Enum
 
 # TODO: rework this whole class
 
-class inputParser:
+class InputParser:
     def __init__(self):
         self.services = services
         self.remotes = SatelliteNodes
@@ -145,7 +143,7 @@ class inputParser:
         return command
 
 if __name__ == '__main__':
-    parser = inputParser()
+    parser = InputParser()
     cmd1 = parser.parseInput('EX2.TIME_MANAGEMENT.SET_TIME(1598385718)')
     print(cmd1)
 

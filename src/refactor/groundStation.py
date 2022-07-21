@@ -18,12 +18,12 @@
 '''
 
 from CSPHandler import getCSPHandler
-from interactiveHandler import interactiveHandler
-from inputHandler import inputHandler
+from interactiveHandler import InteractiveHandler
+from inputHandler import InputHandler
 from system import GroundNodes
 from system import SatelliteNodes
 
-class groundStation:
+class GroundStation:
     def __init__(self, opts):
         keyfile = open(opts.hkeyfile, "r")
         hkey = keyfile.read().strip()
@@ -37,8 +37,8 @@ class groundStation:
             exit(1)
 
         keyfile.close()
-        self.interactive = interactiveHandler()
-        self.inputHandler = inputHandler()
+        self.interactive = InteractiveHandler()
+        self.inputHandler = InputHandler()
         self.setSatellite(opts.satellite)
 
     def run(self):
