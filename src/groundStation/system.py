@@ -1129,6 +1129,13 @@ class SystemValues(object):
                                 '###############################\r\n'
                                 'ADCS\r\n'+
                                 '###############################\r\n'+
+                                'Att_Estimate_Mode': '>B',
+                                'Att_Control_Mode': '>B',
+                                'Run_Mode': '>B',
+                                'Flags_arr': '>V52',
+                                'Longitude': '>f4',
+                                'Latitude': '>f4',
+                                'Altitude': '>f4',
                                 'Estimated_Angular_Rate_X': '>f4',
                                 'Estimated_Angular_Rate_Y': '>f4',
                                 'Estimated_Angular_Rate_Z': '>f4',
