@@ -5,7 +5,6 @@ from enum import Enum
 
 
 # TODO: rework this whole class
-# TODO: add sat_cli support
 # TODO: Remove error prints and use exceptions
 
 class inputParser:
