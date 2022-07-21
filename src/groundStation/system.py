@@ -1475,10 +1475,10 @@ class SystemValues(object):
                                 '###############################\r\n'
                                 'Iris Board\r\n'+
                                 '###############################\r\n'+
-                                'VIS_Temperature': '>u2',
-                                'NIR_Temperature': '>u2',
-                                'Flash_Temperature': '>u2',
-                                'Gate_Temperature': '>u2',
+                                'VIS_Temperature': '>f4',
+                                'NIR_Temperature': '>f4',
+                                'Flash_Temperature': '>f4',
+                                'Gate_Temperature': '>f4',
                                 'Image_number': '>u1',
                                 'Software_Version': '>u1',
                                 'Error_number': '>u1',
@@ -3961,24 +3961,24 @@ class SystemValues(object):
                             }
                         }
                     },
-                    'IRIS_PROGRAM_FLASH': {
-                        'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
-                        'subPort': 6,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
                     'IRIS_COUNT_IMAGES': {
                         'what': "Tell Iris to send number of images stored in SD card",
-                        'subPort': 7,
+                        'subPort': 6,
                         'inoutInfo': {
                             'args': None,
                             'returns': {
                                 'err': '>b',
                                 'Number of Images': '>u',
+                            }
+                        }
+                    },
+                    'IRIS_PROGRAM_FLASH': {
+                        'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
+                        'subPort': 7,
+                        'inoutInfo': {
+                            'args': None,
+                            'returns': {
+                                'err': '>b'
                             }
                         }
                     },
@@ -3989,10 +3989,10 @@ class SystemValues(object):
                             'args': None,
                             'returns': {
                                 'err': '>b',
-                                'VIS_Temperature': '>u2',
-                                'NIR_Temperature': '>u2',
-                                'Flash_Temperature': '>u2',
-                                'Gate_Temperature': '>u2',
+                                'VIS_Temperature': '>f4',
+                                'NIR_Temperature': '>f4',
+                                'Flash_Temperature': '>f4',
+                                'Gate_Temperature': '>f4',
                                 'Image_number': '>u1',
                                 'Software_Version': '>u1',
                                 'Error_number': '>u1',
