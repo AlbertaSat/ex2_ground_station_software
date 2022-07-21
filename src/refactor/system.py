@@ -1839,7 +1839,7 @@ services = {
                 'what' : 'Program a single block of data',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['>u4', '>u4', 'a512'],
+                    'args': ['>u4', '>u4'],
                     'returns': {
                         'err': '>b'
                     }
