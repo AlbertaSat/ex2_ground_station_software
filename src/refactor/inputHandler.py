@@ -23,7 +23,7 @@
 
 class inputHandler():
     def __init__(self):
-        self.historyFile = open("command_history.txt", "a")
+        self.historyFile = open("command_history.log", "a")
     def getInput(self, prompt):
         inStr = input(prompt)
         self.historyFile.write(inStr + '\n')
