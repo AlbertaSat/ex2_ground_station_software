@@ -86,13 +86,10 @@ class ftp(GroundStation):
         self.infile = file
 
     def _transaction(self, data):
-        try:
-            self.networkManager.send(self.satelliteAddr, self.destPort, data)
-            response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-            return self.receiveParse.parseReturnValue(self.destPort, response)
-        except Exception as e:
-            print(e)
-            exit(1)
+        self.networkManager.send(self.satelliteAddr, self.destPort, data)
+        response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
+        return self.receiveParse.parseReturnValue(self.destPort, response)
+
 
     def _get_data_upload_packet(self, req_id, data, count):
         subservice = self.services.get('FTP_COMMAND').get('subservice').get('FTP_UPLOAD_PACKET').get('subPort')
@@ -141,71 +138,62 @@ class ftp(GroundStation):
             mode = "wb"
         else :
             mode = "ab"
-        f = open(self.outfile, mode)
-        f.seek(skip * self.blocksize)
-        blockcount = 0;
-        missing_blocks = list()
-        received = 0
-        while True:
-            packet = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-            if packet is None:
-                print('Did not receive response')
-                f.close()
-                return None
-            data = self.receiveParse.parseReturnValue(self.destPort, packet)
-            # I know it's not good to hardcode the byte I want like this
-            # but there's too much legacy so it won't change
-            if packet[0] == self.services.get("FTP_COMMAND").get('subservice').get('FTP_DATA_PACKET').get('subPort'):
-                if data['blocknum'] != blockcount:
-                    missing_blocks.append(blockcount)
-                    print("missed block {}".format(blockcount))
-                    f.write(bytes("\0" * self.blocksize, 'ascii'))
-                f.write(data['data'])
-                blockcount += 1
-                received += data['size']
-                print("Received block {} of {}".format(data['blocknum'] + 1, int(count)))
+        with open(self.outfile, mode) as f:
+            f.seek(skip * self.blocksize)
+            blockcount = 0;
+            missing_blocks = list()
+            received = 0
+            while True:
+                packet = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
+                data = self.receiveParse.parseReturnValue(self.destPort, packet)
+                # I know it's not good to hardcode the byte I want like this
+                # but there's too much legacy so it won't change
+                if packet[0] == self.services.get("FTP_COMMAND").get('subservice').get('FTP_DATA_PACKET').get('subPort'):
+                    if data['blocknum'] != blockcount:
+                        missing_blocks.append(blockcount)
+                        print("missed block {}".format(blockcount))
+                        f.write(bytes("\0" * self.blocksize, 'ascii'))
+                    f.write(data['data'])
+                    blockcount += 1
+                    received += data['size']
+                    print("Received block {} of {}".format(data['blocknum'] + 1, int(count)))
 
-            else:
-                # Received service reply (final packet of burst download)
-                f.close()
-                return data, missing_blocks, received
-        f.close()
+                else:
+                    # Received service reply (final packet of burst download)
+                    return data, missing_blocks, received
 
     def _do_post_request(self):
-        f = open(self.infile, "rb")
-        filesize = os.path.getsize(self.infile)
-        req_id = randint(0, 1653514975);
-        print("Sending file {} to satellite".format(self.infile))
-        packet = self._get_start_upload_packet(req_id, filesize);
-        data = self._transaction(packet)
-        if (data is None):
-            print("Did not receive response from upload start packet")
-            f.close()
-            return
-        if data['err'] != 0:
-            print("error from upload start packet")
-            f.close()
-            return
-        done = False
-        count = 0
-        while not done:
-            print("Sending packet {}/{}".format(count, int(filesize/self.blocksize)))
-            data = f.read(self.blocksize)
-            packet = self._get_data_upload_packet(req_id, data, count)
-            count += 1
-            resp = self._transaction(packet)
-            if (resp is None):
-                print("Did not receive response from upload data packet")
-                done = True
-                continue
-            if resp['err'] != 0:
-                print("error from upload data packet")
-                done = True
-                continue
+        with open(self.infile, "rb") as f:
+            filesize = os.path.getsize(self.infile)
+            req_id = randint(0, 1653514975);
+            print("Sending file {} to satellite".format(self.infile))
+            packet = self._get_start_upload_packet(req_id, filesize);
+            data = self._transaction(packet)
+            if (data is None):
+                print("Did not receive response from upload start packet")
+                return
+            if data['err'] != 0:
+                print("error from upload start packet")
+                return
+            done = False
+            count = 0
+            while not done:
+                print("Sending packet {}/{}".format(count, int(filesize/self.blocksize)))
+                data = f.read(self.blocksize)
+                packet = self._get_data_upload_packet(req_id, data, count)
+                count += 1
+                resp = self._transaction(packet)
+                if (resp is None):
+                    print("Did not receive response from upload data packet")
+                    done = True
+                    continue
+                if resp['err'] != 0:
+                    print("error from upload data packet")
+                    done = True
+                    continue
 
-            if len(data) < self.blocksize:
-                done = True
-        f.close()
+                if len(data) < self.blocksize:
+                    done = True
 
     def _do_get_request(self):
         print("Requesting file {} from satellite".format(self.infile))
@@ -235,4 +223,8 @@ class ftp(GroundStation):
 if __name__ == "__main__":
     opts = optionsFactory("ftp")
     ftpRunner =  ftp(opts.getOptions())
-    ftpRunner.run()
+    try:
+        ftpRunner.run()
+    except Exception as e:
+        print(e)
+        exit(1)
