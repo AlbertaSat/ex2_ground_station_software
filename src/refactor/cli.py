@@ -19,14 +19,20 @@
 
 from groundStation import GroundStation
 from options import optionsFactory
+import pprint
 
 class cli(GroundStation):
     def run(self):
+        pp = pprint.PrettyPrinter()
         while(1):
             inStr = self.inputHandler.getInput("to send: ")
             try:
                 transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
-                print(transactObj.execute())
+                ret = transactObj.execute()
+                print()
+                for key, value in ret.items():
+                    print("{} : {}".format(key, value))
+                print()
             except Exception as e:
                 print(e)
                 continue
