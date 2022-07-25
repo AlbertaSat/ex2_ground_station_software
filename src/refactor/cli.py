@@ -26,10 +26,10 @@ class cli(GroundStation):
             inStr = self.inputHandler.getInput("to send: ")
             try:
                 transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
+                print(transactObj.execute())
             except Exception as e:
                 print(e)
                 continue
-            print(transactObj.execute())
 
 if __name__ == "__main__":
     opts = optionsFactory("basic")
