@@ -61,7 +61,7 @@ class CSPHandler(object):
     
         stringBuild = ""
         for node in SatelliteNodes:
-            stringBuild = stringBuild + " {} {} ".format(node.value, self.interfaceName)
+            stringBuild = stringBuild + " {} {}, ".format(node.value, self.interfaceName)
         libcsp.rtable_load(stringBuild)
 
         libcsp.route_start_task()
