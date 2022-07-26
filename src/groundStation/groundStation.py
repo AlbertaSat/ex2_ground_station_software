@@ -41,8 +41,6 @@ try:
 except:
     print("uTranceiver module not built!")
 
-from time import sleep
-
 try: # We are importing this file for use on the website (comm.py)
     from ex2_ground_station_software.src.groundStation.commandParser import CommandParser
     from ex2_ground_station_software.src.groundStation.system import SystemValues
@@ -164,7 +162,7 @@ class groundStation(object):
         if port == 17 and bytearray(libcsp.packet_get_data(buf))[0] == 0:
             hk_list = []
             fake_hk = self.vals.SERVICES.get('HOUSEKEEPING') \
-                .get('subservice').get('GET_HK').get('inoutInfo').get('returns')
+                .get('subservice').get('GET_HK').get('inoutInfo').get('returns').copy()
 
             # Replace data types with default values
             # TODO: Store this dictionary somewhere to speed things up in refactor
@@ -179,6 +177,7 @@ class groundStation(object):
                 elif 'f' in fake_hk[key]:
                     fake_hk[key] = DEFAULT_FLOAT
 
+            fake_hk['UNIXtimestamp'] = int(time.time())
             fake_hk['dataPosition'] = self.fake_hk_id
             self.fake_hk_id += 1
 
