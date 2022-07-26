@@ -168,11 +168,9 @@ class groundStation(object):
             # TODO: Store this dictionary somewhere to speed things up in refactor
             DEFAULT_INT = 7
             DEFAULT_FLOAT = 12.34
-            DEFAULT_BYTES = b'\x67\x73\x20\x73\x6f\x66\x74\x77\x61\x72\x65'
             for key in fake_hk:
-                if 'b' in fake_hk[key] or 'B' in fake_hk[key] or 'V' in fake_hk[key]:
-                    fake_hk[key] = DEFAULT_BYTES
-                elif 'u' in fake_hk[key] or 'i' in fake_hk[key]:
+                if 'b' in fake_hk[key] or 'B' in fake_hk[key] or 'V' in fake_hk[key] \
+                    or 'u' in fake_hk[key] or 'i' in fake_hk[key]:
                     fake_hk[key] = DEFAULT_INT
                 elif 'f' in fake_hk[key]:
                     fake_hk[key] = DEFAULT_FLOAT
