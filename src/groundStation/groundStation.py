@@ -68,6 +68,7 @@ class groundStation(object):
         self.number_of_buffers = 100
         self.buffer_size = 1024 #This is max size of an incoming packet
         self.dummy = False # Use dummy responses instead
+        self.fake_hk_id = 1 # Increments the dataPosition of dummy HK data
         libcsp.init(self.myAddr, 'host', 'model', '1.2.3', self.number_of_buffers, self.buffer_size)
         if opts.interface == 'zmq':
             self.__zmq__(self.myAddr)
@@ -159,6 +160,31 @@ class groundStation(object):
         its intended server, port, and a bytestring representing the libcsp
         packet.
         """
+        # Generate fake data for HOUSEKEEPING.GET_HK command (args ignored)
+        if port == 17 and bytearray(libcsp.packet_get_data(buf))[0] == 0:
+            hk_list = []
+            fake_hk = self.vals.SERVICES.get('HOUSEKEEPING') \
+                .get('subservice').get('GET_HK').get('inoutInfo').get('returns')
+
+            # Replace data types with default values
+            # TODO: Store this dictionary somewhere to speed things up in refactor
+            DEFAULT_INT = 7
+            DEFAULT_FLOAT = 12.34
+            DEFAULT_BYTES = b'\x67\x73\x20\x73\x6f\x66\x74\x77\x61\x72\x65'
+            for key in fake_hk:
+                if 'b' in fake_hk[key] or 'B' in fake_hk[key] or 'V' in fake_hk[key]:
+                    fake_hk[key] = DEFAULT_BYTES
+                elif 'u' in fake_hk[key] or 'i' in fake_hk[key]:
+                    fake_hk[key] = DEFAULT_INT
+                elif 'f' in fake_hk[key]:
+                    fake_hk[key] = DEFAULT_FLOAT
+
+            fake_hk['dataPosition'] = self.fake_hk_id
+            self.fake_hk_id += 1
+
+            hk_list.append(fake_hk)
+            return hk_list
+
         return [
             {
                 'Server': server,
@@ -237,9 +263,9 @@ class groundStation(object):
 
         #code following is specific to housekeeping multi-packet transmission
         if  (
-            libcsp.conn_src(conn) != self.vals.APP_DICT.get(self.satellite) or 
-            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or 
-            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or 
+            libcsp.conn_src(conn) != self.vals.APP_DICT.get(self.satellite) or
+            libcsp.conn_sport(conn) != self.vals.SERVICES.get('HOUSEKEEPING').get('port') or
+            data[0] != self.vals.SERVICES.get('HOUSEKEEPING').get('subservice').get('GET_HK').get('subPort') or
             data[2] != 1 #marker in housekeeping data signifying more incoming data
             ):
             return rxDataList[0]
@@ -383,9 +409,9 @@ class options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
-        
+
         self.parser.add_argument(
-            '-u', 
+            '-u',
             action='store_true',
             help='Enable UHF SDR functionality (e.g automatic pipe mode commands)')
 
