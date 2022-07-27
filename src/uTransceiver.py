@@ -145,7 +145,8 @@ class uTransceiver(object):
                 pass
                 #TODO implement someday
                 #retval = uhf.UHF_genericI2C(cmd, ...)
-
+            if cmd == 'resetOBC':
+                retval = self.uhf.UHF_reset_OBC_via_charon()
             #This should be a catch-all for any syntax errors as-is
             #TODO: make more robust handler for incorrect inputs to prevent erronious commands being sent?
             if retval != 0:
