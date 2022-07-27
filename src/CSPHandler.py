@@ -54,10 +54,12 @@ class CSPHandler(object):
         self.interfaceName = ""
         if interface == 'uart':
             self.ser = self._uart(device)
-        elif interface == 'sdr':
-            self._sdr(device, libcsp.SDR_UHF_9600_BAUD)
+        elif interface == 'uhf' or interface == "sdr":
+            self._uhf(device, libcsp.SDR_UHF_9600_BAUD)
         elif interface == 'sband':
-            raise NotImplementedError("Sband support not yet implemented")
+            self._sband()
+        else:
+            raise ValueError("Interface {} does not exist".format(interface))
     
         stringBuild = ""
         for node in SatelliteNodes:
@@ -94,10 +96,13 @@ class CSPHandler(object):
         libcsp.kiss_init(device, ser.baudrate, 512, 'uart')
         self.interfaceName = "uart"
 
-    def _sdr(self, device, uhf_baudrate):
+    def _uhf(self, device, uhf_baudrate):
         """ Initialize SDR interface """
-        libcsp.sdr_init(device, 115200, uhf_baudrate, "UHF")
+        libcsp.uhf_init(device, 115200, uhf_baudrate, "UHF")
         self.interfaceName = "UHF"
+    def _sband(self):
+        self.interfaceName = "SBAND"
+        libcsp.sband_init()
 
 
 class UHF_CSPHandler(CSPHandler):
