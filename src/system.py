@@ -3904,116 +3904,117 @@ services = {
                     }
                 }
             },
-            'IRIS': {
-                'port': 23,
-                'subservice': {
-                    'IRIS_POWER_ON': {
-                        'what': "Send command to OBC to tell EPS to turn on power",
-                        'subPort': 0,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_POWER_OFF': {
-                        'what': "Send command to OBC to tell EPS to turn off power",
-                        'subPort': 1,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_TURN_SENSORS_ON': {
-                        'what': "Send command to OBC to tell Iris to turn on image sensors",
-                        'subPort': 2,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_TURN_SENSORS_OFF': {
-                        'what': "Send command to OBC to tell Iris to turn off image sensors",
-                        'subPort': 3,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_TAKE_IMAGE': {
-                        'what': "Tell Iris to take a picture",
-                        'subPort': 4,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_DELIVER_IMAGE': {
-                        'what': "Tell OBC to perform image transfer from Iris and store those images into SD card",
-                        'subPort': 5,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_COUNT_IMAGES': {
-                        'what': "Tell Iris to send number of images stored in SD card",
-                        'subPort': 6,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b'
-                            }
-                        }
-                    },
-                    'IRIS_PROGRAM_FLASH': {
-                        'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
-                        'subPort': 7,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b',
-                                'Number of Images': '>u',
-                            }
-                        }
-                    },
-                    'IRIS_GET_HK': {
-                        'what': "Tell Iris to send housekeeping data",
-                        'subPort': 8,
-                        'inoutInfo': {
-                            'args': None,
-                            'returns': {
-                                'err': '>b',
-                                'VIS_Temperature': '>f4',
-                                'NIR_Temperature': '>f4',
-                                'Flash_Temperature': '>f4',
-                                'Gate_Temperature': '>f4',
-                                'Image_number': '>u1',
-                                'Software_Version': '>u1',
-                                'Error_number': '>u1',
-                                'MAX_5V_voltage': '>u2',
-                                'MAX_5V_power': '>u2',
-                                'MAX_3V_voltage': '>u2',
-                                'MAX_3V_power': '>u2',
-                                'MIN_5V_voltage': '>u2',
-                                'MIN_3V_voltage': '>u2',
-                            }
+        },
+    },
+    'IRIS': {
+        'port': 23,
+        'subservice': {
+            'IRIS_POWER_ON': {
+                'what': "Send command to OBC to tell EPS to turn on power",
+                'subPort': 0,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_POWER_OFF': {
+                'what': "Send command to OBC to tell EPS to turn off power",
+                'subPort': 1,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_TURN_SENSORS_ON': {
+                'what': "Send command to OBC to tell Iris to turn on image sensors",
+                'subPort': 2,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_TURN_SENSORS_OFF': {
+                'what': "Send command to OBC to tell Iris to turn off image sensors",
+                'subPort': 3,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_TAKE_IMAGE': {
+                'what': "Tell Iris to take a picture",
+                'subPort': 4,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_DELIVER_IMAGE': {
+                'what': "Tell OBC to perform image transfer from Iris and store those images into SD card",
+                'subPort': 5,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_COUNT_IMAGES': {
+                'what': "Tell Iris to send number of images stored in SD card",
+                'subPort': 6,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_PROGRAM_FLASH': {
+                'what': "Tell OBC to start programming Iris using provided binary file on the SD card",
+                'subPort': 7,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                        'Number of Images': '>u',
+                    }
+                }
+            },
+            'IRIS_GET_HK': {
+                'what': "Tell Iris to send housekeeping data",
+                'subPort': 8,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                        'VIS_Temperature': '>f4',
+                        'NIR_Temperature': '>f4',
+                        'Flash_Temperature': '>f4',
+                        'Gate_Temperature': '>f4',
+                        'Image_number': '>u1',
+                        'Software_Version': '>u1',
+                        'Error_number': '>u1',
+                        'MAX_5V_voltage': '>u2',
+                        'MAX_5V_power': '>u2',
+                        'MAX_3V_voltage': '>u2',
+                        'MAX_3V_power': '>u2',
+                        'MIN_5V_voltage': '>u2',
+                        'MIN_3V_voltage': '>u2',
                         }
                     }
                 }
             }
         }
     }
-}
+
 
