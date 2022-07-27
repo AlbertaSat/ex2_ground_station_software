@@ -1,5 +1,5 @@
 '''
- * Copyright (C) 2020  University of Alberta
+ * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -12,68 +12,32 @@
  * GNU General Public License for more details.
 '''
 '''
- * @file test.py
- * @author Andrew Rooney, Grace Yi
- * @date 2020-11-20
+ * @file cli.py
+ * @author Robert Taylor
+ * @date 2022-07-21
 '''
 
-'''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
-import time
-import libcsp_py3 as libcsp
-import unicodedata
-from groundStation import groundStation
+from groundStation import GroundStation
+from options import optionsFactory
+import pprint
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
-flag = groundStation.GracefulExiter()
+class cli(GroundStation):
+    def run(self):
+        pp = pprint.PrettyPrinter()
+        while(1):
+            inStr = self.inputHandler.getInput("to send: ")
+            try:
+                transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
+                ret = transactObj.execute()
+                print()
+                for key, value in ret.items():
+                    print("{} : {}".format(key, value))
+                print()
+            except Exception as e:
+                print(e)
+                continue
 
-def cli():
-
-    sysVals = groundStation.SystemValues()
-
-    while True:
-        if flag.exit():
-            print('Exiting receiving loop\n')
-            flag.reset()
-            return
-        try:
-            server, port, toSend = gs.getInput(prompt='to send: ')
-            gs.handlePipeMode()
-            if server == 24:
-                # This is a direct UART command to a ground station EnduroSat transceiver to enter PIPE
-                # Can be deleted for flight
-                print("calling __setPIPE")
-                gs.__setPIPE__()
-            
-            data = bytearray(libcsp.packet_get_data(toSend))
-
-            if (
-                server == sysVals.APP_DICT.get('EX2') and 
-                port == sysVals.SERVICES.get('SCHEDULER').get('port') and
-                (data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('SET_SCHEDULE').get('subPort') or
-                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('DELETE_SCHEDULE').get('subPort') or
-                data[0] == sysVals.SERVICES.get('SCHEDULER').get('subservice').get('REPLACE_SCHEDULE').get('subPort'))
-                ):
-                filename = gs.get_filename()
-                embeddedCSPObj = groundStation.getEmbededCSPData(filename, data)
-                embeddedCSP = embeddedCSPObj.embedCSP()
-                libcsp.packet_set_data(toSend, embeddedCSP)
-                resp = gs.transaction(server, port, toSend)
-                
-            else:
-                resp = gs.transaction(server, port, toSend)
-            #checks if housekeeping multiple packets. if so, a list of dictionaries is returned
-            if type(resp) == list:
-                for rxData in resp:
-                    print("--------------------------------------------------------------------------")
-                    [print(key,':',value) for key, value in rxData.items()]
-            #else, only a single dictionary is returned
-            else:
-                [print(key,':',value) for key, value in resp.items()]
-                print("\r\n")
-        except Exception as e:
-            print(e)
-
-if __name__ == '__main__':
-    flag = groundStation.GracefulExiter()
-    cli()
+if __name__ == "__main__":
+    opts = optionsFactory("basic")
+    cliRunner = cli(opts.getOptions())
+    cliRunner.run()

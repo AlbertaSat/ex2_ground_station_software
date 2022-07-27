@@ -1,5 +1,5 @@
 '''
- * Copyright (C) 2020  University of Alberta
+ * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,33 +14,26 @@
 '''
  * @file sat_cli.py
  * @author Robert Taylor
- * @date 2021-12-21
+ * @date 2022-07-21
 '''
 
-'''  to run > sudo LD_LIBRARY_PATH=../libcsp/build PYTHONPATH=../libcsp/build python3 src/cli.py -I uart -d /dev/ttyUSB1  '''
-import time
-from groundStation import groundStation, cliGroundStation
+from groundStation import GroundStation
+from options import optionsFactory
 
-opts = groundStation.options()
-gs = cliGroundStation.cliGroundStation(opts.getOptions())
-flag = groundStation.GracefulExiter()
+class sat_cli(GroundStation):
+    def run(self):
+        while(1):
+            inStr = self.inputHandler.getInput("$ ")
+            commandStr = "{}.cli.send_cmd({},{})".format(self.satellite, len(inStr), inStr)
+            try:
+                transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
+            except Exception as e:
+                print(e)
+                continue
+            print(transactObj.execute())
 
-def cli():
-    while True:
-        if flag.exit():
-            print('Exiting receiving loop')
-            flag.reset()
-            return
-        try:
-            cmd = input("$ ")
-            server, port, toSend = gs.getInput(cmd, inVal="{}.cli.send_cmd({},{})".format(gs.satellite, len(cmd), cmd))
-            gs.handlePipeMode()
-            ret = gs.transaction(server, port, toSend)
-            print(ret)
-            
-        except Exception as e:
-            print(e)
 
-if __name__ == '__main__':
-    flag = groundStation.GracefulExiter()
-    cli()
+if __name__ == "__main__":
+    opts = optionsFactory("basic")
+    cliRunner =  sat_cli(opts.getOptions())
+    cliRunner.run()
