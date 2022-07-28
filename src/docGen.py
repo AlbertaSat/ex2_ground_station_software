@@ -19,23 +19,20 @@
 
 ''' to run > python3 docGen.py  '''
 
-from groundStation.system import SystemValues
+from system import services
 
 f = open("CommandDocs.txt", "w")
-system = SystemValues()
 
 f.write('\t\t\t\t-- Ex-Alta 2 Ground Station Commands --\n' +
 'Note: arguments and return types are given as numpy types\n\n\n')
 
-for services in system.SERVICES:
-    print(services)
-    subservice = system.SERVICES[services]['subservice']
+for serv in services:
+    subservice = services[serv]['subservice']
     for subName in subservice.keys():
-        f.write(services + '.' + subName + ':\n')
+        f.write(serv + '.' + subName + ':\n')
 
         sub = subservice[subName]
-        # FIXME: ADCS commands in system.py have 'subport' instead of 'subPort'
-        subport = sub['subPort'] if 'subPort' in sub else sub['subport']
+        subport = sub['subPort'] if 'subPort' in sub else None
         inoutInfo = sub['inoutInfo']
 
         args = 'None' if inoutInfo['args'] is None else ', '.join(map(str, inoutInfo['args']))
@@ -45,5 +42,5 @@ for services in system.SERVICES:
         '\t\tAbout: ' + info + '\n'
         '\t\tArguments: [' + args + ']\n' +
         '\t\treturn values: ' + returns + '\n'
-        '\t\tport: ' + str(system.SERVICES[services]['port']) +
+        '\t\tport: ' + str(services[serv]['port']) +
         '\t\tsubport: ' + str(subport) + '\n\n\n')

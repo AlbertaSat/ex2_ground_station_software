@@ -6,35 +6,35 @@ SCHEDULER.SET_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 15		subport: 0
+		port: 25		subport: 0
 
 
 SCHEDULER.GET_SCHEDULE:
 		About: None
 		Arguments: [None]
 		return values: {'err': '>b'}
-		port: 15		subport: 1
+		port: 25		subport: 1
 
 
 SCHEDULER.REPLACE_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 15		subport: 2
+		port: 25		subport: 2
 
 
 SCHEDULER.DELETE_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 15		subport: 3
+		port: 25		subport: 3
 
 
 SCHEDULER.PING_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Arguments: [None]
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 15		subport: 4
+		port: 25		subport: 4
 
 
 SET_PIPE.UHF_GS_PIPE:
@@ -80,7 +80,7 @@ TIME_MANAGEMENT.GET_TIME:
 
 
 TIME_MANAGEMENT.SET_TIME:
-		About: Set the current unix time on the OBC
+		About: Set the current unix time on the OBC. Set parameter to 0 to use local unix time
 		Arguments: [>u4]
 		return values: {'err': '>b'}
 		port: 8		subport: 11
@@ -767,7 +767,7 @@ UPDATER.INITIALIZE_UPDATE:
 
 UPDATER.PROGRAM_BLOCK:
 		About: Program a single block of data
-		Arguments: [>u4, >u4, a512]
+		Arguments: [>u4, >u4]
 		return values: {'err': '>b'}
 		port: 12		subport: 1
 
@@ -831,8 +831,8 @@ LOGGER.GET_FILE_SIZE:
 CLI.SEND_CMD:
 		About: Send command over the sat_cli.
 		Arguments: [B, a128]
-		return values: None
-		port: 14		subport: 0
+		return values: {'status': '>b', 'resp': 'a128'}
+		port: 24		subport: 0
 
 
 ADCS.ADCS_RESET:
@@ -1642,14 +1642,14 @@ DFGM.DFGM_GET_HK:
 
 FTP_COMMAND.GET_FILE_SIZE:
 		About: None
-		Arguments: [>b]
+		Arguments: [None]
 		return values: {'err': '>b', 'size': '>u8'}
 		port: 20		subport: 0
 
 
 FTP_COMMAND.REQUEST_BURST_DOWNLOAD:
 		About: None
-		Arguments: [>b]
+		Arguments: [None]
 		return values: {'err': '>b', 'mtime': '>u4', 'ctime': '>u4'}
 		port: 20		subport: 1
 
@@ -1663,14 +1663,14 @@ FTP_COMMAND.FTP_DATA_PACKET:
 
 FTP_COMMAND.FTP_START_UPLOAD:
 		About: None
-		Arguments: [>b]
+		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 20		subport: 3
 
 
 FTP_COMMAND.FTP_UPLOAD_PACKET:
 		About: None
-		Arguments: [>b]
+		Arguments: [None]
 		return values: {'err': '>b'}
 		port: 20		subport: 4
 
@@ -1776,14 +1776,14 @@ IRIS.IRIS_DELIVER_IMAGE:
 IRIS.IRIS_COUNT_IMAGES:
 		About: Tell Iris to send number of images stored in SD card
 		Arguments: [None]
-		return values: {'err': '>b', 'Number of Images': '>u'}
+		return values: {'err': '>b'}
 		port: 23		subport: 6
 
 
 IRIS.IRIS_PROGRAM_FLASH:
 		About: Tell OBC to start programming Iris using provided binary file on the SD card
 		Arguments: [None]
-		return values: {'err': '>b'}
+		return values: {'err': '>b', 'Number of Images': '>u'}
 		port: 23		subport: 7
 
 
