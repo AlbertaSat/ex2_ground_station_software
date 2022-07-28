@@ -105,13 +105,13 @@ class getHKTransaction(baseTransaction):
     def execute(self):
         print("WARN: I have no idea how HK receive works, it may not at all")
         self.send()
-        rxDataList = []
+        rxData = dict()
         while True:
             ret = self.receive()
-            rxDataList.append(self.parseReturnValue(ret))
+            rxData = {**rxData, **self.parseReturnValue(ret)}
             if ret[2] != 1:
                 break
-        return rxDataList
+        return rxData
 
 class satcliTransaction(baseTransaction):
     def execute(self):
