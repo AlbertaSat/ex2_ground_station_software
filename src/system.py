@@ -1325,8 +1325,8 @@ services = {
                         '###############################\r\n'
                         'Athena\r\n'+
                         '###############################\r\n'+
-                        'MCU_core_temp': '>i4',
                         'OBC_software_ver':'>U8',
+                        'MCU_core_temp': '>i4',
                         'converter_temp': '>i4',
                         'OBC_uptime': '>u2',
                         'vol0_usage_percent': '>u1',
