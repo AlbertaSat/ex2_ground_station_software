@@ -20,6 +20,8 @@
 import argparse
 import sys
 
+from click import argument
+
 def optionsFactory(kind : str):
     if (kind == "basic"):
         return Options()
@@ -27,6 +29,8 @@ def optionsFactory(kind : str):
         return UpdateOptions()
     elif (kind == "ftp"):
         return FTPOptions()
+    elif (king  == "sband"):
+        return SBANDOptions();
     else:
         raise NotImplementedError("Options class type {} not implemented".format(type))
 
@@ -148,3 +152,15 @@ class FTPOptions(Options):
             help="Download over sband instead of UHF"
         )
         return super().getOptions();
+
+class SBANDOptions(Options):
+    def __init__(self):
+        super().__init__()
+
+    def getOptions(self):
+        self.parser.add-argument(
+            '--port',
+            type=int,
+            help="Port to send data to"
+        )
+        return super().getOptions()

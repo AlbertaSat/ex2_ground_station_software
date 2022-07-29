@@ -28,6 +28,19 @@ from system import services
 #TODO: not a fan of the level of object orientation here. FTP is responsible for too much
 #TODO: The naming conventions here are... interesting
 
+class ftpDownloader():
+    def __init__(self):
+        self.req_id = 0
+        self.missedBlocks = []
+        self.burstSize = 100
+        self.fileSize = 0
+        self.seek = 0 #highest block received
+        self.data = bytearray() # data array received
+    def turnTheCrank(self):
+        # Starting with missed blocks, try to receive up to burstSize packets
+        # Returns whether the file is received
+        return len(self.data) == self.fileSize
+
 class ftp(GroundStation):
     def __init__(self, opts):
         super(ftp, self).__init__(opts)
