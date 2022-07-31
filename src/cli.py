@@ -30,8 +30,14 @@ class cli(GroundStation):
                 transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
                 ret = transactObj.execute()
                 print()
-                for key, value in ret.items():
-                    print("{} : {}".format(key, value))
+                # Housekeeping data can be a list of dicts
+                if isinstance(ret, list):
+                    for entry in ret:
+                        for key, value in entry.items():
+                            print("{} : {}".format(key, value))
+                else:
+                    for key, value in ret.items():
+                        print("{} : {}".format(key, value))
                 print()
             except Exception as e:
                 print(e)

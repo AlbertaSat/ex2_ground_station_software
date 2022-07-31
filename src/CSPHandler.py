@@ -58,7 +58,10 @@ class CSPHandler(object):
             self._sdr(device, libcsp.SDR_UHF_9600_BAUD)
         elif interface == 'sband':
             raise NotImplementedError("Sband support not yet implemented")
-    
+        elif interface == 'dummy':
+            self.interfaceName = "dummy"
+            return # Skip libcsp initialization when using dummy responses
+
         stringBuild = ""
         for node in SatelliteNodes:
             stringBuild = stringBuild + " {} {}, ".format(node.value, self.interfaceName)
@@ -109,7 +112,7 @@ class UHF_CSPHandler(CSPHandler):
             raise ValueError("UHF CSP handler works only with sdr interface")
         self.uTrns = uTransceiver()
         super().__init__(addr, interface, device, hmacKey)
-        
+
 
     def send(self, server, port, buf : bytearray):
         self.uTrns.handlePipeMode()

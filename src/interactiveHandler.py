@@ -18,15 +18,21 @@
 '''
 
 from system import services
+from dummyUtils import generateFakeHKDict
 from inputParser import InputParser
 from receiveParser import ReceiveParser
 from embedCSP import EmbedPacket
 import time
+import libcsp_py3 as libcsp
+
+# A base for fake housekeeping packets
+FAKE_HK_BASE = generateFakeHKDict()
 
 class InteractiveHandler:
-    def __init__(self):
+    def __init__(self, dummy=False):
         self.services = services
         self.inParser = InputParser()
+        self.dummy = dummy # Use dummy responses instead
 
         # TODO: This is bad, make it good when fixing inputParser
         self.appIdx = 0
@@ -38,18 +44,23 @@ class InteractiveHandler:
         # TODO: Make this less bad after fixing inputParser badness
         tokens = self.inParser.lexer(command)
         if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
-            transactObj = getHKTransaction(command, networkHandler)
+            if self.dummy:
+                transactObj = dummyHKTransaction(command, networkHandler)
+            else:
+                transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
             transactObj = schedulerTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
             transactObj = setTimeTransaction(command, networkHandler)
+        elif self.dummy:
+            transactObj = dummyTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
         return transactObj
-    
+
 class baseTransaction:
     def __init__(self, command, networkHandler):
         self.networkHandler = networkHandler
@@ -66,7 +77,7 @@ class baseTransaction:
 
     def receive(self):
         return self.networkHandler.receive(self.dst, self.dport, 10000)
-        
+
     def parseReturnValue(self, data):
         return self.returnParse.parseReturnValue(self.dport, data)
 
@@ -125,6 +136,30 @@ class satcliTransaction(baseTransaction):
                 break
         return response.strip()
 
+class dummyHKTransaction(getHKTransaction):
+    def __init__(self, command, networkHandler):
+        super().__init__(command, networkHandler)
+        self.fake_hk_id = 1 # Dummy value for dataPosition
+
+    def execute(self):
+        hk_list = []
+
+        # TODO: Figure out how to fake multipacket transmission
+        fake_hk = FAKE_HK_BASE.copy()
+        fake_hk['UNIXtimestamp'] = int(time.time())
+        fake_hk['dataPosition'] = self.fake_hk_id
+        self.fake_hk_id += 1
+        hk_list.append(fake_hk)
+
+        return hk_list
+
 class dummyTransaction(baseTransaction):
     def execute(self):
-        raise NotImplementedError("dummy transactions not implemented")
+        pkt = self.inputParse.parseInput(self.command)
+        return {
+            'dst': pkt['dst'],
+            'dport': pkt['dport'],
+            'subservice': pkt['subservice'],
+            'args': pkt['args']
+        }
+
