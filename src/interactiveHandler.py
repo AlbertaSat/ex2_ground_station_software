@@ -42,13 +42,7 @@ class InteractiveHandler:
         # TODO: Make this less bad after fixing inputParser badness
         tokens = self.inParser.lexer(command)
         if self.dummy:
-            if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
-                transactObj = dummyHKTransaction(command, networkHandler, self.fake_hk_id)
-                self.fake_hk_id += 1
-            elif tokens[self.serviceIdx] == "CLI":
-                transactObj = dummySatCliTransaction(command, networkHandler)
-            else:
-                transactObj = dummyTransaction(command, networkHandler)
+            transactObj = self.getDummyTransactionObject(command, networkHandler)
         elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
             transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
@@ -60,6 +54,18 @@ class InteractiveHandler:
         else:
             transactObj = baseTransaction(command, networkHandler)
 
+        return transactObj
+
+    def getDummyTransactionObject(self, command: str, networkHandler):
+        transactObj = None
+        tokens = self.inParser.lexer(command)
+        if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
+            transactObj = dummyHKTransaction(command, networkHandler, self.fake_hk_id)
+            self.fake_hk_id += 1
+        elif tokens[self.serviceIdx] == "CLI":
+            transactObj = dummySatCliTransaction(command, networkHandler)
+        else:
+            transactObj = dummyTransaction(command, networkHandler)
         return transactObj
 
 class baseTransaction:
@@ -110,7 +116,6 @@ class setTimeTransaction(baseTransaction):
         self.args = self.pkt['args']
         self.send()
         return self.parseReturnValue(self.receive())
-
 
 class schedulerTransaction(baseTransaction):
     def execute(self):
