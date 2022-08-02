@@ -17,6 +17,7 @@
  * @date 2022-07-30
 '''
 
+import random
 from system import services
 
 def generateFakeHKDict():
@@ -24,14 +25,18 @@ def generateFakeHKDict():
     """
     fake_hk = services['HOUSEKEEPING']['subservice']['GET_HK']['inoutInfo']['returns'].copy()
 
-    # Replace data types with default values
-    DEFAULT_INT = 7
-    DEFAULT_FLOAT = 12.34
+    # Replace data types with values
     for key in fake_hk:
-        if 'b' in fake_hk[key] or 'B' in fake_hk[key] or 'V' in fake_hk[key] \
-                or 'u' in fake_hk[key] or 'i' in fake_hk[key]:
-            fake_hk[key] = DEFAULT_INT
+        fake_uint = random.randint(0, 255)
+        fake_int = random.randint(-128, 127)
+        fake_float = random.uniform(-128.0, 127.0)
+        if 'B' in fake_hk[key] or 'u' in fake_hk[key] or 'V' in fake_hk[key]:
+            fake_hk[key] = fake_uint
+        elif 'b' in fake_hk[key] or 'i' in fake_hk[key]:
+            fake_hk[key] = fake_int
         elif 'f' in fake_hk[key]:
-            fake_hk[key] = DEFAULT_FLOAT
+            fake_hk[key] = fake_float
+        else:
+            raise NotImplementedError('Found data type not accounted for!')
 
     return fake_hk
