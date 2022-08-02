@@ -25,14 +25,12 @@ from embedCSP import EmbedPacket
 import time
 import libcsp_py3 as libcsp
 
-# A base for fake housekeeping packets
-FAKE_HK_BASE = generateFakeHKDict()
-
 class InteractiveHandler:
     def __init__(self, dummy=False):
         self.services = services
         self.inParser = InputParser()
         self.dummy = dummy # Use dummy responses instead
+        self.fake_hk_id = 1 # Dummy value for HK dataPosition
 
         # TODO: This is bad, make it good when fixing inputParser
         self.appIdx = 0
@@ -43,19 +41,22 @@ class InteractiveHandler:
         transactObj = None
         # TODO: Make this less bad after fixing inputParser badness
         tokens = self.inParser.lexer(command)
-        if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
-            if self.dummy:
-                transactObj = dummyHKTransaction(command, networkHandler)
+        if self.dummy:
+            if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
+                transactObj = dummyHKTransaction(command, networkHandler, self.fake_hk_id)
+                self.fake_hk_id += 1
+            elif tokens[self.serviceIdx] == "CLI":
+                transactObj = dummySatCliTransaction(command, networkHandler)
             else:
-                transactObj = getHKTransaction(command, networkHandler)
+                transactObj = dummyTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
+            transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
             transactObj = schedulerTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
             transactObj = setTimeTransaction(command, networkHandler)
-        elif self.dummy:
-            transactObj = dummyTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -85,6 +86,16 @@ class baseTransaction:
         self.send()
         ret = self.receive()
         return self.parseReturnValue(ret)
+
+class dummyTransaction(baseTransaction):
+    def execute(self):
+        pkt = self.inputParse.parseInput(self.command)
+        return {
+            'dst': pkt['dst'],
+            'dport': pkt['dport'],
+            'subservice': pkt['subservice'],
+            'args': pkt['args']
+        }
 
 class setTimeTransaction(baseTransaction):
     def execute(self):
@@ -124,6 +135,24 @@ class getHKTransaction(baseTransaction):
                 break
         return rxData
 
+class dummyHKTransaction(getHKTransaction):
+    def __init__(self, command, networkHandler, fake_hk_id):
+        super().__init__(command, networkHandler)
+        self.fake_hk_id = fake_hk_id
+
+    def execute(self):
+        hk_list = []
+
+        # TODO: Figure out how to fake multipacket transmission using args
+        fake_hk = generateFakeHKDict()
+        fake_hk['err'] = 0
+        fake_hk['###############################\r\npacket meta\r\n###############################\r\nfinal'] = 0
+        fake_hk['UNIXtimestamp'] = int(time.time())
+        fake_hk['dataPosition'] = self.fake_hk_id
+        hk_list.append(fake_hk)
+
+        return hk_list
+
 class satcliTransaction(baseTransaction):
     def execute(self):
         response = ""
@@ -136,30 +165,14 @@ class satcliTransaction(baseTransaction):
                 break
         return response.strip()
 
-class dummyHKTransaction(getHKTransaction):
-    def __init__(self, command, networkHandler):
-        super().__init__(command, networkHandler)
-        self.fake_hk_id = 1 # Dummy value for dataPosition
-
-    def execute(self):
-        hk_list = []
-
-        # TODO: Figure out how to fake multipacket transmission
-        fake_hk = FAKE_HK_BASE.copy()
-        fake_hk['UNIXtimestamp'] = int(time.time())
-        fake_hk['dataPosition'] = self.fake_hk_id
-        self.fake_hk_id += 1
-        hk_list.append(fake_hk)
-
-        return hk_list
-
-class dummyTransaction(baseTransaction):
+class dummySatCliTransaction(satcliTransaction):
     def execute(self):
         pkt = self.inputParse.parseInput(self.command)
-        return {
-            'dst': pkt['dst'],
-            'dport': pkt['dport'],
-            'subservice': pkt['subservice'],
-            'args': pkt['args']
-        }
-
+        response = """Running as SatCli command \
+            | dst: {} \
+            | dport: {} \
+            | subservice: {} \
+            | args: {}""".format(
+            pkt["dst"], pkt["dport"], pkt["subservice"], pkt["args"]
+        )
+        return response
