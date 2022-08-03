@@ -414,13 +414,13 @@ services = {
         'port': 10,
         'subservice': {
             'S_GET_FREQ': {
-                'what': 'Gets the S-band frequency (MHz)',
+                'what': 'Gets the S-band frequency (Hz)',
                 'subPort': 1,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'frequency': '>f4',
+                        'frequency_Hz': '>u4',
                     }
                 }
             },
@@ -513,14 +513,24 @@ services = {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'Output Power': '>f',
-                        'Power Amplifier Temperature': '>f',
-                        'Top Temperature': '>f',
-                        'Bottom Temperature': '>f',
-                        'Battery Current': '>f',
-                        'Battery Voltage': '>f',
-                        'Power Amplifier Current': '>f',
-                        'Power Amplifier Voltage': '>f',
+                        'S_mode': '>B',
+                        'PA_status': '>B',
+                        'S_frequency_Hz': '>u4',
+                        'S_scrambler': '>B',
+                        'S_filter': '>B',
+                        'S_modulation': '>B',
+                        'S_data_rate': '>B',
+                        'S_bit_order': '>B',
+                        'S_PWRGD': '>B',
+                        'S_TXL': '>B',
+                        'Output Power': '>B',
+                        'Power Amplifier Temperature': '>b',
+                        'Top Temperature': '>b',
+                        'Bottom Temperature': '>b',
+                        'Battery Current': '>u2',
+                        'Battery Voltage': '>u2',
+                        'Power Amplifier Current': '>u2',
+                        'Power Amplifier Voltage': '>u2',
                     }
                 }
             },
@@ -547,22 +557,22 @@ services = {
                         'Buffer Count': '>u2',
                         'Buffer Underrun': '>u2',
                         'Buffer Overrun': '>u2',
-                        'Output Power': '>f',
-                        'Power Amplifier Temperature': '>f',
-                        'Top Temperature': '>f',
-                        'Bottom Temperature': '>f',
-                        'Battery Current': '>f',
-                        'Battery Voltage': '>f',
-                        'Power Amplifier Current': '>f',
-                        'Power Amplifier Voltage': '>f',
+                        'Output Power': '>B',
+                        'Power Amplifier Temperature': '>b',
+                        'Top Temperature': '>b',
+                        'Bottom Temperature': '>b',
+                        'Battery Current mA': '>u2',
+                        'Battery Voltage mV': '>u2',
+                        'Power Amplifier Current mA': '>u2',
+                        'Power Amplifier Voltage mV': '>u2',
                     }
                 }
             },
             'S_SET_FREQ': {
-                'what': 'Sets the frequency of S-band (MHz)',
+                'what': 'Sets the frequency of S-band (Hz)',
                 'subPort': 12,
                 'inoutInfo': {
-                    'args': ['>f'],
+                    'args': ['>u4'],
                     'returns': {
                         'err': '>b',
                     }
@@ -605,7 +615,7 @@ services = {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'Frequency': '>f',
+                        'Frequency': '>u4',
                         'Power Amplifier Power': '>u1',
                         'Power Amplifier status': '>u1',
                         'Power Amplifier mode': '>u1',
@@ -613,14 +623,15 @@ services = {
                         'Encoder filter': '>u1',
                         'Encoder modulation': '>u1',
                         'Encoder rate': '>u1',
+                        'Encoder bit order': '>u1'
                     }
                 }
             },
             'S_SET_CONFIG': {
-                'what': 'Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate)',
+                'what': 'Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate Enc_bit_order)',
                 'subPort': 17,
                 'inoutInfo': {
-                    'args': ['>f', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                    'args': ['>u4', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
                     'returns': {
                         'err': '>b',
                     }
@@ -1360,7 +1371,7 @@ services = {
                         'scw10': '<B',
                         'scw11': '<B',
                         'scw12': '<B',
-                        'freq': '>u4',
+                        'U_frequency': '>u4',
                         'pipe_t': '>u4',
                         'beacon_t': '>u4',
                         'audio_t': '>u4',
@@ -1373,14 +1384,24 @@ services = {
                         '###############################\r\n'
                         'Sband\r\n'+
                         '###############################\r\n'+
-                        'Output_Power': '>f4',
-                        'PA_Temp': '>f4',
-                        'Top_Temp': '>f4',
-                        'Bottom_Temp': '>f4',
-                        'Bat_Current': '>f4',
-                        'Bat_Voltage': '>f4',
-                        'PA_Current': '>f4',
-                        'PA_Voltage': '>f4',
+                        'S_mode': '>B',
+                        'PA_status': '>B',
+                        'S_frequency_Hz': '>u4',
+                        'S_scrambler': '>B',
+                        'S_filter': '>B',
+                        'S_modulation': '>B',
+                        'S_data_rate': '>B',
+                        'S_bit_order': '>B',
+                        'S_PWRGD': '>B',
+                        'S_TXL': '>B',
+                        'Output_Power': '>B',
+                        'PA_Temp': '>b',
+                        'Top_Temp': '>b',
+                        'Bottom_Temp': '>b',
+                        'Bat_Current_mA': '>u2',
+                        'Bat_Voltage_mV': '>u2',
+                        'PA_Current_mA': '>u2',
+                        'PA_Voltage_mV': '>u2',
                         #Hyperion
                         '###############################\r\n'
                         'Hyperion Panels\r\n'+
