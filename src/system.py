@@ -1335,7 +1335,7 @@ services = {
                         'boot_src': '>u2',
                         'last_reset_reason': '<B',
                         'OBC_mode': '<B',
-                        'solar_panel_supply_curr': '<B',
+                        'solar_panel_supply_curr': '>u2',
                         'cmds_received': '>u2',
                         'pckts_uncovered_by_FEC': '>u2',
 
