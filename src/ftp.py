@@ -27,12 +27,6 @@ from system import services
 import signal
 import pickle
 
-
-import traceback
-
-#TODO: not a fan of the level of object orientation here. FTP is responsible for too much
-#TODO: The naming conventions here are... interesting
-
 class FTPData():
     # Stores a single data transaction
     def __init__(self, reqId : int, blocknum : int, data : bytearray):
