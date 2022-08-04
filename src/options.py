@@ -151,6 +151,13 @@ class FTPOptions(Options):
             action='store_true',
             help="Download over sband instead of UHF"
         )
+        self.parser.add_argument(
+            '-r',
+            '--resume',
+            type=int,
+            default=0,
+            help="Attempt to resume download with given ID"
+        )
         return super().getOptions();
 
 class SBANDOptions(Options):
