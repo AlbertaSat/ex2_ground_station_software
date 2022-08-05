@@ -27,6 +27,8 @@ def optionsFactory(kind : str):
         return UpdateOptions()
     elif (kind == "ftp"):
         return FTPOptions()
+    elif (kind  == "sband"):
+        return SBANDOptions();
     else:
         raise NotImplementedError("Options class type {} not implemented".format(type))
 
@@ -147,4 +149,23 @@ class FTPOptions(Options):
             action='store_true',
             help="Download over sband instead of UHF"
         )
+        self.parser.add_argument(
+            '-r',
+            '--resume',
+            type=int,
+            default=0,
+            help="Attempt to resume download with given ID"
+        )
         return super().getOptions();
+
+class SBANDOptions(Options):
+    def __init__(self):
+        super().__init__()
+
+    def getOptions(self):
+        self.parser.add_argument(
+            '--port',
+            type=int,
+            help="Port to send data to"
+        )
+        return super().getOptions()
