@@ -267,9 +267,8 @@ class ftpSender(ftp):
             if (data is None):
                 print("Did not receive response from upload start packet")
                 return
-            if data['err'] != 0:
-                print("error from upload start packet")
-                return
+            if data['err'] < 0:
+                print("error {} from upload start packet".format(data['err']))
             done = False
             count = 0
             while not done:
