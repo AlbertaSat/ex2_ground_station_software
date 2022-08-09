@@ -95,12 +95,10 @@ class baseTransaction:
 
 class dummyTransaction(baseTransaction):
     def execute(self):
-        pkt = self.inputParse.parseInput(self.command)
         return {
-            'dst': pkt['dst'],
-            'dport': pkt['dport'],
-            'subservice': pkt['subservice'],
-            'args': pkt['args']
+            'dst': self.dst,
+            'dport': self.dport,
+            'args': self.args
         }
 
 class setTimeTransaction(baseTransaction):
@@ -172,12 +170,10 @@ class satcliTransaction(baseTransaction):
 
 class dummySatCliTransaction(satcliTransaction):
     def execute(self):
-        pkt = self.inputParse.parseInput(self.command)
         response = """Running as SatCli command \
             | dst: {} \
             | dport: {} \
-            | subservice: {} \
             | args: {}""".format(
-            pkt["dst"], pkt["dport"], pkt["subservice"], pkt["args"]
+            self.dst, self.dport, self.args
         )
         return response
