@@ -64,6 +64,8 @@ class InteractiveHandler:
             self.fake_hk_id += 1
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = dummySatCliTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
+            transactObj = dummySchedulerTransaction(command, networkHandler)
         else:
             transactObj = dummyTransaction(command, networkHandler)
         return transactObj
@@ -125,6 +127,21 @@ class schedulerTransaction(baseTransaction):
         self.args = packetEmbedder.embedCSP()
         self.send()
         return self.parseReturnValue(self.receive())
+
+class dummySchedulerTransaction(baseTransaction):
+    def execute(self):
+        tokens = self.inputParse.lexer(self.command)
+        file_param = tokens[-2]
+        f = open(file_param, "r")
+        cmdList = f.readlines()
+        packetEmbedder = EmbedPacket(cmdList, self.args)
+        self.args = packetEmbedder.embedCSP()
+        return {
+            'err': 0,
+            'dst': self.dst,
+            'dport': self.dport,
+            'args': self.args
+        }
 
 class getHKTransaction(baseTransaction):
     def execute(self):
