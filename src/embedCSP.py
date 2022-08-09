@@ -42,7 +42,7 @@ class EmbedPacket:
                 scheduledTime = self.cmdList[i][:cmdStart]
                 scheduledTime = " ".join(scheduledTime.strip().split())
                 ascii_values = [ord(character) for character in scheduledTime]
-                scheduledCmd = self.cmdList[i][cmdStart:]
+                scheduledCmd = self.cmdList[i][cmdStart:].strip()
 
                 command = self.inputParse.parseInput(scheduledCmd)
                 command['time'] = ascii_values
