@@ -121,8 +121,8 @@ class schedulerTransaction(baseTransaction):
     def execute(self):
         tokens = self.inputParse.lexer(self.command)
         file_param = tokens[-2]
-        f = open(file_param, "r")
-        cmdList = f.readlines()
+        with open(file_param, "r") as f:
+            cmdList = f.readlines()
         packetEmbedder = EmbedPacket(cmdList, self.args)
         self.args = packetEmbedder.embedCSP()
         self.send()
@@ -132,8 +132,8 @@ class dummySchedulerTransaction(baseTransaction):
     def execute(self):
         tokens = self.inputParse.lexer(self.command)
         file_param = tokens[-2]
-        f = open(file_param, "r")
-        cmdList = f.readlines()
+        with open(file_param, "r") as f:
+            cmdList = f.readlines()
         packetEmbedder = EmbedPacket(cmdList, self.args)
         self.args = packetEmbedder.embedCSP()
         return {
