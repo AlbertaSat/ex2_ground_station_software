@@ -4689,11 +4689,20 @@ services = {
                         'MAX_3V_power': '>u2',
                         'MIN_5V_voltage': '>u2',
                         'MIN_3V_voltage': '>u2',
-                        }
+                    }
+                }
+            },
+            'IRIS_DELIVER_LOG': {
+                'what': "Tell OBC to perform log transfer from Iris and store it into SD card",
+                'subPort': 9,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
                     }
                 }
             }
         }
     }
-
+}
 
