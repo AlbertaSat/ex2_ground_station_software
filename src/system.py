@@ -1355,6 +1355,28 @@ services = {
                         'battHeaterState': '<B',
                         'PingWdt_toggles': '<u2',
                         'PingWdt_turnOffs': '<B',
+                        '###############################\r\n'
+                        'EPS STARTUP\r\n'+
+                        '###############################\r\n'+
+                        'cmd': '>b',
+                        'status': '>b',
+                        'timestamp': '<f8',
+                        'last_reset_reason_reg': '<u4',
+                        'bootCnt': '<u4',
+                        'FallbackConfigUsed': '<B',
+                        'rtcInit': '<B',
+                        'rtcClkSourceLSE': '<B',
+                        'flashAppInit': '<B',
+                        'Fram4kPartitionInit': '>b',
+                        'Fram520kPartitionInit': '>b',
+                        'intFlashPartitionInit': '>b',
+                        'fwUpdInit': '<B',
+                        'FSInit': '>b',
+                        'FTInit': '>b',
+                        'supervisorInit': '>b',
+                        'uart1App': '<B',
+                        'uart2App': '<B',
+                        'tmp107Init': '>b',
                         #UHF
                         '###############################\r\n'
                         'UHF\r\n'+
