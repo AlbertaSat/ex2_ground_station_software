@@ -130,15 +130,15 @@ class InputParser:
             raise ValueError('Wrong # of args')
         if subservice is not None:
             outArgs.extend([subservice])
-
-        for i in range(0, len(args)):
-            if inoutInfo['args'][i]:
-                if inoutInfo['args'][i] == 'var':
-                    #Variable size config arg
-                    raise NotImplementedError("Variable size arg not implemented")
-                else :
-                    nparr = np.array([args[i]], dtype=inoutInfo['args'][i])
-                outArgs.extend(nparr.tobytes())
+ 
+        i = 0
+        for name, type in inoutInfo['args'].items():
+            if type == 'var':
+                raise NotImplementedError("Variable size arg not implemented")
+            else:
+                nparr = np.array([args[i]], dtype=type)
+            outArgs.extend(nparr.tobytes())
+            i += 1
         command['args'] = outArgs
         return command
 
