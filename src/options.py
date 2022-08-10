@@ -46,7 +46,7 @@ class Options(object):
             '-I',
             '--interface',
             type=str,
-            default='uart',
+            default='sdr',
             help='CSP interface to use')
 
         self.parser.add_argument(
