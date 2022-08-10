@@ -18,10 +18,17 @@
 '''
 
 expected_iris_HK = {
-    # VNIR Sensor Temperature
-    # SWIR Sensor Temperature
-    # SDRAM usage
-    # Number of images
-    # Software Version
-    # Temp Sensors (0-5)
+    # 'VIS_Temperature': [20, 50],
+    # 'NIR_Temperature': [20, 50],
+    # 'Flash_Temperature': [20, 50],
+    # 'Gate_Temperature': [20, 50],
+    # 'Image_number': [0, 0],
+    # 'Software_Version': [0, 19],
+    # 'Error_number': [0, 0],
+    # 'MAX_5V_voltage': [0, 0xDEAD],
+    # 'MAX_5V_power': [0, 0xBEEF],
+    # 'MAX_3V_voltage': [0, 0xBABE],
+    # 'MAX_3V_power': [0, 0xDEAD],
+    # 'MIN_5V_voltage': [0, 0xBEEF],
+    # 'MIN_3V_voltage': [0, 0xBABE]
 }
