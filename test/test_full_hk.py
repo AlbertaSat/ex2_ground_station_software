@@ -40,7 +40,7 @@ from yukon.expected_yukon_hk import expected_yukon_HK
 # NOTE - The HK variables to be added in don't exist yet at the time of last edit
 
 # Checks all HK data by default
-def testHK(EPS=1, OBC=1, UHF=1, solar=1, charon=1, sBand=1, iris=1, DFGM=1, NIM=1, yukon=1, ADCS=1):
+def testSystemWideHK(EPS=1, OBC=1, UHF=1, solar=1, charon=1, sBand=1, iris=1, DFGM=1, NIM=1, yukon=1, ADCS=1):
     hk_tester = Tester()
     testPassed = 'Pass'
 
@@ -125,6 +125,4 @@ def testHK(EPS=1, OBC=1, UHF=1, solar=1, charon=1, sBand=1, iris=1, DFGM=1, NIM=
     except Exception as e:
         print(e)
         pass
-
-if __name__ == '__main__':
-    testHK(EPS=0, OBC=0, UHF=0, solar=0, charon=0, sBand=0, iris=1, DFGM=0, NIM=0, yukon=0, ADCS=0)
+        
