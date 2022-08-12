@@ -177,9 +177,11 @@ services = {
             'what': 'Set the current unix time on the EPS',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['<u4'],  # timestamp
+                    'args': {
+                        "Time" : '<u4'
+                    },
                     'returns': {
-                        'err': '>b'  # err
+                        'err': '>b'
                     }
                 }
             },
@@ -199,8 +201,7 @@ services = {
                 'what': 'A command to get precise time (NTP-like format)',
                 'subPort': 3,
                 'inoutInfo': {
-                    # Same as return (just reserving space)
-                    'args': ['>B', '<u4', '<u4', '<u4', '<u4', '<u4', '<u4', '<u4', '<u4'],
+                    'args': None,
                     'returns': {
                         'err': '>B',
                         'requestTimeInS': '<u4',
@@ -229,7 +230,9 @@ services = {
             'what': 'Set the current unix time on the OBC. Set parameter to 0 to use local unix time',
                 'subPort': 11,
                 'inoutInfo': {
-                    'args': ['>u4'],  # timestamp
+                    'args': {
+                        "Time" : '<u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -244,7 +247,9 @@ services = {
                 'What': "Command OBC to reboot to a given more, B, A, or G for bootloader, application, or golden image respectively",
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['>B'],  # mode. Can be 'A', 'B', 'G'
+                    'args': {
+                        "Mode" : '>B'
+                    },
                     'returns': {
                         'err': '>b'  # err
                     }
@@ -254,7 +259,9 @@ services = {
                 'what': 'Trigger burnwire. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7. Returns instantaneous current consumption',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['>B'],
+                    'args': {
+                        "Wire" : '>B'
+                    },
                     'returns': {
                         'err': '>b',  # switch status
                         'current_mA': '>u2' # current consumed during burning
@@ -294,7 +301,9 @@ services = {
                 'what': 'Set the period (in ms) of the UHF watchdog timer on the OBC',
                 'subPort': 4,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Period" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',  # err status
                     }
@@ -315,7 +324,9 @@ services = {
                 'what': 'Set the period (in ms) of the S-band watchdog timer on the OBC',
                 'subPort': 6,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Period" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',  # err status
                     }
@@ -336,7 +347,9 @@ services = {
                 'what': 'Set the period (in ms) of the Charon watchdog timer on the OBC.',
                 'subPort': 8,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Period" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',  # err status
                     }
@@ -355,7 +368,9 @@ services = {
             'SET_ADCS_WATCHDOG_TIMEOUT': {
                 'subPort': 10,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Period" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',  # err status
                     }
@@ -374,7 +389,9 @@ services = {
             'SET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
                 'subPort': 13,
                 'inoutInfo': {
-                    'args': ['>u4'], 
+                    'args': {
+                        "Period" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',  # err status
                     }
@@ -499,7 +516,9 @@ services = {
                 'what': 'Gets the pointer to the buffer quantity in S-band. Input = {0:Count, 1:Underrun, 2:Overrun}',
                 'subPort': 8,
                 'inoutInfo': {
-                    'args': ['>B'],
+                    'args': {
+                        "Buffer_quantity" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                         'buffer': '>u2',
@@ -572,7 +591,9 @@ services = {
                 'what': 'Sets the frequency of S-band (Hz)',
                 'subPort': 12,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Frequency" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -582,7 +603,10 @@ services = {
                 'what': 'Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary',
                 'subPort': 13,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1'],
+                    'args': {
+                        "Status" : '>u1',
+                        "Mode" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -592,7 +616,13 @@ services = {
                 'what': 'Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={1:half, 0:full}. Input: 4 binary',
                 'subPort': 14,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1', '>u1'],
+                    'args': {
+                        "Scrambler" : '>u1',
+                        "Filter" : '>u1',
+                        "Modulation" : '>u1',
+                        "Baudrate" : '>u1',
+                        "Bit_order": '>u1',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -602,7 +632,9 @@ services = {
                 'what': 'Sets the power value of S-band power amplifier (24, 26, 28, 30 dBm)',
                 'subPort': 15,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Power" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -628,10 +660,20 @@ services = {
                 }
             },
             'S_SET_CONFIG': {
-                'what': 'Sets all the 8 S-band configurable parameters (freq PA_power PA_status PA_mode Enc_scrambler Enc_filter Enc_mod Enc_rate Enc_bit_order)',
+                'what': 'Sets all the 9 S-band configurable parameters',
                 'subPort': 17,
                 'inoutInfo': {
-                    'args': ['>u4', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                    'args': {
+                        "Freq" : '>u4',
+                        "PA_power" : '>u1',
+                        "PA_status" : '>u1',
+                        "PA_mode" : '>u1',
+                        "Enc_scrambler" : '>u1',
+                        "Enc_filter" : '>u1',
+                        "Enc_mod" : '>u1',
+                        "Enc_rate" : '>u1',
+                        "Enc_bit_order" : '>u1',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -641,7 +683,20 @@ services = {
                 'what': 'Sets UHF status control word',
                 'subPort': 20,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                    'args': { #RONLY = read only parameter
+                        "HFTX_RONLY" : '>u1',
+                        "UART_baud" : '>u1',
+                        "Reset" : '>u1',
+                        "RF_mode" : '>u1',
+                        "Echo" : '>u1',
+                        "Beacon" : '>u1',
+                        "Pipe" : '>u1',
+                        "SW_mode" : '>u1',
+                        "CTS_RONLY" : '>u1',
+                        "SEC_RONLY" : '>u1',
+                        "FRAM_RONLY" : '>u1',
+                        "RFTS_RONLY" : '>u1',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -651,7 +706,9 @@ services = {
                 'what': 'Sets UHF frequency (Hz)',
                 'subPort': 21,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Freq" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -661,7 +718,9 @@ services = {
                 'what': 'Sets UHF PIPE timeout period',
                 'subPort': 22,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Timeout" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -671,7 +730,9 @@ services = {
                 'what': 'Sets UHF beacon message transmission period',
                 'subPort': 23,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Period" : ">u4"
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -681,7 +742,9 @@ services = {
                 'what': 'Sets UHF audio beacon period b/w transmissions',
                 'subPort': 24,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Period" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -691,7 +754,12 @@ services = {
                 'what': 'Sets UHF freq, pipe_t, beacon_t, audio_t parameters. Input:4',
                 'subPort': 25,
                 'inoutInfo': {
-                    'args': ['>u4', '>u4', '>u4', '>u4'],
+                    'args': {
+                        "Freq" : '>u4',
+                        "pipe_t" : '>u4',
+                        "beacon_t" : '>u4',
+                        "audio_t" : '>u4'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -701,7 +769,9 @@ services = {
                 'what': 'Restore UHF default values',
                 'subPort': 26,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Set_1_to_confirm" : '>u1' #Safety precaution 
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -711,7 +781,9 @@ services = {
                 'what': 'Puts UHF TRX into low power mode',
                 'subPort': 27,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Set_1_to_confirm" : '>u1' #Safety precaution
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -721,7 +793,9 @@ services = {
                 'what': 'Sets UHF destination callsign',
                 'subPort': 28,
                 'inoutInfo': {
-                    'args': ['>S6'],
+                    'args': {
+                        "Callsign" : '>S6'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -731,7 +805,9 @@ services = {
                 'what': 'Sets UHF source callsign',
                 'subPort': 29,
                 'inoutInfo': {
-                    'args': ['>S6'],
+                    'args': {
+                        "Callsign" : '>S6'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -741,7 +817,9 @@ services = {
                 'what': 'Sets UHF morse code callsign (max 36)',
                 'subPort': 30,
                 'inoutInfo': {
-                    'args': ['>S36'],
+                    'args': {
+                        "Callsign" : '>S36'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -752,7 +830,9 @@ services = {
                 'subPort': 31,
                 'inoutInfo': {
                     # increase packet size and switch to >U108
-                    'args': ['>S60'],
+                    'args': {
+                        "Beacon" : '>S60'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -762,8 +842,10 @@ services = {
                 'what': 'Sets UHF beacon message (max 98)',
                 'subPort': 32,
                 'inoutInfo': {
-                    # Switch to >U97 after packet configuration
-                    'args': ['>S60'],
+                    #TODO Switch to >U97 after packet configuration
+                    'args': {
+                        "Beacon" : '>S60'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -773,7 +855,9 @@ services = {
                 'what': 'Sets UHF I2C address (22 | 23)',
                 'subPort': 33,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Address" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -783,7 +867,10 @@ services = {
                 'what': 'Sets UHF FRAM address and write 16-byte data',
                 'subPort': 34,
                 'inoutInfo': {
-                    'args': ['>u4', '>S16'],
+                    'args': {
+                        "Address" : '>u4',
+                        "Data" : '>S16'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -793,7 +880,9 @@ services = {
                 'what': 'Puts UHF TRX into secure mode',
                 'subPort': 35,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Set_1_to_confirm" : '>u1' #Safety precaution
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -879,7 +968,9 @@ services = {
                 'what': 'Reads the FRAM data',
                 'subPort': 41,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "FRAM" : '>u4' #TODO: Better name
+                    },
                     'returns': {
                         'err': '>b',
                         'FRAM': '>S16',
@@ -959,7 +1050,10 @@ services = {
                 'what': 'Gets config values in active mode for a specific type',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['<u2', '<u1'], #id, type_id
+                    'args': {
+                        "id" : '<u2',
+                        "type_id" : '<u1'
+                    },
                     'returns': {
                         'err': '>B',
                         'type': '<u1',
@@ -971,7 +1065,10 @@ services = {
                 'what': 'Gets config values in main mode for a specific type',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['<u2', '<u1'], #id, type_id
+                    'args': {
+                        "id" : '<u2',
+                        "type_id" : '<u1'
+                    },
                     'returns': {
                         'err': '>B',
                         'type': '<u1',
@@ -983,7 +1080,10 @@ services = {
                 'what': 'Gets config values in fallback mode for a specific type',
                 'subPort': 2,
                 'inoutInfo': {
-                    'args': ['<u2', '<u1'], #id, type_id
+                    'args': {
+                        "id" : '<u2',
+                        "type_id" : '<u1'
+                    },
                     'returns': {
                         'err': '>B',
                         'type': '<u1',
@@ -995,7 +1095,10 @@ services = {
                 'what': 'Gets config values in default mode for a specific type',
                 'subPort': 3,
                 'inoutInfo': {
-                    'args': ['<u2', '<u1'], #id, type_id
+                    'args': {
+                        "id" : '<u2',
+                        "type_id" : '<u1'
+                    },
                     'returns': {
                         'err': '>B',
                         'type': '<u1',
@@ -1007,7 +1110,11 @@ services = {
                 'what': 'Sets the configuration',
                 'subPort': 4,
                 'inoutInfo': {
-                    'args': ['<u2', '<u1', 'var'], #id, type, config
+                    'args': {
+                        "id" : '<u2',
+                        "type_id" : '<u1',
+                        "Config" : 'var'
+                    },
                     'returns': {
                         'err': '>B',
                     }
@@ -1084,10 +1191,13 @@ services = {
                 }
             },
             'ELEVATE_ACCESS': {
-                'what': 'Elevates access role',
+                'what': 'Elevates access role. Key is in the docs',
                 'subPort': 12,
                 'inoutInfo': {
-                    'args': ['<u1', '<u4'],  # role, key (see docs)
+                    'args': {
+                        "Role" : '<u1',
+                        "Key" : '<u4'
+                    },
                     'returns': {
                         'err': '>B'
                     }
@@ -1130,7 +1240,11 @@ services = {
                 'what': 'Fetch system-wide housekeeping. Input: limit, before_id, before_time',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['>u2', '>u2', '>u4'], #limit, before_id, before_time
+                    'args': {
+                        "Limit" : '>u2',
+                        "Before_id" : '>u2',
+                        "Before_time" : '>u4'
+                    },
                     'returns' : {
                         'err': '>b',
                         # WARNING: Avoid duplicate names in the return items below!
@@ -1551,7 +1665,9 @@ services = {
                 'what': 'Set max number of hk entries to store',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['<u2'], #number of hk entries to store
+                    'args': {
+                        "Max" : '<u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1575,10 +1691,12 @@ services = {
         'port': 16,  # As per EPS docs
         'subservice': {
             'RESET_WDT': {
-                'what': 'Resets the ground station watchdog timer',
+                'what': 'Resets the ground station watchdog timer. See docs for key value',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['<u2'],  # key (see docs)
+                    'args': {
+                        "Key" : '<u2'
+                    },
                     'returns': {
                         'err': '>B'
                     }
@@ -1596,10 +1714,12 @@ services = {
                 }
             },
             'CLEAR_WDT_RESET_MARK': {
-                'what': 'Clears GS watchdog reset mark',
+                'what': 'Clears GS watchdog reset mark. See docs for key value',
                 'subPort': 2,
                 'inoutInfo': {
-                    'args': ['<u2'],  # key (see docs)
+                    'args': {
+                        "Key" : '<u2'
+                    },
                     'returns': {
                         'err': '>B',
                     }
@@ -1622,11 +1742,13 @@ services = {
     'EPS_RESET': {
         'port': 15,  # As per EPS docs
         'subservice': {
-            'EPS_HARD_RESET': {  # Not recommended to use by the operator
-                'what': 'Does a hard reset on EPS (Resets the config)',
+            'EPS_HARD_RESET': {
+                'what': 'Does a hard reset on EPS (Resets the config) Not recommended to use by the operator. Key value is 17767',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['<u2'],  # 17767
+                    'args': {
+                        "Key" : '<u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -1636,16 +1758,17 @@ services = {
     },
 
     'REBOOT': {
-        'port': 4,  # As per CSP docs
+        'port': 4,  # As per EPS CSP docs
         # EPS soft reset
-        # Not recommended to use by the operator
         # no subPort (command ID) needed.
         'subservice':{
             'SOFT': {
-                'what': 'Does a soft reset on EPS (reboot)',
+                'what': 'Does a soft reset on EPS (reboot) Not recommended to use by the operator. Key value is 491527 or 2147975175',
                 'subPort': 128,
                 'inoutInfo': {
-                    'args': ['<u4'],  # 491527 or 2147975175
+                    'args': {
+                        "Key" : '<u4'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -1657,7 +1780,7 @@ services = {
 
     'TM_CLI': {
         # EPS SPECIFIC
-        'port': 7,  # EPS remote CLI uses port 13 unless Otherwise specified
+        'port': 7,  # EPS remote CLI uses port 13 unless Otherwise specified #TODO: Does 7 mean otherwise specified?
         'subservice': {
             'GENERAL_TELEMETRY': {
                 'what': 'Gets the general housekeeping telemetry data',
@@ -1798,12 +1921,15 @@ services = {
             },
             # ALL the EPS CLI commands:
             'SET_TELEMETERY_PERIOD': {
-                'what': 'Set telemetery collection period on EPS',
+                'what': 'Set telemetery collection period on EPS. Magicword is in the docs',
                 'subPort': 255,
                 'inoutInfo': {
-                    # magicWord (refer to docs), telem. ID, period
-                    # (ms), duration (s)
-                    'args': ['<u4', '<B', '<u4', '<u4'],
+                    'args': {
+                        "Magicword" : '<u4',
+                        "Telem_ID" : '<B',
+                        "Period" : '<u4',
+                        "Duration" : '<u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1849,17 +1975,23 @@ services = {
                 'subPort': 0,
                 'inoutInfo': {
                     # output num., state, delay (s)
-                    'args': ['<B', '<B', '<u2'],
+                    'args': {
+                        "Channel" : '<B',
+                        "State" : '<B',
+                        "Delay" : '<u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
                 }
             },
             'ALL_OUTPUT_CONTROL': {
-                'what': 'Sets all ouputs status at once (nth bit -> nth channel',
+                'what': 'Sets all ouputs status at once (nth bit -> nth channel. 18 bit binary integer',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['<u4'],  # binary 18-bit
+                    'args': {
+                        "StateMask" : '<u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1870,7 +2002,11 @@ services = {
                 'subPort': 9,
                 'inoutInfo': {
                     # output num., state, delay (s)
-                    'args': ['<B', '<B', '<u2'],
+                    'args': {
+                        "Channel" : '<B',
+                        "State" : '<B',
+                        "Delay" : '<u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1879,10 +2015,13 @@ services = {
 
             # SOLAR PANEL INPUTS & MPPT
             'SET_SINGLE_MPPT_CONV_V': {
-                'what': 'Sets single MPPT converter voltage',
+                'what': 'Sets single MPPT converter voltage. Voltage is in mv',
                 'subPort': 2,
                 'inoutInfo': {
-                    'args': ['<B', '<u2'],  # channel, voltage (mv)
+                    'args': {
+                        "Channel" : '<B',
+                        "Voltage" : '<u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1892,18 +2031,24 @@ services = {
                 'what': 'Sets all MPPT converter voltage at once',
                 'subPort': 3,
                 'inoutInfo': {
-                    'args': ['<u2', '<u2', '<u2', '<u2'],
+                    'args': {
+                        "v1" : '<u2',
+                        "v2" : '<u2',
+                        "v3" : '<u2',
+                        "v4" : '<u2',
+                    },
                     'returns': {
                         'err': '>b'
                     }
                 }
             },
             'SET_MODE_MPPT': {
-                'what': 'Sets MPPT mode',
+                'what': 'Sets MPPT mode. 0-Hw, 1-manual, 2-auto, 3-auto w/ timeout',
                 'subPort': 4,
                 'inoutInfo': {
-                    # 0-Hw, 1-manual, 2-auto, 3-auto w/ timeout
-                    'args': ['<B'],
+                    'args': {
+                        "Mode" : '<B'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1913,7 +2058,9 @@ services = {
                 'what': 'Sets MPPT auto timeout period',
                 'subPort': 5,
                 'inoutInfo': {
-                    'args': ['<u4'],  # timeout
+                    'args': {
+                        "Timeout" : '<u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1922,20 +2069,25 @@ services = {
 
             # BATTERY HEATER
             'SET_HEATER_MODE': {
-                'what': 'Manual, or automatic',
+                'what': 'Manual, or automatic. See docs for mode values', #TODO: Put the mode values here
                 'subPort': 6,
                 'inoutInfo': {
-                    'args': ['<B'],  # Mode (see docs)
+                    'args': {
+                        "Mode" : '<B'
+                    },
                     'returns': {
-                        'status': '>b'  # 0 = success
+                        'status': '>b'
                     }
                 }
             },
             'SET_HEATER_STATE': {
-                'what': 'On, or off',
+                'what': 'On, or off. Duration in seconds', #TODO: What number is on or off?
                 'subPort': 7,
                 'inoutInfo': {
-                    'args': ['<B', '<u2'],  # state, duration (s)
+                    'args': {
+                        "State" : '<B',
+                        "Duration" : '<u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -1947,27 +2099,34 @@ services = {
         'port': 12,
         'subservice': {
             'INITIALIZE_UPDATE': {
-                'what' : 'Start update procedure. Provide address, size, crc',
+                'what' : 'Start update procedure. Provide address, size, crc. Not intended for operator use. Use updater program',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['>u4', '>u4', '>u2'],
+                    'args': {
+                        "Address" : '>u4',
+                        "Size" : '>u4',
+                        "CRC" : '>u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
                 }
             },
             'PROGRAM_BLOCK': {
-                'what' : 'Program a single block of data',
+                'what' : 'Program a single block of data. Not intended for operator use. Use updater program',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': ['>u4', '>u4'],
+                    'args': { #TODO: Better names
+                        "Arg1" : '>u4',
+                        "Arg2" : '>u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
                 }
             },
             'GET_PROGRESS' : {
-                'what' : 'Get update progress',
+                'what' : 'Get update progress. Not intended for operator use. Use updater program',
                 'subPort' : 2,
                 'inoutInfo' : {
                     'args' : None,
@@ -1980,7 +2139,7 @@ services = {
                 }
             },
             'ERASE_APP' : {
-                'what' : 'Erase working image',
+                'what' : 'Erase working image. Not intended for operator use. Use updater program',
                 'subPort' : 3,
                 'inoutInfo' : {
                     'args' : None,
@@ -1990,7 +2149,7 @@ services = {
                 }
             },
             'VERIFY_APP' : {
-                'what' : 'Verify crc of working image',
+                'what' : 'Verify crc of working image. Not intended for operator use. Use updater program',
                 'subPort' : 4,
                 'inoutInfo' : {
                     'args' : None,
@@ -2019,7 +2178,7 @@ services = {
                 'what': 'Get contents of log file',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': [],
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'log': '>S500',
@@ -2041,7 +2200,9 @@ services = {
                 'what': 'Set the size of the logger files.',
                 'subPort': 3,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Size" : '>u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -2064,10 +2225,13 @@ services = {
         'port': 24,
         'subservice': {
             'SEND_CMD': {
-                'what': 'Send command over the sat_cli.',
+                'what': 'Send command over the sat_cli. Not intended for operator use. Use sat_cli program',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ["B", "a128"],
+                    'args': {
+                        "Len" : "B",
+                        "Command" : "a128"
+                    },
                     'returns': {
                         "status": '>b',
                         "resp": "a128"
@@ -2127,7 +2291,11 @@ services = {
             'ADCS_ERASE_FILE': {
                 'subPort': 5,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1'], #file_type, file_counter, erase_all
+                    'args': {
+                        "File_type" : '>u1',
+                        "File_counter" : '>u1',
+                        "Erase_all" : '>u1'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -2136,7 +2304,12 @@ services = {
             'ADCS_LOAD_FILE_DOWNLOAD_BLOCK': {
                 'subPort': 6,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u4', '>u2'], #file_type, file_counter, offset, block_length
+                    'args': {
+                        "File_type" : '>u1',
+                        "File_counter" : '>u1',
+                        "Offset" : '>u4',
+                        "Block_length" : '>u2'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -2154,7 +2327,10 @@ services = {
             'ADCS_INITIATE_FILE_UPLOAD': {
                 'subPort': 8,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1'], # file_dest, block_size
+                    'args': {
+                        "File_dest" : '>u1',
+                        "Block_size" : '>u1'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -2163,7 +2339,10 @@ services = {
             'ADCS_FILE_UPLOAD_PACKET': {
                 'subPort': 9,
                 'inoutInfo': {
-                    'args': ['>u2', '>u1'], # packet_number, file_bytes
+                    'args': {
+                        "Packet_num" : '>u2',
+                        "File_bytes" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                         'file_bytes': '>b'
@@ -2173,7 +2352,11 @@ services = {
             'ADCS_FINALIZE_UPLOAD_BLOCK': {
                 'subPort': 10,
                 'inoutInfo': {
-                    'args': ['>u2', '>u4', 'u2'], # file_dest, offset, block_length
+                    'args': {
+                        "File_dest" : '>u2',
+                        "Offset" : '>u4',
+                        "Block_length" : '>u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2200,7 +2383,10 @@ services = {
             'ADCS_INITIATE_DOWNLOAD_BURST': {
                 'subPort': 13,
                 'inoutInfo': {
-                    'args': ['>u1', '>?'], # msg_legnth, ignore_hole_map
+                    'args': {
+                        "Msg_len" : '>u1',
+                        "Ignore_hole_map" : '>?'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2395,7 +2581,9 @@ services = {
             'ADCS_SET_CACHE_EN_STATE': {
                 'subPort': 29,
                 'inoutInfo': {
-                    'args': ['>?'],
+                    'args': {
+                        "State" : '>?'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2404,16 +2592,22 @@ services = {
             'ADCS_SET_SRAM_SCRUB_SIZE': {
                 'subPort': 30,
                 'inoutInfo': {
-                    'args': ['>u2'],
+                    'args': {
+                        "Size" : '>u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
                 }
             },
             'ADCS_SET_UNIXTIME_SAVE_CONFIG': {
+                'what' : "when: [1 = now, 2 = on update, 4 = periodically], period",
                 'subPort': 31,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1'], # when: [1 = now, 2 = on update, 4 = periodically], period
+                    'args': {
+                        "When" : '>u1',
+                        "period" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2422,7 +2616,10 @@ services = {
             'ADCS_SET_HOLE_MAP': {
                 'subPort': 32,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1'],
+                    'args': { #TODO: better names
+                        "arg1" : '>u1',
+                        "arg2" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                         'Hole_Map': '>u1'
@@ -2431,8 +2628,11 @@ services = {
             },
             'ADCS_SET_UNIX_T': {
                 'subPort': 33,
-                'inoutInfo': {
-                    'args': ['>u4', '>u2'],
+                'inoutInfo': { #TODO: better names
+                    'args': {
+                        "Arg1" : '>u4',
+                        "Arg2" : '>u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2441,7 +2641,9 @@ services = {
             'ADCS_GET_CACHE_EN_STATE': {
                 'subPort': 34,
                 'inoutInfo': {
-                    'args': ['>?'],
+                    'args': {
+                        "State" : '>?'
+                    },
                     'returns': {
                         'err': '>b',
                         'En_State': '>?'
@@ -2472,7 +2674,9 @@ services = {
             'ADCS_GET_HOLE_MAP': {
                 'subPort': 37,
                 'inoutInfo': {
-                    'args': ['>u1'], #num
+                    'args': { #TODO: better names
+                        "Num" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                         'Hole_Map': '>u1',
@@ -2502,7 +2706,9 @@ services = {
             'ADCS_SET_BOOT_INDEX': {
                 'subPort': 40,
                 'inoutInfo': {
-                    'args': ['>u1'], #index
+                    'args': {
+                        "Index" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2520,7 +2726,9 @@ services = {
             'ADCS_READ_PROGRAM_INFO': {
                 'subPort': 42,
                 'inoutInfo': {
-                    'args': ['>u1'], #index
+                    'args': {
+                        "Index" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2529,7 +2737,10 @@ services = {
             'ADCS_COPY_PROGRAM_INTERNAL_FLASH': {
                 'subPort': 43,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1'], #index, overwrite_flag
+                    'args': {
+                        "Index" : '>u1',
+                        "Overwrite_flag" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2582,9 +2793,12 @@ services = {
                 }
             },
             'ADCS_DEPLOY_MAGNETOMETER_BOOM': {
+                "what" : "Actuation timeout in seconds",
                 'subPort': 47,
                 'inoutInfo': {
-                    'args': ['>u1'], # Actuation timeout (s)
+                    'args': {
+                        "Actuation_timeout" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2593,7 +2807,9 @@ services = {
             'ADCS_SET_ENABLED_STATE': {
                 'subPort': 48,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "State" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2602,7 +2818,10 @@ services = {
             'ADCS_CLEAR_LATCHED_ERRS': {
                 'subPort': 49,
                 'inoutInfo': {
-                    'args': ['>?', '>?'],
+                    'args': { #TODO: Better names
+                        "Arg1" : '>?',
+                        "Arg2" : '>?'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2611,7 +2830,10 @@ services = {
             'ADCS_SET_ATTITUDE_CONTROL_MODE': {
                 'subPort': 50,
                 'inoutInfo': {
-                    'args': ['>u1', '>u2'], # control mode, timeout
+                    'args': {
+                        "Control_mode" : '>u1',
+                        "Timeout" : '>u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2620,7 +2842,9 @@ services = {
             'ADCS_SET_ATTITUDE_ESTIMATE_MODE': {
                 'subPort': 51,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Mode" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2647,7 +2871,9 @@ services = {
             'ADCS_SET_ASGP4_RUNE_MODE': {
                 'subPort': 54,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Mode" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2665,7 +2891,9 @@ services = {
             'ADCS_SET_MTM_OP_MODE': {
                 'subPort': 56,
                 'inoutInfo': {
-                    'args': ['>u1'],
+                    'args': {
+                        "Mode" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2674,7 +2902,11 @@ services = {
             'ADCS_CNV2JPG': {
                 'subPort': 57,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1'],
+                    'args': { #TODO: better names
+                        "Arg1" : '>u1',
+                        "Arg2" : '>u1',
+                        "Arg3" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2683,7 +2915,10 @@ services = {
             'ADCS_SAVE_IMG': {
                 'subPort': 58,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1'],
+                    'args': { #TODO: better names
+                        "Arg1" : '>u1',
+                        "Arg2" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2692,7 +2927,11 @@ services = {
             'ADCS_SET_MAGNETORQUER_OUTPUT': {
                 'subPort': 59,
                 'inoutInfo': {
-                    'args': ['>u2', '>u2', '>u2'],
+                    'args': { #TODO: better names
+                        "Arg1" : '>u2',
+                        "Arg2" : '>u2',
+                        "Arg3" : '>u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -2701,7 +2940,11 @@ services = {
             'ADCS_SET_WHEEL_SPEED': {
                 'subPort': 60,
                 'inoutInfo': {
-                    'args': ['>u2', '>u2', '>u2'],
+                    'args': { #TODO: better names
+                        "Arg1" : '>u2',
+                        "Arg2" : '>u2',
+                        "Arg3" : '>u2'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3140,7 +3383,18 @@ services = {
             'ADCS_SET_POWER_CONTROL': {
                 'subPort': 79,
                 'inoutInfo': {
-                    'args': ['>u1','u1','>u1', 'u1','>u1', 'u1','>u1', 'u1','>u1', 'u1',],
+                    'args': { #TODO: better names
+                        "Arg1" : '>u1',
+                        "Arg2" : '>u1',
+                        "Arg3" : '>u1',
+                        "Arg4" : '>u1',
+                        "Arg5" : '>u1',
+                        "Arg6" : '>u1',
+                        "Arg7" : '>u1',
+                        "Arg8" : '>u1',
+                        "Arg9" : '>u1',
+                        "Arg10" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3166,9 +3420,14 @@ services = {
                 }
             },
             'ADCS_SET_ATTITUDE_ANGLE': {
+                "what" : "CHECK DATA SHEET BEFORE USE. xyz ORDER MAY BE WRONG",
                 'subPort': 81,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4' ], # xyz type
+                    'args': {
+                        "x" : '>f4',
+                        "y" : '>f4',
+                        "z" : '>f4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3189,7 +3448,11 @@ services = {
             'ADCS_SET_TRACK_CONTROLLER': {
                 'subPort': 83,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4' ], # xyz type
+                    'args': {
+                        "x" : '>f4',
+                        "y" : '>f4',
+                        "z" : '>f4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3208,9 +3471,15 @@ services = {
                 }
             },
             'ADCS_SET_LOG_CONFIG': {
+                "what" : "Hex file assumed for file with name 'file name'",
                 'subPort': 85,
                 'inoutInfo': {
-                    'args': ['>u2', '>B', '>B', '>S30'], # period, destination, log, flag file name (.hex assumed)
+                    'args': {
+                        "Period" : '>u2',
+                        "Destination" : '>B',
+                        "Log" : '>B',
+                        "File_name" : '>S30'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3219,7 +3488,9 @@ services = {
             'ADCS_GET_LOG_CONFIG': {
                 'subPort': 86,
                 'inoutInfo': {
-                    'args': ['>B'], #log
+                    'args': {
+                        "Log" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                         'Flags_arr': '>V80',
@@ -3232,7 +3503,11 @@ services = {
             'ADCS_SET_INERTIAL_REF': {
                 'subPort': 87,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4'],
+                    'args': {
+                        "x" : '>f4',
+                        "y" : '>f4',
+                        "z" : '>f4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3253,7 +3528,16 @@ services = {
             'ADCS_SET_SGP4_ORBIT_PARAMS': {
                 'subPort': 89,
                 'inoutInfo': {
-                    'args': ['>f8', '>f8', '>f8', '>f8', '>f8', '>f8', '>f8', '>f8'],
+                    'args': { #TODO: Better names
+                        "inclination" : '>f8',
+                        "eccentricity" : '>f8',
+                        "RAAN" : '>f8',
+                        "AOP" : '>f8',
+                        "Bstar" : '>f8',
+                        "mean_motion" : '>f8',
+                        "mean_anomaly" : '>f8',
+                        "epoch" : '>f8',
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3365,7 +3649,11 @@ services = {
             'ADCS_SET_MTQ_CONFIG': {
                 'subPort': 93,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1'],
+                    'args': { 
+                        "Mag1_axis" : '>u1',
+                        "Mag2_axis" : '>u1',
+                        "Mag3_axis" : '>u1'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3374,7 +3662,12 @@ services = {
             'ADCS_SET_RW_CONFIG': {
                 'subPort': 94,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1', '>u1'],
+                    'args': { 
+                        "RW1_axis" : '>u1',
+                        "RW2_axis" : '>u1',
+                        "RW3_axis" : '>u1',
+                        "RW4_axis" : '>u1'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3383,17 +3676,47 @@ services = {
             'ADCS_SET_RATE_GYRO': {
                 'subPort': 95,
                 'inoutInfo': {
-                    'args': ['>u1', '>u1', '>u1', '>f4', '>f4', '>f4', '>u1'],
+                    'args': { 
+                        "Gyro1_axis" : '>u1',
+                        "Gyro2_axis" : '>u1',
+                        "Gyro3_axis" : '>u1',
+                        "X_sensor_offset" : '>f4',
+                        "Y_sensor_offset" : '>f4',
+                        "Z_sensor_offset" : '>f4',
+                        "Rate_Sensor_Mult" : '>u1',
+                    },
                     'returns': {
                         'err': '>b',
                     }
                 }
             },
             'ADCS_SET_CSS_CONFIG': {
+                "what" : "CSS relative scale floats cannot be negative!",
                 'subPort': 96,
                 'inoutInfo': {
-                    # CSS relative scale floats cannot be negative!
-                    'args': ['>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>B', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>B'],
+                    'args': { 
+                        "CSS1_axis" : '>B',
+                        "CSS2_axis" : '>B',
+                        "CSS3_axis" : '>B',
+                        "CSS4_axis" : '>B',
+                        "CSS5_axis" : '>B',
+                        "CSS6_axis" : '>B',
+                        "CSS7_axis" : '>B',
+                        "CSS8_axis" : '>B',
+                        "CSS9_axis" : '>B',
+                        "CSS10_axis" : '>B',
+                        "CSS1_rel_scale" : '>f4',
+                        "CSS2_rel_scale" : '>f4',
+                        "CSS3_rel_scale" : '>f4',
+                        "CSS4_rel_scale" : '>f4',
+                        "CSS5_rel_scale" : '>f4',
+                        "CSS6_rel_scale" : '>f4',
+                        "CSS7_rel_scale" : '>f4',
+                        "CSS8_rel_scale" : '>f4',
+                        "CSS0_rel_scale" : '>f4',
+                        "CSS10_rel_scale" : '>f4',
+                        "CSS_threshold" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3402,7 +3725,34 @@ services = {
             'ADCS_SET_STAR_TRACK_CONFIG': {
                 'subPort': 97,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>u2', '>u2', '>u1', '>u1', '>u1', '>u2', '>u1', '>u1', '>u1', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>u1', '>u1', '>?', '>?', '>u1'],
+                    'args': { #TODO Better names
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Arg1" : '>u2',
+                        "Arg2" : '>u2',
+                        "Arg3" : '>u1',
+                        "Arg4" : '>u1',
+                        "Arg5" : '>u1',
+                        "Arg6" : '>u2',
+                        "Arg7" : '>u1',
+                        "Arg8" : '>u1',
+                        "Arg9" : '>u1',
+                        "Float4" : '>f4',
+                        "Float5" : '>f4',
+                        "Float6" : '>f4',
+                        "Float7" : '>f4',
+                        "Float8" : '>f4',
+                        "Float9" : '>f4',
+                        "Float10" : '>f4',
+                        "Arg10" : '>u1',
+                        "Arg11" : '>u1',
+                        "Arg12" : '>u1',
+                        "Arg13" : '>u?',
+                        "Arg14" : '>u?',
+                        "Arg15" : '>u1',
+
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3411,7 +3761,9 @@ services = {
             'ADCS_SET_CUBESENSE_CONFIG': {
                 'subPort': 98,
                 'inoutInfo': {
-                    'args': ['>S30'],
+                    'args': {
+                        "Config" : '>S30'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3421,7 +3773,23 @@ services = {
                 'what': 'Sets the magnetometer configuration parameters. Input: Angle xyz (floats), channel_offset xyz (floats), sensitivity matrix (s11,s22,s33,s12,s13,s21,s23,s31,s32)',
                 'subPort': 99,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4'],
+                    'args': {
+                        "angle_x" : '>f4',
+                        "angle_y" : '>f4',
+                        "angle_z" : '>f4',
+                        "channel_x" : '>f4',
+                        "channel_y" : '>f4',
+                        "channel_z" : '>f4',
+                        "s11" : '>f4',
+                        "s22" : '>f4',
+                        "s33" : '>f4',
+                        "s12" : '>f4',
+                        "s13" : '>f4',
+                        "s21" : '>f4',
+                        "s23" : '>f4',
+                        "s31" : '>f4',
+                        "s32" : '>f4',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3430,7 +3798,12 @@ services = {
             'ADCS_SET_DETUMBLE_CONFIG': {
                 'subPort': 100,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>f4'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Float4" : '>f4',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3439,7 +3812,13 @@ services = {
             'ADCS_SET_YWHEEL_CONFIG': {
                 'subPort': 101,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>f4', '>f4'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Float4" : '>f4',
+                        "Float5" : '>f4',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3448,7 +3827,13 @@ services = {
             'ADCS_SET_RWHEEL_CONFIG': {
                 'subPort': 102,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>B', '>B'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Arg1" : '>B',
+                        "Arg2" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3457,7 +3842,12 @@ services = {
             'ADCS_SET_TRACKING_CONFIG': {
                 'subPort': 103,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>u1'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Arg1" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3466,7 +3856,14 @@ services = {
             'ADCS_SET_MOI_MAT': {
                 'subPort': 104,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Float4" : '>f4',
+                        "Float5" : '>f4',
+                        "Float6" : '>f4',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3475,7 +3872,26 @@ services = {
             'ADCS_SET_ESTIMATION_CONFIG': {
                 'subPort': 105,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1', '>u1'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Float4" : '>f4',
+                        "Float5" : '>f4',
+                        "Float6" : '>f4',
+                        "Float7" : '>f4',
+                        "Arg1" : '>u1',
+                        "Arg2" : '>u1',
+                        "Arg3" : '>u1',
+                        "Arg4" : '>u1',
+                        "Arg5" : '>u1',
+                        "Arg6" : '>u1',
+                        "Arg7" : '>u1',
+                        "Arg8" : '>u1',
+                        "Arg9" : '>u1',
+                        "Arg10" : '>u1',
+                        "Arg11" : '>u1',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3484,7 +3900,10 @@ services = {
             'ADCS_SET_USERCODED_SETTING': {
                 'subPort': 106,
                 'inoutInfo': {
-                    'args': ['>O20', '>O20'],
+                    'args': {
+                        "Code1" : '>O20',
+                        "Code2" : '>020'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3493,7 +3912,25 @@ services = {
             'ADCS_SET_ASGP4_SETTING': {
                 'subPort': 107,
                 'inoutInfo': {
-                    'args': ['>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>f4', '>u1', '>f4', '>f4', '>u1', '>f4', '>f4', '>u1', '>f4', '>f4', '>u2'],
+                    'args': {
+                        "Float1" : '>f4',
+                        "Float2" : '>f4',
+                        "Float3" : '>f4',
+                        "Float4" : '>f4',
+                        "Float5" : '>f4',
+                        "Float6" : '>f4',
+                        "Float7" : '>f4',
+                        "Arg1" : '>u1',
+                        "Float8" : '>f4',
+                        "Float9" : '>f4',
+                        "Arg2" : '>u1',
+                        "Float10" : '>f4',
+                        "Float11" : '>f4',
+                        "Arg3" : '>u1',
+                        "Float12" : '>f4',
+                        "Float13" : '>f4',
+                        "Arg4" : '>u2',
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3734,7 +4171,12 @@ services = {
                 'what': 'Saves a file from the ADCS to the OBC. Inputs: type, counter, size, and OBC file name. (Be patient and check the log for return.)',
                 'subPort': 110,
                 'inoutInfo': {
-                    'args': ['>B', 'B', '>u4', '>S30'],
+                    'args': {
+                        "Type" : '>B',
+                        "Counter" : '>B',
+                        "Size" : '>u4',
+                        "File_name" : '>S30'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3749,7 +4191,9 @@ services = {
                 'what': 'Record DFGM data for specified number of seconds.',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['>u4'],
+                    'args': {
+                        "Seconds" : '>u4'
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -3863,7 +4307,9 @@ services = {
                 'what': 'Send artwork from the OBC to the payload. Input: file name, limited to 7 chars!',
                 'subPort': 0,
                 'inoutInfo': {
-                    'args': ['>S10'], # Filename
+                    'args': {
+                        "FIlename" : '>S10'
+                    },
                     'returns': {
                         'err': '>b',
                     }
@@ -3903,10 +4349,12 @@ services = {
                 }
             },
             'GET_FLAG': {
-                'what': 'Get the status of a payload flag. Input: flag/subcode decimal value.',
+                'what': 'Get the status of a payload flag. Input: flag/subcode decimal value. flag/subcode BYTE! Do not use a char',
                 'subPort': 4,
                 'inoutInfo': {
-                    'args': ['>B'], # flag/subcode BYTE! Do not use a char
+                    'args': {
+                        "Flag" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                         'flag_stat': '>B'
@@ -3914,10 +4362,12 @@ services = {
                 }
             },
             'GET_FILENAME': {
-                'what': 'Get a desired image/artwork file name. Input: subcode demimal value.',
+                'what': 'Get a desired image/artwork file name. Input: subcode demimal value. subcode BYTE! Do not use a char',
                 'subPort': 5,
                 'inoutInfo': {
-                    'args': ['>B'], # subcode BYTE! Do not use a char
+                    'args': {
+                        "Subcode" : '>B'
+                    },
                     'returns': {
                         'err': '>b',
                         'filename': '>S11'
