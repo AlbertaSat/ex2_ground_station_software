@@ -35,12 +35,12 @@ for serv in services:
         subport = sub['subPort'] if 'subPort' in sub else None
         inoutInfo = sub['inoutInfo']
 
-        args = 'None' if inoutInfo['args'] is None else ', '.join(map(str, inoutInfo['args']))
+        args = 'None' if inoutInfo['args'] is None else repr(inoutInfo['args'])
         returns = 'None' if inoutInfo['returns'] is None else repr(inoutInfo['returns'])
         info = 'None' if not 'what' in sub else sub['what']
         f.write(
         '\t\tAbout: ' + info + '\n'
-        '\t\tArguments: [' + args + ']\n' +
+        '\t\tArguments: ' + args + '\n' +
         '\t\treturn values: ' + returns + '\n'
         '\t\tport: ' + str(services[serv]['port']) +
         '\t\tsubport: ' + str(subport) + '\n\n\n')

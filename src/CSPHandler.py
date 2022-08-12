@@ -105,7 +105,7 @@ class CSPHandler(object):
         libcsp.uhf_init(device, 115200, uhf_baudrate, "UHF")
         self.interfaceName = "UHF"
     def _sband(self):
-        self.interfaceName = "SBAND"
+        self.interfaceName = "S-BAND"
         libcsp.sband_init()
 
 
