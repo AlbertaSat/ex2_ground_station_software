@@ -66,7 +66,7 @@ Step 4: Run the ground station. This must be done every new session.
 conda activate gnuradio-3.9.4
 gnuradio-companion
 ```
-In GNURadio, open and run `ex2_sdr/gnuradio/uhf/duplex_uhf_mode5_csp_interface.grc`. Note: the first time this is run on a new machine, gnuradio will prompt you to run uhd_images_downloader.py from the proper directory path. Do that, and then try running the flow graph again.
+In GNURadio, open and run `ex2_sdr/gnuradio/uhf/uhf_mode5_pfb_tuned_for_flatsat.grc`. Note: the first time this is run on a new machine, gnuradio will prompt you to run uhd_images_downloader.py from the proper directory path. Do that, and then try running the flow graph again.
 ```
 yarn cli -I sdr -u
 ```
