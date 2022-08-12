@@ -1328,7 +1328,7 @@ services = {
                         'OBC_software_ver':'>U8',
                         'MCU_core_temp': '>i4',
                         'converter_temp': '>i4',
-                        'OBC_uptime': '>u2',
+                        'OBC_uptime': '>u4',
                         'vol0_usage_percent': '>u1',
                         'vol1_usage_percent': '>u1',
                         'boot_cnt': '>u2',
