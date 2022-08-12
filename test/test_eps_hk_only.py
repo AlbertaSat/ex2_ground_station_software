@@ -22,20 +22,20 @@
 
 import time
 import numpy as np
-from testLib import testLib as test
-test = test()  # call to initialize local test class
+from tester import Tester
 
+tester = Tester()  # call to initialize local test class
 
 def testAllCommandsToOBC():
 
     i = 0
     while i < 9:
-        test.send('eps.time_management.get_eps_time')
-        test.send('eps.cli.general_telemetry')
+        tester.send('eps.time_management.get_eps_time')
+        tester.send('eps.cli.general_telemetry')
         time.sleep(1800)
         i += 1
     
-    test.summary()  # call when done to print summary of tests
+    tester.summary()  # call when done to print summary of tests
 
 
 if __name__ == '__main__':

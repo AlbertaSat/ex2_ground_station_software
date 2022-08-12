@@ -64,11 +64,11 @@ class Tester(GroundStation):
         return checkPassed
 
     def sendAndExpect(self, send, expect):
-        inStr = self.inputHandler.getInput("to send: ")
+        print("cmd: " + send)
+
         try:
-            transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
+            transactObj = self.interactive.getTransactionObject(send, self.networkManager)
             ret = transactObj.execute()
-            print()
             if ret == expect:
                 testpassed = 'Pass'
                 colour = '\033[92m' #green
@@ -79,20 +79,22 @@ class Tester(GroundStation):
                 self.failed += 1
             print()
 
-            print(colour + ' - TEST CASE ' + testpassed + ' -\n\tSent: ' + send +
+            print(colour + ' - TEST CASE ' + testpassed + ' -\n\tSent: ' + send + '\n\tExpected: ' + str(expect) +
             '\n\tRecieved: ' + str(ret) + '\n\n' + '\033[0m')
-        except Exception as e:
-            print(e)
-            pass
 
-        return ret == expect
+            return ret == expect
+        except Exception as e:
+            self.failed += 1
+            print(e)
+            return -1
+        
 
     def send(self, send):
-        inStr = self.inputHandler.getInput("to send: ")
+        print("cmd: " + send)
+
         try:
-            transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
+            transactObj = self.interactive.getTransactionObject(send, self.networkManager)
             ret = transactObj.execute()
-            print()
             if ret != {}:
                 testpassed = 'Pass'
                 colour = '\033[92m' #green
@@ -106,6 +108,7 @@ class Tester(GroundStation):
             print(colour + ' - TEST CASE ' + testpassed + ' -\n\tSent: ' + send +
             '\n\tRecieved: ' + str(ret) + '\n\n' + '\033[0m')
         except Exception as e:
+            self.failed += 1
             print(e)
             pass
 
@@ -115,6 +118,7 @@ class Tester(GroundStation):
         print('\tTests performed: ' + str(self.failed + self.passed))
         print('\tTime taken: '+ str(round(np.float32(delta), 2)) + 's')
         print('\tPassed: ' + str(self.passed) + ', Failed: ' + str(self.failed))
+        
         success = int(self.passed/(self.passed + self.failed) * 100)
         if success == 100:
             colour = '\033[92m' #green

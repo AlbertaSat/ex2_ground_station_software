@@ -21,19 +21,19 @@
 
 
 import numpy as np
-from testLib import testLib as test
+from tester import Tester
 
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    test.send('eps.time_management.get_eps_time')
-    test.sendAndExpect('eps.control.single_output_control(10 1 0)', {'err': 0}) #Preferably a channe that does not power a subsystem
-    test.send('eps.cli.general_telemetry')
-    test.sendAndExpect('eps.control.single_output_control(10 0 0)', {'err': 0})
-    test.sendAndExpect('eps.configuration.get_active_config(0 0)', {'err': 0, 'type':0, 'Value': 4})
-    test.sendAndExpect('eps.configuration.get_active_config(136 2)', {'err': 0, 'type':2, 'Value': 500}) #Might change though. Just checking another type
+    tester.send('eps.time_management.get_eps_time')
+    tester.sendAndExpect('eps.control.single_output_control(10, 1, 0)', {'err': 0}) #Preferably a channe that does not power a subsystem
+    tester.send('eps.cli.general_telemetry') # CAUTION: No such subservice
+    tester.sendAndExpect('eps.control.single_output_control(10, 0, 0)', {'err': 0})
+    tester.sendAndExpect('eps.configuration.get_active_config(0, 0)', {'err': 0, 'type':0, 'Value': 4})
+    tester.sendAndExpect('eps.configuration.get_active_config(136, 2)', {'err': 0, 'type':2, 'Value': 500}) #Might change though. Just checking another type
     
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

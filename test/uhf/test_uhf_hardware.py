@@ -27,28 +27,26 @@ import sys
 from os import path
 sys.path.append("./test")
 
-from testLib import testLib as test
+from tester import Tester
 
-test = test() #call to initialize local test class
-
-
+tester = Tester() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    test.send('obc.communication.uhf_get_full_stat')
-    test.sendAndExpect('obc.communication.uhf_set_source(UX1UHF)', {'err': 0})
-    test.sendAndExpect('obc.communication.uhf_set_destination(cq12AB)', {'err': 0})
-    test.sendAndExpect('obc.communication.uhf_get_callsign', {
+    tester.send('ex2.communication.uhf_get_full_stat')
+    tester.sendAndExpect('ex2.communication.uhf_set_source(UX1UHF)', {'err': 0})
+    tester.sendAndExpect('ex2.communication.uhf_set_destination(cq12AB)', {'err': 0})
+    tester.sendAndExpect('ex2.communication.uhf_get_callsign', {
                   'err': 0, 'Destination': b'CQ12AB', 'Source': b'UX1UHF'})
-    test.sendAndExpect(
-        'obc.communication.uhf_set_morse(--.|--|..-|.---|.|.-.-|.-..|-.|--..)', {'err': 0})
-    test.sendAndExpect('obc.communication.uhf_get_morse', {
+    tester.sendAndExpect(
+        'ex2.communication.uhf_set_morse(--.|--|..-|.---|.|.-.-|.-..|-.|--..)', {'err': 0})
+    tester.sendAndExpect('ex2.communication.uhf_get_morse', {
                   'err': 0, 'Morse': b'--. -- ..- .--- . .-.- .-.. -. --..'})
-    test.sendAndExpect('obc.communication.uhf_set_midi(M67H69H71H)', {'err': 0})
-    test.sendAndExpect('obc.communication.uhf_get_midi',
+    tester.sendAndExpect('ex2.communication.uhf_set_midi(M67H69H71H)', {'err': 0})
+    tester.sendAndExpect('ex2.communication.uhf_get_midi',
                   {'err': 0, 'MIDI': b'67H69H71H'})
-    test.sendAndExpect('obc.communication.uhf_set_bcn', {'err': 0})
+    tester.sendAndExpect('ex2.communication.uhf_set_bcn', {'err': 0})
 
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 
 if __name__ == '__main__':

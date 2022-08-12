@@ -27,24 +27,24 @@ import sys
 from os import path
 sys.path.append("./test")
 
-from testLib import testLib as test
+from tester import Tester
 
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 def testAllCommandsToOBC():
-    test.sendAndExpect('obc.communication.s_set_control(0 0)', {'err': 0})
-    test.sendAndExpect('obc.communication.s_get_control',
+    tester.sendAndExpect('ex2.communication.s_set_control(0 0)', {'err': 0})
+    tester.sendAndExpect('ex2.communication.s_get_control',
                   {'err': 0, 'status': 0, 'mode': 0})
-    test.send('obc.communication.s_get_full_status')
-    test.send('obc.communication.s_get_freq')
-    test.sendAndExpect('obc.communication.s_set_papower(24)', {'err': 0})
-    test.sendAndExpect('obc.communication.s_get_papower', {
+    tester.send('ex2.communication.s_get_full_status')
+    tester.send('ex2.communication.s_get_freq')
+    tester.sendAndExpect('ex2.communication.s_set_papower(24)', {'err': 0})
+    tester.sendAndExpect('ex2.communication.s_get_papower', {
                   'err': 0, 'Power Amplifier Power': 24})
-    test.send('obc.communication.s_get_encoder')
-    test.sendAndExpect('obc.communication.s_get_buffer(0)', {'err': 0, 'buffer': 0})
-    test.send('obc.communication.s_get_hk')
+    tester.send('ex2.communication.s_get_encoder')
+    tester.sendAndExpect('ex2.communication.s_get_buffer(0)', {'err': 0, 'buffer': 0})
+    tester.send('ex2.communication.s_get_hk')
     
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

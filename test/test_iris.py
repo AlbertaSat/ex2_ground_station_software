@@ -26,55 +26,47 @@ import sys
 from os import path
 sys.path.append("./test")
 
-from testLib import testLib as test
+from tester import Tester
 
 import time
 
-test = test() #call to initialize local test class
-
-
-# TODO: Need to further discuss with Iris on what other kinds of tests
-#are needed
+tester = Tester() #call to initialize local test class
 
 def test_iris_init():
-    test.send('ex2.iris.iris_power_on')
+    tester.sendAndExpect('ex2.iris.iris_power_on', {'err': 0})
 
 def test_iris_program_flash():
-    test.send('ex2.iris.iris_program_flash')
+    tester.sendAndExpect('ex2.iris.iris_program_flash', {'err': 0})
 
 def test_iris_sensor_on():
-    test.send('ex2.iris.iris_turn_sensors_on')
+    tester.sendAndExpect('ex2.iris.iris_turn_sensors_on', {'err': 0})
 
 def test_iris_sensor_off():
-    test.send('ex2.iris.iris_turn_sensors_off')
+    tester.sendAndExpect('ex2.iris.iris_turn_sensors_off', {'err': 0})
 
 def test_iris_houskeeping():
-    test.send('ex2.iris.iris_get_hk')
+    tester.send('ex2.iris.iris_get_hk')
 
 def test_iris_take_image_and_deliver_image():
-    test.send('ex2.iris.iris_take_image')
-    time.sleep(3)
-    test.send('ex2.iris.iris_deliver_image')
-
-def test_program_iris():
-    raise NotImplementedError
+    tester.sendAndExpect('ex2.iris.iris_take_image', {'err': 0})
+    time.sleep(2)
+    tester.sendAndExpect('ex2.iris.iris_deliver_image', {'err': 0})
 
 if __name__ == '__main__':
-    test_iris_program_flash()
-    time.sleep(8)
+    # test_iris_program_flash()
+    # time.sleep(6)
 
     # test_iris_init()
-    # time.sleep(5)
+    # time.sleep(2)
 
     test_iris_sensor_on()
     time.sleep(10)
 
     test_iris_houskeeping()
-    time.sleep(2)
+    # time.sleep(2)
     test_iris_take_image_and_deliver_image()
-    time.sleep(10) #change depending on image file size
+    # time.sleep(15) #change depending on image file size
 
     test_iris_sensor_off()
-    time.sleep(5)
 
-    test.summary()
+    tester.summary()
