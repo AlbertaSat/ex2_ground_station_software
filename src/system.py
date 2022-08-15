@@ -1325,14 +1325,17 @@ services = {
                         '###############################\r\n'
                         'Athena\r\n'+
                         '###############################\r\n'+
-                        'temparray1': '>i4',
-                        'temparray2': '>i4',
+                        'OBC_software_ver':'>U8',
+                        'MCU_core_temp': '>i4',
+                        'converter_temp': '>i4',
+                        'OBC_uptime': '>u4',
+                        'vol0_usage_percent': '>u1',
+                        'vol1_usage_percent': '>u1',
                         'boot_cnt': '>u2',
+                        'boot_src': '>u2',
                         'last_reset_reason': '<B',
                         'OBC_mode': '<B',
-                        'OBC_uptime': '>u2',
-                        'solar_panel_supply_curr': '<B',
-                        'OBC_software_ver': '<B',
+                        'solar_panel_supply_curr': '>u2',
                         'cmds_received': '>u2',
                         'pckts_uncovered_by_FEC': '>u2',
 
