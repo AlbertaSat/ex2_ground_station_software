@@ -29,9 +29,9 @@ class GroundStation:
         hkey = keyfile.read().strip()
         try:
             if opts.u:
-                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, "UHF")
+                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, "UHF", useFec = opts.fec)
             else:
-                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey)
+                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, useFec = opts.fec)
         except Exception as e:
             print(e)
             exit(1)
