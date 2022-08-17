@@ -82,6 +82,14 @@ class GroundNodes(Enum):
     SBAND = 17
     PIPE= 24
 
+varTypes = {
+    0: '<u1',
+    1: '<i1',
+    2: '<u2',
+    4: '<u4',
+    9: '<S16' #Empty means all zero or Use <V16
+}
+
 services = {
     'SCHEDULER': {
         'port': 25,
