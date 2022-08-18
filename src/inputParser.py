@@ -17,7 +17,7 @@
  * @date 2022-07-21
 '''
 
-from system import services, SatelliteNodes
+from system import services, SatelliteNodes, varTypes
 import numpy as np
 
 # TODO: rework this whole class
@@ -134,7 +134,7 @@ class InputParser:
         i = 0
         for name, type in inoutInfo['args'].items():
             if type == 'var':
-                raise NotImplementedError("Variable size arg not implemented")
+                np.array([args[i]], dtype=varTypes[outArgs[-1]])
             else:
                 nparr = np.array([args[i]], dtype=type)
             outArgs.extend(nparr.tobytes())
