@@ -170,59 +170,6 @@ services = {
         'port': 8,  # share a port with EPS time service
         # TODO: these need a error response value
         'subservice': {
-            'GET_EPS_TIME': {
-                'what': 'Get the current unix time on the EPS',
-                'subPort': 0,
-                'inoutInfo': {
-                    'args': None,  # SID
-                    'returns': {
-                        'err': '>b',
-                        'timestamp': '<u4'
-                    }
-                }
-            },
-            'SET_EPS_TIME': {
-            'what': 'Set the current unix time on the EPS',
-                'subPort': 1,
-                'inoutInfo': {
-                    'args': {
-                        "Time" : '<u4'
-                    },
-                    'returns': {
-                        'err': '>b'
-                    }
-                }
-            },
-            'GET_LAST_PPS_TIME': {
-                'what': 'Get last PPS time (EPS)',
-                'subPort': 2,
-                'inoutInfo': {
-                    'args': None,
-                    'returns': {
-                        'err': '>b',  # error is 2 (wrong pps)
-                        #'timestampInS': '<u4',
-                        #'secondFraction': '<u4'
-                    }
-                }
-            },
-            'GET_PRECISE_TIME': {
-                'what': 'A command to get precise time (NTP-like format)',
-                'subPort': 3,
-                'inoutInfo': {
-                    'args': None,
-                    'returns': {
-                        'err': '>B',
-                        'requestTimeInS': '<u4',
-                        'requestSecondFraction': '<u4',
-                        'receiveTimeInS': '<u4',
-                        'receiveSecondFraction': '<u4',
-                        'transmitTimeInS': '<u4',
-                        'transmitSecondFraction': '<u4',
-                        'receptionTimeInS': '<u4',
-                        'receptionSecondFraction': '<u4'
-                    }
-                }
-            },
             'GET_TIME': { # OBC time
                 'what': 'Get the current unix time on the OBC',
                 'subPort': 10,
@@ -239,7 +186,7 @@ services = {
                 'subPort': 11,
                 'inoutInfo': {
                     'args': {
-                        "Time" : '<u4'
+                        "Time" : '>u4'
                     },
                     'returns': {
                         'err': '>b'
@@ -2935,6 +2882,7 @@ services = {
                     }
                 }
             },
+
             'ADCS_SET_MAGNETORQUER_OUTPUT': {
                 'subPort': 59,
                 'inoutInfo': {
