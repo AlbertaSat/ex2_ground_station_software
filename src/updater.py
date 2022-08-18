@@ -25,6 +25,19 @@ import os
 from inputParser import InputParser
 from receiveParser import ReceiveParser
 from system import services
+from enum import Enum
+
+class updater_failuretype(Enum): # Same values as updater program on satellite
+    UPDATE_NOFAIL = 0
+    UPDATE_GENERICFAILURE = 1
+    UPDATE_INVALIDADDR = 2
+    UPDATE_NOINIT = 3
+    UPDATE_ERASEFAILED = 4
+    UPDATE_WRITEFAILED = 5
+    UPDATE_OUTOFORDER = 6
+    UPDATE_CRCMISMATCH = 7
+    UPDATE_VERIFYFAILED = 8
+    UPDATE_NOSUBSERVICE = 9
 
 class updater(GroundStation):
     #TODO: Better object orientation, maybe a common class with FTP?
@@ -39,6 +52,9 @@ class updater(GroundStation):
         self.setFile(opts.file)
         self.doresume = opts.resume
         self.address = opts.address
+        self.skip = 0
+        self.current_block = 0
+        self.total_blocks = 0
 
     def setFile(self, filename):
         print(filename)
@@ -52,6 +68,7 @@ class updater(GroundStation):
         self.file.seek(0)
 
     def run(self):
+        self._init_update()
         self._send_update()
 
     def _transaction(self, command : dict):
@@ -94,54 +111,71 @@ class updater(GroundStation):
         command['args'] = out
         return command
 
-    def _send_update(self):
-        skip = 0;
-
+    def _init_update(self):
         if self.doresume:
-            resume_packet = self._get_resume_packet()
-            data = self._transaction(resume_packet);
-            if (len(data) == 0):
-                print("Could not initialize connection")
-                return False
-            if data['err'] == -1:
-                print("Error response from resume packet")
-                return False
-            d = data
-            print(d);
-            if self.file_crc != d['crc'] :
-                print("Crc of input file differs from CRC of file the satellite is expecting")
-                exit(1)
-            self.address = int(d['next_addr'])
-            skip = int(d['next_addr'] - d['start_addr']);
-            print("Skip: {}".format(skip))
-            self.file.read(skip) # move the filepointer ahead by the size already sent
+            self._setResume()
         else:
             init_packet = self._get_init_packet()
             data = self._transaction(init_packet)
-            if (len(data) == 0):
-                print("Could not initialize connection")
-                return False
-            if data['err'] == -1:
-                print("Error response from init packet")
-                return False
+            if data['err'] < 0:
+                err = data['err']
+                if err == -updater_failuretype.UPDATE_INVALIDADDR:
+                    raise Exception("Invalid application address")
+                elif err == -updater_failuretype.UPDATE_ERASEFAILED:
+                    raise Exception("Satellite failed to erase flash")
+                else:
+                    raise Exception("Unknown init error {}".format(err))
+        self.total_blocks = self.filesize // self.blocksize
+        self.current_block = self.skip // self.blocksize
+    def _sendblock(self, data):
+        update_packet = self._get_block_update_packet(data)
+        data = self._transaction(update_packet)
+        return data['err']
 
+    def _resync(self):
+        self._setResume()
+        self.total_blocks = self.filesize // self.blocksize
+        self.current_block = self.skip // self.blocksize
+
+    def _setResume(self):
+        resume_packet = self._get_resume_packet()
+        data = self._transaction(resume_packet);
+        if data['err'] < 0:
+            err = data['err']
+            if err == -updater_failuretype.UPDATE_NOINIT:
+                raise Exception("Cannot resume, no update in progress")
+            else:
+                raise Exception("Unknown resume error {}".format(err))
+        d = data
+        if self.file_crc != d['crc'] :
+            raise Exception("Crc of input file differs from CRC of file the satellite is expecting")
+        self.address = int(d['next_addr'])
+        self.skip = int(d['next_addr'] - d['start_addr']);
+        print("Skip: {}".format(self.skip))
+        self.file.seek(self.skip) # move the filepointer ahead by the size already sent
+
+    def _send_update(self):
         b = bytearray()
-        total_blocks = self.filesize // self.blocksize;
-        current_block = skip // self.blocksize
         while True:
             b = self.file.read(self.blocksize)
             if len(b) == 0:
                 break
-            update_packet = self._get_block_update_packet(b)
-            print("Sending block {}/{}".format(current_block, total_blocks));
-            current_block += 1;
-            data = self._transaction(update_packet)
-            if (len(data) == 0):
-                print("Did not receive response from data packet")
-                return False
-            if data['err'] != 0:
-                print("error from data packet")
-                return False
+            print("Sending block {}/{}".format(self.current_block, self.total_blocks));
+            err = self._sendblock(b)
+            if err < 0:
+                if err == -updater_failuretype.UPDATE_NOINIT:
+                    raise Exception("No update in progress")
+                elif err == -updater_failuretype.UPDATE_OUTOFORDER:
+                    self._resync()
+                    continue
+                elif err == -updater_failuretype.UPDATE_CRCMISMATCH:
+                    self.file.seek(-self.blocksize, 1)
+                    continue # Keep trying until CRC is successful
+                elif err == -updater_failuretype.UPDATE_WRITEFAILED:
+                    raise Exception("Satellite failed to write to flash")
+                else:
+                    raise Exception("Unknown block update error {}".format(err))
+            self.current_block += 1;
             self.address += len(b)
         return True
     
