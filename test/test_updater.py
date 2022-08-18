@@ -20,15 +20,17 @@
 '''  to run > yarn run:test_updater -I uart -d /dev/ttyUSB0 '''
 
 import numpy as np
-from testLib import testLib as test
+from tester import Tester
 
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 def testUpdaterCommandsToOBC():
-    test.sendAndExpect('ex2.updater.erase_app()', {'err': 0})
-    test.sendAndExpect('ex2.updater.set_app_address(2097152)', {'err': 0})
-    test.sendAndExpect('ex2.updater.set_app_crc(1234)', {'err': 0})
-    test.sendAndExpect('ex2.updater.get_app_info()', {'err' : 0, 'exists' : 0, 'size' : 387424, 'addr' : 2097152, 'crc' : 1234})
+    tester.sendAndExpect('ex2.updater.erase_app()', {'err': 0})
+
+    # CAUTION No such subservices
+    tester.sendAndExpect('ex2.updater.set_app_address(2097152)', {'err': 0})
+    tester.sendAndExpect('ex2.updater.set_app_crc(1234)', {'err': 0})
+    tester.sendAndExpect('ex2.updater.get_app_info()', {'err' : 0, 'exists' : 0, 'size' : 387424, 'addr' : 2097152, 'crc' : 1234})
 
 if __name__ == '__main__':
     testUpdaterCommandsToOBC();
