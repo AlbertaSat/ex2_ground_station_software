@@ -82,6 +82,14 @@ class GroundNodes(Enum):
     SBAND = 17
     PIPE= 24
 
+varTypes = {
+    0: '<u1',
+    1: '<i1',
+    2: '<u2',
+    4: '<u4',
+    9: '<S16' #Empty means all zero or Use <V16
+}
+
 services = {
     'SCHEDULER': {
         'port': 25,
@@ -162,59 +170,6 @@ services = {
         'port': 8,  # share a port with EPS time service
         # TODO: these need a error response value
         'subservice': {
-            'GET_EPS_TIME': {
-                'what': 'Get the current unix time on the EPS',
-                'subPort': 0,
-                'inoutInfo': {
-                    'args': None,  # SID
-                    'returns': {
-                        'err': '>b',
-                        'timestamp': '<u4'
-                    }
-                }
-            },
-            'SET_EPS_TIME': {
-            'what': 'Set the current unix time on the EPS',
-                'subPort': 1,
-                'inoutInfo': {
-                    'args': {
-                        "Time" : '<u4'
-                    },
-                    'returns': {
-                        'err': '>b'
-                    }
-                }
-            },
-            'GET_LAST_PPS_TIME': {
-                'what': 'Get last PPS time (EPS)',
-                'subPort': 2,
-                'inoutInfo': {
-                    'args': None,
-                    'returns': {
-                        'err': '>b',  # error is 2 (wrong pps)
-                        #'timestampInS': '<u4',
-                        #'secondFraction': '<u4'
-                    }
-                }
-            },
-            'GET_PRECISE_TIME': {
-                'what': 'A command to get precise time (NTP-like format)',
-                'subPort': 3,
-                'inoutInfo': {
-                    'args': None,
-                    'returns': {
-                        'err': '>B',
-                        'requestTimeInS': '<u4',
-                        'requestSecondFraction': '<u4',
-                        'receiveTimeInS': '<u4',
-                        'receiveSecondFraction': '<u4',
-                        'transmitTimeInS': '<u4',
-                        'transmitSecondFraction': '<u4',
-                        'receptionTimeInS': '<u4',
-                        'receptionSecondFraction': '<u4'
-                    }
-                }
-            },
             'GET_TIME': { # OBC time
                 'what': 'Get the current unix time on the OBC',
                 'subPort': 10,
@@ -231,7 +186,7 @@ services = {
                 'subPort': 11,
                 'inoutInfo': {
                     'args': {
-                        "Time" : '<u4'
+                        "Time" : '>u4'
                     },
                     'returns': {
                         'err': '>b'
@@ -1325,14 +1280,17 @@ services = {
                         '###############################\r\n'
                         'Athena\r\n'+
                         '###############################\r\n'+
-                        'temparray1': '>i4',
-                        'temparray2': '>i4',
+                        'OBC_software_ver':'>U8',
+                        'MCU_core_temp': '>i4',
+                        'converter_temp': '>i4',
+                        'OBC_uptime': '>u4',
+                        'vol0_usage_percent': '>u1',
+                        'vol1_usage_percent': '>u1',
                         'boot_cnt': '>u2',
+                        'boot_src': '>u2',
                         'last_reset_reason': '<B',
                         'OBC_mode': '<B',
-                        'OBC_uptime': '>u2',
-                        'solar_panel_supply_curr': '<B',
-                        'OBC_software_ver': '<B',
+                        'solar_panel_supply_curr': '>u2',
                         'cmds_received': '>u2',
                         'pckts_uncovered_by_FEC': '>u2',
 
@@ -2924,6 +2882,7 @@ services = {
                     }
                 }
             },
+
             'ADCS_SET_MAGNETORQUER_OUTPUT': {
                 'subPort': 59,
                 'inoutInfo': {

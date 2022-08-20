@@ -74,6 +74,12 @@ class Options(object):
             type=str,
             default="EX2",
             help='Satellite parameter for automatic programs (e.g FTP)')
+        self.parser.add_argument(
+            '--fec',
+            action='store_true',
+            default=False,
+            help="Use forward error correction"
+        )
         return self.parser.parse_args(sys.argv[1:])
 
 class UpdateOptions(Options):
