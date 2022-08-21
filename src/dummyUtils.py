@@ -30,12 +30,15 @@ def generateFakeHKDict():
         fake_uint = random.randint(0, 255)
         fake_int = random.randint(-128, 127)
         fake_float = random.uniform(-128.0, 127.0)
+        fake_string = 'Test String!'
         if 'B' in fake_hk[key] or 'u' in fake_hk[key] or 'V' in fake_hk[key]:
             fake_hk[key] = fake_uint
         elif 'b' in fake_hk[key] or 'i' in fake_hk[key]:
             fake_hk[key] = fake_int
         elif 'f' in fake_hk[key]:
             fake_hk[key] = fake_float
+        elif 'U' in fake_hk[key]:
+            fake_hk[key] = fake_string
         else:
             raise NotImplementedError('Found data type not accounted for!')
 
