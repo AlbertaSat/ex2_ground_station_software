@@ -21,17 +21,14 @@
 
 import time
 import sys
-from testLib import testLib as test
-from os import path
-sys.path.append("./src")
-from groundStation import groundStation
 
 import numpy as np
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
+from tester import Tester
+from eps.expected_eps_hk import expected_EPS_HK
+from test_full_hk import testSystemWideHK
 
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 # TODO - Automate the remaining steps in the OBC Firmware Update test - 1, 3-8
 def testFirmwareUpdate():
@@ -78,46 +75,46 @@ def test_EPS_pingWatchdog():
     # 5) Repeat the following every 10 seconds for 6 minutes:
     for i in range(36): 
         # Gather all EPS HK info
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
+        response = tester.sendAndGet('eps.cli.general_telemetry')
         
-        # Display data on ground station CLI
-        for val in test.expected_EPS_HK:
-            # To pass test, all active power channels have output state = 1
-            colour = '\033[0m' #white
-            if val in pchannels:
-                if (response[val] == 0):
-                    testPassed = "Fail"
-                    colour = '\033[91m' #red
-                else:
-                    colour = '\033[92m' #green
-            print(colour + str(val) + ": " + str(response[val]))
+        if (response != -1):
+            # Display data on ground station CLI
+            for val in expected_EPS_HK:
+                # To pass test, all active power channels have output state = 1
+                colour = '\033[0m' #white
+                if val in pchannels:
+                    if (response[val] == 0):
+                        testPassed = "Fail"
+                        colour = '\033[91m' #red
+                    else:
+                        colour = '\033[92m' #green
+                print(colour + str(val) + ": " + str(response[val]))
 
-        time.sleep(10)
+            time.sleep(10)
 
     # 6) Disconnect UART connection between YukonSat Payload and the OBC
     input("\nPlease disconnect the UART connection between YukonSat Payload and the OBC. Press enter to resume tests.\n") 
 
     # 7) Repeat step 5:
     for j in range(36): 
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
+        response = tester.sendAndGet('eps.cli.general_telemetry')
 
-        for val in test.expected_EPS_HK:
-            # To pass test, all active power channels have output state = 1 except channel 10, which should be 0
-            colour = '\033[0m' #white
-            if val in pchannels:
-                if (response[val] == 0) and (val != 'pchannel10'):
-                    testPassed = "Fail"
-                    colour = '\033[91m' #red
-                elif (response[val] == 1) and (val == 'pchannel10'):
-                    testPassed = "Fail"
-                    colour = '\033[91m' #red
-                else:
-                    colour = '\033[92m' #green
-            print(colour + str(val) + ": " + str(response[val]))
-            
-        time.sleep(10)
+        if (response != -1):
+            for val in expected_EPS_HK:
+                # To pass test, all active power channels have output state = 1 except channel 10, which should be 0
+                colour = '\033[0m' #white
+                if val in pchannels:
+                    if (response[val] == 0) and (val != 'pchannel10'):
+                        testPassed = "Fail"
+                        colour = '\033[91m' #red
+                    elif (response[val] == 1) and (val == 'pchannel10'):
+                        testPassed = "Fail"
+                        colour = '\033[91m' #red
+                    else:
+                        colour = '\033[92m' #green
+                print(colour + str(val) + ": " + str(response[val]))
+                
+            time.sleep(10)
 
     # 8) Reconnect  UART connection between YukonSat Payload and the OBC
     input("\nPlease Reconnect the UART connection between YukonSat Payload and the OBC. Press enter to resume tests.\n")  
@@ -125,10 +122,10 @@ def test_EPS_pingWatchdog():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - EPS PING WATCHDOG TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -173,7 +170,7 @@ def testAllCommandsToOBC():
     testFirmwareUpdate()
 
     print("\n---------- OBC HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0)
+    # testSystemWideHK(1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0)
 
     # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
@@ -182,7 +179,7 @@ def testAllCommandsToOBC():
     # TODO - Finish function implementation
     print("\n---------- FULL PAYLOAD FUNCTIONALITY TEST ----------\n")  
 
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

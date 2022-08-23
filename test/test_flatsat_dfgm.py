@@ -23,17 +23,11 @@ would be more than enough data.'''
 
 import time
 import sys
-from testLib import testLib as test
-from os import path
-sys.path.append("./src")
-from groundStation import groundStation
 
-import numpy as np
+from tester import Tester
+from test_full_hk import testSystemWideHK
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
-
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 # TODO - Automate the remaining steps in the DFGM Data Acquisition and S Band Downlink test - 3, 4
 def test_DFGM_dataAcquisitionAndSBandDownlink():
@@ -42,8 +36,8 @@ def test_DFGM_dataAcquisitionAndSBandDownlink():
 
     # 2) Turn the DFGM on for 10 seconds and have the OBC process the data output by the DFGM into 1 Hz, 10 Hz, and 100 Hz data. Store them as separate
     # files on the SD card. This data will just be used for testing, and will consist of background magnetic signatures
-    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(10)')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('ex2.dfgm.dfgm_run(10)')
+    
     if (response['err'] != 0):
         testPassed = "Fail"
     time.sleep(11)
@@ -55,10 +49,10 @@ def test_DFGM_dataAcquisitionAndSBandDownlink():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -75,8 +69,8 @@ def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
 
     # 2) Turn the DFGM on for 10 seconds and have the OBC process the data output by the DFGM into 1 Hz, 10 Hz, and 100 Hz data. Store them as separate
     # files on the SD card
-    server, port, toSend = gs.getInput('ex2.dfgm.dfgm_run(10)')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('ex2.dfgm.dfgm_run(10)')
+    
     if (response['err'] != 0):
         testPassed = "Fail"
     time.sleep(11)
@@ -88,10 +82,10 @@ def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - DFGM DATA ACQUISITION AND UHF DOWNLINK TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -102,7 +96,7 @@ def test_DFGM_dataAcquisitionAnd_UHF_Downlink():
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
+    testSystemWideHK(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0)
 
     # TODO - Finish function implementation
     print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")
@@ -112,7 +106,7 @@ def testAllCommandsToOBC():
     print("\n---------- DFGM DATA ACQUISITION AND SBAND DOWNLINK TEST ----------\n")
     test_DFGM_dataAcquisitionAnd_UHF_Downlink()
 
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

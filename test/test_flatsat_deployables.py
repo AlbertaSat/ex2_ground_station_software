@@ -21,9 +21,12 @@
 
 import time
 import numpy as np
-from testLib import testLib as test
 
-test = test() #call to initialize local test class
+from tester import Tester
+from eps.expected_eps_hk import expected_EPS_HK
+from test_full_hk import testSystemWideHK
+
+tester = Tester()
 
 def testAllCommandsToOBC():
     # Commisioning/LEOP Test - Cannot be automated. Requires a visual inspection of the burn wires, a release of physical switches, and watching mechanisms deploy
@@ -32,7 +35,7 @@ def testAllCommandsToOBC():
 
     # Failure to Deploy Test - Cannot be automated. Requires the securing and releasing of physical switches
 
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

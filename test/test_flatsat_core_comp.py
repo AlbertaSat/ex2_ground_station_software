@@ -23,18 +23,12 @@
 
 import time
 import sys
-from testLib import testLib
-from os import system
-from os import path
-sys.path.append("./src")
-from groundStation import groundStation
 
-import numpy as np
+from tester import Tester
+from eps.expected_eps_hk import expected_EPS_HK
+from test_full_hk import testSystemWideHK
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
-
-test = testLib(gs) #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 # TODO - Automate the remaining steps in the EPS test - 2-4, 10, 12
 def test_EPS_pingWatchdog():
@@ -53,11 +47,10 @@ def test_EPS_pingWatchdog():
     # 5) Repeat the following every 10 seconds for 6 minutes:
     for i in range(36): 
         # Gather all EPS HK info
-        server, port, toSend = gs.getInput(None, 'eps.tm_cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
+        response = tester.sendAndGet('eps.tm_cli.general_telemetry')
         
         # Display data on ground station CLI
-        for val in test.expected_EPS_HK:
+        for val in expected_EPS_HK:
             # To pass test, all active power channels have output state = 1
             colour = '\033[0m' #white
             if val in pchannels:
@@ -75,10 +68,9 @@ def test_EPS_pingWatchdog():
 
     # 7) Repeat step 5:
     for j in range(36): 
-        server, port, toSend = gs.getInput(None, 'eps.cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
-
-        for val in test.expected_EPS_HK:
+        response = tester.sendAndGet('eps.cli.general_telemetry')
+        
+        for val in expected_EPS_HK:
             # To pass test, all active power channels have output state = 1 except channel 8, which should be 0
             colour = '\033[0m' #white
             if val in pchannels:
@@ -104,10 +96,9 @@ def test_EPS_pingWatchdog():
 
     # 11) Repeat step 5:
     for k in range(36): 
-        server, port, toSend = gs.getInput(None, 'eps.cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
-
-        for val in test.expected_EPS_HK:
+        response = tester.sendAndGet('eps.cli.general_telemetry')
+        
+        for val in expected_EPS_HK:
             # To pass test, all active power channels have output state = 1 except channels 6 and 9, which should both be 0
             colour = '\033[0m' #white
             if val in pchannels:
@@ -128,10 +119,10 @@ def test_EPS_pingWatchdog():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - EPS PING WATCHDOG TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -145,11 +136,11 @@ def test_GS_pingWatchdog():
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
     # 2) Gather all EPS HK info
-    server, port, toSend = gs.getInput('eps.cli.general_telemetry')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('eps.cli.general_telemetry')
+    
 
     # 3) Display data on ground station CLI
-    for val in test.expected_EPS_HK:
+    for val in expected_EPS_HK:
         # To pass test, ground station WDT remaining time is < 86300 seconds
         colour = '\033[0m' #white
         if (val == 'gs_wdt_time_left_s'):
@@ -161,14 +152,14 @@ def test_GS_pingWatchdog():
         print(colour + str(val) + ": " + str(response[val]))
 
     # 4) Reset the ground station watchdog timer
-    server, port, toSend = gs.getInput('eps.ground_station_wdt.reset')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('eps.ground_station_wdt.reset')
+    
 
     # 5) Repeat steps 2 & 3 within 100 seconds of step 4
-    server, port, toSend = gs.getInput('eps.cli.general_telemetry')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('eps.cli.general_telemetry')
+    
 
-    for val in test.expected_EPS_HK:
+    for val in expected_EPS_HK:
         # To pass test, ground station WDT remaining time is > 86300 seconds
         colour = '\033[0m' #white
         if (val == 'gs_wdt_time_left_s'):
@@ -182,10 +173,10 @@ def test_GS_pingWatchdog():
     # Take note of the test's result
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - GROUND STATION PING WATCHDOG TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -210,8 +201,8 @@ def test_OBC_firmwareUpdate():
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
     # 2) Retrieve the current firmware version ID and display it on the ground station CLI
-    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
+    
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
     # To pass test, current version should NOT be the "golden" image
@@ -229,8 +220,8 @@ def test_OBC_firmwareUpdate():
     test.sendSatCliCmd(gs, 'reboot A')
 
     # 5) Repeat step 2
-    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
+    
     lastVersion = currentVersion
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
@@ -242,8 +233,8 @@ def test_OBC_firmwareUpdate():
     # NOT SURE HOW TO DO THIS
 
     # # 7) Repeat step 2
-    # server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
-    # response = gs.transaction(server, port, toSend)
+    # response = tester.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
+    # 
     # lastVersion = currentVersion
     # currentVersion = response['OBC_software_ver']
     # print("Current firmware/software version ID: " + str(currentVersion))
@@ -254,10 +245,10 @@ def test_OBC_firmwareUpdate():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - OBC FIRMWARE UPDATE TEST ' + testPassed + '\n\n' + '\033[0m')
     
@@ -274,8 +265,8 @@ def test_OBC_goldenFirmwareUpdate():
     # 1) Ensure OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed (Doesn't have to be automated)
 
     # 2) Retrieve the current firmware version ID and display it on the ground station CLI
-    server, port, toSend = gs.getInput('ex2.housekeeping.get_hk(1, 0, 0)')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
+    
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
     # To pass test, current version should NOT be the "golden" image
@@ -285,8 +276,8 @@ def test_OBC_goldenFirmwareUpdate():
     # 3) Reset the OBC and have it boot the "golden" firmware image
 
     # 4) Repeat step 2
-    server, port, toSend = gs.getInput('exhousekeeping.get_hk(1, 0, 0)')
-    response = gs.transaction(server, port, toSend)
+    response = tester.sendAndGet('exhousekeeping.get_hk(1, 0, 0)')
+    
     currentVersion = response['OBC_software_ver']
     print("Current firmware/software version ID: " + str(currentVersion))
     # To pass test, current version should be the "golden" image
@@ -296,10 +287,10 @@ def test_OBC_goldenFirmwareUpdate():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - OBC GOLDEN FIRMWARE UPDATE TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -309,7 +300,7 @@ def test_OBC_goldenFirmwareUpdate():
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0)
+    testSystemWideHK(1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0)
 
     # # TODO - Finish function implementation
     # print("\n---------- EPS PING WATCHDOG TEST ----------\n")
@@ -326,7 +317,7 @@ def testAllCommandsToOBC():
     # print("\n---------- OBC GOLDEN FIRMWARE UPDATE TEST ----------\n")
     # test_OBC_goldenFirmwareUpdate()
 
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

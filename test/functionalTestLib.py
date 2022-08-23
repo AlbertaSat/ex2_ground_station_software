@@ -24,7 +24,6 @@ import time
 import sys
 from os import path
 import numpy as np
-sys.path.append("./src")
 
 from tester import Tester
 from test_full_hk import testSystemWideHK
@@ -33,17 +32,6 @@ class functionalTestLib(Tester):
     def __init__(self):
         super().__init__()
         pass
-
-    def sendCmd(self, send):
-        print("cmd: " + send)
-        try:
-            transactObj = self.interactive.getTransactionObject(send, self.networkManager)
-            ret = transactObj.execute()
-            print()
-            return ret
-        except Exception as e:
-            print(e)
-            return -1
     
     def testSystemWide_HK(self, aurora = 0, yukon = 0):
         # Aurora HK and Yukon HK cannot be checked at the same time
@@ -68,11 +56,11 @@ class functionalTestLib(Tester):
         time.sleep(1)
 
         # 1c) Verify results in Table 2 from the Full and Partial Functional Test Plan
-        response = self.sendCmd("ex2.adcs.adcs_get_bootloader_state")
+        response = self.sendAndGet("ex2.adcs.adcs_get_bootloader_state")
         print(response)
         startTime = response['Uptime']
         time.sleep(1)
-        response = self.sendCmd("ex2.adcs.adcs_get_bootloader_state")
+        response = self.sendAndGet("ex2.adcs.adcs_get_bootloader_state")
         endTime = response['Uptime']
         # To pass test, uptime should increment every second
         timeDiff = endTime - startTime
@@ -90,7 +78,7 @@ class functionalTestLib(Tester):
                 testPassed = "Fail"
             flagIndex += 1
 
-        response = self.sendCmd("ex2.adcs.adcs_get_boot_program_stat")
+        response = self.sendAndGet("ex2.adcs.adcs_get_boot_program_stat")
 
         # To pass test, Cause of Reset must be "PowerOnReset" (0) or "SystemReqReset" (8)
         if not (response['Mcu_Reset_Cause'] == 0 or response['Mcu_Reset_Cause'] == 8):
@@ -104,7 +92,7 @@ class functionalTestLib(Tester):
         if (response['Boot_Cause'] != 0 or response['Boot_Idx'] != 2): # TODO - Add in check for Firmware Versions
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_boot_index")
+        response = self.sendAndGet("ex2.adcs.adcs_get_boot_index")
 
         # To pass test, Program Index must be "RunInternalFlashProgram" (1)
         if (response['Program_Idx'] != 1):
@@ -114,7 +102,7 @@ class functionalTestLib(Tester):
         if not (response['Boot_Stat'] == 1 or response['Boot_Stat'] == 0):
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_comms_stat")
+        response = self.sendAndGet("ex2.adcs.adcs_get_comms_stat")
 
         # Comms_Status is uint16 containing information that must be split into 2 uint8 variables
         commsStatus = response['Comms_Status']
@@ -134,7 +122,7 @@ class functionalTestLib(Tester):
         time.sleep(5)
 
         # 1f) Verify results in Table 3 from the Full and Partial Functional Test Plan
-        response = self.sendCmd("ex2.adcs.adcs_get_acp_loop_stat")
+        response = self.sendAndGet("ex2.adcs.adcs_get_acp_loop_stat")
 
         # To pass test, time since iteration start should be between 0 and 1000 ms
         if (response['Time'] < 0 or response['Time'] > 1000):
@@ -144,7 +132,7 @@ class functionalTestLib(Tester):
         if (response['Execution_point'] != 1):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_boot_program_stat")
+        response = self.sendAndGet("ex2.adcs.adcs_get_boot_program_stat")
 
         # To pass test, Cause of Reset must be "PowerOnReset" (0) or "SystemReqReset" (8), or "Unknown" (15)
         if not (response['Mcu_Reset_Cause'] == 0 or response['Mcu_Reset_Cause'] == 8 or response['Mcu_Reset_Cause'] == 15):
@@ -159,19 +147,19 @@ class functionalTestLib(Tester):
         if (response['Boot_Cause'] != 0 or response['Boot_Idx'] != 1): # TODO - Add in check for Firmware Versions
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_node_identification")
+        response = self.sendAndGet("ex2.adcs.adcs_get_node_identification")
 
         # To pass test, Node Type must be 10, Interface Version must be 7, and Runtime should be between 0 and 1000 ms
         if (response['Node_Type'] != 10 or response['Interface_Ver'] != 7 or response['Runtime_Ms'] < 0 or response['Runtime_Ms'] > 1000):
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_boot_index")
+        response = self.sendAndGet("ex2.adcs.adcs_get_boot_index")
 
         # To pass test, Program Index must be "RunInternalFlashProgram" (1) and Boot Status must be "BootSuccess" (1)
         if (response['Program_Idx'] != 1 or response['Boot_Stat'] != 1):
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_comms_stat")
+        response = self.sendAndGet("ex2.adcs.adcs_get_comms_stat")
 
         # Comms_Status is uint16 containing information that must be split into 2 uint8 variables
         commsStatus = response['Comms_Status']
@@ -186,45 +174,45 @@ class functionalTestLib(Tester):
             testPassed = "Fail"
         # oldTelemetryRequestCounter = telemetryRequestCounter # May or may not be needed for other steps in the test
         
-        response= self.sendCmd("ex2.adcs.adcs_get_unix_t")
+        response= self.sendAndGet("ex2.adcs.adcs_get_unix_t")
         startTime = response["Unix_t"]
         time.sleep(2)
-        response = self.sendCmd("ex2.adcs.adcs_get_unix_t")
+        response = self.sendAndGet("ex2.adcs.adcs_get_unix_t")
         endTime = response['Unix_t']
 
         # To pass test, time should be incrementing
         if (endTime - startTime <= 0):
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_sram_latchup_count")
+        response = self.sendAndGet("ex2.adcs.adcs_get_sram_latchup_count")
 
         # To pass test, the number of SRAM latchups for both 1 and 2 should be 0
         if (response['Sram1'] != 0 or response['Sram2'] != 0):
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_edac_err_count")
+        response = self.sendAndGet("ex2.adcs.adcs_get_edac_err_count")
         
         # To pass test, Single, Double, and Multi SRAM should be 0
         if (response['Single_Sram'] != 0 or response['Double_Sram'] != 0 or response['Multi_Sram'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_control")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_control")
 
         # To pass test, all nodes indicate "PowOff" (0)
         if (response['Control'] != 0):
             testPassed = "Fail"
 
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # response = self.sendCmd("ex2.adcs.adcs_get_current_state")
+        # response = self.sendAndGet("ex2.adcs.adcs_get_current_state")
         # 
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsOff"
         # and all other states should be "No" (0)
 
         # 1g) Use the command "ADCS_set_enabled_state(1)" to swtich the run mode to "AdcsEnabled"
-        response = self.sendCmd("ex2.adcs.adcs_set_enabled_state(1)")
+        response = self.sendAndGet("ex2.adcs.adcs_set_enabled_state(1)")
 
         # 1h) Verify results in Table 4 from the Full and Partial Functional Test Plan
-        response = self.sendCmd("ex2.adcs.adcs_get_comms_stat")
+        response = self.sendAndGet("ex2.adcs.adcs_get_comms_stat")
 
         # Comms_Status is uint16 containing information that must be split into 2 uint8 variables
         commsStatus = response['Comms_Status']
@@ -235,7 +223,7 @@ class functionalTestLib(Tester):
         if telecommandCounter != 1:
             testPassed = "Fail"
 
-        response = self.sendCmd("ex2.adcs.adcs_get_execution_times")
+        response = self.sendAndGet("ex2.adcs.adcs_get_execution_times")
 
         # To pass test, Time to Perform ADCS Update is between 80-130 ms, Time to Perform Sensor/Act Communication is between 0-6 ms, Time to execute
         # SGP4 Propagator is between 36-56 ms, and Time to Execute IGRF Model is between 40-60 ms
@@ -252,7 +240,7 @@ class functionalTestLib(Tester):
             testPassed = "Fail"
         
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # response = self.sendCmd("ex2.adcs.adcs_get_current_state")
+        # response = self.sendAndGet("ex2.adcs.adcs_get_current_state")
         # 
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # Sun is Above Local Horizon should be "Yes" (1), and all other states should be "No" (0)
@@ -267,9 +255,9 @@ class functionalTestLib(Tester):
 
         # 4) Perform the reaction wheels health check for CubeWheel1
         # 4a) Using command ADCS_get_power_control(), ensure that all nodes are selected as "PowOff" (0)
-        response = self.sendCmd("ex2.adcs.get_power_control")
+        response = self.sendAndGet("ex2.adcs.get_power_control")
         if response['Control'] != 0:
-            response = self.sendCmd("ex2.adcs.set_power_control(0)")
+            response = self.sendAndGet("ex2.adcs.set_power_control(0)")
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
         # 4b) Using command ADCS_set_power_control(), switch on CubeWheel1Power Power Selection by selecting "PowOn" (1)
@@ -278,7 +266,7 @@ class functionalTestLib(Tester):
 
         # 4c) Verify Results in Table 8
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # response = self.sendCmd("ex2.adcs.adcs_get_current_state")
+        # response = self.sendAndGet("ex2.adcs.adcs_get_current_state")
         # 
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # CubeWheel1 Enabled should be "Yes" (1), and all other states should be "No" (0)
@@ -290,7 +278,7 @@ class functionalTestLib(Tester):
         time.sleep(10)
 
         # 4f) Verify results in Table 9
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
 
         # To pass test, X Wheel Speed should be between 3995-4005 rpm, and Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X' < 3995] or response['Wheel_Speed_X'] > 4005):
@@ -299,7 +287,7 @@ class functionalTestLib(Tester):
         if (response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
 
         # To pass test, Wheel1Current should be between 9-17 mA, and Wheel2Current and Wheel3Current should be 0 mA
         if (response['wheel1_I' < 9] or response['wheel1_I'] > 17):
@@ -313,7 +301,7 @@ class functionalTestLib(Tester):
 
         # 4h) After 10 seconds, verify table 10
         time.sleep(10)
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
 
         # To pass test, X Wheel Speed should be between -2005 and -1995 rpm, and Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X' < -2005] or response['Wheel_Speed_X'] > -1995):
@@ -322,7 +310,7 @@ class functionalTestLib(Tester):
         if (response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
 
         # To pass test, Wheel1Current should be between 4-10 mA, and Wheel2Current and Wheel3Current should be 0 mA
         if (response['wheel1_I' < 4] or response['wheel1_I'] > 10):
@@ -336,13 +324,13 @@ class functionalTestLib(Tester):
 
         # 4j) After 10 seconds, verify table 11
         time.sleep(10)
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
 
         # To pass test, X, Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
 
         # To pass test, Wheel1Current should be between 1-7 mA, and Wheel2Current and Wheel3Current should be 0 mA
         if (response['wheel1_I' < 1] or response['wheel1_I'] > 7):
@@ -352,16 +340,16 @@ class functionalTestLib(Tester):
             testPassed = "Fail"
 
         # 4k) Using command ADCS_set_power_control(), switch off CubeWheel1Power Power Selection by selecting "PowOff" (0)
-        response = self.sendCmd("ex2.adcs.set_power_control(0)")
+        response = self.sendAndGet("ex2.adcs.set_power_control(0)")
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
         # 5) Perform the reaction wheels health check for CubeWheel2
         # 5a & b) Repeat steps 4a-4k for CubeWheel2, setting the commanded Y speed instead of the X speed, and using tables 12-15
 
         #Using command ADCS_get_power_control(), ensure that all nodes are selected as "PowOff" (0)
-        response = self.sendCmd("ex2.adcs.get_power_control")
+        response = self.sendAndGet("ex2.adcs.get_power_control")
         if response['Control'] != 0:
-            response = self.sendCmd("ex2.adcs.set_power_control(0)")
+            response = self.sendAndGet("ex2.adcs.set_power_control(0)")
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
         # Using command ADCS_set_power_control(), switch on CubeWheel2Power Power Selection by selecting "PowOn" (1)
@@ -370,7 +358,7 @@ class functionalTestLib(Tester):
 
         # Verify Results in Table 12
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # response = self.sendCmd("ex2.adcs.adcs_get_current_state")
+        # response = self.sendAndGet("ex2.adcs.adcs_get_current_state")
         # 
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # CubeWheel2 Enabled should be "Yes" (1), and all other states should be "No" (0)
@@ -382,7 +370,7 @@ class functionalTestLib(Tester):
         time.sleep(10)
 
         # Verify results in Table 13
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
 
         # To pass test, Y Wheel Speed should be between 3995-4005 rpm, and X and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_Y' < 3995] or response['Wheel_Speed_Y'] > 4005):
@@ -391,7 +379,7 @@ class functionalTestLib(Tester):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
         
 
         # To pass test, Wheel2Current should be between 9-17 mA, and Wheel1Current and Wheel3Current should be 0 mA
@@ -406,7 +394,7 @@ class functionalTestLib(Tester):
 
         # After 10 seconds, verify table 14
         time.sleep(10)
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
         
 
         # To pass test, Y Wheel Speed should be between -2005 and -1995 rpm, and X and Z Wheel Speed should be 0 rpm
@@ -416,7 +404,7 @@ class functionalTestLib(Tester):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
         
 
         # To pass test, Wheel2Current should be between 4-10 mA, and Wheel1Current and Wheel3Current should be 0 mA
@@ -431,14 +419,14 @@ class functionalTestLib(Tester):
 
         # After 10 seconds, verify table 15
         time.sleep(10)
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
         
 
         # To pass test, X, Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
         
 
         # To pass test, Wheel2Current should be between 1-7 mA, and Wheel1Current and Wheel3Current should be 0 mA
@@ -449,7 +437,7 @@ class functionalTestLib(Tester):
             testPassed = "Fail"
 
         # Using command ADCS_set_power_control(), switch off CubeWheel1Power Power Selection by selecting "PowOff" (0)
-        response = self.sendCmd("ex2.adcs.set_power_control(0)")
+        response = self.sendAndGet("ex2.adcs.set_power_control(0)")
         
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -457,10 +445,10 @@ class functionalTestLib(Tester):
         # 6a & b) Repeat steps 4a-4k for CubeWheel3, setting the commanded Z speed instead of the X speed, and using tables 16-19
         
         # Using command ADCS_get_power_control(), ensure that all nodes are selected as "PowOff" (0)
-        response = self.sendCmd("ex2.adcs.get_power_control")
+        response = self.sendAndGet("ex2.adcs.get_power_control")
         
         if response['Control'] != 0:
-            response = self.sendCmd("ex2.adcs.set_power_control(0)")
+            response = self.sendAndGet("ex2.adcs.set_power_control(0)")
             
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -470,7 +458,7 @@ class functionalTestLib(Tester):
 
         # Verify Results in Table 16
         # TODO - Add a check for these values. The "adcs_get_current_state" GS command does not exist yet at the time of last edit
-        # response = self.sendCmd("ex2.adcs.adcs_get_current_state")
+        # response = self.sendAndGet("ex2.adcs.adcs_get_current_state")
         # 
         # To pass test, Attitude Estimation Mode should be "EstNone", Control Mode should be "ConNone", ADCS Run Mode should be "AdcsEnabled",
         # CubeWheel3 Enabled should be "Yes" (1), and all other states should be "No" (0)
@@ -484,7 +472,7 @@ class functionalTestLib(Tester):
         # Verify results in Table 17
         # NOTE - There seems to be a typo in the document. Table 17 is completely the same as table 16. It is assumed that the table should
         # look similar to table 13, but with checks for Z Wheel Speed and Wheel3Current instead
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
         
 
         # To pass test, Z Wheel Speed should be between 3995-4005 rpm, and X and Y Wheel Speed should be 0 rpm
@@ -494,7 +482,7 @@ class functionalTestLib(Tester):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
         
 
         # To pass test, Wheel3Current should be between 9-17 mA, and Wheel1Current and Wheel2Current should be 0 mA
@@ -509,7 +497,7 @@ class functionalTestLib(Tester):
 
         # After 10 seconds, verify table 18
         time.sleep(10)
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
         
 
         # To pass test, Z Wheel Speed should be between -2005 and -1995 rpm, and X and Y Wheel Speed should be 0 rpm
@@ -519,7 +507,7 @@ class functionalTestLib(Tester):
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
         
 
         # To pass test, Wheel3Current should be between 4-10 mA, and Wheel1Current and Wheel2Current should be 0 mA
@@ -534,14 +522,14 @@ class functionalTestLib(Tester):
 
         # After 10 seconds, verify table 19
         time.sleep(10)
-        response = self.sendCmd("ex2.adcs.adcs_get_measurements")
+        response = self.sendAndGet("ex2.adcs.adcs_get_measurements")
         
 
         # To pass test, X, Y and Z Wheel Speed should be 0 rpm
         if (response['Wheel_Speed_X'] != 0 or response['Wheel_Speed_Y'] != 0 or response['Wheel_Speed_Z'] != 0):
             testPassed = "Fail"
         
-        response = self.sendCmd("ex2.adcs.adcs_get_power_temp")
+        response = self.sendAndGet("ex2.adcs.adcs_get_power_temp")
         
 
         # To pass test, Wheel3Current should be between 1-7 mA, and Wheel1Current and Wheel2Current should be 0 mA
@@ -552,7 +540,7 @@ class functionalTestLib(Tester):
             testPassed = "Fail"
 
         # Using command ADCS_set_power_control(), switch off CubeWheel1Power Power Selection by selecting "PowOff" (0)
-        response = self.sendCmd("ex2.adcs.set_power_control(0)")
+        response = self.sendAndGet("ex2.adcs.set_power_control(0)")
         
         # NOTE - Unsure if this turns everything off or turns off a specific ADCS component
 
@@ -576,10 +564,10 @@ class functionalTestLib(Tester):
         # 1) Send a command over UHF to tell the OBC to synchronize all onboard clocks with the ground station's time
 
         # 2) Send a command to calculate the difference between the OBC time and the EPS and ADCS time
-        response = self.sendCmd('ex2.time_management.get_time')
+        response = self.sendAndGet('ex2.time_management.get_time')
         
         OBC_time = response['timestamp']
-        response = self.sendCmd('eps.time_management.get_eps_time')
+        response = self.sendAndGet('eps.time_management.get_eps_time')
         
         EPS_time = response['timestamp']
         # To pass test, the difference between the timestamps should be < 2 seconds
@@ -609,7 +597,7 @@ class functionalTestLib(Tester):
         testPassed = "Pass"
 
         # 1) Send a command to gather and downlink system-wide HK and display it on the terminal
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0, 0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
         
         for val in response:
             print(str(val) + ": " + str(response[val]))
@@ -618,7 +606,7 @@ class functionalTestLib(Tester):
 
         # 3) After 10 seconds, repeat step 1
         time.sleep(10)
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0 ,0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0 ,0)')
         
         for val in response:
             print(str(val) + ": " + str(response[val]))
@@ -681,7 +669,7 @@ class functionalTestLib(Tester):
 
         # 2) Put the transceiver into transparent (PIPE) mode using a radio command, and continuously send randomly generated 128 byte packets
         # from the ground for 1 minute
-        response = self.sendCmd('ex2.set_pipe.uhf_gs_pipe')
+        response = self.sendAndGet('ex2.set_pipe.uhf_gs_pipe')
                 
 
         # 3) Store the data generated from step 2 into a file on the OBC
@@ -699,7 +687,7 @@ class functionalTestLib(Tester):
 
         # 2) Send a command over UHF to turn on the DFGM for 10 seconds and have the OBC process the data output
         # into 1 Hz, 10 Hz, and 100 Hz data. Also store this data into a file on the SD card
-        response = self.sendCmd('ex2.dfgm.dfgm_run(10)')
+        response = self.sendAndGet('ex2.dfgm.dfgm_run(10)')
         
 
         # 3) Send a command over UHF for the OBC to downlink a 1 Hz DFGM data file over UHF and save it on the PC
@@ -731,12 +719,12 @@ class functionalTestLib(Tester):
         # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware installed
 
         # 2) Send a command from the OBC to the EPS to set all EPS output states 
-        response = self.sendCmd('eps.control.all_output_control(1023)') # 1023 = 0b1111111111
+        response = self.sendAndGet('eps.control.all_output_control(1023)') # 1023 = 0b1111111111
         
         
         # 3) Send a command from the OBC to the EPS to retrieve HK data and print it on the terminal display
         # To pass test, all output states should be on (= 1)
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0, 0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
         
         for val in response:
             colour = '\033[0m' #white
@@ -755,17 +743,17 @@ class functionalTestLib(Tester):
             # 4) Send a command from the OBC to the EPS to turn all output states off individually excluding output 6
             for channel in channels:
                 command = 'eps.control.single_output_control(' + str(channel) + ', 0, 0)'
-                response = self.sendCmd(command)
+                response = self.sendAndGet(command)
                 
 
             # 5) Send a command from the OBC to the EPS to set EPS output 1 to on
             command = 'eps.control.single_output_control(' + str(channelToReset) + ', 1, 0)'
-            response = self.sendCmd(command)
+            response = self.sendAndGet(command)
             
 
             # 6) Send a command from the OBC to the EPS to retrieve HK data and print it to the terminal display
             # To pass test, the channel switched on should actually be on (1)
-            response = self.sendCmd('ex2.housekeeping.get_hk(1, 0, 0)')
+            response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
             
             for val in response:
                 colour = '\033[0m' #white
@@ -779,12 +767,12 @@ class functionalTestLib(Tester):
 
             # 7) Send a command from the OBC to the EPS to set EPS output 1 to off
             command = 'eps.control.single_output_control(' + str(channelToReset) + ', 0, 0)'
-            response = self.sendCmd(command)
+            response = self.sendAndGet(command)
             
 
             # 8) Send a command from the OBC to the EPS to retrieve HK data and print it to the terminal display
             # To pass test, the channel switched off should actually be off (0)
-            response = self.sendCmd('ex2.housekeeping.get_hk(1, 0, 0)')
+            response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
             
             for val in response:
                 colour = '\033[0m' #white
@@ -803,12 +791,12 @@ class functionalTestLib(Tester):
         # NOTE - the channels list already excludes channel 6
         for channel in channels:
                 command = 'eps.control.single_output_control(' + str(channel) + ', 0, 0)'
-                response = self.sendCmd(command)
+                response = self.sendAndGet(command)
                 
 
         # 11) Send a command from the OBC to the EPS to retrieve HK data and print it to the terminal display
         # To pass test, all channels should be off (0), except channel 6
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0, 0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
         
         for val in response:
             colour = '\033[0m' #white
@@ -847,7 +835,7 @@ class functionalTestLib(Tester):
         # 1) Ensure that the OBC, UHF, EPS, and Charon are turned on, and that the OBC has the msot up-to-date firmware installed
 
         # 2) Downlink all HK data, and verify that the time and date are correct to the current time and date
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0 ,0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0 ,0)')
         
         currtime = response['UNIXtimestamp']
         if (abs(currtime - time.time()) >= 1):
@@ -859,7 +847,7 @@ class functionalTestLib(Tester):
         time.sleep(30)
 
         # 5) Downlink all HK data
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0 ,0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0 ,0)')
         
         # To pass test, roughly 30 seconds should have passed on the OBC's time
         oldTime = currtime
@@ -877,7 +865,7 @@ class functionalTestLib(Tester):
         # 1) Ensure that the OBC, UHF, and EPS are turned on, and that the OBC has the most up-to-date firmware
 
         # 2) Command the OBC to collect HK data
-        response = self.sendCmd('ex2.housekeeping.get_hk(1, 0, 0)')
+        response = self.sendAndGet('ex2.housekeeping.get_hk(1, 0, 0)')
         
         # To pass test, all solar panel currents should be with their expected value ranges (0-600 mA for all)
         solarPanelCurrents = ['Port_Current', 'Port_Dep_Current', 'Star_Current', 'Star_Dep_Current', 'Zenith_Current']

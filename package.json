@@ -35,6 +35,16 @@
     "test_iris": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_iris.py",
     "test_core_flatsat": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_core_comp.py",
     "test_hk": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_full_hk.py",
-    "test_full_functional_ex_alta2": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_full_functional_ex_alta2.py"
+    "test_full_functional_ex_alta2": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_full_functional_ex_alta2.py",
+    "test_full_flatsat": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_full_flatsat.py",
+    "test_flatsat_adcs": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_adcs.py",
+    "test_flatsat_aurora": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_aurora.py",
+    "test_flatsat_charon_and_gps": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_charon_and_gps.py",
+    "test_flatsat_deployables": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_deployables.py",
+    "test_flatsat_dfgm": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_dfgm.py",
+    "test_flatsat_iris": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_iris.py",
+    "test_flatsat_sband": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_sband.py",
+    "test_flatsat_solar_panels": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_solar_panels.py",
+    "test_flatsat_yukon": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_flatsat_yukon.py"
   }
 }
