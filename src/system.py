@@ -91,6 +91,21 @@ varTypes = {
 }
 
 services = {
+    'CSP': {
+        'port': 1,
+        'subservice': {
+            'PING': {
+                'what': "Do a CSP ping",
+                'subPort': 0,
+                'inoutInfo':{
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    },
+                },
+            },
+        },
+    },
     'SCHEDULER': {
         'port': 25,
         # TODO: these need a error response value
