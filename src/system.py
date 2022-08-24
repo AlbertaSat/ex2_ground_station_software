@@ -4701,6 +4701,16 @@ services = {
                         'err': '>b'
                     }
                 }
+            },
+            'IRIS_SET_TIME': {
+                'what': "Initialize Iris RTC from ground station via OBC",
+                'subPort': 10,
+                'inoutInfo': {
+                    'args': ['>u4'],  # timestamp
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
             }
         }
     }
