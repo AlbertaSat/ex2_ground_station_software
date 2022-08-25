@@ -24,7 +24,7 @@ would be more than enough data.'''
 import time
 import sys
 
-from tester import Tester
+from groundstation_tester import Tester
 from test_full_hk import testSystemWideHK
 
 tester = Tester() #call to initialize local test class

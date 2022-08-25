@@ -20,7 +20,7 @@
 import sys
 from os import path
 
-from tester import Tester
+from groundstation_tester import Tester
 
 from adcs.expected_adcs_hk import expected_ADCS_HK
 from charon.expected_charon_hk import expected_charon_HK

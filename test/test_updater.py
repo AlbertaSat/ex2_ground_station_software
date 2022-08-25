@@ -20,7 +20,7 @@
 '''  to run > yarn run:test_updater -I uart -d /dev/ttyUSB0 '''
 
 import numpy as np
-from tester import Tester
+from groundstation_tester import Tester
 
 tester = Tester() #call to initialize local test class
 

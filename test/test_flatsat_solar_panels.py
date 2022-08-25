@@ -16,13 +16,10 @@
  * @author Daniel Sacro
  * @date 2022-03-14
 '''
-
-from testLib import testLib as test
-
-from tester import Tester
+from groundstation_tester import Tester
 from test_full_hk import testSystemWideHK
 
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")

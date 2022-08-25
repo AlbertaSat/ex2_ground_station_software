@@ -25,7 +25,7 @@ import sys
 from os import path
 import numpy as np
 
-from tester import Tester
+from groundstation_tester import Tester
 from test_full_hk import testSystemWideHK
 
 class functionalTestLib(Tester):

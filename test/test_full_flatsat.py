@@ -25,7 +25,7 @@ import os
 
 import numpy as np
 
-from tester import Tester
+from groundstation_tester import Tester
 from eps.expected_eps_hk import expected_EPS_HK
 from test_full_hk import testSystemWideHK
 
