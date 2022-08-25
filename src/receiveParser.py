@@ -18,26 +18,32 @@
 '''
 
 import numpy as np
-from system import services
+from system import SatelliteNodes, getServices
 
 class ReceiveParser:
     def __init__(self):
-        self.services = services
+        pass
 
-    def parseReturnValue(self, dport, data):
+    def parseReturnValue(self, src, dport, data):
+        systemType = None
+        for node in SatelliteNodes:
+            if node[2] == src:
+                systemType = node[0]
+        services = getServices(systemType)
+
         # TODO: Refactor this
         length = len(data)
         service = [
-            x for x in self.services if self.services[x]['port'] == dport][0]
+            x for x in services if services[x]['port'] == dport][0]
 
         idx = 0
         outputObj = {}
         subservice = {}
 
         if service and (
-                'subservice' in self.services[service]) and length > 0:
-            subservice = [self.services[service]['subservice'][x] for x in self.services[service]
-                          ['subservice'] if self.services[service]['subservice'][x]['subPort'] == data[idx]][0]
+                'subservice' in services[service]) and length > 0:
+            subservice = [services[service]['subservice'][x] for x in services[service]
+                          ['subservice'] if services[service]['subservice'][x]['subPort'] == data[idx]][0]
             idx += 1
 
         if 'inoutInfo' not in subservice:
