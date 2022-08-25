@@ -19,11 +19,9 @@
 
 from groundStation import GroundStation
 from options import optionsFactory
-import pprint
 
 class cli(GroundStation):
     def run(self):
-        pp = pprint.PrettyPrinter()
         while(1):
             inStr = self.inputHandler.getInput("to send: ")
             try:
