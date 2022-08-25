@@ -2,8 +2,17 @@
 Note: arguments and return types are given as numpy types
 
 
+CSP.PING:
+		About: Do a CSP ping
+		Supports:('EPS', 'OBC')
+		Arguments: None
+		return values: {'err': '<b'}
+		port: 1		subport: 0
+
+
 SCHEDULER.SET_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 25		subport: 0
@@ -11,6 +20,7 @@ SCHEDULER.SET_SCHEDULE:
 
 SCHEDULER.GET_SCHEDULE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 25		subport: 1
@@ -18,6 +28,7 @@ SCHEDULER.GET_SCHEDULE:
 
 SCHEDULER.REPLACE_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 25		subport: 2
@@ -25,6 +36,7 @@ SCHEDULER.REPLACE_SCHEDULE:
 
 SCHEDULER.DELETE_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 25		subport: 3
@@ -32,6 +44,7 @@ SCHEDULER.DELETE_SCHEDULE:
 
 SCHEDULER.PING_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 25		subport: 4
@@ -39,41 +52,15 @@ SCHEDULER.PING_SCHEDULE:
 
 SET_PIPE.UHF_GS_PIPE:
 		About: Testing function to put an EndurSat radio being used as the ground station radio into PIPE mode
+		Supports:['OBC']
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 0		subport: 0
 
 
-TIME_MANAGEMENT.GET_EPS_TIME:
-		About: Get the current unix time on the EPS
-		Arguments: None
-		return values: {'err': '>b', 'timestamp': '<u4'}
-		port: 8		subport: 0
-
-
-TIME_MANAGEMENT.SET_EPS_TIME:
-		About: Set the current unix time on the EPS
-		Arguments: {'Time': '<u4'}
-		return values: {'err': '>b'}
-		port: 8		subport: 1
-
-
-TIME_MANAGEMENT.GET_LAST_PPS_TIME:
-		About: Get last PPS time (EPS)
-		Arguments: None
-		return values: {'err': '>b'}
-		port: 8		subport: 2
-
-
-TIME_MANAGEMENT.GET_PRECISE_TIME:
-		About: A command to get precise time (NTP-like format)
-		Arguments: None
-		return values: {'err': '>B', 'requestTimeInS': '<u4', 'requestSecondFraction': '<u4', 'receiveTimeInS': '<u4', 'receiveSecondFraction': '<u4', 'transmitTimeInS': '<u4', 'transmitSecondFraction': '<u4', 'receptionTimeInS': '<u4', 'receptionSecondFraction': '<u4'}
-		port: 8		subport: 3
-
-
 TIME_MANAGEMENT.GET_TIME:
 		About: Get the current unix time on the OBC
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'timestamp': '>u4'}
 		port: 8		subport: 10
@@ -81,13 +68,111 @@ TIME_MANAGEMENT.GET_TIME:
 
 TIME_MANAGEMENT.SET_TIME:
 		About: Set the current unix time on the OBC. Set parameter to 0 to use local unix time
-		Arguments: {'Time': '<u4'}
+		Supports:'OBC'
+		Arguments: {'Time': '>u4'}
 		return values: {'err': '>b'}
 		port: 8		subport: 11
 
 
+EPS_FIRMWARE.START:
+		About: None
+		Supports:'EPS'
+		Arguments: {'ImageType': '<u1', 'TargetMcuUid0': '<u4', 'TargetMcuUid1': '<u4', 'TargetMcuUid2': '<u4', 'ImageSize': '<u4', 'fromGoldenStorage': '<b'}
+		return values: {'err': '>b'}
+		port: 11		subport: 0
+
+
+EPS_FIRMWARE.START_FROM_GOLDEN:
+		About: None
+		Supports:'EPS'
+		Arguments: {'ImageType': '<b'}
+		return values: {'err': '>b'}
+		port: 11		subport: 1
+
+
+EPS_FIRMWARE.ABORT:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 11		subport: 2
+
+
+EPS_FIRMWARE.INSTALL:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 11		subport: 3
+
+
+EPS_FIRMWARE.GET_SYSTEM_INFO:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '<b', 'imageType': '<b', 'mcuUid0': '<u4', 'mcuUid1': '<u4', 'mcuUid2': '<u4', 'versionOfBootloaderL1Major': '<u2', 'versionOfBootloaderL1Minor': '<u2', 'versionOfBootloaderL1Patch': '<u2', 'versionOfBootloaderL2Major': '<u2', 'versionOfBootloaderL2Minor': '<u2', 'versionOfBootloaderL2Patch': '<u2', 'versionOfApplicationL1Major': '<u2', 'versionOfApplicationL1Minor': '<u2', 'versionOfApplicationPatch': '<u2', 'repNameBL1': 'V32', 'gitHashBL1': 'V20', 'repNameBL2': 'V32', 'gitHashBL2': 'V20', 'repNameAPP': 'V32', 'gitHashAPP': 'V20'}
+		port: 11		subport: 4
+
+
+EPS_FIRMWARE.GET_CURRENT_STATE:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '<b', 'state': '<b'}
+		port: 11		subport: 5
+
+
+EPS_FIRMWARE.GET_CURRENT_UPDATE_DESCRIPTOR:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '<b', 'imageType': '<b', 'TargetMcuUid0': '<u4', 'TargetMcuUid1': '<u4', 'TargetMcuUid2': '<u4', 'ImageSize': '<u4', 'fromGoldenStorage': '<b'}
+		port: 11		subport: 6
+
+
+EPS_FIRMWARE.GET_GOLDEN_UPDATE_DESCRIPTOR:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '<b', 'imageType': '<b', 'TargetMcuUid0': '<u4', 'TargetMcuUid1': '<u4', 'TargetMcuUid2': '<u4', 'ImageSize': '<u4', 'fromGoldenStorage': '<b'}
+		port: 11		subport: 7
+
+
+EPS_FIRMWARE.VALIDATE_SIGNATURE:
+		About: None
+		Supports:'EPS'
+		Arguments: {'imageType': '<b'}
+		return values: {'err': '<b', 'size': '<u4', 'crc': '<u4'}
+		port: 11		subport: 8
+
+
+EPS_FIRMWARE.ABORT_BOOT:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 11		subport: 9
+
+
+EPS_FIRMWARE.GET_GOLDEN_INFO:
+		About: None
+		Supports:'EPS'
+		Arguments: None
+		return values: {'err': '<b', 'imageType': '<b', 'versionMajor': '<u2', 'versionMinor': '<u2', 'versionPatch': '<u2', 'crc': '<u4', 'repName': 'V32', 'gitHash': 'V20'}
+		port: 11		subport: 10
+
+
+EPS_FIRMWARE.SET_SIGNATURE_CHECKING:
+		About: None
+		Supports:'EPS'
+		Arguments: {'enable': '<b', 'magicKey': '<u4'}
+		return values: {'err': '<b'}
+		port: 11		subport: 11
+
+
 GENERAL.REBOOT:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Mode': '>B'}
 		return values: {'err': '>b'}
 		port: 11		subport: 0
@@ -95,6 +180,7 @@ GENERAL.REBOOT:
 
 GENERAL.DEPLOY_DEPLOYABLES:
 		About: Trigger burnwire. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7. Returns instantaneous current consumption
+		Supports:'OBC'
 		Arguments: {'Wire': '>B'}
 		return values: {'err': '>b', 'current_mA': '>u2'}
 		port: 11		subport: 1
@@ -102,6 +188,7 @@ GENERAL.DEPLOY_DEPLOYABLES:
 
 GENERAL.GET_SWITCH_STATUS:
 		About: Query the status of all deployment switches. Returns 1 = Deployed, 0 = Undeployed
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'switch_DFGM': '>b', 'switch_UHF_P': '>b', 'switch_UHF_Z': '>b', 'switch_UHF_S': '>b', 'switch_UHF_N': '>b', 'switch_Port': '>b', 'switch_Payload': '>b', 'switch_Starboard': '>b'}
 		port: 11		subport: 2
@@ -109,6 +196,7 @@ GENERAL.GET_SWITCH_STATUS:
 
 GENERAL.GET_UHF_WATCHDOG_TIMEOUT:
 		About: Get the period (in ticks) of the UHF watchdog timer on the OBC
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 3
@@ -116,6 +204,7 @@ GENERAL.GET_UHF_WATCHDOG_TIMEOUT:
 
 GENERAL.SET_UHF_WATCHDOG_TIMEOUT:
 		About: Set the period (in ms) of the UHF watchdog timer on the OBC
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 11		subport: 4
@@ -123,6 +212,7 @@ GENERAL.SET_UHF_WATCHDOG_TIMEOUT:
 
 GENERAL.GET_SBAND_WATCHDOG_TIMEOUT:
 		About: Get the period (in ticks) of the S-band watchdog timer on the OBC
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 5
@@ -130,6 +220,7 @@ GENERAL.GET_SBAND_WATCHDOG_TIMEOUT:
 
 GENERAL.SET_SBAND_WATCHDOG_TIMEOUT:
 		About: Set the period (in ms) of the S-band watchdog timer on the OBC
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 11		subport: 6
@@ -137,6 +228,7 @@ GENERAL.SET_SBAND_WATCHDOG_TIMEOUT:
 
 GENERAL.GET_CHARON_WATCHDOG_TIMEOUT:
 		About: Get the period (in ticks) of the Charon watchdog timer on the OBC
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 7
@@ -144,6 +236,7 @@ GENERAL.GET_CHARON_WATCHDOG_TIMEOUT:
 
 GENERAL.SET_CHARON_WATCHDOG_TIMEOUT:
 		About: Set the period (in ms) of the Charon watchdog timer on the OBC.
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 11		subport: 8
@@ -151,6 +244,7 @@ GENERAL.SET_CHARON_WATCHDOG_TIMEOUT:
 
 GENERAL.GET_ADCS_WATCHDOG_TIMEOUT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 9
@@ -158,6 +252,7 @@ GENERAL.GET_ADCS_WATCHDOG_TIMEOUT:
 
 GENERAL.SET_ADCS_WATCHDOG_TIMEOUT:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 11		subport: 10
@@ -165,6 +260,7 @@ GENERAL.SET_ADCS_WATCHDOG_TIMEOUT:
 
 GENERAL.GET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'timeout_ms': '>u4'}
 		port: 11		subport: 12
@@ -172,6 +268,7 @@ GENERAL.GET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 
 GENERAL.SET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 11		subport: 13
@@ -179,6 +276,7 @@ GENERAL.SET_NS_PAYLOAD_WATCHDOG_TIMEOUT:
 
 GENERAL.ENABLE_BEACON_TASK:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 11		subport: 14
@@ -186,6 +284,7 @@ GENERAL.ENABLE_BEACON_TASK:
 
 GENERAL.DISABLE_BEACON_TASK:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 11		subport: 15
@@ -193,6 +292,7 @@ GENERAL.DISABLE_BEACON_TASK:
 
 GENERAL.BEACON_TASK_GET_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'state': '>?'}
 		port: 11		subport: 16
@@ -200,6 +300,7 @@ GENERAL.BEACON_TASK_GET_STATE:
 
 COMMUNICATION.S_GET_FREQ:
 		About: Gets the S-band frequency (Hz)
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'frequency_Hz': '>u4'}
 		port: 10		subport: 1
@@ -207,6 +308,7 @@ COMMUNICATION.S_GET_FREQ:
 
 COMMUNICATION.S_GET_CONTROL:
 		About: Gets the S-band`s power amplifier write status and its mode = {0:configuration, 1: synchronization, 2:data, 3:test data}
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'status': '>u1', 'mode': '>u1'}
 		port: 10		subport: 2
@@ -214,6 +316,7 @@ COMMUNICATION.S_GET_CONTROL:
 
 COMMUNICATION.S_GET_ENCODER:
 		About: Gets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={0:half, 1:full}
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'scrambler': '>u1', 'filter': '>u1', 'modulation': '>u1', 'rate': '>u1'}
 		port: 10		subport: 3
@@ -221,6 +324,7 @@ COMMUNICATION.S_GET_ENCODER:
 
 COMMUNICATION.S_GET_PAPOWER:
 		About: Gets the power value of S-band power amplifier
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Power Amplifier Power': '>u1'}
 		port: 10		subport: 4
@@ -228,6 +332,7 @@ COMMUNICATION.S_GET_PAPOWER:
 
 COMMUNICATION.S_GET_STATUS:
 		About: Checks if the power of S-band power aamplifier is good and if the frequency lock is achieved
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1'}
 		port: 10		subport: 5
@@ -235,6 +340,7 @@ COMMUNICATION.S_GET_STATUS:
 
 COMMUNICATION.S_GET_FW:
 		About: S-band Firmware Version. XYY = X.YY
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Firmware Version': '>u2'}
 		port: 10		subport: 6
@@ -242,6 +348,7 @@ COMMUNICATION.S_GET_FW:
 
 COMMUNICATION.S_GET_TR:
 		About: S-band Transmit Ready Indicator = {0: >2560B in buffer}
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Transmit Ready': '>i4'}
 		port: 10		subport: 7
@@ -249,13 +356,15 @@ COMMUNICATION.S_GET_TR:
 
 COMMUNICATION.S_GET_BUFFER:
 		About: Gets the pointer to the buffer quantity in S-band. Input = {0:Count, 1:Underrun, 2:Overrun}
-		Arguments: {'Buffer': '>B'}
+		Supports:'OBC'
+		Arguments: {'Buffer_quantity': '>B'}
 		return values: {'err': '>b', 'buffer': '>u2'}
 		port: 10		subport: 8
 
 
 COMMUNICATION.S_GET_HK:
 		About: Gets S-band housekeeping info
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'S_mode': '>B', 'PA_status': '>B', 'S_frequency_Hz': '>u4', 'S_scrambler': '>B', 'S_filter': '>B', 'S_modulation': '>B', 'S_data_rate': '>B', 'S_bit_order': '>B', 'S_PWRGD': '>B', 'S_TXL': '>B', 'Output Power': '>B', 'Power Amplifier Temperature': '>b', 'Top Temperature': '>b', 'Bottom Temperature': '>b', 'Battery Current': '>u2', 'Battery Voltage': '>u2', 'Power Amplifier Current': '>u2', 'Power Amplifier Voltage': '>u2'}
 		port: 10		subport: 9
@@ -263,6 +372,7 @@ COMMUNICATION.S_GET_HK:
 
 COMMUNICATION.S_SOFT_RESET:
 		About: Reset S-band FPGA registers to default
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 10		subport: 10
@@ -270,6 +380,7 @@ COMMUNICATION.S_SOFT_RESET:
 
 COMMUNICATION.S_GET_FULL_STATUS:
 		About: A full status of S-band non-configurable parameters
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'PWRGD': '>u1', 'TXL': '>u1', 'Transmit Ready': '>i4', 'Buffer Count': '>u2', 'Buffer Underrun': '>u2', 'Buffer Overrun': '>u2', 'Output Power': '>B', 'Power Amplifier Temperature': '>b', 'Top Temperature': '>b', 'Bottom Temperature': '>b', 'Battery Current mA': '>u2', 'Battery Voltage mV': '>u2', 'Power Amplifier Current mA': '>u2', 'Power Amplifier Voltage mV': '>u2'}
 		port: 10		subport: 11
@@ -277,6 +388,7 @@ COMMUNICATION.S_GET_FULL_STATUS:
 
 COMMUNICATION.S_SET_FREQ:
 		About: Sets the frequency of S-band (Hz)
+		Supports:'OBC'
 		Arguments: {'Frequency': '>u4'}
 		return values: {'err': '>b'}
 		port: 10		subport: 12
@@ -284,6 +396,7 @@ COMMUNICATION.S_SET_FREQ:
 
 COMMUNICATION.S_SET_CONTROL:
 		About: Sets the S-band`s power amplifier write status and its mode = {0:config, 1: synch, 2:data, 3:test data}. Input: 2 binary
+		Supports:'OBC'
 		Arguments: {'Status': '>u1', 'Mode': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 13
@@ -291,13 +404,15 @@ COMMUNICATION.S_SET_CONTROL:
 
 COMMUNICATION.S_SET_ENCODER:
 		About: Sets the S-band encoding configuration. mod={0:QPSK, 1:OQPSK}, rate={1:half, 0:full}. Input: 4 binary
-		Arguments: {'Bin1': '>u1', 'Bin2': '>u1', 'Bin3': '>u1', 'Bin4': '>u1'}
+		Supports:'OBC'
+		Arguments: {'Scrambler': '>u1', 'Filter': '>u1', 'Modulation': '>u1', 'Baudrate': '>u1', 'Bit_order': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 14
 
 
 COMMUNICATION.S_SET_PAPOWER:
 		About: Sets the power value of S-band power amplifier (24, 26, 28, 30 dBm)
+		Supports:'OBC'
 		Arguments: {'Power': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 15
@@ -305,6 +420,7 @@ COMMUNICATION.S_SET_PAPOWER:
 
 COMMUNICATION.S_GET_CONFIG:
 		About: A full status of S-band configurable parameters (the ones with set functions)
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Frequency': '>u4', 'Power Amplifier Power': '>u1', 'Power Amplifier status': '>u1', 'Power Amplifier mode': '>u1', 'Encoder scrambler': '>u1', 'Encoder filter': '>u1', 'Encoder modulation': '>u1', 'Encoder rate': '>u1', 'Encoder bit order': '>u1'}
 		port: 10		subport: 16
@@ -312,6 +428,7 @@ COMMUNICATION.S_GET_CONFIG:
 
 COMMUNICATION.S_SET_CONFIG:
 		About: Sets all the 9 S-band configurable parameters
+		Supports:'OBC'
 		Arguments: {'Freq': '>u4', 'PA_power': '>u1', 'PA_status': '>u1', 'PA_mode': '>u1', 'Enc_scrambler': '>u1', 'Enc_filter': '>u1', 'Enc_mod': '>u1', 'Enc_rate': '>u1', 'Enc_bit_order': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 17
@@ -319,13 +436,15 @@ COMMUNICATION.S_SET_CONFIG:
 
 COMMUNICATION.UHF_SET_SCW:
 		About: Sets UHF status control word
-		Arguments: {'w1': '>u1', 'w2': '>u1', 'w3': '>u1', 'w4': '>u1', 'w5': '>u1', 'w6': '>u1', 'w7': '>u1', 'w8': '>u1', 'w9': '>u1', 'w10': '>u1', 'w11': '>u1', 'w12': '>u1'}
+		Supports:'OBC'
+		Arguments: {'HFTX_RONLY': '>u1', 'UART_baud': '>u1', 'Reset': '>u1', 'RF_mode': '>u1', 'Echo': '>u1', 'Beacon': '>u1', 'Pipe': '>u1', 'SW_mode': '>u1', 'CTS_RONLY': '>u1', 'SEC_RONLY': '>u1', 'FRAM_RONLY': '>u1', 'RFTS_RONLY': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 20
 
 
 COMMUNICATION.UHF_SET_FREQ:
 		About: Sets UHF frequency (Hz)
+		Supports:'OBC'
 		Arguments: {'Freq': '>u4'}
 		return values: {'err': '>b'}
 		port: 10		subport: 21
@@ -333,6 +452,7 @@ COMMUNICATION.UHF_SET_FREQ:
 
 COMMUNICATION.UHF_SET_PIPE_T:
 		About: Sets UHF PIPE timeout period
+		Supports:'OBC'
 		Arguments: {'Timeout': '>u4'}
 		return values: {'err': '>b'}
 		port: 10		subport: 22
@@ -340,6 +460,7 @@ COMMUNICATION.UHF_SET_PIPE_T:
 
 COMMUNICATION.UHF_SET_BEACON_T:
 		About: Sets UHF beacon message transmission period
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 10		subport: 23
@@ -347,6 +468,7 @@ COMMUNICATION.UHF_SET_BEACON_T:
 
 COMMUNICATION.UHF_SET_AUDIO_T:
 		About: Sets UHF audio beacon period b/w transmissions
+		Supports:'OBC'
 		Arguments: {'Period': '>u4'}
 		return values: {'err': '>b'}
 		port: 10		subport: 24
@@ -354,6 +476,7 @@ COMMUNICATION.UHF_SET_AUDIO_T:
 
 COMMUNICATION.UHF_SET_PARAMS:
 		About: Sets UHF freq, pipe_t, beacon_t, audio_t parameters. Input:4
+		Supports:'OBC'
 		Arguments: {'Freq': '>u4', 'pipe_t': '>u4', 'beacon_t': '>u4', 'audio_t': '>u4'}
 		return values: {'err': '>b'}
 		port: 10		subport: 25
@@ -361,20 +484,23 @@ COMMUNICATION.UHF_SET_PARAMS:
 
 COMMUNICATION.UHF_RESTORE:
 		About: Restore UHF default values
-		Arguments: {'a1': '>u1'}
+		Supports:'OBC'
+		Arguments: {'Set_1_to_confirm': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 26
 
 
 COMMUNICATION.UHF_LOW_PWR:
 		About: Puts UHF TRX into low power mode
-		Arguments: {'a1': '>u1'}
+		Supports:'OBC'
+		Arguments: {'Set_1_to_confirm': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 27
 
 
 COMMUNICATION.UHF_SET_DESTINATION:
 		About: Sets UHF destination callsign
+		Supports:'OBC'
 		Arguments: {'Callsign': '>S6'}
 		return values: {'err': '>b'}
 		port: 10		subport: 28
@@ -382,6 +508,7 @@ COMMUNICATION.UHF_SET_DESTINATION:
 
 COMMUNICATION.UHF_SET_SOURCE:
 		About: Sets UHF source callsign
+		Supports:'OBC'
 		Arguments: {'Callsign': '>S6'}
 		return values: {'err': '>b'}
 		port: 10		subport: 29
@@ -389,6 +516,7 @@ COMMUNICATION.UHF_SET_SOURCE:
 
 COMMUNICATION.UHF_SET_MORSE:
 		About: Sets UHF morse code callsign (max 36)
+		Supports:'OBC'
 		Arguments: {'Callsign': '>S36'}
 		return values: {'err': '>b'}
 		port: 10		subport: 30
@@ -396,6 +524,7 @@ COMMUNICATION.UHF_SET_MORSE:
 
 COMMUNICATION.UHF_SET_MIDI:
 		About: Sets UHF MIDI audio beacon (max 36 notes)
+		Supports:'OBC'
 		Arguments: {'Beacon': '>S60'}
 		return values: {'err': '>b'}
 		port: 10		subport: 31
@@ -403,6 +532,7 @@ COMMUNICATION.UHF_SET_MIDI:
 
 COMMUNICATION.UHF_SET_BEACON_MSG:
 		About: Sets UHF beacon message (max 98)
+		Supports:'OBC'
 		Arguments: {'Beacon': '>S60'}
 		return values: {'err': '>b'}
 		port: 10		subport: 32
@@ -410,6 +540,7 @@ COMMUNICATION.UHF_SET_BEACON_MSG:
 
 COMMUNICATION.UHF_SET_I2C:
 		About: Sets UHF I2C address (22 | 23)
+		Supports:'OBC'
 		Arguments: {'Address': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 33
@@ -417,6 +548,7 @@ COMMUNICATION.UHF_SET_I2C:
 
 COMMUNICATION.UHF_WRITE_FRAM:
 		About: Sets UHF FRAM address and write 16-byte data
+		Supports:'OBC'
 		Arguments: {'Address': '>u4', 'Data': '>S16'}
 		return values: {'err': '>b'}
 		port: 10		subport: 34
@@ -424,13 +556,15 @@ COMMUNICATION.UHF_WRITE_FRAM:
 
 COMMUNICATION.UHF_SECURE:
 		About: Puts UHF TRX into secure mode
-		Arguments: {'arg': '>u1'}
+		Supports:'OBC'
+		Arguments: {'Set_1_to_confirm': '>u1'}
 		return values: {'err': '>b'}
 		port: 10		subport: 35
 
 
 COMMUNICATION.UHF_GET_FULL_STAT:
 		About: Returns the fulla status of all the UHF non-configurable parameters
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'HFXT': '>u1', 'UartBaud': '>u1', 'Reset': '>u1', 'RF Mode': '>u1', 'Echo': '>u1', 'BCN': '>u1', 'PIPE': '>u1', 'Bootloader': '>u1', 'CTS': '>u1', 'SEC': '>u1', 'FRAM': '>u1', 'RFTS': '>u1', 'Frequency': '>u4', 'PIPE timeout': '>u4', 'Beacon period': '>u4', 'Audio trans. period': '>u4', 'Uptime': '>u4', 'Packets out': '>u4', 'Packets in': '>u4', 'Packets in CRC16': '>u4', 'Temperature': '>f'}
 		port: 10		subport: 36
@@ -438,6 +572,7 @@ COMMUNICATION.UHF_GET_FULL_STAT:
 
 COMMUNICATION.UHF_GET_CALLSIGN:
 		About: Gets UHF destination and source callsign
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Destination': '>S6', 'Source': '>S6'}
 		port: 10		subport: 37
@@ -445,6 +580,7 @@ COMMUNICATION.UHF_GET_CALLSIGN:
 
 COMMUNICATION.UHF_GET_MORSE:
 		About: Gets UHF morse callsign
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Morse': '>S36'}
 		port: 10		subport: 38
@@ -452,6 +588,7 @@ COMMUNICATION.UHF_GET_MORSE:
 
 COMMUNICATION.UHF_GET_MIDI:
 		About: Gets UHF MIDI audio beacon
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'MIDI': '>S60'}
 		port: 10		subport: 39
@@ -459,6 +596,7 @@ COMMUNICATION.UHF_GET_MIDI:
 
 COMMUNICATION.UHF_GET_BEACON_MSG:
 		About: Gets the beacon message
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Beacon Message': '>S60'}
 		port: 10		subport: 40
@@ -466,6 +604,7 @@ COMMUNICATION.UHF_GET_BEACON_MSG:
 
 COMMUNICATION.UHF_GET_FRAM:
 		About: Reads the FRAM data
+		Supports:'OBC'
 		Arguments: {'FRAM': '>u4'}
 		return values: {'err': '>b', 'FRAM': '>S16'}
 		port: 10		subport: 41
@@ -473,6 +612,7 @@ COMMUNICATION.UHF_GET_FRAM:
 
 COMMUNICATION.UHF_SET_ECHO:
 		About: Starts echo over UART
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 10		subport: 42
@@ -480,6 +620,7 @@ COMMUNICATION.UHF_SET_ECHO:
 
 COMMUNICATION.UHF_SET_BCN:
 		About: Set the communication to the beacon mode
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 10		subport: 43
@@ -487,6 +628,7 @@ COMMUNICATION.UHF_SET_BCN:
 
 COMMUNICATION.UHF_SET_PIPE:
 		About: Set the communication to the PIPE(transparent) mode
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 10		subport: 44
@@ -494,6 +636,7 @@ COMMUNICATION.UHF_SET_PIPE:
 
 COMMUNICATION.UHF_GET_SECURE_KEY:
 		About: Gets the key for secure mode
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Secure Key': '>u4'}
 		port: 10		subport: 45
@@ -501,6 +644,7 @@ COMMUNICATION.UHF_GET_SECURE_KEY:
 
 COMMUNICATION.UHF_GET_SWVER:
 		About: Gets the UHF firmware version
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'ver_XYZ': '>u2'}
 		port: 10		subport: 46
@@ -508,6 +652,7 @@ COMMUNICATION.UHF_GET_SWVER:
 
 COMMUNICATION.UHF_GET_PLDSZ:
 		About: Gets UHF device payload size
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'size_B': '>u2'}
 		port: 10		subport: 47
@@ -515,6 +660,7 @@ COMMUNICATION.UHF_GET_PLDSZ:
 
 CONFIGURATION.GET_ACTIVE_CONFIG:
 		About: Gets config values in active mode for a specific type
+		Supports:'EPS'
 		Arguments: {'id': '<u2', 'type_id': '<u1'}
 		return values: {'err': '>B', 'type': '<u1', 'Value': 'var'}
 		port: 9		subport: 0
@@ -522,6 +668,7 @@ CONFIGURATION.GET_ACTIVE_CONFIG:
 
 CONFIGURATION.GET_MAIN_CONFIG:
 		About: Gets config values in main mode for a specific type
+		Supports:'EPS'
 		Arguments: {'id': '<u2', 'type_id': '<u1'}
 		return values: {'err': '>B', 'type': '<u1', 'Value': 'var'}
 		port: 9		subport: 1
@@ -529,6 +676,7 @@ CONFIGURATION.GET_MAIN_CONFIG:
 
 CONFIGURATION.GET_FALLBACK_CONFIG:
 		About: Gets config values in fallback mode for a specific type
+		Supports:'EPS'
 		Arguments: {'id': '<u2', 'type_id': '<u1'}
 		return values: {'err': '>B', 'type': '<u1', 'Value': 'var'}
 		port: 9		subport: 2
@@ -536,6 +684,7 @@ CONFIGURATION.GET_FALLBACK_CONFIG:
 
 CONFIGURATION.GET_DEFAULT_CONFIG:
 		About: Gets config values in default mode for a specific type
+		Supports:'EPS'
 		Arguments: {'id': '<u2', 'type_id': '<u1'}
 		return values: {'err': '>B', 'type': '<u1', 'Value': 'var'}
 		port: 9		subport: 3
@@ -543,6 +692,7 @@ CONFIGURATION.GET_DEFAULT_CONFIG:
 
 CONFIGURATION.SET_CONFIG:
 		About: Sets the configuration
+		Supports:'EPS'
 		Arguments: {'id': '<u2', 'type_id': '<u1', 'Config': 'var'}
 		return values: {'err': '>B'}
 		port: 9		subport: 4
@@ -550,6 +700,7 @@ CONFIGURATION.SET_CONFIG:
 
 CONFIGURATION.LOAD_MAIN2ACTIVE:
 		About: Load main configuration from file into active
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 5
@@ -557,6 +708,7 @@ CONFIGURATION.LOAD_MAIN2ACTIVE:
 
 CONFIGURATION.LOAD_FALLBACK2ACTIVE:
 		About: Load fallback configuration from file into active
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 6
@@ -564,6 +716,7 @@ CONFIGURATION.LOAD_FALLBACK2ACTIVE:
 
 CONFIGURATION.LOAD_DEFAULT2ACTIVE:
 		About: Load default configuration from file into active
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 7
@@ -571,6 +724,7 @@ CONFIGURATION.LOAD_DEFAULT2ACTIVE:
 
 CONFIGURATION.UNLOCK_CONFIG:
 		About: Unlock configuration for saving
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 8
@@ -578,6 +732,7 @@ CONFIGURATION.UNLOCK_CONFIG:
 
 CONFIGURATION.LOCK_CONFIG:
 		About: Lock configuration from saving
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 9
@@ -585,6 +740,7 @@ CONFIGURATION.LOCK_CONFIG:
 
 CONFIGURATION.SAVE_ACTIVE2MAIN:
 		About: Save active configuration to main file
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 10
@@ -592,6 +748,7 @@ CONFIGURATION.SAVE_ACTIVE2MAIN:
 
 CONFIGURATION.SAVE_ACTIVE2FALLBACK:
 		About: Save active configuration to fallback file
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B'}
 		port: 9		subport: 11
@@ -599,6 +756,7 @@ CONFIGURATION.SAVE_ACTIVE2FALLBACK:
 
 CONFIGURATION.ELEVATE_ACCESS:
 		About: Elevates access role. Key is in the docs
+		Supports:'EPS'
 		Arguments: {'Role': '<u1', 'Key': '<u4'}
 		return values: {'err': '>B'}
 		port: 9		subport: 12
@@ -606,6 +764,7 @@ CONFIGURATION.ELEVATE_ACCESS:
 
 CONFIGURATION.GET_STATUS:
 		About: Gets status and errors info
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B', 'isInitialized': '<u1', 'isLocked': '<u1', 'isFallbackConfigurationLoaded': '<u1', 'isMainConfigurationLoaded': '<u1', 'wasFallbackRequested': '<u1', 'initSource': '<u1', 'currAccessRole': '<u1', 'totalNumofErrors': '<u1', 'numOfParameterDoesNotExistErrors': '<u1', 'numOfInvalidParameterTypeErrors': '<u1', 'numOfValidationFailErrors': '<u1', 'numOfStorageFailErrors': '<u1', 'numOfNotInitializedErrors': '<u1', 'numOfNotLoadedOnInitErrors': '<u1', 'numOfLockedErrors': '<u1', 'numOfAccessDeniedErrors': '<u1', 'numOfWrongPasswordErrors': '<u1', 'numOfUnknownErrors': '<u1'}
 		port: 9		subport: 13
@@ -613,13 +772,15 @@ CONFIGURATION.GET_STATUS:
 
 HOUSEKEEPING.GET_HK:
 		About: Fetch system-wide housekeeping. Input: limit, before_id, before_time
+		Supports:'OBC'
 		Arguments: {'Limit': '>u2', 'Before_id': '>u2', 'Before_time': '>u4'}
-		return values: {'err': '>b', '###############################\r\npacket meta\r\n###############################\r\nfinal': '<B', 'UNIXtimestamp': '>u4', 'dataPosition': '>u2', '###############################\r\nADCS\r\n###############################\r\nAtt_Estimate_Mode': '>B', 'Att_Control_Mode': '>B', 'Run_Mode': '>B', 'Flags_arr': '>V52', 'Longitude': '>f4', 'Latitude': '>f4', 'Altitude': '>f4', 'Estimated_Angular_Rate_X': '>f4', 'Estimated_Angular_Rate_Y': '>f4', 'Estimated_Angular_Rate_Z': '>f4', 'Estimated_Angular_Angle_X': '>f4', 'Estimated_Angular_Angle_Y': '>f4', 'Estimated_Angular_Angle_Z': '>f4', 'Sat_Position_ECI_X': '>f4', 'Sat_Position_ECI_Y': '>f4', 'Sat_Position_ECI_Z': '>f4', 'Sat_Velocity_ECI_X': '>f4', 'Sat_Velocity_ECI_Y': '>f4', 'Sat_Velocity_ECI_Z': '>f4', 'Sat_Position_LLH_X': '>f4', 'Sat_Position_LLH_Y': '>f4', 'Sat_Position_LLH_Z': '>f4', 'ECEF_Position_X': '>i2', 'ECEF_Position_Y': '>i2', 'ECEF_Position_Z': '>i2', 'Coarse_Sun_Vector_X': '>f4', 'Coarse_Sun_Vector_Y': '>f4', 'Coarse_Sun_Vector_Z': '>f4', 'Fine_Sun_Vector_X': '>f4', 'Fine_Sun_Vector_Y': '>f4', 'Fine_Sun_Vector_Z': '>f4', 'Nadir_Vector_X': '>f4', 'Nadir_Vector_Y': '>f4', 'Nadir_Vector_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4', 'Mag_Field_Vector_X': '>f4', 'Mag_Field_Vector_Y': '>f4', 'Mag_Field_Vector_Z': '>f4', 'TC_num': '>i2', 'TM_num': '>i2', 'CommsStat_flags_1': '<B', 'CommsStat_flags_2': '<B', 'CommsStat_flags_3': '<B', 'CommsStat_flags_4': '<B', 'CommsStat_flags_5': '<B', 'CommsStat_flags_6': '<B', 'Wheel1_Current': '>f4', 'Wheel2_Current': '>f4', 'Wheel3_Current': '>f4', 'CubeSense1_Current': '>f4', 'CubeSense2_Current': '>f4', 'CubeControl_Current3v3': '>f4', 'CubeControl_Current5v0': '>f4', 'CubeStar_Current': '>f4', 'CubeStar_Temp': '>f4', 'Magnetorquer_Current': '>f4', 'MCU_Temp': '>f4', 'Rate_Sensor_Temp_X': '>i2', 'Rate_Sensor_Temp_Y': '>i2', 'Rate_Sensor_Temp_Z': '>i2', '###############################\r\nAthena\r\n###############################\r\ntemparray1': '>i4', 'temparray2': '>i4', 'boot_cnt': '>u2', 'last_reset_reason': '<B', 'OBC_mode': '<B', 'OBC_uptime': '>u2', 'solar_panel_supply_curr': '<B', 'OBC_software_ver': '<B', 'cmds_received': '>u2', 'pckts_uncovered_by_FEC': '>u2', '###############################\r\nEPS\r\n###############################\r\ncmd': '<B', 'status': '<b', 'timestamp': '<f8', 'uptimeInS': '<u4', 'bootCnt': '<u4', 'wdt_gs_time_left_s': '<u4', 'wdt_gs_counter': '<u4', 'mpptConverterVoltage1_mV': '<u2', 'mpptConverterVoltage2_mV': '<u2', 'mpptConverterVoltage3_mV': '<u2', 'mpptConverterVoltage4_mV': '<u2', 'curSolarPanels1_mA': '<u2', 'curSolarPanels2_mA': '<u2', 'curSolarPanels3_mA': '<u2', 'curSolarPanels4_mA': '<u2', 'curSolarPanels5_mA': '<u2', 'curSolarPanels6_mA': '<u2', 'curSolarPanels7_mA': '<u2', 'curSolarPanels8_mA': '<u2', 'vBatt_mV': '<u2', 'curSolar_mA': '<u2', 'curBattIn_mA': '<u2', 'curBattOut_mA': '<u2', 'curOutput1_mA': '<u2', 'curOutput2_mA': '<u2', 'curOutput3_mA': '<u2', 'curOutput4_mA': '<u2', 'curOutput5_mA': '<u2', 'curOutput6_mA': '<u2', 'curOutput7_mA': '<u2', 'curOutput8_mA': '<u2', 'curOutput9_mA': '<u2', 'curOutput10_mA': '<u2', 'curOutput11_mA': '<u2', 'curOutput12_mA': '<u2', 'curOutput13_mA': '<u2', 'curOutput14_mA': '<u2', 'curOutput15_mA': '<u2', 'curOutput16_mA': '<u2', 'curOutput17_mA': '<u2', 'curOutput18_mA': '<u2', 'AOcurOutput1_mA': '<u2', 'AOcurOutput2_mA': '<u2', 'outputConverterVoltage1': '<u2', 'outputConverterVoltage2': '<u2', 'outputConverterVoltage3': '<u2', 'outputConverterVoltage4': '<u2', 'outputConverterVoltage5': '<u2', 'outputConverterVoltage6': '<u2', 'outputConverterVoltage7': '<u2', 'outputConverterVoltage8': '<u2', 'outputConverterState': '<B', 'outputStatus': '<u4', 'outputFaultStatus': '<u4', 'protectedOutputAccessCnt': '>u2', 'outputOnDelta1': '<u2', 'outputOnDelta2': '<u2', 'outputOnDelta3': '<u2', 'outputOnDelta4': '<u2', 'outputOnDelta5': '<u2', 'outputOnDelta6': '<u2', 'outputOnDelta7': '<u2', 'outputOnDelta8': '<u2', 'outputOnDelta9': '<u2', 'outputOnDelta10': '<u2', 'outputOnDelta11': '<u2', 'outputOnDelta12': '<u2', 'outputOnDelta13': '<u2', 'outputOnDelta14': '<u2', 'outputOnDelta15': '<u2', 'outputOnDelta16': '<u2', 'outputOnDelta17': '<u2', 'outputOnDelta18': '<u2', 'outputOffDelta1': '<u2', 'outputOffDelta2': '<u2', 'outputOffDelta3': '<u2', 'outputOffDelta4': '<u2', 'outputOffDelta5': '<u2', 'outputOffDelta6': '<u2', 'outputOffDelta7': '<u2', 'outputOffDelta8': '<u2', 'outputOffDelta9': '<u2', 'outputOffDelta10': '<u2', 'outputOffDelta11': '<u2', 'outputOffDelta12': '<u2', 'outputOffDelta13': '<u2', 'outputOffDelta14': '<u2', 'outputOffDelta15': '<u2', 'outputOffDelta16': '<u2', 'outputOffDelta17': '<u2', 'outputOffDelta18': '<u2', 'outputFaultCount1': '<B', 'outputFaultCount2': '<B', 'outputFaultCount3': '<B', 'outputFaultCount4': '<B', 'outputFaultCount5': '<B', 'outputFaultCount6': '<B', 'outputFaultCount7': '<B', 'outputFaultCount8': '<B', 'outputFaultCount9': '<B', 'outputFaultCount10': '<B', 'outputFaultCount11': '<B', 'outputFaultCount12': '<B', 'outputFaultCount13': '<B', 'outputFaultCount14': '<B', 'outputFaultCount15': '<B', 'outputFaultCount16': '<B', 'outputFaultCount17': '<B', 'outputFaultCount18': '<B', 'temp1_c': '<b', 'temp2_c': '<b', 'temp3_c': '<b', 'temp4_c': '<b', 'temp5_c': '<b', 'temp6_c': '<b', 'temp7_c': '<b', 'temp8_c': '<b', 'temp9_c': '<b', 'temp10_c': '<b', 'temp11_c': '<b', 'temp12_c': '<b', 'temp13_c': '<b', 'temp14_c': '<b', 'battMode': '<B', 'mpptMode': '<B', 'battHeaterMode': '<B', 'battHeaterState': '<B', 'PingWdt_toggles': '<u2', 'PingWdt_turnOffs': '<B', '###############################\r\nUHF\r\n###############################\r\nscw1': '<B', 'scw2': '<B', 'scw3': '<B', 'scw4': '<B', 'scw5': '<B', 'scw6': '<B', 'scw7': '<B', 'scw8': '<B', 'scw9': '<B', 'scw10': '<B', 'scw11': '<B', 'scw12': '<B', 'U_frequency': '>u4', 'pipe_t': '>u4', 'beacon_t': '>u4', 'audio_t': '>u4', 'uptime': '>u4', 'pckts_out': '>u4', 'pckts_in': '>u4', 'pckts_in_crc16': '>u4', 'temperature': '>f4', '###############################\r\nSband\r\n###############################\r\nS_mode': '>B', 'PA_status': '>B', 'S_frequency_Hz': '>u4', 'S_scrambler': '>B', 'S_filter': '>B', 'S_modulation': '>B', 'S_data_rate': '>B', 'S_bit_order': '>B', 'S_PWRGD': '>B', 'S_TXL': '>B', 'Output_Power': '>B', 'PA_Temp': '>b', 'Top_Temp': '>b', 'Bottom_Temp': '>b', 'Bat_Current_mA': '>u2', 'Bat_Voltage_mV': '>u2', 'PA_Current_mA': '>u2', 'PA_Voltage_mV': '>u2', '###############################\r\nHyperion Panels\r\n###############################\r\nNadir_Temp1': '>b', 'Nadir_Temp_Adc': '>b', 'Port_Temp1': '>b', 'Port_Temp2': '>b', 'Port_Temp3': '>b', 'Port_Temp_Adc': '>b', 'Port_Dep_Temp1': '>b', 'Port_Dep_Temp2': '>b', 'Port_Dep_Temp3': '>b', 'Port_Dep_Temp_Adc': '>b', 'Star_Temp1': '>b', 'Star_Temp2': '>b', 'Star_Temp3': '>b', 'Star_Temp_Adc': '>b', 'Star_Dep_Temp1': '>b', 'Star_Dep_Temp2': '>b', 'Star_Dep_Temp3': '>b', 'Star_Dep_Temp_Adc': '>b', 'Zenith_Temp1': '>b', 'Zenith_Temp2': '>b', 'Zenith_Temp3': '>b', 'Zenith_Temp_Adc': '>b', 'Nadir_Pd1': '>B', 'Port_Pd1': '>B', 'Port_Pd2': '>B', 'Port_Pd3': '>B', 'Port_Dep_Pd1': '>B', 'Port_Dep_Pd2': '>B', 'Port_Dep_Pd3': '>B', 'Star_Pd1': '>B', 'Star_Pd2': '>B', 'Star_Pd3': '>B', 'Star_Dep_Pd1': '>B', 'Star_Dep_Pd2': '>B', 'Star_Dep_Pd3': '>B', 'Zenith_Pd1': '>B', 'Zenith_Pd2': '>B', 'Zenith_Pd3': '>B', 'Port_Voltage': '>u2', 'Port_Dep_Voltage': '>u2', 'Star_Voltage': '>u2', 'Star_Dep_Voltage': '>u2', 'Zenith_Voltage': '>u2', 'Port_Current': '>u2', 'Port_Dep_Current': '>u2', 'Star_Current': '>u2', 'Star_Dep_Current': '>u2', 'Zenith_Current': '>u2', '###############################\r\nCharon Interfacing Board\r\n###############################\r\ngps_crc': '>u2', 'charon_temp1': '>b', 'charon_temp2': '>b', 'charon_temp3': '>b', 'charon_temp4': '>b', 'charon_temp5': '>b', 'charon_temp6': '>b', 'charon_temp7': '>b', 'charon_temp8': '>b', '###############################\r\nDFGM Board\r\n###############################\r\nCore_Voltage': '>u2', 'Sensor_Temperature': '>u2', 'Reference_Temperature': '>u2', 'Board_Temperature': '>u2', 'Positive_Rail_Voltage': '>u2', 'Input_Voltage': '>u2', 'Reference_Voltage': '>u2', 'Input_Current': '>u2', 'Reserved_1': '>u2', 'Reserved_2': '>u2', 'Reserved_3': '>u2', 'Reserved_4': '>u2', '###############################\r\nNorthern SPIRIT\r\n###############################\r\nns_temp0': '>i2', 'ns_temp1': '>i2', 'ns_temp2': '>i2', 'ns_temp3': '>i2', 'eNIM0_lux': '>i2', 'eNIM1_lux': '>i2', 'eNIM2_lux': '>i2', 'ram_avail': '>i2', 'lowest_img_num': '>i2', 'first_blank_img_num': '>i2', '###############################\r\nIris Board\r\n###############################\r\nVIS_Temperature': '>f4', 'NIR_Temperature': '>f4', 'Flash_Temperature': '>f4', 'Gate_Temperature': '>f4', 'Image_number': '>u1', 'Software_Version': '>u1', 'Error_number': '>u1', 'MAX_5V_voltage': '>u2', 'MAX_5V_power': '>u2', 'MAX_3V_voltage': '>u2', 'MAX_3V_power': '>u2', 'MIN_5V_voltage': '>u2', 'MIN_3V_voltage': '>u2'}
+		return values: {'err': '>b', '###############################\r\npacket meta\r\n###############################\r\nfinal': '<B', 'UNIXtimestamp': '>u4', 'dataPosition': '>u2', '###############################\r\nADCS\r\n###############################\r\nAtt_Estimate_Mode': '>B', 'Att_Control_Mode': '>B', 'Run_Mode': '>B', 'Flags_arr': '>V52', 'Longitude': '>f4', 'Latitude': '>f4', 'Altitude': '>f4', 'Estimated_Angular_Rate_X': '>f4', 'Estimated_Angular_Rate_Y': '>f4', 'Estimated_Angular_Rate_Z': '>f4', 'Estimated_Angular_Angle_X': '>f4', 'Estimated_Angular_Angle_Y': '>f4', 'Estimated_Angular_Angle_Z': '>f4', 'Sat_Position_ECI_X': '>f4', 'Sat_Position_ECI_Y': '>f4', 'Sat_Position_ECI_Z': '>f4', 'Sat_Velocity_ECI_X': '>f4', 'Sat_Velocity_ECI_Y': '>f4', 'Sat_Velocity_ECI_Z': '>f4', 'Sat_Position_LLH_X': '>f4', 'Sat_Position_LLH_Y': '>f4', 'Sat_Position_LLH_Z': '>f4', 'ECEF_Position_X': '>i2', 'ECEF_Position_Y': '>i2', 'ECEF_Position_Z': '>i2', 'Coarse_Sun_Vector_X': '>f4', 'Coarse_Sun_Vector_Y': '>f4', 'Coarse_Sun_Vector_Z': '>f4', 'Fine_Sun_Vector_X': '>f4', 'Fine_Sun_Vector_Y': '>f4', 'Fine_Sun_Vector_Z': '>f4', 'Nadir_Vector_X': '>f4', 'Nadir_Vector_Y': '>f4', 'Nadir_Vector_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4', 'Mag_Field_Vector_X': '>f4', 'Mag_Field_Vector_Y': '>f4', 'Mag_Field_Vector_Z': '>f4', 'TC_num': '>i2', 'TM_num': '>i2', 'CommsStat_flags_1': '<B', 'CommsStat_flags_2': '<B', 'CommsStat_flags_3': '<B', 'CommsStat_flags_4': '<B', 'CommsStat_flags_5': '<B', 'CommsStat_flags_6': '<B', 'Wheel1_Current': '>f4', 'Wheel2_Current': '>f4', 'Wheel3_Current': '>f4', 'CubeSense1_Current': '>f4', 'CubeSense2_Current': '>f4', 'CubeControl_Current3v3': '>f4', 'CubeControl_Current5v0': '>f4', 'CubeStar_Current': '>f4', 'CubeStar_Temp': '>f4', 'Magnetorquer_Current': '>f4', 'MCU_Temp': '>f4', 'Rate_Sensor_Temp_X': '>i2', 'Rate_Sensor_Temp_Y': '>i2', 'Rate_Sensor_Temp_Z': '>i2', '###############################\r\nAthena\r\n###############################\r\nOBC_software_ver': '>U8', 'MCU_core_temp': '>i4', 'converter_temp': '>i4', 'OBC_uptime': '>u4', 'vol0_usage_percent': '>u1', 'vol1_usage_percent': '>u1', 'boot_cnt': '>u2', 'boot_src': '>u2', 'last_reset_reason': '<B', 'OBC_mode': '<B', 'solar_panel_supply_curr': '>u2', 'cmds_received': '>u2', 'pckts_uncovered_by_FEC': '>u2', '###############################\r\nEPS\r\n###############################\r\neps_cmd_hk': '<B', 'eps_status_hk': '<b', 'eps_timestamp_hk': '<f8', 'eps_uptimeInS_hk': '<u4', 'eps_bootCnt_hk': '<u4', 'wdt_gs_time_left_s': '<u4', 'wdt_gs_counter': '<u4', 'mpptConverterVoltage1_mV': '<u2', 'mpptConverterVoltage2_mV': '<u2', 'mpptConverterVoltage3_mV': '<u2', 'mpptConverterVoltage4_mV': '<u2', 'curSolarPanels1_mA': '<u2', 'curSolarPanels2_mA': '<u2', 'curSolarPanels3_mA': '<u2', 'curSolarPanels4_mA': '<u2', 'curSolarPanels5_mA': '<u2', 'curSolarPanels6_mA': '<u2', 'curSolarPanels7_mA': '<u2', 'curSolarPanels8_mA': '<u2', 'vBatt_mV': '<u2', 'curSolar_mA': '<u2', 'curBattIn_mA': '<u2', 'curBattOut_mA': '<u2', 'curOutput1_mA': '<u2', 'curOutput2_mA': '<u2', 'curOutput3_mA': '<u2', 'curOutput4_mA': '<u2', 'curOutput5_mA': '<u2', 'curOutput6_mA': '<u2', 'curOutput7_mA': '<u2', 'curOutput8_mA': '<u2', 'curOutput9_mA': '<u2', 'curOutput10_mA': '<u2', 'curOutput11_mA': '<u2', 'curOutput12_mA': '<u2', 'curOutput13_mA': '<u2', 'curOutput14_mA': '<u2', 'curOutput15_mA': '<u2', 'curOutput16_mA': '<u2', 'curOutput17_mA': '<u2', 'curOutput18_mA': '<u2', 'AOcurOutput1_mA': '<u2', 'AOcurOutput2_mA': '<u2', 'outputConverterVoltage1': '<u2', 'outputConverterVoltage2': '<u2', 'outputConverterVoltage3': '<u2', 'outputConverterVoltage4': '<u2', 'outputConverterVoltage5': '<u2', 'outputConverterVoltage6': '<u2', 'outputConverterVoltage7': '<u2', 'outputConverterVoltage8': '<u2', 'outputConverterState': '<B', 'outputStatus': '<u4', 'outputFaultStatus': '<u4', 'protectedOutputAccessCnt': '>u2', 'outputOnDelta1': '<u2', 'outputOnDelta2': '<u2', 'outputOnDelta3': '<u2', 'outputOnDelta4': '<u2', 'outputOnDelta5': '<u2', 'outputOnDelta6': '<u2', 'outputOnDelta7': '<u2', 'outputOnDelta8': '<u2', 'outputOnDelta9': '<u2', 'outputOnDelta10': '<u2', 'outputOnDelta11': '<u2', 'outputOnDelta12': '<u2', 'outputOnDelta13': '<u2', 'outputOnDelta14': '<u2', 'outputOnDelta15': '<u2', 'outputOnDelta16': '<u2', 'outputOnDelta17': '<u2', 'outputOnDelta18': '<u2', 'outputOffDelta1': '<u2', 'outputOffDelta2': '<u2', 'outputOffDelta3': '<u2', 'outputOffDelta4': '<u2', 'outputOffDelta5': '<u2', 'outputOffDelta6': '<u2', 'outputOffDelta7': '<u2', 'outputOffDelta8': '<u2', 'outputOffDelta9': '<u2', 'outputOffDelta10': '<u2', 'outputOffDelta11': '<u2', 'outputOffDelta12': '<u2', 'outputOffDelta13': '<u2', 'outputOffDelta14': '<u2', 'outputOffDelta15': '<u2', 'outputOffDelta16': '<u2', 'outputOffDelta17': '<u2', 'outputOffDelta18': '<u2', 'outputFaultCount1': '<B', 'outputFaultCount2': '<B', 'outputFaultCount3': '<B', 'outputFaultCount4': '<B', 'outputFaultCount5': '<B', 'outputFaultCount6': '<B', 'outputFaultCount7': '<B', 'outputFaultCount8': '<B', 'outputFaultCount9': '<B', 'outputFaultCount10': '<B', 'outputFaultCount11': '<B', 'outputFaultCount12': '<B', 'outputFaultCount13': '<B', 'outputFaultCount14': '<B', 'outputFaultCount15': '<B', 'outputFaultCount16': '<B', 'outputFaultCount17': '<B', 'outputFaultCount18': '<B', 'temp1_c': '<b', 'temp2_c': '<b', 'temp3_c': '<b', 'temp4_c': '<b', 'temp5_c': '<b', 'temp6_c': '<b', 'temp7_c': '<b', 'temp8_c': '<b', 'temp9_c': '<b', 'temp10_c': '<b', 'temp11_c': '<b', 'temp12_c': '<b', 'temp13_c': '<b', 'temp14_c': '<b', 'battMode': '<B', 'mpptMode': '<B', 'battHeaterMode': '<B', 'battHeaterState': '<B', 'PingWdt_toggles': '<u2', 'PingWdt_turnOffs': '<B', 'thermalProtTemperature_1': '>b', 'thermalProtTemperature_2': '>b', 'thermalProtTemperature_3': '>b', 'thermalProtTemperature_4': '>b', 'thermalProtTemperature_5': '>b', 'thermalProtTemperature_6': '>b', 'thermalProtTemperature_7': '>b', 'thermalProtTemperature_8': '>b', '###############################\r\nEPS STARTUP\r\n###############################\r\neps_cmd_startup': '<B', 'eps_status_startup': '<b', 'eps_timestamp_startup': '>f8', 'last_reset_reason_reg': '>u4', 'eps_bootCnt_startup': '>u4', 'FallbackConfigUsed': '<B', 'rtcInit': '<B', 'rtcClkSourceLSE': '>B', 'flashAppInit': '>B', 'Fram4kPartitionInit': '>b', 'Fram520kPartitionInit': '>b', 'intFlashPartitionInit': '>b', 'fwUpdInit': '>B', 'FSInit': '>b', 'FTInit': '>b', 'supervisorInit': '>b', 'uart1App': '>B', 'uart2App': '>B', 'tmp107Init': '>b', '###############################\r\nUHF\r\n###############################\r\nscw1': '<B', 'scw2': '<B', 'scw3': '<B', 'scw4': '<B', 'scw5': '<B', 'scw6': '<B', 'scw7': '<B', 'scw8': '<B', 'scw9': '<B', 'scw10': '<B', 'scw11': '<B', 'scw12': '<B', 'U_frequency': '>u4', 'pipe_t': '>u4', 'beacon_t': '>u4', 'audio_t': '>u4', 'uptime': '>u4', 'pckts_out': '>u4', 'pckts_in': '>u4', 'pckts_in_crc16': '>u4', 'temperature': '>f4', '###############################\r\nSband\r\n###############################\r\nS_mode': '>B', 'PA_status': '>B', 'S_frequency_Hz': '>u4', 'S_scrambler': '>B', 'S_filter': '>B', 'S_modulation': '>B', 'S_data_rate': '>B', 'S_bit_order': '>B', 'S_PWRGD': '>B', 'S_TXL': '>B', 'Output_Power': '>B', 'PA_Temp': '>b', 'Top_Temp': '>b', 'Bottom_Temp': '>b', 'Bat_Current_mA': '>u2', 'Bat_Voltage_mV': '>u2', 'PA_Current_mA': '>u2', 'PA_Voltage_mV': '>u2', '###############################\r\nHyperion Panels\r\n###############################\r\nNadir_Temp1': '>b', 'Nadir_Temp_Adc': '>b', 'Port_Temp1': '>b', 'Port_Temp2': '>b', 'Port_Temp3': '>b', 'Port_Temp_Adc': '>b', 'Port_Dep_Temp1': '>b', 'Port_Dep_Temp2': '>b', 'Port_Dep_Temp3': '>b', 'Port_Dep_Temp_Adc': '>b', 'Star_Temp1': '>b', 'Star_Temp2': '>b', 'Star_Temp3': '>b', 'Star_Temp_Adc': '>b', 'Star_Dep_Temp1': '>b', 'Star_Dep_Temp2': '>b', 'Star_Dep_Temp3': '>b', 'Star_Dep_Temp_Adc': '>b', 'Zenith_Temp1': '>b', 'Zenith_Temp2': '>b', 'Zenith_Temp3': '>b', 'Zenith_Temp_Adc': '>b', 'Nadir_Pd1': '>B', 'Port_Pd1': '>B', 'Port_Pd2': '>B', 'Port_Pd3': '>B', 'Port_Dep_Pd1': '>B', 'Port_Dep_Pd2': '>B', 'Port_Dep_Pd3': '>B', 'Star_Pd1': '>B', 'Star_Pd2': '>B', 'Star_Pd3': '>B', 'Star_Dep_Pd1': '>B', 'Star_Dep_Pd2': '>B', 'Star_Dep_Pd3': '>B', 'Zenith_Pd1': '>B', 'Zenith_Pd2': '>B', 'Zenith_Pd3': '>B', 'Port_Voltage': '>u2', 'Port_Dep_Voltage': '>u2', 'Star_Voltage': '>u2', 'Star_Dep_Voltage': '>u2', 'Zenith_Voltage': '>u2', 'Port_Current': '>u2', 'Port_Dep_Current': '>u2', 'Star_Current': '>u2', 'Star_Dep_Current': '>u2', 'Zenith_Current': '>u2', '###############################\r\nCharon Interfacing Board\r\n###############################\r\ngps_crc': '>u2', 'charon_temp1': '>b', 'charon_temp2': '>b', 'charon_temp3': '>b', 'charon_temp4': '>b', 'charon_temp5': '>b', 'charon_temp6': '>b', 'charon_temp7': '>b', 'charon_temp8': '>b', '###############################\r\nDFGM Board\r\n###############################\r\nCore_Voltage': '>u2', 'Sensor_Temperature': '>u2', 'Reference_Temperature': '>u2', 'Board_Temperature': '>u2', 'Positive_Rail_Voltage': '>u2', 'Input_Voltage': '>u2', 'Reference_Voltage': '>u2', 'Input_Current': '>u2', 'Reserved_1': '>u2', 'Reserved_2': '>u2', 'Reserved_3': '>u2', 'Reserved_4': '>u2', '###############################\r\nNorthern SPIRIT\r\n###############################\r\nns_temp0': '>i2', 'ns_temp1': '>i2', 'ns_temp2': '>i2', 'ns_temp3': '>i2', 'eNIM0_lux': '>i2', 'eNIM1_lux': '>i2', 'eNIM2_lux': '>i2', 'ram_avail': '>i2', 'lowest_img_num': '>i2', 'first_blank_img_num': '>i2', '###############################\r\nIris Board\r\n###############################\r\nVIS_Temperature': '>f4', 'NIR_Temperature': '>f4', 'Flash_Temperature': '>f4', 'Gate_Temperature': '>f4', 'Image_number': '>u1', 'Software_Version': '>u1', 'Error_number': '>u1', 'MAX_5V_voltage': '>u2', 'MAX_5V_power': '>u2', 'MAX_3V_voltage': '>u2', 'MAX_3V_power': '>u2', 'MIN_5V_voltage': '>u2', 'MIN_3V_voltage': '>u2'}
 		port: 17		subport: 0
 
 
 HOUSEKEEPING.SET_MAX_FILES:
 		About: Set max number of hk entries to store
+		Supports:'OBC'
 		Arguments: {'Max': '<u2'}
 		return values: {'err': '>b'}
 		port: 17		subport: 1
@@ -627,6 +788,7 @@ HOUSEKEEPING.SET_MAX_FILES:
 
 HOUSEKEEPING.GET_MAX_FILES:
 		About: Get max number of hk entries to store
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'max': '>u2'}
 		port: 17		subport: 2
@@ -634,6 +796,7 @@ HOUSEKEEPING.GET_MAX_FILES:
 
 GROUND_STATION_WDT.RESET_WDT:
 		About: Resets the ground station watchdog timer. See docs for key value
+		Supports:'EPS'
 		Arguments: {'Key': '<u2'}
 		return values: {'err': '>B'}
 		port: 16		subport: 0
@@ -641,6 +804,7 @@ GROUND_STATION_WDT.RESET_WDT:
 
 GROUND_STATION_WDT.GET_WDT_REMAINING:
 		About: Gets GS watchdog time left in seconds
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B', 'timeLeftInS': '<u4'}
 		port: 16		subport: 1
@@ -648,6 +812,7 @@ GROUND_STATION_WDT.GET_WDT_REMAINING:
 
 GROUND_STATION_WDT.CLEAR_WDT_RESET_MARK:
 		About: Clears GS watchdog reset mark. See docs for key value
+		Supports:'EPS'
 		Arguments: {'Key': '<u2'}
 		return values: {'err': '>B'}
 		port: 16		subport: 2
@@ -655,6 +820,7 @@ GROUND_STATION_WDT.CLEAR_WDT_RESET_MARK:
 
 GROUND_STATION_WDT.CHECK_STARTUP_POST_RESET:
 		About: Checks if startup happened after GS watchdog reset
+		Supports:'EPS'
 		Arguments: None
 		return values: {'err': '>B', 'startupAfterGsWdt': '?'}
 		port: 16		subport: 3
@@ -662,6 +828,7 @@ GROUND_STATION_WDT.CHECK_STARTUP_POST_RESET:
 
 EPS_RESET.EPS_HARD_RESET:
 		About: Does a hard reset on EPS (Resets the config) Not recommended to use by the operator. Key value is 17767
+		Supports:'EPS'
 		Arguments: {'Key': '<u2'}
 		return values: {'err': '>b'}
 		port: 15		subport: 1
@@ -669,6 +836,7 @@ EPS_RESET.EPS_HARD_RESET:
 
 REBOOT.SOFT:
 		About: Does a soft reset on EPS (reboot) Not recommended to use by the operator. Key value is 491527 or 2147975175
+		Supports:'EPS'
 		Arguments: {'Key': '<u4'}
 		return values: {'err': '>b'}
 		port: 4		subport: 128
@@ -676,6 +844,7 @@ REBOOT.SOFT:
 
 TM_CLI.GENERAL_TELEMETRY:
 		About: Gets the general housekeeping telemetry data
+		Supports:'EPS'
 		Arguments: None
 		return values: {'status': '>b', 'timestamp': '<f8', 'uptimeInS': '<u4', 'bootCnt': '<u4', 'gs_wdt_time_left_s': '<u4', 'counter_wdt_gs': '<u4', 'mpptConverterVoltage1_mV': '<u2', 'mpptConverterVoltage2_mV': '<u2', 'mpptConverterVoltage3_mV': '<u2', 'mpptConverterVoltage4_mV': '<u2', 'curSolarPanels1_mA': '<u2', 'curSolarPanels2_mA': '<u2', 'curSolarPanels3_mA': '<u2', 'curSolarPanels4_mA': '<u2', 'curSolarPanels5_mA': '<u2', 'curSolarPanels6_mA': '<u2', 'curSolarPanels7_mA': '<u2', 'curSolarPanels8_mA': '<u2', 'vBatt_mV': '<u2', 'curSolar_mA': '<u2', 'curBattIn_mA': '<u2', 'curBattOut_mA': '<u2', 'curOutput1_mA': '<u2', 'curOutput2_mA': '<u2', 'curOutput3_mA': '<u2', 'curOutput4_mA': '<u2', 'curOutput5_mA': '<u2', 'curOutput6_mA': '<u2', 'curOutput7_mA': '<u2', 'curOutput8_mA': '<u2', 'curOutput9_mA': '<u2', 'curOutput10_mA': '<u2', 'curOutput11_mA': '<u2', 'curOutput12_mA': '<u2', 'curOutput13_mA': '<u2', 'curOutput14_mA': '<u2', 'curOutput15_mA': '<u2', 'curOutput16_mA': '<u2', 'curOutput17_mA': '<u2', 'curOutput18_mA': '<u2', 'AOcurOutput1_mA': '<u2', 'AOcurOutput2_mA': '<u2', 'outputConverterVoltage1': '<u2', 'outputConverterVoltage2': '<u2', 'outputConverterVoltage3': '<u2', 'outputConverterVoltage4': '<u2', 'outputConverterVoltage5': '<u2', 'outputConverterVoltage6': '<u2', 'outputConverterVoltage7': '<u2', 'outputConverterVoltage8': '<u2', 'outputConverterState': '<B', 'outputStatus': '<u4', 'outputFaultStatus': '<u4', 'protectedOutputAccessCnt': '<u2', 'outputOnDelta1': '<u2', 'outputOnDelta2': '<u2', 'outputOnDelta3': '<u2', 'outputOnDelta4': '<u2', 'outputOnDelta5': '<u2', 'outputOnDelta6': '<u2', 'outputOnDelta7': '<u2', 'outputOnDelta8': '<u2', 'outputOnDelta9': '<u2', 'outputOnDelta10': '<u2', 'outputOnDelta11': '<u2', 'outputOnDelta12': '<u2', 'outputOnDelta13': '<u2', 'outputOnDelta14': '<u2', 'outputOnDelta15': '<u2', 'outputOnDelta16': '<u2', 'outputOnDelta17': '<u2', 'outputOnDelta18': '<u2', 'outputOffDelta1': '<u2', 'outputOffDelta2': '<u2', 'outputOffDelta3': '<u2', 'outputOffDelta4': '<u2', 'outputOffDelta5': '<u2', 'outputOffDelta6': '<u2', 'outputOffDelta7': '<u2', 'outputOffDelta8': '<u2', 'outputOffDelta9': '<u2', 'outputOffDelta10': '<u2', 'outputOffDelta11': '<u2', 'outputOffDelta12': '<u2', 'outputOffDelta13': '<u2', 'outputOffDelta14': '<u2', 'outputOffDelta15': '<u2', 'outputOffDelta16': '<u2', 'outputOffDelta17': '<u2', 'outputOffDelta18': '<u2', 'outputFaultCount1': '<B', 'outputFaultCount2': '<B', 'outputFaultCount3': '<B', 'outputFaultCount4': '<B', 'outputFaultCount5': '<B', 'outputFaultCount6': '<B', 'outputFaultCount7': '<B', 'outputFaultCount8': '<B', 'outputFaultCount9': '<B', 'outputFaultCount10': '<B', 'outputFaultCount11': '<B', 'outputFaultCount12': '<B', 'outputFaultCount13': '<B', 'outputFaultCount14': '<B', 'outputFaultCount15': '<B', 'outputFaultCount16': '<B', 'outputFaultCount17': '<B', 'outputFaultCount18': '<B', 'temp1_c': '<b', 'temp2_c': '<b', 'temp3_c': '<b', 'temp4_c': '<b', 'temp5_c': '<b', 'temp6_c': '<b', 'temp7_c': '<b', 'temp8_c': '<b', 'temp9_c': '<b', 'temp10_c': '<b', 'temp11_c': '<b', 'temp12_c': '<b', 'temp13_c': '<b', 'temp14_c': '<b', 'battMode': '<B', 'mpptMode': '<B', 'battHeaterMode': '<B', 'battHeaterState': '<B', 'PingWdt_toggles': '<u2', 'PingWdt_turnOffs': '<B'}
 		port: 7		subport: 0
@@ -683,13 +852,15 @@ TM_CLI.GENERAL_TELEMETRY:
 
 TM_CLI.SET_TELEMETERY_PERIOD:
 		About: Set telemetery collection period on EPS. Magicword is in the docs
-		Arguments: {'Magicword': '<u4', 'Telem': '<B', 'ID': '<u4', 'Period': '<u4'}
+		Supports:'EPS'
+		Arguments: {'Magicword': '<u4', 'Telem_ID': '<B', 'Period': '<u4', 'Duration': '<u4'}
 		return values: {'err': '>b'}
 		port: 7		subport: 255
 
 
 TM_CLI.STARTUP_TELEMETRY:
 		About: Get the startup telemetry from the EPS
+		Supports:'EPS'
 		Arguments: None
 		return values: {'status': '>b', 'timestamp': '<f8', 'last_reset_reason_reg': '<u4', 'bootCnt': '<u4', 'FallbackConfigUsed': '<B', 'rtcInit': '<B', 'rtcClkSourceLSE': '<B', 'Fram4kPartitionInit': '>b', 'Fram520kPartitionInit': '>b', 'intFlashPartitionInit': '>b', 'FSInit': '>b', 'FTInit': '>b', 'supervisorInit': '>b', 'uart1App': '<B', 'uart2App': '<B', 'tmp107Init': '>b'}
 		port: 7		subport: 1
@@ -697,6 +868,7 @@ TM_CLI.STARTUP_TELEMETRY:
 
 CONTROL.SINGLE_OUTPUT_CONTROL:
 		About: Turns on/off a power output channel (with a defined delay)
+		Supports:'EPS'
 		Arguments: {'Channel': '<B', 'State': '<B', 'Delay': '<u2'}
 		return values: {'err': '>b'}
 		port: 14		subport: 0
@@ -704,6 +876,7 @@ CONTROL.SINGLE_OUTPUT_CONTROL:
 
 CONTROL.ALL_OUTPUT_CONTROL:
 		About: Sets all ouputs status at once (nth bit -> nth channel. 18 bit binary integer
+		Supports:'EPS'
 		Arguments: {'StateMask': '<u4'}
 		return values: {'err': '>b'}
 		port: 14		subport: 1
@@ -711,6 +884,7 @@ CONTROL.ALL_OUTPUT_CONTROL:
 
 CONTROL.SINGLE_OUTPUT_CONTROL_NORMAL_BATT:
 		About: Set the output channels mode on normal battery mode
+		Supports:'EPS'
 		Arguments: {'Channel': '<B', 'State': '<B', 'Delay': '<u2'}
 		return values: {'err': '>b'}
 		port: 14		subport: 9
@@ -718,6 +892,7 @@ CONTROL.SINGLE_OUTPUT_CONTROL_NORMAL_BATT:
 
 CONTROL.SET_SINGLE_MPPT_CONV_V:
 		About: Sets single MPPT converter voltage. Voltage is in mv
+		Supports:'EPS'
 		Arguments: {'Channel': '<B', 'Voltage': '<u2'}
 		return values: {'err': '>b'}
 		port: 14		subport: 2
@@ -725,6 +900,7 @@ CONTROL.SET_SINGLE_MPPT_CONV_V:
 
 CONTROL.SET_ALL_MPPT_CONV_V:
 		About: Sets all MPPT converter voltage at once
+		Supports:'EPS'
 		Arguments: {'v1': '<u2', 'v2': '<u2', 'v3': '<u2', 'v4': '<u2'}
 		return values: {'err': '>b'}
 		port: 14		subport: 3
@@ -732,6 +908,7 @@ CONTROL.SET_ALL_MPPT_CONV_V:
 
 CONTROL.SET_MODE_MPPT:
 		About: Sets MPPT mode. 0-Hw, 1-manual, 2-auto, 3-auto w/ timeout
+		Supports:'EPS'
 		Arguments: {'Mode': '<B'}
 		return values: {'err': '>b'}
 		port: 14		subport: 4
@@ -739,6 +916,7 @@ CONTROL.SET_MODE_MPPT:
 
 CONTROL.SET_AUTO_TIMEOUT_MPPT:
 		About: Sets MPPT auto timeout period
+		Supports:'EPS'
 		Arguments: {'Timeout': '<u4'}
 		return values: {'err': '>b'}
 		port: 14		subport: 5
@@ -746,6 +924,7 @@ CONTROL.SET_AUTO_TIMEOUT_MPPT:
 
 CONTROL.SET_HEATER_MODE:
 		About: Manual, or automatic. See docs for mode values
+		Supports:'EPS'
 		Arguments: {'Mode': '<B'}
 		return values: {'status': '>b'}
 		port: 14		subport: 6
@@ -753,6 +932,7 @@ CONTROL.SET_HEATER_MODE:
 
 CONTROL.SET_HEATER_STATE:
 		About: On, or off. Duration in seconds
+		Supports:'EPS'
 		Arguments: {'State': '<B', 'Duration': '<u2'}
 		return values: {'err': '>b'}
 		port: 14		subport: 7
@@ -760,6 +940,7 @@ CONTROL.SET_HEATER_STATE:
 
 UPDATER.INITIALIZE_UPDATE:
 		About: Start update procedure. Provide address, size, crc. Not intended for operator use. Use updater program
+		Supports:'OBC'
 		Arguments: {'Address': '>u4', 'Size': '>u4', 'CRC': '>u2'}
 		return values: {'err': '>b'}
 		port: 12		subport: 0
@@ -767,6 +948,7 @@ UPDATER.INITIALIZE_UPDATE:
 
 UPDATER.PROGRAM_BLOCK:
 		About: Program a single block of data. Not intended for operator use. Use updater program
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u4', 'Arg2': '>u4'}
 		return values: {'err': '>b'}
 		port: 12		subport: 1
@@ -774,6 +956,7 @@ UPDATER.PROGRAM_BLOCK:
 
 UPDATER.GET_PROGRESS:
 		About: Get update progress. Not intended for operator use. Use updater program
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'start_addr': '>u4', 'next_addr': '>u4', 'crc': '>u2'}
 		port: 12		subport: 2
@@ -781,6 +964,7 @@ UPDATER.GET_PROGRESS:
 
 UPDATER.ERASE_APP:
 		About: Erase working image. Not intended for operator use. Use updater program
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 12		subport: 3
@@ -788,6 +972,7 @@ UPDATER.ERASE_APP:
 
 UPDATER.VERIFY_APP:
 		About: Verify crc of working image. Not intended for operator use. Use updater program
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 12		subport: 4
@@ -795,6 +980,7 @@ UPDATER.VERIFY_APP:
 
 UPDATER.VERIFY_GOLDEN:
 		About: Verify crc of golden image
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 12		subport: 5
@@ -802,6 +988,7 @@ UPDATER.VERIFY_GOLDEN:
 
 LOGGER.GET_FILE:
 		About: Get contents of log file
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'log': '>S500'}
 		port: 13		subport: 0
@@ -809,6 +996,7 @@ LOGGER.GET_FILE:
 
 LOGGER.GET_OLD_FILE:
 		About: Get contents of old log file
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'log': '>S500'}
 		port: 13		subport: 1
@@ -816,6 +1004,7 @@ LOGGER.GET_OLD_FILE:
 
 LOGGER.SET_FILE_SIZE:
 		About: Set the size of the logger files.
+		Supports:'OBC'
 		Arguments: {'Size': '>u4'}
 		return values: {'err': '>b'}
 		port: 13		subport: 3
@@ -823,6 +1012,7 @@ LOGGER.SET_FILE_SIZE:
 
 LOGGER.GET_FILE_SIZE:
 		About: Get the size of the logger files.
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'size': '>u4'}
 		port: 13		subport: 2
@@ -830,6 +1020,7 @@ LOGGER.GET_FILE_SIZE:
 
 CLI.SEND_CMD:
 		About: Send command over the sat_cli. Not intended for operator use. Use sat_cli program
+		Supports:'OBC'
 		Arguments: {'Len': 'B', 'Command': 'a128'}
 		return values: {'status': '>b', 'resp': 'a128'}
 		port: 24		subport: 0
@@ -837,6 +1028,7 @@ CLI.SEND_CMD:
 
 ADCS.ADCS_RESET:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 0
@@ -844,6 +1036,7 @@ ADCS.ADCS_RESET:
 
 ADCS.ADCS_RESET_LOG_POINTER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 1
@@ -851,6 +1044,7 @@ ADCS.ADCS_RESET_LOG_POINTER:
 
 ADCS.ADCS_ADVANCE_LOG_POINTER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 2
@@ -858,6 +1052,7 @@ ADCS.ADCS_ADVANCE_LOG_POINTER:
 
 ADCS.ADCS_RESET_BOOT_REGISTERS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 3
@@ -865,6 +1060,7 @@ ADCS.ADCS_RESET_BOOT_REGISTERS:
 
 ADCS.ADCS_FORMAT_SD_CARD:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 4
@@ -872,6 +1068,7 @@ ADCS.ADCS_FORMAT_SD_CARD:
 
 ADCS.ADCS_ERASE_FILE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'File_type': '>u1', 'File_counter': '>u1', 'Erase_all': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 5
@@ -879,6 +1076,7 @@ ADCS.ADCS_ERASE_FILE:
 
 ADCS.ADCS_LOAD_FILE_DOWNLOAD_BLOCK:
 		About: None
+		Supports:'OBC'
 		Arguments: {'File_type': '>u1', 'File_counter': '>u1', 'Offset': '>u4', 'Block_length': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 6
@@ -886,6 +1084,7 @@ ADCS.ADCS_LOAD_FILE_DOWNLOAD_BLOCK:
 
 ADCS.ADCS_ADVANCE_FILE_LIST_READ_POINTER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 7
@@ -893,6 +1092,7 @@ ADCS.ADCS_ADVANCE_FILE_LIST_READ_POINTER:
 
 ADCS.ADCS_INITIATE_FILE_UPLOAD:
 		About: None
+		Supports:'OBC'
 		Arguments: {'File_dest': '>u1', 'Block_size': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 8
@@ -900,6 +1100,7 @@ ADCS.ADCS_INITIATE_FILE_UPLOAD:
 
 ADCS.ADCS_FILE_UPLOAD_PACKET:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Packet_num': '>u2', 'File_bytes': '>u1'}
 		return values: {'err': '>b', 'file_bytes': '>b'}
 		port: 18		subport: 9
@@ -907,6 +1108,7 @@ ADCS.ADCS_FILE_UPLOAD_PACKET:
 
 ADCS.ADCS_FINALIZE_UPLOAD_BLOCK:
 		About: None
+		Supports:'OBC'
 		Arguments: {'File_dest': '>u2', 'Offset': '>u4', 'Block_length': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 10
@@ -914,6 +1116,7 @@ ADCS.ADCS_FINALIZE_UPLOAD_BLOCK:
 
 ADCS.ADCS_RESET_UPLOAD_BLOCK:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 11
@@ -921,6 +1124,7 @@ ADCS.ADCS_RESET_UPLOAD_BLOCK:
 
 ADCS.ADCS_RESET_FILE_LIST_READ_POINTER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 12
@@ -928,6 +1132,7 @@ ADCS.ADCS_RESET_FILE_LIST_READ_POINTER:
 
 ADCS.ADCS_INITIATE_DOWNLOAD_BURST:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Msg_len': '>u1', 'Ignore_hole_map': '>?'}
 		return values: {'err': '>b'}
 		port: 18		subport: 13
@@ -935,6 +1140,7 @@ ADCS.ADCS_INITIATE_DOWNLOAD_BURST:
 
 ADCS.ADCS_GET_NODE_IDENTIFICATION:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Node_Type': '>u1', 'Interface_Ver': '>u1', 'Major_Firm_Ver': '>u1', 'Minor_Firm_Ver': '>u1', 'Runtime_S': '>u2', 'Runtime_Ms': '>u2'}
 		port: 18		subport: 14
@@ -942,6 +1148,7 @@ ADCS.ADCS_GET_NODE_IDENTIFICATION:
 
 ADCS.ADCS_GET_BOOT_PROGRAM_STAT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Mcu_Reset_Cause': '>u1', 'Boot_Cause': '>u1', 'Boot_Count': '>u2', 'Boot_Idx': '>u1', 'Major_Firm_Ver': '>u1', 'Minor_Firm_Ver': '>u1'}
 		port: 18		subport: 15
@@ -949,6 +1156,7 @@ ADCS.ADCS_GET_BOOT_PROGRAM_STAT:
 
 ADCS.ADCS_GET_BOOT_INDEX:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Program_Idx': '>u1', 'Boot_Stat': '>u1'}
 		port: 18		subport: 16
@@ -956,6 +1164,7 @@ ADCS.ADCS_GET_BOOT_INDEX:
 
 ADCS.ADCS_GET_LAST_LOGGED_EVENT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Time': '>u4', 'Event_Id': '>u1', 'Event_Param': '>u1'}
 		port: 18		subport: 17
@@ -963,6 +1172,7 @@ ADCS.ADCS_GET_LAST_LOGGED_EVENT:
 
 ADCS.ADCS_GET_SD_FORMAT_PROCESS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'FormT_Busy': '>?', 'Erase_All_Busy': '>?'}
 		port: 18		subport: 18
@@ -970,6 +1180,7 @@ ADCS.ADCS_GET_SD_FORMAT_PROCESS:
 
 ADCS.ADCS_GET_TC_ACK:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Last_Tc_Id': '>u1', 'Tc_Processed': '>?', 'Tc_Err_Stat': '>b'}
 		port: 18		subport: 19
@@ -977,6 +1188,7 @@ ADCS.ADCS_GET_TC_ACK:
 
 ADCS.ADCS_GET_FILE_DOWNLOAD_BUFFER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Packet_Count': '>u2', 'File': '>u4'}
 		port: 18		subport: 20
@@ -984,6 +1196,7 @@ ADCS.ADCS_GET_FILE_DOWNLOAD_BUFFER:
 
 ADCS.ADCS_GET_FILE_DOWNLOAD_BLOCK_STAT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Ready': '>?', 'Param_Err': '?', 'Crc16_Checksum': '>u2', 'Length': '>u2'}
 		port: 18		subport: 21
@@ -991,6 +1204,7 @@ ADCS.ADCS_GET_FILE_DOWNLOAD_BLOCK_STAT:
 
 ADCS.ADCS_GET_FILE_INFO:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Type': '>u1', 'Updating': '?', 'Size': '>u4', 'Time': '>u4', 'Crc16_Checksum': '>u2'}
 		port: 18		subport: 22
@@ -998,6 +1212,7 @@ ADCS.ADCS_GET_FILE_INFO:
 
 ADCS.ADCS_GET_INIT_UPLOAD_STAT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Busy': '>?'}
 		port: 18		subport: 23
@@ -1005,6 +1220,7 @@ ADCS.ADCS_GET_INIT_UPLOAD_STAT:
 
 ADCS.ADCS_GET_FINALIZE_UPLOAD_STAT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Busy': '>?', 'Error': '>?'}
 		port: 18		subport: 24
@@ -1012,6 +1228,7 @@ ADCS.ADCS_GET_FINALIZE_UPLOAD_STAT:
 
 ADCS.ADCS_GET_UPLOAD_CRC16_CHECKSUM:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Checksum': '>u2'}
 		port: 18		subport: 25
@@ -1019,6 +1236,7 @@ ADCS.ADCS_GET_UPLOAD_CRC16_CHECKSUM:
 
 ADCS.ADCS_GET_SRAM_LATCHUP_COUNT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Sram1': '>u2', 'Sram2': '>u2'}
 		port: 18		subport: 26
@@ -1026,6 +1244,7 @@ ADCS.ADCS_GET_SRAM_LATCHUP_COUNT:
 
 ADCS.ADCS_GET_EDAC_ERR_COUNT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Single_Sram': '>u2', 'Double_Sram': '>u2', 'Multi_Sram': '>u2'}
 		port: 18		subport: 27
@@ -1033,6 +1252,7 @@ ADCS.ADCS_GET_EDAC_ERR_COUNT:
 
 ADCS.ADCS_GET_COMMS_STAT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'TC_num': '>u2', 'TM_num': '>u2', 'CommsStat_flags_1': '<B', 'CommsStat_flags_2': '<B', 'CommsStat_flags_3': '<B', 'CommsStat_flags_4': '<B', 'CommsStat_flags_5': '<B', 'CommsStat_flags_6': '<B'}
 		port: 18		subport: 28
@@ -1040,6 +1260,7 @@ ADCS.ADCS_GET_COMMS_STAT:
 
 ADCS.ADCS_SET_CACHE_EN_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'State': '>?'}
 		return values: {'err': '>b'}
 		port: 18		subport: 29
@@ -1047,6 +1268,7 @@ ADCS.ADCS_SET_CACHE_EN_STATE:
 
 ADCS.ADCS_SET_SRAM_SCRUB_SIZE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Size': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 30
@@ -1054,6 +1276,7 @@ ADCS.ADCS_SET_SRAM_SCRUB_SIZE:
 
 ADCS.ADCS_SET_UNIXTIME_SAVE_CONFIG:
 		About: when: [1 = now, 2 = on update, 4 = periodically], period
+		Supports:'OBC'
 		Arguments: {'When': '>u1', 'period': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 31
@@ -1061,6 +1284,7 @@ ADCS.ADCS_SET_UNIXTIME_SAVE_CONFIG:
 
 ADCS.ADCS_SET_HOLE_MAP:
 		About: None
+		Supports:'OBC'
 		Arguments: {'arg1': '>u1', 'arg2': '>u1'}
 		return values: {'err': '>b', 'Hole_Map': '>u1'}
 		port: 18		subport: 32
@@ -1068,6 +1292,7 @@ ADCS.ADCS_SET_HOLE_MAP:
 
 ADCS.ADCS_SET_UNIX_T:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u4', 'Arg2': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 33
@@ -1075,6 +1300,7 @@ ADCS.ADCS_SET_UNIX_T:
 
 ADCS.ADCS_GET_CACHE_EN_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'State': '>?'}
 		return values: {'err': '>b', 'En_State': '>?'}
 		port: 18		subport: 34
@@ -1082,6 +1308,7 @@ ADCS.ADCS_GET_CACHE_EN_STATE:
 
 ADCS.ADCS_GET_SRAM_SCRUB_SIZE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Size': '>u2'}
 		port: 18		subport: 35
@@ -1089,6 +1316,7 @@ ADCS.ADCS_GET_SRAM_SCRUB_SIZE:
 
 ADCS.ADCS_GET_UNIXTIME_SAVE_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'When': '>u1', 'Period': '>u1'}
 		port: 18		subport: 36
@@ -1096,6 +1324,7 @@ ADCS.ADCS_GET_UNIXTIME_SAVE_CONFIG:
 
 ADCS.ADCS_GET_HOLE_MAP:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Num': '>u1'}
 		return values: {'err': '>b', 'Hole_Map': '>u1'}
 		port: 18		subport: 37
@@ -1103,6 +1332,7 @@ ADCS.ADCS_GET_HOLE_MAP:
 
 ADCS.ADCS_GET_UNIX_T:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Unix_t': '>u4', 'Count_Ms': '>u2'}
 		port: 18		subport: 38
@@ -1110,6 +1340,7 @@ ADCS.ADCS_GET_UNIX_T:
 
 ADCS.ADCS_CLEAR_ERR_FLAGS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 39
@@ -1117,6 +1348,7 @@ ADCS.ADCS_CLEAR_ERR_FLAGS:
 
 ADCS.ADCS_SET_BOOT_INDEX:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Index': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 40
@@ -1124,6 +1356,7 @@ ADCS.ADCS_SET_BOOT_INDEX:
 
 ADCS.ADCS_RUN_SELECTED_PROGRAM:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 41
@@ -1131,6 +1364,7 @@ ADCS.ADCS_RUN_SELECTED_PROGRAM:
 
 ADCS.ADCS_READ_PROGRAM_INFO:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Index': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 42
@@ -1138,6 +1372,7 @@ ADCS.ADCS_READ_PROGRAM_INFO:
 
 ADCS.ADCS_COPY_PROGRAM_INTERNAL_FLASH:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Index': '>u1', 'Overwrite_flag': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 43
@@ -1145,6 +1380,7 @@ ADCS.ADCS_COPY_PROGRAM_INTERNAL_FLASH:
 
 ADCS.ADCS_GET_BOOTLOADER_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Uptime': '>u2', 'Flags_arr_1': '>u1', 'Flags_arr_2': '>u1', 'Flags_arr_3': '>u1', 'Flags_arr_4': '>u1', 'Flags_arr_5': '>u1', 'Flags_arr_6': '>u1', 'Flags_arr_7': '>u1', 'Flags_arr_8': '>u1', 'Flags_arr_9': '>u1', 'Flags_arr_10': '>u1', 'Flags_arr_11': '>u1', 'Flags_arr_12': '>u1'}
 		port: 18		subport: 44
@@ -1152,6 +1388,7 @@ ADCS.ADCS_GET_BOOTLOADER_STATE:
 
 ADCS.ADCS_GET_PROGRAM_INFO:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Index': '>u1', 'Busy': '>?', 'File_Size': '>u4', 'Crc16_Checksum': '>u2'}
 		port: 18		subport: 45
@@ -1159,6 +1396,7 @@ ADCS.ADCS_GET_PROGRAM_INFO:
 
 ADCS.ADCS_COPY_INTERNAL_FLASH_PROGRESS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Error': '>?', 'Busy': '>?'}
 		port: 18		subport: 46
@@ -1166,6 +1404,7 @@ ADCS.ADCS_COPY_INTERNAL_FLASH_PROGRESS:
 
 ADCS.ADCS_DEPLOY_MAGNETOMETER_BOOM:
 		About: Actuation timeout in seconds
+		Supports:'OBC'
 		Arguments: {'Actuation_timeout': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 47
@@ -1173,6 +1412,7 @@ ADCS.ADCS_DEPLOY_MAGNETOMETER_BOOM:
 
 ADCS.ADCS_SET_ENABLED_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'State': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 48
@@ -1180,6 +1420,7 @@ ADCS.ADCS_SET_ENABLED_STATE:
 
 ADCS.ADCS_CLEAR_LATCHED_ERRS:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>?', 'Arg2': '>?'}
 		return values: {'err': '>b'}
 		port: 18		subport: 49
@@ -1187,6 +1428,7 @@ ADCS.ADCS_CLEAR_LATCHED_ERRS:
 
 ADCS.ADCS_SET_ATTITUDE_CONTROL_MODE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Control_mode': '>u1', 'Timeout': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 50
@@ -1194,6 +1436,7 @@ ADCS.ADCS_SET_ATTITUDE_CONTROL_MODE:
 
 ADCS.ADCS_SET_ATTITUDE_ESTIMATE_MODE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Mode': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 51
@@ -1201,6 +1444,7 @@ ADCS.ADCS_SET_ATTITUDE_ESTIMATE_MODE:
 
 ADCS.ADCS_TRIGGER_ADCS_LOOP:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 52
@@ -1208,6 +1452,7 @@ ADCS.ADCS_TRIGGER_ADCS_LOOP:
 
 ADCS.ADCS_TRIGGER_ADCS_LOOP_SIM:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 53
@@ -1215,6 +1460,7 @@ ADCS.ADCS_TRIGGER_ADCS_LOOP_SIM:
 
 ADCS.ADCS_SET_ASGP4_RUNE_MODE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Mode': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 54
@@ -1222,6 +1468,7 @@ ADCS.ADCS_SET_ASGP4_RUNE_MODE:
 
 ADCS.ADCS_TRIGGER_ASGP4:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 55
@@ -1229,6 +1476,7 @@ ADCS.ADCS_TRIGGER_ASGP4:
 
 ADCS.ADCS_SET_MTM_OP_MODE:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Mode': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 56
@@ -1236,6 +1484,7 @@ ADCS.ADCS_SET_MTM_OP_MODE:
 
 ADCS.ADCS_CNV2JPG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u1', 'Arg2': '>u1', 'Arg3': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 57
@@ -1243,6 +1492,7 @@ ADCS.ADCS_CNV2JPG:
 
 ADCS.ADCS_SAVE_IMG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u1', 'Arg2': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 58
@@ -1250,6 +1500,7 @@ ADCS.ADCS_SAVE_IMG:
 
 ADCS.ADCS_SET_MAGNETORQUER_OUTPUT:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u2', 'Arg2': '>u2', 'Arg3': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 59
@@ -1257,6 +1508,7 @@ ADCS.ADCS_SET_MAGNETORQUER_OUTPUT:
 
 ADCS.ADCS_SET_WHEEL_SPEED:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u2', 'Arg2': '>u2', 'Arg3': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 60
@@ -1264,6 +1516,7 @@ ADCS.ADCS_SET_WHEEL_SPEED:
 
 ADCS.ADCS_SAVE_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 61
@@ -1271,6 +1524,7 @@ ADCS.ADCS_SAVE_CONFIG:
 
 ADCS.ADCS_SAVE_ORBIT_PARAMS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 62
@@ -1278,6 +1532,7 @@ ADCS.ADCS_SAVE_ORBIT_PARAMS:
 
 ADCS.ADCS_GET_CURRENT_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'att_estimate_mode': '>B', 'att_ctrl_mode': '>B', 'run_mode': '>B', 'ASGP4_mode': '>B', 'flags_arr_1': '>B', 'flags_arr_2': '>B', 'flags_arr_3': '>B', 'flags_arr_4': '>B', 'flags_arr_5': '>B', 'flags_arr_6': '>B', 'flags_arr_7': '>B', 'flags_arr_8': '>B', 'flags_arr_9': '>B', 'flags_arr_10': '>B', 'flags_arr_11': '>B', 'flags_arr_12': '>B', 'flags_arr_13': '>B', 'flags_arr_14': '>B', 'flags_arr_15': '>B', 'flags_arr_16': '>B', 'flags_arr_17': '>B', 'flags_arr_18': '>B', 'flags_arr_19': '>B', 'flags_arr_20': '>B', 'flags_arr_21': '>B', 'flags_arr_22': '>B', 'flags_arr_23': '>B', 'flags_arr_24': '>B', 'flags_arr_25': '>B', 'flags_arr_26': '>B', 'flags_arr_27': '>B', 'flags_arr_28': '>B', 'flags_arr_29': '>B', 'flags_arr_30': '>B', 'flags_arr_31': '>B', 'flags_arr_32': '>B', 'flags_arr_33': '>B', 'flags_arr_34': '>B', 'flags_arr_35': '>B', 'flags_arr_36': '>B', 'flags_arr_37': '>B', 'flags_arr_38': '>B', 'flags_arr_39': '>B', 'flags_arr_40': '>B', 'flags_arr_41': '>B', 'flags_arr_42': '>B', 'flags_arr_43': '>B', 'flags_arr_44': '>B', 'flags_arr_45': '>B', 'flags_arr_46': '>B', 'flags_arr_47': '>B', 'flags_arr_48': '>B', 'flags_arr_49': '>B', 'flags_arr_50': '>B', 'flags_arr_51': '>B', 'flags_arr_52': '>B', 'MTM_sample_mode': '>B', 'est_angle_x': '>f4', 'est_angle_y': '>f4', 'est_angle_z': '>f4', 'est_quaternion_x': '>i2', 'est_quaternion_y': '>i2', 'est_quaternion_z': '>i2', 'est_angular_rate_x': '>f4', 'est_angular_rate_y': '>f4', 'est_angular_rate_z': '>f4', 'ECI_pos_x': '>f4', 'ECI_pos_y': '>f4', 'ECI_pos_z': '>f4', 'ECI_vel_x': '>f4', 'ECI_vel_y': '>f4', 'ECI_vel_z': '>f4', 'Latitude': '>f4', 'Longitude': '>f4', 'Altitude': '>f4', 'ecef_pos_x': '>i2', 'ecef_pos_y': '>i2', 'ecef_pos_z': '>i2'}
 		port: 18		subport: 63
@@ -1285,6 +1540,7 @@ ADCS.ADCS_GET_CURRENT_STATE:
 
 ADCS.ADCS_GET_JPG_CNV_PROGESS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Percentage': '>u1', 'Result': '>u1', 'File_Counter': '>u1'}
 		port: 18		subport: 64
@@ -1292,6 +1548,7 @@ ADCS.ADCS_GET_JPG_CNV_PROGESS:
 
 ADCS.ADCS_GET_CUBEACP_STATE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Flags_Arr_1': '>u1', 'Flags_Arr_2': '>u1', 'Flags_Arr_3': '>u1', 'Flags_Arr_4': '>u1', 'Flags_Arr_5': '>u1', 'Flags_Arr_6': '>u1'}
 		port: 18		subport: 65
@@ -1299,6 +1556,7 @@ ADCS.ADCS_GET_CUBEACP_STATE:
 
 ADCS.ADCS_GET_SAT_POS_LLH:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'X': '>i2', 'Y': '>i2', 'Z': '>u2'}
 		port: 18		subport: 66
@@ -1306,6 +1564,7 @@ ADCS.ADCS_GET_SAT_POS_LLH:
 
 ADCS.ADCS_GET_EXECUTION_TIMES:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Adcs_Update': '>u2', 'Sensor_Comm': '>u2', 'SGP4_propag': '>u2', 'IGRF_model': '>u2'}
 		port: 18		subport: 67
@@ -1313,6 +1572,7 @@ ADCS.ADCS_GET_EXECUTION_TIMES:
 
 ADCS.ADCS_GET_ACP_LOOP_STAT:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Time': '>u2', 'Execution_point': '>u1'}
 		port: 18		subport: 68
@@ -1320,6 +1580,7 @@ ADCS.ADCS_GET_ACP_LOOP_STAT:
 
 ADCS.ADCS_GET_IMG_SAVE_PROGRESS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Percentage': '>u1', 'Status': '>u1'}
 		port: 18		subport: 69
@@ -1327,6 +1588,7 @@ ADCS.ADCS_GET_IMG_SAVE_PROGRESS:
 
 ADCS.ADCS_GET_MEASUREMENTS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Magnetic_field_X': '>f4', 'Magnetic_field_Y': '>f4', 'Magnetic_field_Z': '>f4', 'Coarse_Sun_X': '>f4', 'Coarse_Sun_Y': '>f4', 'Coarse_Sun_Z': '>f4', 'Sun_X': '>f4', 'Sun_Y': '>f4', 'Sun_Z': '>f4', 'Nadir_X': '>f4', 'Nadir_Y': '>f4', 'Nadir_Z': '>f4', 'Angular_Rate_X': '>f4', 'Angular_Rate_Y': '>f4', 'Angular_Rate_Z': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4', 'Star1b_X': '>f4', 'Star1b_Y': '>f4', 'Star1b_Z': '>f4', 'Star1o_X': '>f4', 'Star1o_Y': '>f4', 'Star1o_Z': '>f4', 'Star2b_X': '>f4', 'Star2b_Y': '>f4', 'Star2b_Z': '>f4', 'Star2o_X': '>f4', 'Star2o_Y': '>f4', 'Star2o_Z': '>f4', 'Star3b_X': '>f4', 'Star3b_Y': '>f4', 'Star3b_Z': '>f4', 'Star3o_X': '>f4', 'Star3o_Y': '>f4', 'Star3o_Z': '>f4'}
 		port: 18		subport: 70
@@ -1334,6 +1596,7 @@ ADCS.ADCS_GET_MEASUREMENTS:
 
 ADCS.ADCS_GET_ACTUATOR:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Magnetorquer_X_ms/1000': '>f4', 'Magnetorquer_Y_ms/1000': '>f4', 'Magnetorquer_Z_ms/1000': '>f4', 'Wheel_Speed_X': '>f4', 'Wheel_Speed_Y': '>f4', 'Wheel_Speed_Z': '>f4'}
 		port: 18		subport: 71
@@ -1341,6 +1604,7 @@ ADCS.ADCS_GET_ACTUATOR:
 
 ADCS.ADCS_GET_ESTIMATION:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Igrf_magnetic_field_X': '>f4', 'Igrf_magnetic_field_Y': '>f4', 'Igrf_magnetic_field_Z': '>f4', 'Sun_X': '>f4', 'Sun_Y': '>f4', 'Sun_Z': '>f4', 'Gyro_bias_X': '>f4', 'Gyro_bias_Y': '>f4', 'Gyro_bias_Z': '>f4', 'Innovation_X': '>f4', 'Innovation_Y': '>f4', 'Innovation_Z': '>f4', 'Quaternion_Err_X': '>f4', 'Quaternion_Err_Y': '>f4', 'Quaternion_Err_Z': '>f4', 'Quaternion_Covar_X': '>f4', 'Angular_Rate_Covar_X': '>f4', 'Angular_Rate_Covar_Y': '>f4', 'Angular_Rate_Covar_Z': '>f4'}
 		port: 18		subport: 72
@@ -1348,6 +1612,7 @@ ADCS.ADCS_GET_ESTIMATION:
 
 ADCS.ADCS_GET_ASGP4:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Epoch': '>f4', 'Inclination': '>f4', 'RAAN': '>f4', 'ECC': '>f4', 'AOP': '>f4', 'MA': '>f4', 'MM': '>f4', 'Bstar': '>f4'}
 		port: 18		subport: 73
@@ -1355,6 +1620,7 @@ ADCS.ADCS_GET_ASGP4:
 
 ADCS.ADCS_GET_RAW_SENSOR:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Cam1_Centroid_X': '>i2', 'Cam1_Centroid_Y': '>i2', 'Cam1_Capture_Stat': '>u1', 'Cam1_Detect_Result': '>u1', 'Cam2_Centroid_X': '>i2', 'Cam2_Centroid_Y': '>i2', 'Cam2_Capture_Stat': '>u1', 'Cam2_Detect_Result': '>u1', 'Css_1': '>u1', 'Css_2': '>u1', 'Css_3': '>u1', 'Css_4': '>u1', 'Css_5': '>u1', 'Css_6': '>u1', 'Css_7': '>u1', 'Css_8': '>u1', 'Css_9': '>u1', 'Css_10': '>u1', 'MTM_X': '>i2', 'MTM_Y': '>i2', 'MTM_Z': '>i2', 'Rate_X': '>i2', 'Rate_Y': '>i2', 'Rate_Z': '>i2'}
 		port: 18		subport: 74
@@ -1362,6 +1628,7 @@ ADCS.ADCS_GET_RAW_SENSOR:
 
 ADCS.ADCS_GET_RAW_GPS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Sol_Stat': '>u1', 'Tracked_Sats': '>u1', 'UsedInSol_Sats': '>u1', 'Xyz_Lof_Count': '>u1', 'Range_Log_Count': '>u1', 'Response_Msg': '>u1', 'Reference_Week': '>u2', 'Time': '>u4', 'X_Pos': '>i4', 'X_Vel': '>i2', 'Y_Pos': '>i4', 'Y_Vel': '>i2', 'Z_Pos': '>i4', 'Z_Vel': '>i2', 'Pos_Std_Dev_X': '>f4', 'Pos_Std_Dev_Y': '>f4', 'Pos_Std_Dev_Z': '>f4', 'Vel_Std_Dev_X': '>u1', 'Vel_Std_Dev_Y': '>u1', 'Vel_Std_Dev_Z': '>u1'}
 		port: 18		subport: 75
@@ -1369,6 +1636,7 @@ ADCS.ADCS_GET_RAW_GPS:
 
 ADCS.ADCS_GET_STAR_TRACKER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Detected_Stars': '>u1', 'Img_noise': '>u1', 'Invalid_stars': '>u1', 'Identified_stars': '>u1', 'Identification_mode': '>u1', 'Img_dark_val': '>u1', 'flags_arr': '>O20', 'Sample_T': '>u2', 'Star1_Confidence': '>u1', 'Star1_magnitude': '>u2', 'Star1_Catalouge_Num': '>u2', 'Star1_Centroid_X': '>i2', 'Star1_Centroid_Y': '>i2', 'Star2_Confidence': '>u1', 'Star2_magnitude': '>u2', 'Star2_Catalouge_Num': '>u2', 'Star2_Centroid_X': '>i2', 'Star2_Centroid_Y': '>i2', 'Star3_Confidence': '>u1', 'Star3_magnitude': '>u2', 'Star3_Catalouge_Num': '>u2', 'Star3_Centroid_X': '>i2', 'Star3_Centroid_Y': '>i2', 'Capture_T': '>u2', 'Detect_T': '>u2', 'Identification_T': '>u2', 'Estimated_Rate_X': '>f4', 'Estimated_Rate_Y': '>f4', 'Estimated_Rate_Z': '>f4', 'Estimated_Att_X': '>f4', 'Estimated_Att_Y': '>f4', 'Estimated_Att_Z': '>f4'}
 		port: 18		subport: 76
@@ -1376,6 +1644,7 @@ ADCS.ADCS_GET_STAR_TRACKER:
 
 ADCS.ADCS_GET_MTM2_MEASUREMENTS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Mag_X': '>i2', 'Mag_Y': '>i2', 'Mag_Z': '>i2'}
 		port: 18		subport: 77
@@ -1383,6 +1652,7 @@ ADCS.ADCS_GET_MTM2_MEASUREMENTS:
 
 ADCS.ADCS_GET_POWER_TEMP:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Cubesense1_3v3_I': '>f4', 'Cubesense1_CamSram_I': '>f4', 'Cubesense2_3v3_I': '>f4', 'Cubesense2_CamSram_I': '>f4', 'Cubecontrol_3v3_I': '>f4', 'cubecontrol_5v_I': '>f4', 'Cubecontrol_vBat_I': '>f4', 'wheel1_I': '>f4', 'wheel2_I': '>f4', 'wheel3_I': '>f4', 'Cubestar_I': '>f4', 'Magnetorquer_I': '>f4', 'Cubestar_Temp': '>f4', 'MCU_temp': '>f4', 'MTM_temp': '>f4', 'MTM2_temp': '>f4', 'Rate_Sensor_Temp_X': '>i2', 'Rate_Sensor_Temp_Y': '>i2', 'Rate_Sensor_Temp_Z': '>i2'}
 		port: 18		subport: 78
@@ -1390,6 +1660,7 @@ ADCS.ADCS_GET_POWER_TEMP:
 
 ADCS.ADCS_SET_POWER_CONTROL:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Arg1': '>u1', 'Arg2': '>u1', 'Arg3': '>u1', 'Arg4': '>u1', 'Arg5': '>u1', 'Arg6': '>u1', 'Arg7': '>u1', 'Arg8': '>u1', 'Arg9': '>u1', 'Arg10': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 79
@@ -1397,6 +1668,7 @@ ADCS.ADCS_SET_POWER_CONTROL:
 
 ADCS.ADCS_GET_POWER_CONTROL:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'CubeCTRLSgn': '>u1', 'CubeCTRLMtr': '>u1', 'CubeSense1': '>u1', 'CubeSense2': '>u1', 'CubeStar': '>u1', 'CubeWheel1': '>u1', 'CubeWheel2': '>u1', 'CubeWheel3': '>u1', 'Motor': '>u1', 'GPS': '>u1'}
 		port: 18		subport: 80
@@ -1404,6 +1676,7 @@ ADCS.ADCS_GET_POWER_CONTROL:
 
 ADCS.ADCS_SET_ATTITUDE_ANGLE:
 		About: CHECK DATA SHEET BEFORE USE. xyz ORDER MAY BE WRONG
+		Supports:'OBC'
 		Arguments: {'x': '>f4', 'y': '>f4', 'z': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 81
@@ -1411,6 +1684,7 @@ ADCS.ADCS_SET_ATTITUDE_ANGLE:
 
 ADCS.ADCS_GET_ATTITUDE_ANGLE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'X': '>f4', 'Y': '>f4', 'Z': '>f4'}
 		port: 18		subport: 82
@@ -1418,6 +1692,7 @@ ADCS.ADCS_GET_ATTITUDE_ANGLE:
 
 ADCS.ADCS_SET_TRACK_CONTROLLER:
 		About: None
+		Supports:'OBC'
 		Arguments: {'x': '>f4', 'y': '>f4', 'z': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 83
@@ -1425,6 +1700,7 @@ ADCS.ADCS_SET_TRACK_CONTROLLER:
 
 ADCS.ADCS_GET_TRACK_CONTROLLER:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'X': '>f4', 'Y': '>f4', 'Z': '>f4'}
 		port: 18		subport: 84
@@ -1432,6 +1708,7 @@ ADCS.ADCS_GET_TRACK_CONTROLLER:
 
 ADCS.ADCS_SET_LOG_CONFIG:
 		About: Hex file assumed for file with name 'file name'
+		Supports:'OBC'
 		Arguments: {'Period': '>u2', 'Destination': '>B', 'Log': '>B', 'File_name': '>S30'}
 		return values: {'err': '>b'}
 		port: 18		subport: 85
@@ -1439,6 +1716,7 @@ ADCS.ADCS_SET_LOG_CONFIG:
 
 ADCS.ADCS_GET_LOG_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Log': '>B'}
 		return values: {'err': '>b', 'Flags_arr': '>V80', 'Period': '>u2', 'Dest': '>u1', 'Log': '>u1'}
 		port: 18		subport: 86
@@ -1446,6 +1724,7 @@ ADCS.ADCS_GET_LOG_CONFIG:
 
 ADCS.ADCS_SET_INERTIAL_REF:
 		About: None
+		Supports:'OBC'
 		Arguments: {'x': '>f4', 'y': '>f4', 'z': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 87
@@ -1453,6 +1732,7 @@ ADCS.ADCS_SET_INERTIAL_REF:
 
 ADCS.ADCS_GET_INERTIAL_REF:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'X': '>f4', 'Y': '>f4', 'Z': '>f4'}
 		port: 18		subport: 88
@@ -1460,13 +1740,15 @@ ADCS.ADCS_GET_INERTIAL_REF:
 
 ADCS.ADCS_SET_SGP4_ORBIT_PARAMS:
 		About: None
-		Arguments: {'Arg1': '>f8', 'Arg2': '>f8', 'Arg3': '>f8', 'Arg4': '>f8', 'Arg5': '>f8', 'Arg6': '>f8', 'Arg7': '>f8', 'Arg8': '>f8'}
+		Supports:'OBC'
+		Arguments: {'inclination': '>f8', 'eccentricity': '>f8', 'RAAN': '>f8', 'AOP': '>f8', 'Bstar': '>f8', 'mean_motion': '>f8', 'mean_anomaly': '>f8', 'epoch': '>f8'}
 		return values: {'err': '>b'}
 		port: 18		subport: 89
 
 
 ADCS.ADCS_GET_SGP4_ORBIT_PARAMS:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Inclination': '>f8', 'ECC': '>f8', 'RAAN': '>f8', 'AOP': '>f8', 'Bstar': '>f8', 'MM': '>f8', 'MA': '>f8', 'Epoch': '>f8'}
 		port: 18		subport: 90
@@ -1474,6 +1756,7 @@ ADCS.ADCS_GET_SGP4_ORBIT_PARAMS:
 
 ADCS.ADCS_SET_SYSTEM_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 91
@@ -1481,6 +1764,7 @@ ADCS.ADCS_SET_SYSTEM_CONFIG:
 
 ADCS.ADCS_GET_SYSTEM_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Acp_Type': '>u1', 'Special_Ctrl_Sel': '>u1', 'CC_sig_ver': '>u1', 'CC_motor_ver': '>u1', 'CS1_ver': '>u1', 'CS2_ver': '>u1', 'CS1_cam': '>u1', 'CS2_cam': '>u1', 'CubeStar_Ver': '>u1', 'GPS': '>u1', 'Include_MTM2': '>?', 'MTQ_max_dipole_X': '>f4', 'MTQ_max_dipole_Y': '>f4', 'MTQ_max_dipole_Z': '>f4', 'MTQ_ontime_res': '>f4', 'MTQ_max_ontime': '>f4', 'RW_max_torque_X': '>f4', 'RW_max_torque_Y': '>f4', 'RW_max_torque_Z': '>f4', 'RW_max_moment_X': '>f4', 'RW_max_moment_Y': '>f4', 'RW_max_moment_Z': '>f4', 'RW_inertia_X': '>f4', 'RW_inertia_Y': '>f4', 'RW_inertia_Z': '>f4', 'RW_torque_inc': '>f4', 'MTM1_bias_d1_X': '>f4', 'MTM1_bias_d1_Y': '>f4', 'MTM1_bias_d1_Z': '>f4', 'MTM1_bias_d2_X': '>f4', 'MTM1_bias_d2_Y': '>f4', 'MTM1_bias_d2_Z': '>f4', 'MTM1_sens_s1_X': '>f4', 'MTM1_sens_s1_Y': '>f4', 'MTM1_sens_s1_Z': '>f4', 'MTM1_sens_s2_X': '>f4', 'MTM1_sens_s2_Y': '>f4', 'MTM1_sens_s2_Z': '>f4', 'MTM2_bias_d1_X': '>f4', 'MTM2_bias_d1_Y': '>f4', 'MTM2_bias_d1_Z': '>f4', 'MTM2_bias_d2_X': '>f4', 'MTM2_bias_d2_Y': '>f4', 'MTM2_bias_d2_Z': '>f4', 'MTM2_sens_s1_X': '>f4', 'MTM2_sens_s1_Y': '>f4', 'MTM2_sens_s1_Z': '>f4', 'MTM2_sens_s2_X': '>f4', 'MTM2_sens_s2_Y': '>f4', 'MTM2_sens_s2_Z': '>f4', 'CC_Signal_Port': '>u1', 'CC_Signal_Pin': '>u1', 'CC_Motor_Port': '>u1', 'CC_Motor_Pin': '>u1', 'CC_Common_Port': '>u1', 'CC_Common_Pin': '>u1', 'CS1_Port': '>u1', 'CS1_Pin': '>u1', 'CS2_Port': '>u1', 'CS2_Pin': '>u1', 'CubeStar_Port': '>u1', 'CubeStar_Pin': '>u1', 'CW1_Port': '>u1', 'CW1_Pin': '>u1', 'CW2_Port': '>u1', 'CW2_Pin': '>u1', 'CW3_Port': '>u1', 'CW3_Pin': '>u1'}
 		port: 18		subport: 92
@@ -1488,34 +1772,39 @@ ADCS.ADCS_GET_SYSTEM_CONFIG:
 
 ADCS.ADCS_SET_MTQ_CONFIG:
 		About: None
-		Arguments: {'Arg1': '>u1', 'Arg2': '>u1', 'Arg3': '>u1'}
+		Supports:'OBC'
+		Arguments: {'Mag1_axis': '>u1', 'Mag2_axis': '>u1', 'Mag3_axis': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 93
 
 
 ADCS.ADCS_SET_RW_CONFIG:
 		About: None
-		Arguments: {'Arg1': '>u1', 'Arg2': '>u1', 'Arg3': '>u1', 'Arg4': '>u1'}
+		Supports:'OBC'
+		Arguments: {'RW1_axis': '>u1', 'RW2_axis': '>u1', 'RW3_axis': '>u1', 'RW4_axis': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 94
 
 
 ADCS.ADCS_SET_RATE_GYRO:
 		About: None
-		Arguments: {'Arg1': '>u1', 'Arg2': '>u1', 'Arg3': '>u1', 'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Arg4': '>u1'}
+		Supports:'OBC'
+		Arguments: {'Gyro1_axis': '>u1', 'Gyro2_axis': '>u1', 'Gyro3_axis': '>u1', 'X_sensor_offset': '>f4', 'Y_sensor_offset': '>f4', 'Z_sensor_offset': '>f4', 'Rate_Sensor_Mult': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 95
 
 
 ADCS.ADCS_SET_CSS_CONFIG:
 		About: CSS relative scale floats cannot be negative!
-		Arguments: {'Arg1': '>B', 'Arg2': '>B', 'Arg3': '>B', 'Arg4': '>B', 'Arg5': '>B', 'Arg6': '>B', 'Arg7': '>B', 'Arg8': '>B', 'Arg9': '>B', 'Arg10': '>B', 'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Float4': '>f4', 'Float5': '>f4', 'Float6': '>f4', 'Float7': '>f4', 'Float8': '>f4', 'Float9': '>f4', 'Float10': '>f4', 'Arg11': '>B'}
+		Supports:'OBC'
+		Arguments: {'CSS1_axis': '>B', 'CSS2_axis': '>B', 'CSS3_axis': '>B', 'CSS4_axis': '>B', 'CSS5_axis': '>B', 'CSS6_axis': '>B', 'CSS7_axis': '>B', 'CSS8_axis': '>B', 'CSS9_axis': '>B', 'CSS10_axis': '>B', 'CSS1_rel_scale': '>f4', 'CSS2_rel_scale': '>f4', 'CSS3_rel_scale': '>f4', 'CSS4_rel_scale': '>f4', 'CSS5_rel_scale': '>f4', 'CSS6_rel_scale': '>f4', 'CSS7_rel_scale': '>f4', 'CSS8_rel_scale': '>f4', 'CSS0_rel_scale': '>f4', 'CSS10_rel_scale': '>f4', 'CSS_threshold': '>B'}
 		return values: {'err': '>b'}
 		port: 18		subport: 96
 
 
 ADCS.ADCS_SET_STAR_TRACK_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Arg1': '>u2', 'Arg2': '>u2', 'Arg3': '>u1', 'Arg4': '>u1', 'Arg5': '>u1', 'Arg6': '>u2', 'Arg7': '>u1', 'Arg8': '>u1', 'Arg9': '>u1', 'Float4': '>f4', 'Float5': '>f4', 'Float6': '>f4', 'Float7': '>f4', 'Float8': '>f4', 'Float9': '>f4', 'Float10': '>f4', 'Arg10': '>u1', 'Arg11': '>u1', 'Arg12': '>u1', 'Arg13': '>u?', 'Arg14': '>u?', 'Arg15': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 97
@@ -1523,6 +1812,7 @@ ADCS.ADCS_SET_STAR_TRACK_CONFIG:
 
 ADCS.ADCS_SET_CUBESENSE_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Config': '>S30'}
 		return values: {'err': '>b'}
 		port: 18		subport: 98
@@ -1530,6 +1820,7 @@ ADCS.ADCS_SET_CUBESENSE_CONFIG:
 
 ADCS.ADCS_SET_MTM_CONFIG:
 		About: Sets the magnetometer configuration parameters. Input: Angle xyz (floats), channel_offset xyz (floats), sensitivity matrix (s11,s22,s33,s12,s13,s21,s23,s31,s32)
+		Supports:'OBC'
 		Arguments: {'angle_x': '>f4', 'angle_y': '>f4', 'angle_z': '>f4', 'channel_x': '>f4', 'channel_y': '>f4', 'channel_z': '>f4', 's11': '>f4', 's22': '>f4', 's33': '>f4', 's12': '>f4', 's13': '>f4', 's21': '>f4', 's23': '>f4', 's31': '>f4', 's32': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 99
@@ -1537,6 +1828,7 @@ ADCS.ADCS_SET_MTM_CONFIG:
 
 ADCS.ADCS_SET_DETUMBLE_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Float4': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 100
@@ -1544,6 +1836,7 @@ ADCS.ADCS_SET_DETUMBLE_CONFIG:
 
 ADCS.ADCS_SET_YWHEEL_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Float4': '>f4', 'Float5': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 101
@@ -1551,6 +1844,7 @@ ADCS.ADCS_SET_YWHEEL_CONFIG:
 
 ADCS.ADCS_SET_RWHEEL_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Arg1': '>B', 'Arg2': '>B'}
 		return values: {'err': '>b'}
 		port: 18		subport: 102
@@ -1558,6 +1852,7 @@ ADCS.ADCS_SET_RWHEEL_CONFIG:
 
 ADCS.ADCS_SET_TRACKING_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Arg1': '>B'}
 		return values: {'err': '>b'}
 		port: 18		subport: 103
@@ -1565,6 +1860,7 @@ ADCS.ADCS_SET_TRACKING_CONFIG:
 
 ADCS.ADCS_SET_MOI_MAT:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Float4': '>f4', 'Float5': '>f4', 'Float6': '>f4'}
 		return values: {'err': '>b'}
 		port: 18		subport: 104
@@ -1572,6 +1868,7 @@ ADCS.ADCS_SET_MOI_MAT:
 
 ADCS.ADCS_SET_ESTIMATION_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Float4': '>f4', 'Float5': '>f4', 'Float6': '>f4', 'Float7': '>f4', 'Arg1': '>u1', 'Arg2': '>u1', 'Arg3': '>u1', 'Arg4': '>u1', 'Arg5': '>u1', 'Arg6': '>u1', 'Arg7': '>u1', 'Arg8': '>u1', 'Arg9': '>u1', 'Arg10': '>u1', 'Arg11': '>u1'}
 		return values: {'err': '>b'}
 		port: 18		subport: 105
@@ -1579,6 +1876,7 @@ ADCS.ADCS_SET_ESTIMATION_CONFIG:
 
 ADCS.ADCS_SET_USERCODED_SETTING:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Code1': '>O20', 'Code2': '>020'}
 		return values: {'err': '>b'}
 		port: 18		subport: 106
@@ -1586,6 +1884,7 @@ ADCS.ADCS_SET_USERCODED_SETTING:
 
 ADCS.ADCS_SET_ASGP4_SETTING:
 		About: None
+		Supports:'OBC'
 		Arguments: {'Float1': '>f4', 'Float2': '>f4', 'Float3': '>f4', 'Float4': '>f4', 'Float5': '>f4', 'Float6': '>f4', 'Float7': '>f4', 'Arg1': '>u1', 'Float8': '>f4', 'Float9': '>f4', 'Arg2': '>u1', 'Float10': '>f4', 'Float11': '>f4', 'Arg3': '>u1', 'Float12': '>f4', 'Float13': '>f4', 'Arg4': '>u2'}
 		return values: {'err': '>b'}
 		port: 18		subport: 107
@@ -1593,6 +1892,7 @@ ADCS.ADCS_SET_ASGP4_SETTING:
 
 ADCS.ADCS_GET_FULL_CONFIG:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'MTQ_x': '>B', 'MTQ_y': '>B', 'MTQ_z': '>B', 'RW1': '>B', 'RW2': '>B', 'RW3': '>B', 'RW4': '>B', 'gyro_x': '>B', 'gyro_y': '>B', 'gyro_z': '>B', 'sensor_offset_x': '>f4', 'sensor_offset_y': '>f4', 'sensor_offset_z': '>f4', 'rate_sensor_mult': '>B', 'css_config1': '>B', 'css_config2': '>B', 'css_config3': '>B', 'css_config4': '>B', 'css_config5': '>B', 'css_config6': '>B', 'css_config7': '>B', 'css_config8': '>B', 'css_config9': '>B', 'css_config10': '>B', 'css_relscale1': '>f4', 'css_relscale2': '>f4', 'css_relscale3': '>f4', 'css_relscale4': '>f4', 'css_relscale5': '>f4', 'css_relscale6': '>f4', 'css_relscale7': '>f4', 'css_relscale8': '>f4', 'css_relscale9': '>f4', 'css_relscale10': '>f4', 'css_threshold': '>B', 'cs1_mnt_angle_x': '>f4', 'cs1_mnt_angle_y': '>f4', 'cs1_mnt_angle_z': '>f4', 'cs1_detect_th': '>B', 'cs1_auto_adjust': '>?', 'cs1_exposure_t': '>u2', 'cs1_boresight_x': '>f4', 'cs1_boresight_y': '>f4', 'cs2_mnt_angle_x': '>f4', 'cs2_mnt_angle_y': '>f4', 'cs2_mnt_angle_z': '>f4', 'cs2_detect_th': '>B', 'cs2_auto_adjust': '>?', 'cs2_exposure_t': '>u2', 'cs2_boresight_x': '>f4', 'cs2_boresight_y': '>f4', 'nadir_max_deviate': '>B', 'nadir_max_bad_edge': '>B', 'nadir_max_radius': '>B', 'nadir_min_radius': '>B', 'cam1_area_1_x_min': '>u2', 'cam1_area_1_x_max': '>u2', 'cam1_area_1_y_min': '>u2', 'cam1_area_1_y_max': '>u2', 'cam1_area_2_x_min': '>u2', 'cam1_area_2_x_max': '>u2', 'cam1_area_2_y_min': '>u2', 'cam1_area_2_y_max': '>u2', 'cam1_area_3_x_min': '>u2', 'cam1_area_3_x_max': '>u2', 'cam1_area_3_y_min': '>u2', 'cam1_area_3_y_max': '>u2', 'cam1_area_4_x_min': '>u2', 'cam1_area_4_x_max': '>u2', 'cam1_area_4_y_min': '>u2', 'cam1_area_4_y_max': '>u2', 'cam1_area_5_x_min': '>u2', 'cam1_area_5_x_max': '>u2', 'cam1_area_5_y_min': '>u2', 'cam1_area_5_y_max': '>u2', 'cam2_area_1_x_min': '>u2', 'cam2_area_1_x_max': '>u2', 'cam2_area_1_y_min': '>u2', 'cam2_area_1_y_max': '>u2', 'cam2_area_2_x_min': '>u2', 'cam2_area_2_x_max': '>u2', 'cam2_area_2_y_min': '>u2', 'cam2_area_2_y_max': '>u2', 'cam2_area_3_x_min': '>u2', 'cam2_area_3_x_max': '>u2', 'cam2_area_3_y_min': '>u2', 'cam2_area_3_y_max': '>u2', 'cam2_area_4_x_min': '>u2', 'cam2_area_4_x_max': '>u2', 'cam2_area_4_y_min': '>u2', 'cam2_area_4_y_max': '>u2', 'cam2_area_5_x_min': '>u2', 'cam2_area_5_x_max': '>u2', 'cam2_area_5_y_min': '>u2', 'cam2_area_5_y_max': '>u2', 'MTM1_mount_angle_x': '>f4', 'MTM1_mount_angle_y': '>f4', 'MTM1_mount_angle_z': '>f4', 'MTM1_channel_offset_x': '>f4', 'MTM1_channel_offset_y': '>f4', 'MTM1_channel_offset_z': '>f4', 'MTM1_sensitivity_mat_1': '>f4', 'MTM1_sensitivity_mat_2': '>f4', 'MTM1_sensitivity_mat_3': '>f4', 'MTM1_sensitivity_mat_4': '>f4', 'MTM1_sensitivity_mat_5': '>f4', 'MTM1_sensitivity_mat_6': '>f4', 'MTM1_sensitivity_mat_7': '>f4', 'MTM1_sensitivity_mat_8': '>f4', 'MTM1_sensitivity_mat_9': '>f4', 'MTM2_mount_angle_x': '>f4', 'MTM2_mount_angle_y': '>f4', 'MTM2_mount_angle_z': '>f4', 'MTM2_channel_offset_x': '>f4', 'MTM2_channel_offset_y': '>f4', 'MTM2_channel_offset_z': '>f4', 'MTM2_sensitivity_mat_1': '>f4', 'MTM2_sensitivity_mat_2': '>f4', 'MTM2_sensitivity_mat_3': '>f4', 'MTM2_sensitivity_mat_4': '>f4', 'MTM2_sensitivity_mat_5': '>f4', 'MTM2_sensitivity_mat_6': '>f4', 'MTM2_sensitivity_mat_7': '>f4', 'MTM2_sensitivity_mat_8': '>f4', 'MTM2_sensitivity_mat_9': '>f4', 'cubestar_mounting_angle_x': '>f4', 'cubestar_mounting_angle_y': '>f4', 'cubestar_mounting_angle_z': '>f4', 'cubestar_exposure_t': '>u2', 'cubestar_analog_gain': '>u2', 'cubestar_detect_th': '>B', 'cubestar_star_th': '>B', 'cubestar_max_star_matched': '>B', 'cubestar_detect_timeout_t': '>u2', 'cubestar_max_pixel': '>B', 'cubestar_min_pixel': '>B', 'cubestar_err_margin': '>B', 'cubestar_delay_t': '>u2', 'cubestar_centroid_x': '>f4', 'cubestar_centroid_y': '>f4', 'cubestar_focal_len': '>f4', 'cubestar_radical_distor_1': '>f4', 'cubestar_radical_distor_2': '>f4', 'cubestar_tangent_distor_1': '>f4', 'cubestar_tangent_distor_2': '>f4', 'cubestar_window_wid': '>B', 'cubestar_track_margin': '>B', 'cubestar_valid_margin': '>B', 'cubestar_module_en': '>?', 'cubestar_loc_predict_en': '>?', 'cubestar_search_wid': '>B', 'detumble_spin_gain': '>f4', 'detumble_damping_gain': '>f4', 'detumble_spin_rate': '>f4', 'detumble_fast_bDot': '>f4', 'ywheel_control_gain': '>f4', 'ywheel_damping_gain': '>f4', 'ywheel_proportional_gain': '>f4', 'ywheel_derivative_gain': '>f4', 'ywheel_reference': '>f4', 'rwheel_proportional_gain': '>f4', 'rwheel_derivative_gain': '>f4', 'rwheel_bias_moment': '>f4', 'rwheel_sun_point_facet': '>B', 'rwheel_auto_transit': '>?', 'tracking_proportional_gain': '>f4', 'tracking_derivative_gain': '>f4', 'tracking_integral_gain': '>f4', 'tracking_target_facet': '>B', 'MoI_config_diag_x': '>f4', 'MoI_config_diag_y': '>f4', 'MoI_config_diag_z': '>f4', 'MoI_config_nondiag_x': '>f4', 'MoI_config_nondiag_y': '>f4', 'MoI_config_nondiag_z': '>f4', 'est_MTM_rate_noise': '>f4', 'est_EKF_noise': '>f4', 'est_CSS_noise': '>f4', 'est_sun_sensor_noise': '>f4', 'est_nadir_sensor_noise': '>f4', 'est_MTM_noise': '>f4', 'est_star_track_noise': '>f4', 'est_select_arr_1': '>B', 'est_select_arr_2': '>B', 'est_select_arr_3': '>B', 'est_select_arr_4': '>B', 'est_select_arr_5': '>B', 'est_select_arr_6': '>B', 'est_select_arr_7': '>B', 'est_select_arr_8': '>B', 'est_MTM_mode': '>B', 'est_MTM_select': '>B', 'est_cam_sample_period': '>B', 'asgp4_inclination': '>f4', 'asgp4_RAAN': '>f4', 'asgp4_ECC': '>f4', 'asgp4_AoP': '>f4', 'asgp4_time': '>f4', 'asgp4_pos': '>f4', 'asgp4_max_pos_err': '>f4', 'asgp4_filter': '>B', 'asgp4_xp': '>f4', 'asgp4_yp': '>f4', 'asgp4_gps_rollover': '>B', 'asgp4_pos_sd': '>f4', 'asgp4_vel_sd': '>f4', 'asgp4_min_stat': '>B', 'asgp4_time_gain': '>f4', 'asgp4_max_lag': '>f4', 'asgp4_min_samples': '>u2', 'usercoded_controller': '>V48', 'usercoded_estimator': '>V48'}
 		port: 18		subport: 108
@@ -1600,6 +1900,7 @@ ADCS.ADCS_GET_FULL_CONFIG:
 
 ADCS.ADCS_DOWNLOAD_FILE_LIST_TO_OBC:
 		About: Saves information about files stored on the ADCS to the OBC. File name VOL0:/adcs/adcs_file_list.txt
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 18		subport: 109
@@ -1607,6 +1908,7 @@ ADCS.ADCS_DOWNLOAD_FILE_LIST_TO_OBC:
 
 ADCS.ADCS_DOWNLOAD_FILE_TO_OBC:
 		About: Saves a file from the ADCS to the OBC. Inputs: type, counter, size, and OBC file name. (Be patient and check the log for return.)
+		Supports:'OBC'
 		Arguments: {'Type': '>B', 'Counter': '>B', 'Size': '>u4', 'File_name': '>S30'}
 		return values: {'err': '>b'}
 		port: 18		subport: 110
@@ -1614,6 +1916,7 @@ ADCS.ADCS_DOWNLOAD_FILE_TO_OBC:
 
 DFGM.DFGM_RUN:
 		About: Record DFGM data for specified number of seconds.
+		Supports:'OBC'
 		Arguments: {'Seconds': '>u4'}
 		return values: {'err': '>b'}
 		port: 19		subport: 0
@@ -1621,6 +1924,7 @@ DFGM.DFGM_RUN:
 
 DFGM.DFGM_START:
 		About: Start recording DFGM data
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 19		subport: 1
@@ -1628,6 +1932,7 @@ DFGM.DFGM_START:
 
 DFGM.DFGM_STOP:
 		About: Stop recording DFGM data.
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 19		subport: 2
@@ -1635,6 +1940,7 @@ DFGM.DFGM_STOP:
 
 DFGM.DFGM_GET_HK:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Core Voltage': '>u2', 'Sensor Temperature': '>u2', 'Reference Temperature': '>u2', 'Board Temperature': '>u2', 'Positive Rail Voltage': '>u2', 'Input Voltage': '>u2', 'Reference Voltage': '>u2', 'Input Current': '>u2', 'Reserved 1': '>u2', 'Reserved 2': '>u2', 'Reserved 3': '>u2', 'Reserved 4': '>u2'}
 		port: 19		subport: 3
@@ -1642,6 +1948,7 @@ DFGM.DFGM_GET_HK:
 
 FTP_COMMAND.GET_FILE_SIZE:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'size': '>u8'}
 		port: 20		subport: 0
@@ -1649,6 +1956,7 @@ FTP_COMMAND.GET_FILE_SIZE:
 
 FTP_COMMAND.REQUEST_BURST_DOWNLOAD:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'mtime': '>u4', 'ctime': '>u4'}
 		port: 20		subport: 1
@@ -1656,6 +1964,7 @@ FTP_COMMAND.REQUEST_BURST_DOWNLOAD:
 
 FTP_COMMAND.FTP_DATA_PACKET:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'req_id': '>u4', 'size': '>u4', 'blocknum': '>u2', 'data': 'var'}
 		port: 20		subport: 2
@@ -1663,6 +1972,7 @@ FTP_COMMAND.FTP_DATA_PACKET:
 
 FTP_COMMAND.FTP_START_UPLOAD:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 20		subport: 3
@@ -1670,6 +1980,7 @@ FTP_COMMAND.FTP_START_UPLOAD:
 
 FTP_COMMAND.FTP_UPLOAD_PACKET:
 		About: None
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 20		subport: 4
@@ -1677,6 +1988,7 @@ FTP_COMMAND.FTP_UPLOAD_PACKET:
 
 NS_PAYLOAD.UPLOAD_ARTWORK:
 		About: Send artwork from the OBC to the payload. Input: file name, limited to 7 chars!
+		Supports:'OBC'
 		Arguments: {'FIlename': '>S10'}
 		return values: {'err': '>b'}
 		port: 22		subport: 0
@@ -1684,6 +1996,7 @@ NS_PAYLOAD.UPLOAD_ARTWORK:
 
 NS_PAYLOAD.CAPTURE_IMAGE:
 		About: Tell the payload to display artwork and capture an image.
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'confirmation_err': '>B'}
 		port: 22		subport: 1
@@ -1691,6 +2004,7 @@ NS_PAYLOAD.CAPTURE_IMAGE:
 
 NS_PAYLOAD.CONFIRM_DOWNLINK:
 		About: Let the payload know that the last image it took was received by the ground and can be deleted.
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 22		subport: 2
@@ -1698,6 +2012,7 @@ NS_PAYLOAD.CONFIRM_DOWNLINK:
 
 NS_PAYLOAD.GET_HEARTBEAT:
 		About: Receive a ping (char h) from the payload
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'heartbeat': '>S1'}
 		port: 22		subport: 3
@@ -1705,6 +2020,7 @@ NS_PAYLOAD.GET_HEARTBEAT:
 
 NS_PAYLOAD.GET_FLAG:
 		About: Get the status of a payload flag. Input: flag/subcode decimal value. flag/subcode BYTE! Do not use a char
+		Supports:'OBC'
 		Arguments: {'Flag': '>B'}
 		return values: {'err': '>b', 'flag_stat': '>B'}
 		port: 22		subport: 4
@@ -1712,6 +2028,7 @@ NS_PAYLOAD.GET_FLAG:
 
 NS_PAYLOAD.GET_FILENAME:
 		About: Get a desired image/artwork file name. Input: subcode demimal value. subcode BYTE! Do not use a char
+		Supports:'OBC'
 		Arguments: {'Subcode': '>B'}
 		return values: {'err': '>b', 'filename': '>S11'}
 		port: 22		subport: 5
@@ -1719,6 +2036,7 @@ NS_PAYLOAD.GET_FILENAME:
 
 NS_PAYLOAD.GET_TELEMETRY:
 		About: Get telemetry data from the payload
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'temp0': '>i2', 'temp1': '>i2', 'temp2': '>i2', 'temp3': '>i2', 'eNIM0_lux': '>i2', 'eNIM1_lux': '>i2', 'eNIM2_lux': '>i2', 'ram_avail': '>i2', 'lowest_img_num': '>i2', 'first_blank_img_num': '>i2'}
 		port: 22		subport: 6
@@ -1726,6 +2044,7 @@ NS_PAYLOAD.GET_TELEMETRY:
 
 NS_PAYLOAD.GET_SW_VERSION:
 		About: Get payload software version.
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'version': '>S7'}
 		port: 22		subport: 7
@@ -1733,6 +2052,7 @@ NS_PAYLOAD.GET_SW_VERSION:
 
 IRIS.IRIS_POWER_ON:
 		About: Send command to OBC to tell EPS to turn on power
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 0
@@ -1740,6 +2060,7 @@ IRIS.IRIS_POWER_ON:
 
 IRIS.IRIS_POWER_OFF:
 		About: Send command to OBC to tell EPS to turn off power
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 1
@@ -1747,6 +2068,7 @@ IRIS.IRIS_POWER_OFF:
 
 IRIS.IRIS_TURN_SENSORS_ON:
 		About: Send command to OBC to tell Iris to turn on image sensors
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 2
@@ -1754,6 +2076,7 @@ IRIS.IRIS_TURN_SENSORS_ON:
 
 IRIS.IRIS_TURN_SENSORS_OFF:
 		About: Send command to OBC to tell Iris to turn off image sensors
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 3
@@ -1761,6 +2084,7 @@ IRIS.IRIS_TURN_SENSORS_OFF:
 
 IRIS.IRIS_TAKE_IMAGE:
 		About: Tell Iris to take a picture
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 4
@@ -1768,6 +2092,7 @@ IRIS.IRIS_TAKE_IMAGE:
 
 IRIS.IRIS_DELIVER_IMAGE:
 		About: Tell OBC to perform image transfer from Iris and store those images into SD card
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 5
@@ -1775,6 +2100,7 @@ IRIS.IRIS_DELIVER_IMAGE:
 
 IRIS.IRIS_COUNT_IMAGES:
 		About: Tell Iris to send number of images stored in SD card
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b'}
 		port: 23		subport: 6
@@ -1782,6 +2108,7 @@ IRIS.IRIS_COUNT_IMAGES:
 
 IRIS.IRIS_PROGRAM_FLASH:
 		About: Tell OBC to start programming Iris using provided binary file on the SD card
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'Number of Images': '>u'}
 		port: 23		subport: 7
@@ -1789,6 +2116,7 @@ IRIS.IRIS_PROGRAM_FLASH:
 
 IRIS.IRIS_GET_HK:
 		About: Tell Iris to send housekeeping data
+		Supports:'OBC'
 		Arguments: None
 		return values: {'err': '>b', 'VIS_Temperature': '>f4', 'NIR_Temperature': '>f4', 'Flash_Temperature': '>f4', 'Gate_Temperature': '>f4', 'Image_number': '>u1', 'Software_Version': '>u1', 'Error_number': '>u1', 'MAX_5V_voltage': '>u2', 'MAX_5V_power': '>u2', 'MAX_3V_voltage': '>u2', 'MAX_3V_power': '>u2', 'MIN_5V_voltage': '>u2', 'MIN_3V_voltage': '>u2'}
 		port: 23		subport: 8
