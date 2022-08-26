@@ -4711,6 +4711,26 @@ services = {
                         'err': '>b'
                     }
                 }
+            },
+            'IRIS_SET_CONFIG': {
+                'what': "Update Iris configurations from ground station via OBC \
+                         Configurations are implemented in a ordered list, where each \
+                         element corresponds to a specific config. See below the working \
+                         implementation: \
+                         [toggle_iris_logger, format_iris_nand, set_resolution, set_saturation] \
+                         This is pass via the 'args' parameters",
+                'subPort': 11,
+                'inoutInfo': {
+                    'args': {"toggle_iris_logger": '>u1', 
+                             "toggle_direct_method": '>u1', 
+                             "format_iris_nand": '>u1', 
+                             "set_resolution": '>u2', 
+                             "set_saturation": '>u1'
+                             },
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
             }
         }
     }
