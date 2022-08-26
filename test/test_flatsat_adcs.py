@@ -21,17 +21,13 @@
 
 import time
 import sys
-from testLib import testLib as test
 from os import path
-sys.path.append("./src")
-from groundStation import groundStation
 
-import numpy as np
+from groundstation_tester import Tester
+from eps.expected_eps_hk import expected_EPS_HK
+from test_full_hk import testSystemWideHK
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
-
-test = test() #call to initialize local test class
+tester = Tester() #call to initialize local test class
 
 # TODO - Automate the remaining steps in the EPS Ping Watchdog test - 2-4
 def test_EPS_pingWatchdog():
@@ -51,20 +47,19 @@ def test_EPS_pingWatchdog():
     # 5) Repeat the following every 10 seconds for 6 minutes:
     for i in range(36): 
         # Gather all EPS HK info
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
-        
-        # Display data on ground station CLI
-        for val in test.expected_EPS_HK:
-            # To pass test, all active power channels have output state = 1
-            colour = '\033[0m' #white
-            if val in pchannels:
-                if (response[val] == 0):
-                    testPassed = "Fail"
-                    colour = '\033[91m' #red
-                else:
-                    colour = '\033[92m' #green
-            print(colour + str(val) + ": " + str(response[val]))
+        response = tester.sendAndGet('ex2.cli.general_telemetry') # CAUTION: No such subservice
+
+        if (response != -1):
+            for val in expected_EPS_HK:
+                # To pass test, all active power channels have output state = 1
+                colour = '\033[0m' #white
+                if val in pchannels:
+                    if (response[val] == 0):
+                        testPassed = "Fail"
+                        colour = '\033[91m' #red
+                    else:
+                        colour = '\033[92m' #green
+                print(colour + str(val) + ": " + str(response[val]))
 
         time.sleep(10)
 
@@ -73,22 +68,22 @@ def test_EPS_pingWatchdog():
 
     # 7) Repeat step 5:
     for j in range(36): 
-        server, port, toSend = gs.getInput('eps.cli.general_telemetry')
-        response = gs.transaction(server, port, toSend)
+        response = tester.sendCmd('eps.cli.general_telemetry') # CAUTION: No such subservice
 
-        for val in test.expected_EPS_HK:
-            # To pass test, all active power channels have output state = 1 except channels 1 and 5, which should both be 0
-            colour = '\033[0m' #white
-            if val in pchannels:
-                if (response[val] == 0) and (val != 'pchannel1') and (val != 'pchannel5'):
-                    testPassed = "Fail"
-                    colour = '\033[91m' #red
-                elif (response[val] == 1) and (val == 'pchannel1' or val == 'pchannel5'):
-                    testPassed = "Fail"
-                    colour = '\033[91m' #red
-                else:
-                    colour = '\033[92m' #green
-            print(colour + str(val) + ": " + str(response[val]))
+        if (response != -1):
+            for val in expected_EPS_HK:
+                # To pass test, all active power channels have output state = 1 except channels 1 and 5, which should both be 0
+                colour = '\033[0m' #white
+                if val in pchannels:
+                    if (response[val] == 0) and (val != 'pchannel1') and (val != 'pchannel5'):
+                        testPassed = "Fail"
+                        colour = '\033[91m' #red
+                    elif (response[val] == 1) and (val == 'pchannel1' or val == 'pchannel5'):
+                        testPassed = "Fail"
+                        colour = '\033[91m' #red
+                    else:
+                        colour = '\033[92m' #green
+                print(colour + str(val) + ": " + str(response[val]))
             
         time.sleep(10)
 
@@ -98,10 +93,10 @@ def test_EPS_pingWatchdog():
     # Take note of the test results
     if (testPassed == "Pass"):
         colour = '\033[92m' #green
-        test.passed += 1
+        tester.passed += 1
     else:
         colour = '\033[91m' #red
-        test.failed += 1
+        tester.failed += 1
 
     print(colour + ' - EPS PING WATCHDOG TEST ' + testPassed + '\n\n' + '\033[0m')
 
@@ -111,13 +106,13 @@ def test_EPS_pingWatchdog():
 
 def testAllCommandsToOBC():
     print("\n---------- OBC SYSTEM-WIDE HOUSEKEEPING TEST ----------\n")
-    test.testHousekeeping(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,)
+    testSystemWideHK(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,)
 
     # TODO - Finish function implementation
     print("\n---------- EPS PING WATCHDOG TEST ----------\n")
     test_EPS_pingWatchdog()
 
-    test.summary() #call when done to print summary of tests
+    tester.summary() #call when done to print summary of tests
 
 if __name__ == '__main__':
     testAllCommandsToOBC()

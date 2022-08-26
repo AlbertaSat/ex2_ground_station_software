@@ -26,7 +26,7 @@ import sys
 from os import path
 sys.path.append("./test")
 
-from tester import Tester
+from groundstation_tester import Tester
 
 import time
 

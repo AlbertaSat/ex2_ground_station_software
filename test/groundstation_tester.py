@@ -39,6 +39,17 @@ class Tester(GroundStation):
         
         pass
 
+    def sendAndGet(self, send):
+        print("cmd: " + send)
+        try:
+            transactObj = self.interactive.getTransactionObject(send, self.networkManager)
+            ret = transactObj.execute()
+            print()
+            return ret
+        except Exception as e:
+            print(e)
+            return -1
+
     def checkModuleHK(self, real_module_HK, expected_module_HK, ignore_params_list=None) -> bool:
         checkPassed = True
         for val in expected_module_HK:
@@ -119,7 +130,12 @@ class Tester(GroundStation):
         print('\tTime taken: '+ str(round(np.float32(delta), 2)) + 's')
         print('\tPassed: ' + str(self.passed) + ', Failed: ' + str(self.failed))
         
-        success = int(self.passed/(self.passed + self.failed) * 100)
+        if ((self.passed + self.failed) != 0):
+            success = int(self.passed/(self.passed + self.failed) * 100)
+        else:
+            success = 0
+            print("Zero tests were performed!")
+
         if success == 100:
             colour = '\033[92m' #green
         elif success >= 80:

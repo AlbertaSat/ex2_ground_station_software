@@ -21,7 +21,7 @@
 
 
 import numpy as np
-from tester import Tester
+from groundstation_tester import Tester
 
 tester = Tester() #call to initialize local test class
 
