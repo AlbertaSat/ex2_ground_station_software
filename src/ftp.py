@@ -141,7 +141,7 @@ class ftp(GroundStation):
     def _transaction(self, data):
         self.networkManager.send(self.satelliteAddr, self.destPort, data)
         response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-        return self.receiveParse.parseReturnValue(self.destPort, response)
+        return self.receiveParse.parseReturnValue(self.satelliteAddr, self.destPort, response)
 
 class ftpGetter(ftp):
     def __init__(self, opts):
@@ -214,7 +214,7 @@ class ftpGetter(ftp):
         received = 0
         while True:
             packet = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-            data = self.receiveParse.parseReturnValue(self.destPort, packet)
+            data = self.receiveParse.parseReturnValue(self.satelliteAddr, self.destPort, packet)
             # I know it's not good to hardcode the byte I want like this
             # but there's too much legacy so it won't change
             if packet[0] == self.services.get("FTP_COMMAND").get('subservice').get('FTP_DATA_PACKET').get('subPort'):

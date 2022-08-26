@@ -17,14 +17,13 @@
  * @date 2022-07-21
 '''
 
-from system import services, SatelliteNodes, varTypes
+from system import getServices, SatelliteNodes, varTypes
 import numpy as np
 
 # TODO: rework this whole class
 
 class InputParser:
     def __init__(self):
-        self.services = services
         self.remotes = SatelliteNodes
         self.appIdx = 0
         self.serviceIdx = 2
@@ -35,17 +34,19 @@ class InputParser:
         command = {}
 
         remote = None
-        for name, member in SatelliteNodes.__members__.items():
-            if name == tokens[self.appIdx]:
-                remote = member.value
+
+        for node in SatelliteNodes:
+            if node[1] == tokens[self.appIdx]:
+                remote = node
                 break
         if remote is None:
             raise ValueError("No such remote or bad format")
-        command['dst'] = remote
+        command['dst'] = remote[2]
+        services = getServices(remote[0])
 
-        if tokens[self.serviceIdx] in self.services:
+        if tokens[self.serviceIdx] in services:
             # Matches <service>
-            service = self.services[tokens[self.serviceIdx]]
+            service = services[tokens[self.serviceIdx]]
             command['dport'] = service['port']
             if 'subservice' not in service:
                 # Then there is no subservice, skip to arg check

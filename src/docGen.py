@@ -28,6 +28,7 @@ f.write('\t\t\t\t-- Ex-Alta 2 Ground Station Commands --\n' +
 
 for serv in services:
     subservice = services[serv]['subservice']
+    supported = services[serv]['supports']
     for subName in subservice.keys():
         f.write(serv + '.' + subName + ':\n')
 
@@ -40,6 +41,7 @@ for serv in services:
         info = 'None' if not 'what' in sub else sub['what']
         f.write(
         '\t\tAbout: ' + info + '\n'
+        '\t\tSupports:' + repr(supported) + '\n'
         '\t\tArguments: ' + args + '\n' +
         '\t\treturn values: ' + returns + '\n'
         '\t\tport: ' + str(services[serv]['port']) +

@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - 'src/groundStation/system.py'
+      - 'src/system.py'
 
 jobs:
   build:

@@ -33,6 +33,7 @@ class GroundStation:
             else:
                 self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, useFec = opts.fec)
         except Exception as e:
+            raise
             print(e)
             exit(1)
 
@@ -47,10 +48,10 @@ class GroundStation:
     def setSatellite(self, name):
         satelliteAddr = 0
         satelliteName = ''
-        for i in SatelliteNodes.__members__.values():
-            if i.name == name:
-                satelliteAddr = i.value
-                satelliteName = i.name
+        for i in SatelliteNodes:
+            if i[1] == name:
+                satelliteAddr = i[2]
+                satelliteName = i[1]
         if satelliteAddr == 0:
             raise Exception("Invalid satellite {}".format(name))
         self.satelliteAddr = satelliteAddr
