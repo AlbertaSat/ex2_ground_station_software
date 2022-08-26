@@ -2122,3 +2122,11 @@ IRIS.IRIS_GET_HK:
 		port: 23		subport: 8
 
 
+IRIS.IRIS_DELIVER_LOG:
+		About: Tell OBC to perform log transfer from Iris and store it into SD card
+		Supports:'OBC'
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 23		subport: 9
+
+
