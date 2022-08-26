@@ -4706,7 +4706,7 @@ services = {
                 'what': "Initialize Iris RTC from ground station via OBC",
                 'subPort': 10,
                 'inoutInfo': {
-                    'args': ['>u4'],  # timestamp
+                    'args': {"new_iris_time": '>u4'},
                     'returns': {
                         'err': '>b'
                     }
