@@ -111,7 +111,7 @@ services = {
         },
     },
     'SCHEDULER': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 25,
         # TODO: these need a error response value
         'subservice': {
@@ -121,8 +121,8 @@ services = {
                 'inoutInfo': {
                     'args': None,  # All scheduled commands should be stored in schedule.txt
                     'returns': {
-                        'err': '>b', 
-                        'number of cmds scheduled': '>b'  # Returns -1 if an error occurred. 
+                        'err': '>b',
+                        'number of cmds scheduled': '>b'  # Returns -1 if an error occurred.
                     }
                 }
             },
@@ -141,7 +141,7 @@ services = {
                 'inoutInfo': {
                     'args': None,
                     'returns': {
-                        'err': '>b', 
+                        'err': '>b',
                         'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
                     }
                 }
@@ -163,7 +163,7 @@ services = {
                 'inoutInfo': {
                     'args': None,
                     'returns': {
-                        'err': '>b', 
+                        'err': '>b',
                         'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
                     }
                 }
@@ -171,7 +171,7 @@ services = {
         }
     },
     'SET_PIPE': {
-        'supports': ["OBC"],
+        'supports': ("OBC",),
         'port': 0,
         'subservice' : {
             'UHF_GS_PIPE': {
@@ -188,7 +188,7 @@ services = {
 
     },
     'TIME_MANAGEMENT': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 8,
         'subservice': {
             'GET_TIME': {
@@ -217,7 +217,7 @@ services = {
         }
     },
     'EPS_FIRMWARE': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 11,
         'subservice' : {
             'START': {
@@ -400,7 +400,7 @@ services = {
         }
     },
     'GENERAL': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port' : 11,
         'subservice' : {
             'REBOOT': {
@@ -539,7 +539,7 @@ services = {
             'GET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
                 'subPort': 12,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',  # err status
                         'timeout_ms': '>u4'
@@ -588,7 +588,7 @@ services = {
         }
     },
     'COMMUNICATION': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 10,
         'subservice': {
             'S_GET_FREQ': {
@@ -931,7 +931,7 @@ services = {
                 'subPort': 26,
                 'inoutInfo': {
                     'args': {
-                        "Set_1_to_confirm" : '>u1' #Safety precaution 
+                        "Set_1_to_confirm" : '>u1' #Safety precaution
                     },
                     'returns': {
                         'err': '>b',
@@ -1205,7 +1205,7 @@ services = {
     },
 
     'CONFIGURATION': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 9,  # As per EPS docs
         'subservice': {
             'GET_ACTIVE_CONFIG': {
@@ -1396,7 +1396,7 @@ services = {
         }
     },
     'HOUSEKEEPING': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 17,
         'subservice': {
             'GET_HK': {
@@ -1854,7 +1854,7 @@ services = {
     },
 
     'GROUND_STATION_WDT': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 16,  # As per EPS docs
         'subservice': {
             'RESET_WDT': {
@@ -1907,7 +1907,7 @@ services = {
     },
 
     'EPS_RESET': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 15,  # As per EPS docs
         'subservice': {
             'EPS_HARD_RESET': {
@@ -1926,7 +1926,7 @@ services = {
     },
 
     'REBOOT': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 4,  # As per EPS CSP docs
         # EPS soft reset
         # no subPort (command ID) needed.
@@ -1948,7 +1948,7 @@ services = {
     },
 
     'TM_CLI': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 7,  # EPS remote CLI uses port 13 unless Otherwise specified #TODO: Does 7 mean otherwise specified?
         'subservice': {
             'GENERAL_TELEMETRY': {
@@ -2135,7 +2135,7 @@ services = {
     },
 
     'CONTROL': {
-        'supports' : ("EPS"),
+        'supports' : ("EPS",),
         'port': 14,
         'subservice': {
             # POWER OUTPUTS
@@ -2265,7 +2265,7 @@ services = {
         }
     },
     'UPDATER' : {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 12,
         'subservice': {
             'INITIALIZE_UPDATE': {
@@ -2342,7 +2342,7 @@ services = {
     },
 
     'LOGGER': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 13,
         'subservice': {
             'GET_FILE': {
@@ -2393,7 +2393,7 @@ services = {
         }
     },
     'CLI' : {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 24,
         'subservice': {
             'SEND_CMD': {
@@ -2413,7 +2413,7 @@ services = {
         }
     },
     'ADCS': { # refer to the adcs service
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 18,
         'subservice': {
             'ADCS_RESET': {
@@ -2746,7 +2746,7 @@ services = {
                         'CommsStat_flags_3': '<B',
                         'CommsStat_flags_4': '<B',
                         'CommsStat_flags_5': '<B',
-                        'CommsStat_flags_6': '<B',      
+                        'CommsStat_flags_6': '<B',
 
                     }
                 }
@@ -3123,7 +3123,7 @@ services = {
                         'err': '>b',
                     }
                 }
-            },                    
+            },
             'ADCS_SAVE_CONFIG': {
                 'subPort': 61,
                 'inoutInfo': {
@@ -3225,7 +3225,7 @@ services = {
                         'Altitude': '>f4',
                         'ecef_pos_x': '>i2',
                         'ecef_pos_y': '>i2',
-                        'ecef_pos_z': '>i2'                                             
+                        'ecef_pos_z': '>i2'
                     }
                 }
             },
@@ -3823,7 +3823,7 @@ services = {
             'ADCS_SET_MTQ_CONFIG': {
                 'subPort': 93,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Mag1_axis" : '>u1',
                         "Mag2_axis" : '>u1',
                         "Mag3_axis" : '>u1'
@@ -3836,7 +3836,7 @@ services = {
             'ADCS_SET_RW_CONFIG': {
                 'subPort': 94,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "RW1_axis" : '>u1',
                         "RW2_axis" : '>u1',
                         "RW3_axis" : '>u1',
@@ -3850,7 +3850,7 @@ services = {
             'ADCS_SET_RATE_GYRO': {
                 'subPort': 95,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Gyro1_axis" : '>u1',
                         "Gyro2_axis" : '>u1',
                         "Gyro3_axis" : '>u1',
@@ -3868,7 +3868,7 @@ services = {
                 "what" : "CSS relative scale floats cannot be negative!",
                 'subPort': 96,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "CSS1_axis" : '>B',
                         "CSS2_axis" : '>B',
                         "CSS3_axis" : '>B',
@@ -4255,8 +4255,8 @@ services = {
                         'cubestar_err_margin': '>B',
                         'cubestar_delay_t': '>u2',
                         'cubestar_centroid_x': '>f4',
-                        'cubestar_centroid_y': '>f4',    
-                        'cubestar_focal_len': '>f4', 
+                        'cubestar_centroid_y': '>f4',
+                        'cubestar_focal_len': '>f4',
                         'cubestar_radical_distor_1': '>f4',
                         'cubestar_radical_distor_2': '>f4',
                         'cubestar_tangent_distor_1': '>f4',
@@ -4308,7 +4308,7 @@ services = {
                         'est_select_arr_8': '>B',
                         'est_MTM_mode': '>B',
                         'est_MTM_select': '>B',
-                        'est_cam_sample_period': '>B',                          
+                        'est_cam_sample_period': '>B',
                         'asgp4_inclination': '>f4',
                         'asgp4_RAAN': '>f4',
                         'asgp4_ECC': '>f4',
@@ -4359,7 +4359,7 @@ services = {
         }
     },
     'DFGM': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 19,
         'subservice': {
             'DFGM_RUN': {
@@ -4419,7 +4419,7 @@ services = {
         }
     },
     "FTP_COMMAND": {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 20,
         'subservice': {
             'GET_FILE_SIZE': {
@@ -4477,7 +4477,7 @@ services = {
         }
     },
     'NS_PAYLOAD': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 22,
         'subservice': {
             'UPLOAD_ARTWORK': {
@@ -4496,7 +4496,7 @@ services = {
                 'what': 'Tell the payload to display artwork and capture an image.',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'confirmation_err': '>B'
@@ -4507,18 +4507,18 @@ services = {
                 'what': 'Let the payload know that the last image it took was received by the ground and can be deleted.',
                 'subPort': 2,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                     }
                 }
             },
-            
+
             'GET_HEARTBEAT': {
                 'what': 'Receive a ping (char h) from the payload',
                 'subPort': 3,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'heartbeat': '>S1'
@@ -4555,7 +4555,7 @@ services = {
                 'what': 'Get telemetry data from the payload',
                 'subPort': 6,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'temp0': '>i2',
@@ -4575,7 +4575,7 @@ services = {
                 'what': 'Get payload software version.',
                 'subPort': 7,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'version': '>S7'
@@ -4585,7 +4585,7 @@ services = {
         },
     },
     'IRIS': {
-        'supports' : ("OBC"),
+        'supports' : ("OBC",),
         'port': 23,
         'subservice': {
             'IRIS_POWER_ON': {
