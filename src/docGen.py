@@ -41,7 +41,7 @@ for serv in services:
         info = 'None' if not 'what' in sub else sub['what']
         f.write(
         '\t\tAbout: ' + info + '\n'
-        '\t\tSupports:' + repr(supported) + '\n'
+        '\t\tSupports: ' + ', '.join(supported) + '\n'
         '\t\tArguments: ' + args + '\n' +
         '\t\treturn values: ' + returns + '\n'
         '\t\tport: ' + str(services[serv]['port']) +
