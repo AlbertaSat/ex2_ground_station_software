@@ -18,6 +18,7 @@
 '''
 
 import random
+import time
 from system import services
 
 def generateFakeHKDict():
@@ -43,3 +44,11 @@ def generateFakeHKDict():
             raise NotImplementedError('Found data type not accounted for!')
 
     return fake_hk
+
+
+def generateFakeFTPGetRequest():
+    return {
+        'err': 0,
+        'timestamp': time.time(),
+        'data': 'Hello World!'
+    }

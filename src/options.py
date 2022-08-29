@@ -28,7 +28,7 @@ def optionsFactory(kind : str):
     elif (kind == "ftp"):
         return FTPOptions()
     elif (kind  == "sband"):
-        return SBANDOptions();
+        return SBANDOptions()
     else:
         raise NotImplementedError("Options class type {} not implemented".format(type))
 
@@ -62,9 +62,9 @@ class Options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout')
-        
+
         self.parser.add_argument(
-            '-u', 
+            '-u',
             action='store_true',
             help='Enable UHF SDR functionality (e.g automatic pipe mode commands)')
 
@@ -118,12 +118,12 @@ class UpdateOptions(Options):
             help="Provide file CRC. Can be hex or decimal"
         )
 
-        return super().getOptions();
+        return super().getOptions()
 
 
 class FTPOptions(Options):
     def __init__(self):
-        super().__init__();
+        super().__init__()
 
     def getOptions(self):
         self.parser.add_argument(
@@ -162,7 +162,13 @@ class FTPOptions(Options):
             default=0,
             help="Attempt to resume download with given ID"
         )
-        return super().getOptions();
+        self.parser.add_argument(
+            '--read-file',
+            type=str,
+            default='',
+            help="Read a pickle file generated from a GET request"
+        )
+        return super().getOptions()
 
 class SBANDOptions(Options):
     def __init__(self):

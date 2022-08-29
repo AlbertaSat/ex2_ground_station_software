@@ -24,6 +24,7 @@ import os
 from random import randint
 from receiveParser import ReceiveParser
 from system import services
+from dummyUtils import generateFakeFTPGetRequest
 import signal
 import pickle
 
@@ -99,7 +100,7 @@ class ftpTransaction():
             if i not in blocksReceived:
                 missingBlocks.append(i)
         return missingBlocks
-    
+
     def getTotalBlocks(self):
         return self.totalBlocks
 
@@ -126,7 +127,7 @@ class ftp(GroundStation):
 
         self.destPort = self.services.get("FTP_COMMAND").get("port")
 
-    def shutdown(self):
+    def shutdown(self, arg1, arg2):
         exit(0)
 
     def run(self):
@@ -166,7 +167,7 @@ class ftpGetter(ftp):
 
         if data['err'] < 0:
             raise ValueError("error {} from file size packet".format(data['err']))
-        
+
         filesize = int(data['size'])
         req_id = randint(1,1652982075)
         total_blocks = filesize // self.blocksize
@@ -201,7 +202,7 @@ class ftpGetter(ftp):
                     numToRequest += 1
                 else:
                     break
-                
+
             download_packet = self._get_burst_download_packet(req_id, skip, numToRequest)
             self.networkManager.send(self.satelliteAddr, self.destPort, download_packet)
             self._receive_burst()
@@ -229,7 +230,7 @@ class ftpGetter(ftp):
                 # Received service reply (final packet of burst download)
                 return data
 
-    def _get_burst_download_packet(self, req_id, skip, count):     
+    def _get_burst_download_packet(self, req_id, skip, count):
             subservice = self.services.get('FTP_COMMAND').get('subservice').get('REQUEST_BURST_DOWNLOAD').get('subPort')
             out = bytearray()
             out.extend(subservice.to_bytes(1, byteorder='big'))
@@ -250,6 +251,25 @@ class ftpGetter(ftp):
         out.extend(int(0).to_bytes(1, byteorder='big'))
         return out
 
+class dummyFTPGetter(ftpGetter):
+    def __init__(self, opts):
+        self.fake_req_id = randint(0, 1653514975)
+        super().__init__(opts)
+
+    def makeNewDownloadTransaction(self, infile, outfile):
+        return ftpTransaction(self.fake_req_id, randint(1, 10), self.infile, self.outfile)
+
+    def _do_get_request(self):
+        blocknum = 0
+        while not self.currentTransaction.isDone():
+            data = FTPData(self.fake_req_id, blocknum, generateFakeFTPGetRequest())
+            self.currentTransaction.receiveData(data)
+            blocknum += 1
+        myfilename = ".ftpTransactions/{}.pickle".format(self.fake_req_id)
+        if os.path.exists(myfilename):
+            os.remove(myfilename)
+
+
 class ftpSender(ftp):
     def __init__(self,opts):
         super().__init__(opts)
@@ -260,9 +280,9 @@ class ftpSender(ftp):
     def _do_post_request(self):
         with open(self.infile, "rb") as f:
             filesize = os.path.getsize(self.infile)
-            req_id = randint(0, 1653514975);
+            req_id = randint(0, 1653514975)
             print("Sending file {} to satellite".format(self.infile))
-            packet = self._get_start_upload_packet(req_id, filesize);
+            packet = self._get_start_upload_packet(req_id, filesize)
             data = self._transaction(packet)
             if (data is None):
                 print("Did not receive response from upload start packet")
@@ -310,12 +330,47 @@ class ftpSender(ftp):
         out.extend(int(0).to_bytes(1, byteorder='big'))
         return out
 
+class dummyFTPSender(ftpSender):
+    def __init__(self, opts):
+        super().__init__(opts)
+        if not os.path.exists(".ftpTransactions/dummy_post"):
+            os.mkdir(".ftpTransactions/dummy_post")
+
+    def _do_post_request(self):
+        with open(self.infile, "rb") as infile:
+            with open('.ftpTransactions/dummy_post/{}'.format(self.infile.replace('/', '_')), "wb+") as outfile:
+                data = infile.read()
+                outfile.write(data)
+
+class ftpReader():
+    def __init__(self, opts):
+        self.file = opts.read_file
+
+    def run(self):
+        with open(self.file, 'rb') as f:
+            data = pickle.load(f)
+            print("Data of {}:".format(self.file))
+            for block in data.received:
+                print("Block #{}:".format(block.blocknum), end=' ')
+                print(block.data)
+
+    def shutdown(self, arg1, arg2):
+        exit(0)
 
 def ftpFactory(opts):
+    if opts.read_file:
+        return ftpReader(opts)
+
     if opts.get and opts.post:
         raise ValueError("Cannot post and get a file at the same time")
     if not opts.get and not opts.post:
         raise ValueError("Must get or post a file")
+
+    if opts.interface == 'dummy':
+        if opts.get:
+            return dummyFTPGetter(opts)
+        elif opts.post:
+            return dummyFTPSender(opts)
 
     if opts.get:
         return ftpGetter(opts)
@@ -324,10 +379,11 @@ def ftpFactory(opts):
 
 if __name__ == "__main__":
     opts = optionsFactory("ftp")
-    ftpRunner =  ftpFactory(opts.getOptions())
+    ftpRunner = ftpFactory(opts.getOptions())
     signal.signal(signal.SIGINT, ftpRunner.shutdown)
     try:
         ftpRunner.run()
     except Exception as e:
         print(e)
         ftpRunner.shutdown(None, None)
+    ftpRunner.shutdown(None, None)
