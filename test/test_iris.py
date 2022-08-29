@@ -70,7 +70,7 @@ def test_iris_set_time():
     tester.sendAndExpect(cmd, {'err': 0})
 
 def test_iris_set_config(logger, method, nand, res, sat):
-    tester.sendAndExpect('ex2.iris.iris_set_config(0,0,0,{:d},{:d})'.format(res, sat), {'err': 0})
+    tester.sendAndExpect('ex2.iris.iris_set_config({:d},{:d},{:d},{:d},{:d})'.format(logger, method, nand, res, sat), {'err': 0})
 
 
 def scenario_iris_firmware_update_and_housekeeping_retrieval():
