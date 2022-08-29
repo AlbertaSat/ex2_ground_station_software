@@ -71,11 +71,7 @@ Numpy types (> for BE)
 import numpy as np
 from enum import Enum
 
-class SatelliteNodes(Enum):
-    EX2 = 1
-    YUK = 2
-    ARI = 3
-    EPS = 4
+SatelliteNodes = ("OBC", "EX2", 1), ("OBC", "YKS", 2), ("OBC", "ARS", 3), ("EPS", "EPS", 4)
 
 class GroundNodes(Enum):
     GND = 16
@@ -90,8 +86,32 @@ varTypes = {
     9: '<S16' #Empty means all zero or Use <V16
 }
 
+def getServices(system):
+    outDict = dict()
+    for serv in services:
+        if system in services[serv]['supports']:
+            outDict[serv] = services[serv]
+    return outDict
+
 services = {
+    'CSP': {
+        'supports' : ("EPS", "OBC"),
+        'port': 1,
+        'subservice': {
+            'PING': {
+                'what': "Do a CSP ping",
+                'subPort': 0,
+                'inoutInfo':{
+                    'args': None,
+                    'returns': {
+                        'err': '<b'
+                    },
+                },
+            },
+        },
+    },
     'SCHEDULER': {
+        'supports' : ("OBC",),
         'port': 25,
         # TODO: these need a error response value
         'subservice': {
@@ -101,8 +121,8 @@ services = {
                 'inoutInfo': {
                     'args': None,  # All scheduled commands should be stored in schedule.txt
                     'returns': {
-                        'err': '>b', 
-                        'number of cmds scheduled': '>b'  # Returns -1 if an error occurred. 
+                        'err': '>b',
+                        'number of cmds scheduled': '>b'  # Returns -1 if an error occurred.
                     }
                 }
             },
@@ -121,7 +141,7 @@ services = {
                 'inoutInfo': {
                     'args': None,
                     'returns': {
-                        'err': '>b', 
+                        'err': '>b',
                         'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
                     }
                 }
@@ -143,7 +163,7 @@ services = {
                 'inoutInfo': {
                     'args': None,
                     'returns': {
-                        'err': '>b', 
+                        'err': '>b',
                         'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
                     }
                 }
@@ -151,6 +171,7 @@ services = {
         }
     },
     'SET_PIPE': {
+        'supports': ("OBC",),
         'port': 0,
         'subservice' : {
             'UHF_GS_PIPE': {
@@ -167,10 +188,10 @@ services = {
 
     },
     'TIME_MANAGEMENT': {
-        'port': 8,  # share a port with EPS time service
-        # TODO: these need a error response value
+        'supports' : ("OBC",),
+        'port': 8,
         'subservice': {
-            'GET_TIME': { # OBC time
+            'GET_TIME': {
                 'what': 'Get the current unix time on the OBC',
                 'subPort': 10,
                 'inoutInfo': {
@@ -181,7 +202,7 @@ services = {
                     }
                 }
             },
-            'SET_TIME': { # OBC time
+            'SET_TIME': {
             'what': 'Set the current unix time on the OBC. Set parameter to 0 to use local unix time',
                 'subPort': 11,
                 'inoutInfo': {
@@ -195,7 +216,191 @@ services = {
             },
         }
     },
+    'EPS_FIRMWARE': {
+        'supports' : ("EPS",),
+        'port': 11,
+        'subservice' : {
+            'START': {
+                'What': "Start new update process. New update descriptor is recorded into non-volatile memory. Set fromGoldenStorage to true if forcing to install from the golden image storage, otherwise always equal to false.",
+                'subPort': 0,
+                'inoutInfo': {
+                    'args': {
+                        "ImageType" : '<u1',
+                        "TargetMcuUid0" : "<u4",
+                        "TargetMcuUid1" : "<u4",
+                        "TargetMcuUid2" : "<u4",
+                        "ImageSize" : "<u4",
+                        "fromGoldenStorage" : "<b"
+                    },
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            "START_FROM_GOLDEN": {
+                'What': "Start new update process from the existing golden image expecting imageType to be installed. If expected image type does not match existing golden image - error is returned. Golden image and its descriptor must exist in the file system to be successful.",
+                'subPort': 1,
+                'inoutInfo': {
+                    'args' : {
+                        "ImageType" : "<b"
+                    },
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            "ABORT": {
+                'What' : "Abort current update procedure. It deletes the current update descriptor from non-volatile memory.",
+                'subPort': 2,
+                'inoutInfo': {
+                    'args' : None,
+                    'returns' : {
+                        'err': '>b'
+                    }
+                }
+            },
+            "INSTALL": {
+                'What': "Execute installation procedure.",
+                'subPort': 3,
+                'inoutInfo': {
+                    'args' : None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            "GET_SYSTEM_INFO": {
+                'What': "Get system information including unique subsystem ID and versions of each image.",
+                'subPort': 4,
+                'inoutInfo': {
+                    'args' : None,
+                    'returns': {
+                        'err': '<b',
+                        'imageType': '<b',
+                        'mcuUid0': "<u4",
+                        'mcuUid1': "<u4",
+                        'mcuUid2': "<u4",
+                        'versionOfBootloaderL1Major' : '<u2',
+                        'versionOfBootloaderL1Minor' : '<u2',
+                        'versionOfBootloaderL1Patch' : '<u2',
+                        'versionOfBootloaderL2Major' : '<u2',
+                        'versionOfBootloaderL2Minor' : '<u2',
+                        'versionOfBootloaderL2Patch' : '<u2',
+                        'versionOfApplicationL1Major' : '<u2',
+                        'versionOfApplicationL1Minor' : '<u2',
+                        'versionOfApplicationPatch' : '<u2',
+                        'repNameBL1' : 'V32',
+                        'gitHashBL1': 'V20',
+                        'repNameBL2': 'V32',
+                        'gitHashBL2': 'V20',
+                        'repNameAPP': 'V32',
+                        'gitHashAPP': 'V20'
+
+                    }
+                }
+            },
+            "GET_CURRENT_STATE": {
+                'What': "Return the current state of the ongoing update process.",
+                'subPort' : 5,
+                'inoutInfo' : {
+                    'args': None,
+                    'returns' : {
+                        'err': '<b',
+                        'state': '<b'
+                    }
+                }
+            },
+            "GET_CURRENT_UPDATE_DESCRIPTOR": {
+                'What': "Return the descriptor of current update process, which includes information about what type of update is performed.",
+                'subPort' : 6,
+                'inoutInfo' : {
+                    'args': None,
+                    'returns' : {
+                        'err': '<b',
+                        'imageType': '<b',
+                        "TargetMcuUid0" : "<u4",
+                        "TargetMcuUid1" : "<u4",
+                        "TargetMcuUid2" : "<u4",
+                        "ImageSize" : "<u4",
+                        "fromGoldenStorage" : "<b"
+                    }
+                }
+            },
+            "GET_GOLDEN_UPDATE_DESCRIPTOR": {
+                'What': "Return the update descriptor of the golden image.",
+                'subPort' : 7,
+                'inoutInfo' : {
+                    'args': None,
+                    'returns' : {
+                        'err': '<b',
+                        'imageType': '<b',
+                        "TargetMcuUid0" : "<u4",
+                        "TargetMcuUid1" : "<u4",
+                        "TargetMcuUid2" : "<u4",
+                        "ImageSize" : "<u4",
+                        "fromGoldenStorage" : "<b"
+                    }
+                }
+            },
+            "VALIDATE_SIGNATURE": {
+                'What': "Perform image integrity check by checking for valid signature. Image size and CRC32 value is returned as a result. In case of invalid image signature, error invalidSignature is returned.",
+                'subPort': 8,
+                'inoutInfo': {
+                    'args': {
+                        'imageType': '<b'
+                    },
+                    'returns': {
+                        'err': '<b',
+                        'size': '<u4',
+                        'crc': '<u4'
+                    }
+                }
+            },
+            "ABORT_BOOT": {
+                'What': "Abort boot process. Supported only in the bootloader L2 context.",
+                'subPort': 9,
+                'inoutInfo': {
+                    'args' : None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            "GET_GOLDEN_INFO": {
+                'What': "Checks if golden image is present and is valid. Returns information of golden image.",
+                'subPort': 10,
+                'inoutInfo': {
+                    'args' : None,
+                    'returns': {
+                        'err': '<b',
+                        'imageType': '<b',
+                        'versionMajor': "<u2",
+                        'versionMinor': "<u2",
+                        'versionPatch': "<u2",
+                        'crc': "<u4",
+                        'repName': 'V32',
+                        'gitHash': 'V20'
+
+                    }
+                }
+            },
+            "SET_SIGNATURE_CHECKING": {
+                'What': "Enables or disables signature checking which allows updating firmware with different signature. Set state is kept until reboot. Recommended update sequence: bootloader L1, bootloader L2, application. By default signature checking is enabled. Enable: 1 - enable, 0 - disable. Magic: 0x862A7E01",
+                'subPort': 11,
+                'inoutInfo': {
+                    'args': {
+                        'enable': '<b',
+                        'magicKey': '<u4'
+                    },
+                    'returns': {
+                        'err': '<b'
+                    }
+                }
+            }
+        }
+    },
     'GENERAL': {
+        'supports' : ("OBC",),
         'port' : 11,
         'subservice' : {
             'REBOOT': {
@@ -334,7 +539,7 @@ services = {
             'GET_NS_PAYLOAD_WATCHDOG_TIMEOUT': {
                 'subPort': 12,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',  # err status
                         'timeout_ms': '>u4'
@@ -383,6 +588,7 @@ services = {
         }
     },
     'COMMUNICATION': {
+        'supports' : ("OBC",),
         'port': 10,
         'subservice': {
             'S_GET_FREQ': {
@@ -725,7 +931,7 @@ services = {
                 'subPort': 26,
                 'inoutInfo': {
                     'args': {
-                        "Set_1_to_confirm" : '>u1' #Safety precaution 
+                        "Set_1_to_confirm" : '>u1' #Safety precaution
                     },
                     'returns': {
                         'err': '>b',
@@ -999,6 +1205,7 @@ services = {
     },
 
     'CONFIGURATION': {
+        'supports' : ("EPS",),
         'port': 9,  # As per EPS docs
         'subservice': {
             'GET_ACTIVE_CONFIG': {
@@ -1189,6 +1396,7 @@ services = {
         }
     },
     'HOUSEKEEPING': {
+        'supports' : ("OBC",),
         'port': 17,
         'subservice': {
             'GET_HK': {
@@ -1646,6 +1854,7 @@ services = {
     },
 
     'GROUND_STATION_WDT': {
+        'supports' : ("EPS",),
         'port': 16,  # As per EPS docs
         'subservice': {
             'RESET_WDT': {
@@ -1698,6 +1907,7 @@ services = {
     },
 
     'EPS_RESET': {
+        'supports' : ("EPS",),
         'port': 15,  # As per EPS docs
         'subservice': {
             'EPS_HARD_RESET': {
@@ -1716,6 +1926,7 @@ services = {
     },
 
     'REBOOT': {
+        'supports' : ("EPS",),
         'port': 4,  # As per EPS CSP docs
         # EPS soft reset
         # no subPort (command ID) needed.
@@ -1737,7 +1948,7 @@ services = {
     },
 
     'TM_CLI': {
-        # EPS SPECIFIC
+        'supports' : ("EPS",),
         'port': 7,  # EPS remote CLI uses port 13 unless Otherwise specified #TODO: Does 7 mean otherwise specified?
         'subservice': {
             'GENERAL_TELEMETRY': {
@@ -1924,7 +2135,7 @@ services = {
     },
 
     'CONTROL': {
-        # EPS SPECIFIC
+        'supports' : ("EPS",),
         'port': 14,
         'subservice': {
             # POWER OUTPUTS
@@ -2054,6 +2265,7 @@ services = {
         }
     },
     'UPDATER' : {
+        'supports' : ("OBC",),
         'port': 12,
         'subservice': {
             'INITIALIZE_UPDATE': {
@@ -2130,6 +2342,7 @@ services = {
     },
 
     'LOGGER': {
+        'supports' : ("OBC",),
         'port': 13,
         'subservice': {
             'GET_FILE': {
@@ -2180,6 +2393,7 @@ services = {
         }
     },
     'CLI' : {
+        'supports' : ("OBC",),
         'port': 24,
         'subservice': {
             'SEND_CMD': {
@@ -2199,6 +2413,7 @@ services = {
         }
     },
     'ADCS': { # refer to the adcs service
+        'supports' : ("OBC",),
         'port': 18,
         'subservice': {
             'ADCS_RESET': {
@@ -2531,7 +2746,7 @@ services = {
                         'CommsStat_flags_3': '<B',
                         'CommsStat_flags_4': '<B',
                         'CommsStat_flags_5': '<B',
-                        'CommsStat_flags_6': '<B',      
+                        'CommsStat_flags_6': '<B',
 
                     }
                 }
@@ -2908,7 +3123,7 @@ services = {
                         'err': '>b',
                     }
                 }
-            },                    
+            },
             'ADCS_SAVE_CONFIG': {
                 'subPort': 61,
                 'inoutInfo': {
@@ -3010,7 +3225,7 @@ services = {
                         'Altitude': '>f4',
                         'ecef_pos_x': '>i2',
                         'ecef_pos_y': '>i2',
-                        'ecef_pos_z': '>i2'                                             
+                        'ecef_pos_z': '>i2'
                     }
                 }
             },
@@ -3608,7 +3823,7 @@ services = {
             'ADCS_SET_MTQ_CONFIG': {
                 'subPort': 93,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Mag1_axis" : '>u1',
                         "Mag2_axis" : '>u1',
                         "Mag3_axis" : '>u1'
@@ -3621,7 +3836,7 @@ services = {
             'ADCS_SET_RW_CONFIG': {
                 'subPort': 94,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "RW1_axis" : '>u1',
                         "RW2_axis" : '>u1',
                         "RW3_axis" : '>u1',
@@ -3635,7 +3850,7 @@ services = {
             'ADCS_SET_RATE_GYRO': {
                 'subPort': 95,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Gyro1_axis" : '>u1',
                         "Gyro2_axis" : '>u1',
                         "Gyro3_axis" : '>u1',
@@ -3653,7 +3868,7 @@ services = {
                 "what" : "CSS relative scale floats cannot be negative!",
                 'subPort': 96,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "CSS1_axis" : '>B',
                         "CSS2_axis" : '>B',
                         "CSS3_axis" : '>B',
@@ -4040,8 +4255,8 @@ services = {
                         'cubestar_err_margin': '>B',
                         'cubestar_delay_t': '>u2',
                         'cubestar_centroid_x': '>f4',
-                        'cubestar_centroid_y': '>f4',    
-                        'cubestar_focal_len': '>f4', 
+                        'cubestar_centroid_y': '>f4',
+                        'cubestar_focal_len': '>f4',
                         'cubestar_radical_distor_1': '>f4',
                         'cubestar_radical_distor_2': '>f4',
                         'cubestar_tangent_distor_1': '>f4',
@@ -4093,7 +4308,7 @@ services = {
                         'est_select_arr_8': '>B',
                         'est_MTM_mode': '>B',
                         'est_MTM_select': '>B',
-                        'est_cam_sample_period': '>B',                          
+                        'est_cam_sample_period': '>B',
                         'asgp4_inclination': '>f4',
                         'asgp4_RAAN': '>f4',
                         'asgp4_ECC': '>f4',
@@ -4144,6 +4359,7 @@ services = {
         }
     },
     'DFGM': {
+        'supports' : ("OBC",),
         'port': 19,
         'subservice': {
             'DFGM_RUN': {
@@ -4203,6 +4419,7 @@ services = {
         }
     },
     "FTP_COMMAND": {
+        'supports' : ("OBC",),
         'port': 20,
         'subservice': {
             'GET_FILE_SIZE': {
@@ -4260,6 +4477,7 @@ services = {
         }
     },
     'NS_PAYLOAD': {
+        'supports' : ("OBC",),
         'port': 22,
         'subservice': {
             'UPLOAD_ARTWORK': {
@@ -4278,7 +4496,7 @@ services = {
                 'what': 'Tell the payload to display artwork and capture an image.',
                 'subPort': 1,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'confirmation_err': '>B'
@@ -4289,18 +4507,18 @@ services = {
                 'what': 'Let the payload know that the last image it took was received by the ground and can be deleted.',
                 'subPort': 2,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                     }
                 }
             },
-            
+
             'GET_HEARTBEAT': {
                 'what': 'Receive a ping (char h) from the payload',
                 'subPort': 3,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'heartbeat': '>S1'
@@ -4337,7 +4555,7 @@ services = {
                 'what': 'Get telemetry data from the payload',
                 'subPort': 6,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'temp0': '>i2',
@@ -4357,7 +4575,7 @@ services = {
                 'what': 'Get payload software version.',
                 'subPort': 7,
                 'inoutInfo': {
-                    'args': None, 
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'version': '>S7'
@@ -4367,6 +4585,7 @@ services = {
         },
     },
     'IRIS': {
+        'supports' : ("OBC",),
         'port': 23,
         'subservice': {
             'IRIS_POWER_ON': {

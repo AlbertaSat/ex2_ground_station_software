@@ -88,7 +88,7 @@ class baseTransaction:
         return self.networkHandler.receive(self.dst, self.dport, 10000)
 
     def parseReturnValue(self, data):
-        return self.returnParse.parseReturnValue(self.dport, data)
+        return self.returnParse.parseReturnValue(self.dst, self.dport, data)
 
     def execute(self):
         self.send()
