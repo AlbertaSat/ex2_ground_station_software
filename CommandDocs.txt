@@ -2130,3 +2130,11 @@ IRIS.IRIS_DELIVER_LOG:
 		port: 23		subport: 9
 
 
+IRIS.IRIS_SET_TIME:
+		About: Initialize Iris RTC from ground station via OBC
+		Supports:'OBC'
+		Arguments: {'new_iris_time': '>u4'}
+		return values: {'err': '>b'}
+		port: 23		subport: 10
+
+
