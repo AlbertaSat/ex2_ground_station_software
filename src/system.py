@@ -2417,6 +2417,7 @@ services = {
         'port': 18,
         'subservice': {
             'ADCS_RESET': {
+                'what': 'Forces ADCS to perform a reset.'
                 'subPort': 0,
                 'inoutInfo': {
                     'args': None,
@@ -2426,6 +2427,7 @@ services = {
                 }
             },
             'ADCS_RESET_LOG_POINTER': {
+                'what': 'Resets TLM log pointer to log buffer (from where LastLogEvent TLM is returned).',
                 'subPort': 1,
                 'inoutInfo': {
                     'args': None,
@@ -2435,6 +2437,7 @@ services = {
                 }
             },
             'ADCS_ADVANCE_LOG_POINTER': {
+                'what': 'Advances TLM log pointer to log buffer (form where LastLogEvent TLM is returned).',
                 'subPort': 2,
                 'inoutInfo': {
                     'args': None,
@@ -2444,6 +2447,7 @@ services = {
                 }
             },
             'ADCS_RESET_BOOT_REGISTERS': {
+                'what': 'Resets boot counter, state, and cause registers',
                 'subPort': 3,
                 'inoutInfo': {
                     'args': None,
@@ -2453,6 +2457,7 @@ services = {
                 }
             },
             'ADCS_FORMAT_SD_CARD': {
+                'what': 'Formats SD card.',
                 'subPort': 4,
                 'inoutInfo': {
                     'args': None,
@@ -2462,6 +2467,7 @@ services = {
                 }
             },
             'ADCS_ERASE_FILE': {
+                'what': 'Erases file by file type and counter. Alternatively, can erase all files in SD card.',
                 'subPort': 5,
                 'inoutInfo': {
                     'args': {
@@ -2475,6 +2481,7 @@ services = {
                 }
             },
             'ADCS_LOAD_FILE_DOWNLOAD_BLOCK': {
+                'what': 'Fill download buffer with file contents specified by file type, counter, offset and length.',
                 'subPort': 6,
                 'inoutInfo': {
                     'args': {
@@ -2489,6 +2496,7 @@ services = {
                 }
             },
             'ADCS_ADVANCE_FILE_LIST_READ_POINTER': {
+                'what':  'Advances file list read pointer.',
                 'subPort': 7,
                 'inoutInfo': {
                     'args': None,
@@ -2498,6 +2506,7 @@ services = {
                 }
             },
             'ADCS_INITIATE_FILE_UPLOAD': {
+                'what': 'Initiates file upload to destination (Table 20, F/W Ref. Manual) with block size specified.',
                 'subPort': 8,
                 'inoutInfo': {
                     'args': {
@@ -2510,6 +2519,7 @@ services = {
                 }
             },
             'ADCS_FILE_UPLOAD_PACKET': {
+                'what': 'Sends 20-byte file message. Include packet number and file bytes to be sent.',
                 'subPort': 9,
                 'inoutInfo': {
                     'args': {
@@ -2523,6 +2533,7 @@ services = {
                 }
             },
             'ADCS_FINALIZE_UPLOAD_BLOCK': {
+                'what': 'Finalizes uploaded file block at specified destination (Table 20, F/W Ref. Manual), offset, and block length. Executed after hole map is complete.',
                 'subPort': 10,
                 'inoutInfo': {
                     'args': {
@@ -2536,6 +2547,7 @@ services = {
                 }
             },
             'ADCS_RESET_UPLOAD_BLOCK': {
+                'what': 'Resets the hole map for the upload block.',
                 'subPort': 11,
                 'inoutInfo': {
                     'args': None,
@@ -2545,6 +2557,7 @@ services = {
                 }
             },
             'ADCS_RESET_FILE_LIST_READ_POINTER': {
+                'what': 'Resets file list read pointer.',
                 'subPort': 12,
                 'inoutInfo': {
                     'args': None,
@@ -2554,6 +2567,7 @@ services = {
                 }
             },
             'ADCS_INITIATE_DOWNLOAD_BURST': {
+                'what': 'Initiates download burst. ADCS begins to send 20-byte packets. Specify message length, and hole map polling. Executed after download block is ready.'
                 'subPort': 13,
                 'inoutInfo': {
                     'args': {
@@ -2566,6 +2580,7 @@ services = {
                 }
             },
             'ADCS_GET_NODE_IDENTIFICATION': {
+                'what': 'Returns identification for this node: type, interface, firmware versions, and runtime in s and ms.',
                 'subPort': 14,
                 'inoutInfo': {
                     'args': None,
@@ -2581,6 +2596,7 @@ services = {
                 }
             },
             'ADCS_GET_BOOT_PROGRAM_STAT': {
+                'what': 'Returns boot and running program status: reset cause, boot cause (Table 29 and 30 F/W Ref. Manual), boot counter, program index and firmware version',
                 'subPort': 15,
                 'inoutInfo': {
                     'args': None,
@@ -2596,6 +2612,7 @@ services = {
                 }
             },
             'ADCS_GET_BOOT_INDEX': {
+                'what': 'Returns program index and boot status (Tables 31 and 33 F/W Ref. Manual)',
                 'subPort': 16,
                 'inoutInfo': {
                     'args': None,
@@ -2607,6 +2624,7 @@ services = {
                 }
             },
             'ADCS_GET_LAST_LOGGED_EVENT': {
+                'what': 'Returns last logged event time, ID and parameter (relative to pointer -- use advance/reset log pointer commands).',
                 'subPort': 17,
                 'inoutInfo': {
                     'args': None,
@@ -2618,7 +2636,8 @@ services = {
                     }
                 }
             },
-            'ADCS_GET_SD_FORMAT_PROCESS': {
+            'ADCS_GET_SD_FORMAT_PROGRESS': {
+                'what': 'Returns SD format and/or erase all progress.',
                 'subPort': 18,
                 'inoutInfo': {
                     'args': None,
@@ -2630,6 +2649,7 @@ services = {
                 }
             },
             'ADCS_GET_TC_ACK': {
+                'what': 'Returns last TC ID, processed flag, TC error status (Table 40 F/W Ref. Manual) and index.',
                 'subPort': 19,
                 'inoutInfo': {
                     'args': None,
@@ -2637,11 +2657,13 @@ services = {
                         'err': '>b',
                         'Last_Tc_Id': '>u1',
                         'Tc_Processed': '>?',
-                        'Tc_Err_Stat': '>b'
+                        'Tc_Err_Stat': '>b',
+                        'Tc_Param_Err_Index': '>B'
                     }
                 }
             },
             'ADCS_GET_FILE_DOWNLOAD_BUFFER': {
+                'what': 'Returns file download buffer with packet count and 20-byte packet.',
                 'subPort': 20,
                 'inoutInfo': {
                     'args': None,
@@ -2653,26 +2675,29 @@ services = {
                 }
             },
             'ADCS_GET_FILE_DOWNLOAD_BLOCK_STAT': {
+                'what': 'Returns ready flag, msg length and hole map parameter error flag, CRC16 checksum, and block length of download block.',
                 'subPort': 21,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
                         'Ready': '>?',
-                        'Param_Err': '?',
+                        'Param_Err': '>?',
                         'Crc16_Checksum': '>u2',
                         'Length': '>u2'
                     }
                 }
             },
             'ADCS_GET_FILE_INFO': {
+                'what': 'Returns file type, update flag, counter, size, date/time, CRC16 checksum.',
                 'subPort': 22,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
                         'Type': '>u1',
-                        'Updating': '?',
+                        'Updating': '>?',
+                        'File_Counter': '>u1',
                         'Size': '>u4',
                         'Time': '>u4',
                         'Crc16_Checksum': '>u2'
@@ -2680,6 +2705,7 @@ services = {
                 }
             },
             'ADCS_GET_INIT_UPLOAD_STAT': {
+                'what': 'Returns status of upload initiation.',
                 'subPort': 23,
                 'inoutInfo': {
                     'args': None,
@@ -2690,6 +2716,7 @@ services = {
                 }
             },
             'ADCS_GET_FINALIZE_UPLOAD_STAT': {
+                'what': 'Returns busy and error flag regarding upload finalization status.',
                 'subPort': 24,
                 'inoutInfo': {
                     'args': None,
@@ -2701,6 +2728,7 @@ services = {
                 }
             },
             'ADCS_GET_UPLOAD_CRC16_CHECKSUM': {
+                'what': 'Returns upload CRC16 checksum.',
                 'subPort': 25,
                 'inoutInfo': {
                     'args': None,
@@ -2711,6 +2739,7 @@ services = {
                 }
             },
             'ADCS_GET_SRAM_LATCHUP_COUNT': {
+                'what': 'Returns SRAM1 and SRAM2 latchup counts.',
                 'subPort': 26,
                 'inoutInfo': {
                     'args': None,
@@ -2722,6 +2751,7 @@ services = {
                 }
             },
             'ADCS_GET_EDAC_ERR_COUNT': {
+                'what': 'Returns single, double, and multiple SRAM upsets.',
                 'subPort': 27,
                 'inoutInfo': {
                     'args': None,
@@ -2734,6 +2764,7 @@ services = {
                 }
             },
             'ADCS_GET_COMMS_STAT': {
+                'what': 'Returns TC counter, TLM request counter, TC buffer overrun flag, and UART, I2C, and CAN error flags.',
                 'subPort': 28,
                 'inoutInfo': {
                     'args': None,
@@ -2741,17 +2772,18 @@ services = {
                         'err': '>b',
                         'TC_num': '>u2',
                         'TM_num': '>u2',
-                        'CommsStat_flags_1': '<B',
-                        'CommsStat_flags_2': '<B',
-                        'CommsStat_flags_3': '<B',
-                        'CommsStat_flags_4': '<B',
-                        'CommsStat_flags_5': '<B',
-                        'CommsStat_flags_6': '<B',
+                        'TC_Buffer_Overrun': '<B',
+                        'UART_Error': '<B',
+                        'UART_Incomplete': '<B',
+                        'I2C_TLM_Err': '<B',
+                        'I2C_TC_Buffer_Err': '<B',
+                        'CAN_TC_Buffer_Err': '<B',
 
                     }
                 }
             },
             'ADCS_SET_CACHE_EN_STATE': {
+                'what': 'Sets cache enabled state.',
                 'subPort': 29,
                 'inoutInfo': {
                     'args': {
@@ -2763,6 +2795,7 @@ services = {
                 }
             },
             'ADCS_SET_SRAM_SCRUB_SIZE': {
+                'what': 'Set SRAM scrubbing size.',
                 'subPort': 30,
                 'inoutInfo': {
                     'args': {
@@ -2787,11 +2820,12 @@ services = {
                 }
             },
             'ADCS_SET_HOLE_MAP': {
+                'what': 'Sets file upload hole map (up to 8 arrays of 16 bytes).',
                 'subPort': 32,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "arg1" : '>u1',
-                        "arg2" : '>u1'
+                    'args': { 
+                        "Hole_Map" : '>u1', 
+                        "Hole_Map_Num" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -2800,11 +2834,12 @@ services = {
                 }
             },
             'ADCS_SET_UNIX_T': {
+                'what': 'Sets the Unix Time.',
                 'subPort': 33,
-                'inoutInfo': { #TODO: better names
+                'inoutInfo': { 
                     'args': {
-                        "Arg1" : '>u4',
-                        "Arg2" : '>u2'
+                        "Unix_T" : '>u4',
+                        "Count_Millis" : '>u2'
                     },
                     'returns': {
                         'err': '>b',
@@ -2812,11 +2847,10 @@ services = {
                 }
             },
             'ADCS_GET_CACHE_EN_STATE': {
+                'what': 'Returns cache enabled state.',
                 'subPort': 34,
                 'inoutInfo': {
-                    'args': {
-                        "State" : '>?'
-                    },
+                    'args': None,
                     'returns': {
                         'err': '>b',
                         'En_State': '>?'
@@ -2824,6 +2858,7 @@ services = {
                 }
             },
             'ADCS_GET_SRAM_SCRUB_SIZE': {
+                'what': 'Returns SRAM scrubbing size.',
                 'subPort': 35,
                 'inoutInfo': {
                     'args': None,
@@ -2834,6 +2869,7 @@ services = {
                 }
             },
             'ADCS_GET_UNIXTIME_SAVE_CONFIG': {
+                'what': 'Returns Unix Time save configuration: when: [1 = now, 2 = on update, 4 = periodically], and period',
                 'subPort': 36,
                 'inoutInfo': {
                     'args': None,
@@ -2845,10 +2881,11 @@ services = {
                 }
             },
             'ADCS_GET_HOLE_MAP': {
+                'what': 'Returns file upload hole map: ',
                 'subPort': 37,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "Num" : '>u1'
+                    'args': {
+                        "Hole_Map_Num" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -2857,6 +2894,7 @@ services = {
                 }
             },
             'ADCS_GET_UNIX_T': {
+                'what': 'Returns the Unix Time in (in s and ms) saved on the ADCS.',
                 'subPort': 38,
                 'inoutInfo': {
                     'args': None,
@@ -2868,6 +2906,7 @@ services = {
                 }
             },
             'ADCS_CLEAR_ERR_FLAGS': {
+                'what': 'Clears ADCS error flags.',
                 'subPort': 39,
                 'inoutInfo': {
                     'args': None,
@@ -2877,6 +2916,7 @@ services = {
                 }
             },
             'ADCS_SET_BOOT_INDEX': {
+                'what': 'Selects which program to boot (Table 63 F/W Ref. Manual).'
                 'subPort': 40,
                 'inoutInfo': {
                     'args': {
@@ -2888,6 +2928,7 @@ services = {
                 }
             },
             'ADCS_RUN_SELECTED_PROGRAM': {
+                'what': 'Runs selected program -- forces the bootloader to run internal flash program.',
                 'subPort': 41,
                 'inoutInfo': {
                     'args': None,
@@ -2897,6 +2938,7 @@ services = {
                 }
             },
             'ADCS_READ_PROGRAM_INFO': {
+                'what': 'Requests program CRC and length, use ADCS_GET_PROGRAM_INFO to read.'
                 'subPort': 42,
                 'inoutInfo': {
                     'args': {
@@ -2908,6 +2950,7 @@ services = {
                 }
             },
             'ADCS_COPY_PROGRAM_INTERNAL_FLASH': {
+                'what': 'Copies program at index (Table 66, F/W Ref. Manual), with option to overwrite the bootloader.',
                 'subPort': 43,
                 'inoutInfo': {
                     'args': {
@@ -2920,28 +2963,30 @@ services = {
                 }
             },
             'ADCS_GET_BOOTLOADER_STATE': {
+                'what': 'Return status flags for bootloader.',
                 'subPort': 44,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'Uptime': '>u2',
-                        'Flags_arr_1': '>u1',
-                        'Flags_arr_2': '>u1',
-                        'Flags_arr_3': '>u1',
-                        'Flags_arr_4': '>u1',
-                        'Flags_arr_5': '>u1',
-                        'Flags_arr_6': '>u1',
-                        'Flags_arr_7': '>u1',
-                        'Flags_arr_8': '>u1',
-                        'Flags_arr_9': '>u1',
-                        'Flags_arr_10': '>u1',
-                        'Flags_arr_11': '>u1',
-                        'Flags_arr_12': '>u1'
+                        'Uptime_S': '>u2',
+                        'SRAM1_En': '>u1',
+                        'SRAM2_En': '>u1',
+                        'SRAM_Latch_Err_Un_Re': '>u1',
+                        'SRAN_Latch_Err_Re': '>u1',
+                        'SD_Card_Init_Err': '>u1',
+                        'SD_Card_Read_Err': '>u1',
+                        'SD_Card_Write_Err': '>u1',
+                        'Ext_Flash_Err': '>u1',
+                        'Int_Flash_Err': '>u1',
+                        'EEPROM_Err': '>u1',
+                        'Boot_Reg_Corrupt': '>u1',
+                        'Comms_Err': '>u1'
                     }
                 }
             },
             'ADCS_GET_PROGRAM_INFO': {
+                'what': 'Returns program index, reading flag, file syze (bytes) and CRC16 checksum.'
                 'subPort': 45,
                 'inoutInfo': {
                     'args': None,
@@ -2955,6 +3000,7 @@ services = {
                 }
             },
             'ADCS_COPY_INTERNAL_FLASH_PROGRESS': {
+                'what': 'Progress of copy to internal flash operation -- returns busy and error flags.'
                 'subPort': 46,
                 'inoutInfo': {
                     'args': None,
@@ -2978,6 +3024,7 @@ services = {
                 }
             },
             'ADCS_SET_ENABLED_STATE': {
+                'what': 'Set emabled state and control loop behaviour (Table 75, F/W Ref. Manual).',
                 'subPort': 48,
                 'inoutInfo': {
                     'args': {
@@ -2989,11 +3036,12 @@ services = {
                 }
             },
             'ADCS_CLEAR_LATCHED_ERRS': {
+                'what': 'Clear ADCS and/or HK error flags.',
                 'subPort': 49,
                 'inoutInfo': {
                     'args': { #TODO: Better names
-                        "Arg1" : '>?',
-                        "Arg2" : '>?'
+                        "ADCS_Err_Flags" : '>?',
+                        "HK_Err_Flags" : '>?'
                     },
                     'returns': {
                         'err': '>b',
@@ -3001,6 +3049,7 @@ services = {
                 }
             },
             'ADCS_SET_ATTITUDE_CONTROL_MODE': {
+                'what': 'Sets control mode (Table 78 F/W Ref. Manual), and control timeout duration (0xFFFF for inf timeout).',
                 'subPort': 50,
                 'inoutInfo': {
                     'args': {
@@ -3013,10 +3062,11 @@ services = {
                 }
             },
             'ADCS_SET_ATTITUDE_ESTIMATE_MODE': {
+                'what': 'Sets estimation mode (Table 80 F/W Ref. Manual).'.
                 'subPort': 51,
                 'inoutInfo': {
                     'args': {
-                        "Mode" : '>u1'
+                        "Est_Mode" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -3024,6 +3074,7 @@ services = {
                 }
             },
             'ADCS_TRIGGER_ADCS_LOOP': {
+                'what': 'Trigger ADCS to perform one iteration of the control loop (only when Run Mode is triggered).',
                 'subPort': 52,
                 'inoutInfo': {
                     'args': None,
@@ -3033,6 +3084,7 @@ services = {
                 }
             },
             'ADCS_TRIGGER_ADCS_LOOP_SIM': {
+                'what': 'Trigger ADCS to perform one iteration of the control loop only with simulated sensor data.',
                 'subPort': 53,
                 'inoutInfo': {
                     'args': None, #TODO: sim_sensor_data type ?
@@ -3041,7 +3093,8 @@ services = {
                     }
                 }
             },
-            'ADCS_SET_ASGP4_RUNE_MODE': {
+            'ADCS_SET_ASGP4_RUN_MODE': {
+                'what': 'Sets ASGP4 run mode -- (GPS augmented SGP4 not used, use SGP4 commands instead!).',
                 'subPort': 54,
                 'inoutInfo': {
                     'args': {
@@ -3053,6 +3106,7 @@ services = {
                 }
             },
             'ADCS_TRIGGER_ASGP4': {
+                'what': 'Trigger ASGP4 process -- (GPS augmented SGP4 not used, use SPG4 commands instead!).',
                 'subPort': 55,
                 'inoutInfo': {
                     'args': None,
@@ -3062,10 +3116,11 @@ services = {
                 }
             },
             'ADCS_SET_MTM_OP_MODE': {
+                'what': 'Set magnetometer mode (Table 90 F/W Ref. Manual).',
                 'subPort': 56,
                 'inoutInfo': {
                     'args': {
-                        "Mode" : '>u1'
+                        "Mtm_Mde" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -3073,12 +3128,13 @@ services = {
                 }
             },
             'ADCS_CNV2JPG': {
+                'what': 'Convert raw/bmp files to JPG',
                 'subPort': 57,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "Arg1" : '>u1',
-                        "Arg2" : '>u1',
-                        "Arg3" : '>u1'
+                    'args': { 
+                        "Src_File_Ctr" : '>u1',
+                        "Qual_Factor" : '>u1',
+                        "White_Bal" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -3086,11 +3142,12 @@ services = {
                 }
             },
             'ADCS_SAVE_IMG': {
+                'what': 'Save and capture image from CubeSense or CubeStar cameras to SD card with specified size (Tables 95 and 96 F/W Ref. Manual).',
                 'subPort': 58,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "Arg1" : '>u1',
-                        "Arg2" : '>u1'
+                    'args': { 
+                        "Cam_Select" : '>u1',
+                        "Img_Size" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -3099,12 +3156,13 @@ services = {
             },
 
             'ADCS_SET_MAGNETORQUER_OUTPUT': {
+                'what': 'Set X, Y, and Z magnetorquer duty cycles [0 - +/-800]. Only valid of Control Mode is None.',
                 'subPort': 59,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "Arg1" : '>u2',
-                        "Arg2" : '>u2',
-                        "Arg3" : '>u2'
+                    'args': { 
+                        "Mtq_X" : '>i2',
+                        "Mtq_Y" : '>i2',
+                        "Mtq_Z" : '>i2'
                     },
                     'returns': {
                         'err': '>b',
@@ -3112,12 +3170,13 @@ services = {
                 }
             },
             'ADCS_SET_WHEEL_SPEED': {
+                'what': 'Set wheel speed rpm [0 - +/-8000]. Only valid if Control Mode is None.', 
                 'subPort': 60,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "Arg1" : '>u2',
-                        "Arg2" : '>u2',
-                        "Arg3" : '>u2'
+                    'args': { 
+                        "Wheel_X" : '>i2',
+                        "Wheel_Y" : '>i2',
+                        "Wheel_Z" : '>i2'
                     },
                     'returns': {
                         'err': '>b',
@@ -3125,6 +3184,7 @@ services = {
                 }
             },
             'ADCS_SAVE_CONFIG': {
+                'what': 'Saves current configuration to flash memory.',
                 'subPort': 61,
                 'inoutInfo': {
                     'args': None,
@@ -3134,6 +3194,7 @@ services = {
                 }
             },
             'ADCS_SAVE_ORBIT_PARAMS': {
+                'what': 'Saves current orbit parameters to flash memory.',
                 'subPort': 62,
                 'inoutInfo': {
                     'args': None,
@@ -3143,6 +3204,7 @@ services = {
                 }
             },
             'ADCS_GET_CURRENT_STATE': {
+                'what': 'Gets full ADCS state (Table 149 F/W Ref. Manual).'
                 'subPort': 63,
                 'inoutInfo': {
                     'args': None,
@@ -3152,62 +3214,62 @@ services = {
                         'att_ctrl_mode': '>B',
                         'run_mode': '>B',
                         'ASGP4_mode': '>B',
-                        'flags_arr_1': '>B',
-                        'flags_arr_2': '>B',
-                        'flags_arr_3': '>B',
-                        'flags_arr_4': '>B',
-                        'flags_arr_5': '>B',
-                        'flags_arr_6': '>B',
-                        'flags_arr_7': '>B',
-                        'flags_arr_8': '>B',
-                        'flags_arr_9': '>B',
-                        'flags_arr_10': '>B',
-                        'flags_arr_11': '>B',
-                        'flags_arr_12': '>B',
-                        'flags_arr_13': '>B',
-                        'flags_arr_14': '>B',
-                        'flags_arr_15': '>B',
-                        'flags_arr_16': '>B',
-                        'flags_arr_17': '>B',
-                        'flags_arr_18': '>B',
-                        'flags_arr_19': '>B',
-                        'flags_arr_20': '>B',
-                        'flags_arr_21': '>B',
-                        'flags_arr_22': '>B',
-                        'flags_arr_23': '>B',
-                        'flags_arr_24': '>B',
-                        'flags_arr_25': '>B',
-                        'flags_arr_26': '>B',
-                        'flags_arr_27': '>B',
-                        'flags_arr_28': '>B',
-                        'flags_arr_29': '>B',
-                        'flags_arr_30': '>B',
-                        'flags_arr_31': '>B',
-                        'flags_arr_32': '>B',
-                        'flags_arr_33': '>B',
-                        'flags_arr_34': '>B',
-                        'flags_arr_35': '>B',
-                        'flags_arr_36': '>B',
-                        'flags_arr_37': '>B',
-                        'flags_arr_38': '>B',
-                        'flags_arr_39': '>B',
-                        'flags_arr_40': '>B',
-                        'flags_arr_41': '>B',
-                        'flags_arr_42': '>B',
-                        'flags_arr_43': '>B',
-                        'flags_arr_44': '>B',
-                        'flags_arr_45': '>B',
-                        'flags_arr_46': '>B',
-                        'flags_arr_47': '>B',
-                        'flags_arr_48': '>B',
-                        'flags_arr_49': '>B',
-                        'flags_arr_50': '>B',
-                        'flags_arr_51': '>B',
-                        'flags_arr_52': '>B',
-                        'MTM_sample_mode': '>B',
-                        'est_angle_x': '>f4',
-                        'est_angle_y': '>f4',
-                        'est_angle_z': '>f4',
+                        'Cubectrl_Sig_En': '>B',
+                        'Cubectrl_Mtr_En': '>B',
+                        'Cube1_En': '>B',
+                        'Cubesns2_En': '>B',
+                        'Cubewhl1_En': '>B',
+                        'Cubewhl2_En': '>B',
+                        'Cubewhl3_En': '>B',
+                        'Cubestr_En': '>B',
+                        'GPS_Rx_En': '>B',
+                        'GPS_LNA_Pwr_En': '>B',
+                        'Mtr_Drvr_En': '>B',
+                        'Sun_Abv_Lcl_Hrzn': '>B',
+                        'CubeSense1_Comms_Err': '>B',
+                        'CubeSense2_Comms_Err': '>B',
+                        'Cubectrl_Sig_Comms_Err': '>B',
+                        'Cubectrl_Mtr_Comms_Err': '>B',
+                        'CubeWheel1_Comms_Err': '>B',
+                        'CubeWheel2_Comms_Err': '>B',
+                        'CubeWheel3_Comms_Err': '>B',
+                        'CubeStar_Comms_Err': '>B',
+                        'Mtm_Rng_Err': '>B',
+                        'Cam1_SRAM_Ov': '>B',
+                        'Cam1_3V3_Ov': '>B',
+                        'Cam1_Busy_Err': '>B',
+                        'Cam1_Det_Err': '>B',
+                        'Sun_Snsr_Rng_Err': '>B',
+                        'Cam2_SRAM_Ov': '>B',
+                        'Cam2_3V3_Ov': '>B',
+                        'Cam2_Busy_Err': '>B',
+                        'Cam2_Det_Err': '>B',
+                        'Ndir_Snsr_Rng_Err': '>B',
+                        'Rate_Snsr_Rng_Err': '>B',
+                        'Whl_Spd_Rng_Err': '>B',
+                        'Crs_Sun_Snsr_Err': '>B',
+                        'Strtrckr_Mtch_Err': '>B',
+                        'Strtrckr_Ov_Det': '>B',
+                        'Orbt_Param_Invld': '>B',
+                        'Cnfg_Invld': '>B',
+                        'Ctrl_Mde_Invld': '>B',
+                        'Estmtr_Chng_Invld': '>B',
+                        'Mtm_Smpl_Mode': '>B',
+                        'Mag_Fld_Diff': '>B',
+                        'Node_Recov_Err': '>B',
+                        'CubeSense1_Runtm_Err': '>B',
+                        'CubeSense2_Runtm_Err': '>B',
+                        'Cubectrl_Sgnl_Runtm_Err': '>B',
+                        'Cubectrl_Mtr_Runtm_Err': '>B',
+                        'CubeWhl1_Runtm_Err': '>B',
+                        'CubeWhl2_Runtm_Err': '>B',
+                        'CubeWhl3_Runtm_Err': '>B',
+                        'Cubestr_Runtm_Err': '>B',
+                        'Mtm__Err': '>B',
+                        'Rate_Snsr_Fail': '>B',
+                        'est_roll_angle': '>f4',
+                        'est_pitch_angle': '>f4',
+                        'est_yaw_angle': '>f4',
                         'est_quaternion_x': '>i2',
                         'est_quaternion_y': '>i2',
                         'est_quaternion_z': '>i2',
@@ -3230,6 +3292,7 @@ services = {
                 }
             },
             'ADCS_GET_JPG_CNV_PROGESS': {
+                'what': 'Returns JPG conversion progress.',
                 'subPort': 64,
                 'inoutInfo': {
                     'args': None,
@@ -3242,33 +3305,36 @@ services = {
                 }
             },
             'ADCS_GET_CUBEACP_STATE': {
+                'what': 'Returns flags regarding ACP state.',
                 'subPort': 65,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'Flags_Arr_1': '>u1',
-                        'Flags_Arr_2': '>u1',
-                        'Flags_Arr_3': '>u1',
-                        'Flags_Arr_4': '>u1',
-                        'Flags_Arr_5': '>u1',
-                        'Flags_Arr_6': '>u1',
+                        'Cnfg_Load_Err': '>u1',
+                        'Orbt_Param_Load_Err': '>u1',
+                        'Sys_Cnfg_Load_Err': '>u1',
+                        'SD_Crd_Init_Err': '>u1',
+                        'SD_Crd_Rd_Err': '>u1',
+                        'SD_Crd_Wrt_Err': '>u1',
                     }
                 }
             },
             'ADCS_GET_SAT_POS_LLH': {
+                'what': 'Returns LLH (WGS-84) satellite position.',
                 'subPort': 66,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'X': '>i2',
-                        'Y': '>i2',
-                        'Z': '>u2',
+                        'Latitude': '>i2',
+                        'Longitude': '>i2',
+                        'Altitude': '>u2',
                     }
                 }
             },
             'ADCS_GET_EXECUTION_TIMES': {
+                'what': 'Returns execution times of ACP functions (Table 155 F/W Ref. Manual).',
                 'subPort': 67,
                 'inoutInfo': {
                     'args': None,
@@ -3282,6 +3348,7 @@ services = {
                 }
             },
             'ADCS_GET_ACP_LOOP_STAT': {
+                'what': 'Returns time (ms) since start of loop and execution point (Table 168 F/W Ref. Manual).',
                 'subPort': 68,
                 'inoutInfo': {
                     'args': None,
@@ -3293,6 +3360,7 @@ services = {
                 }
             },
             'ADCS_GET_IMG_SAVE_PROGRESS': {
+                'what': 'Returns image save progress.',
                 'subPort': 69,
                 'inoutInfo': {
                     'args': None,
@@ -3304,6 +3372,7 @@ services = {
                 }
             },
             'ADCS_GET_MEASUREMENTS': {
+                'what': 'Returns calibrated sensor measurements (Table 150 F/W Ref. Manual).',
                 'subPort': 70,
                 'inoutInfo': {
                     'args': None,
@@ -3349,6 +3418,7 @@ services = {
                 }
             },
             'ADCS_GET_ACTUATOR': {
+                'what': 'Returns actuator commands on-time.',
                 'subPort': 71,
                 'inoutInfo': {
                     'args': None,
@@ -3364,6 +3434,7 @@ services = {
                 }
             },
             'ADCS_GET_ESTIMATION': {
+                'what': 'Returns estimation meta-data (Table 152 F/W Ref. Manual).',
                 'subPort': 72,
                 'inoutInfo': {
                     'args': None,
@@ -3394,6 +3465,7 @@ services = {
                 }
             },
             'ADCS_GET_ASGP4': {
+                'what': 'Get ASGP4 TLEs. (Not using GPS-augmented SGP4, use SGP4 commands instead!).',
                 'subPort': 73,
                 'inoutInfo': {
                     'args': None,
@@ -3411,6 +3483,7 @@ services = {
                 }
             },
             'ADCS_GET_RAW_SENSOR': {
+                'what': 'Returns raw sensor measurements (Table 153 F/W Ref. Manual).'
                 'subPort': 74,
                 'inoutInfo': {
                     'args': None,
@@ -3445,6 +3518,7 @@ services = {
                 }
             },
             'ADCS_GET_RAW_GPS': {
+                'what': 'Returns raw GPS data (Table 158 F/W Ref. Manual).',
                 'subPort': 75,
                 'inoutInfo': {
                     'args': None,
@@ -3474,6 +3548,7 @@ services = {
                 }
             },
             'ADCS_GET_STAR_TRACKER': {
+                'what': 'Return raw Star Tracker measurements (Table 159 F/W Ref. Manual).',
                 'subPort': 76,
                 'inoutInfo': {
                     'args': None,
@@ -3515,6 +3590,7 @@ services = {
                 }
             },
             'ADCS_GET_MTM2_MEASUREMENTS': {
+                'what': 'Return raw secondary magnetometer measuremnets.',
                 'subPort': 77,
                 'inoutInfo': {
                     'args': None,
@@ -3527,6 +3603,7 @@ services = {
                 }
             },
             'ADCS_GET_POWER_TEMP': {
+                'what': 'Returns power and temperature measurements (Table 154 F/W Ref. Manual).',
                 'subPort': 78,
                 'inoutInfo': {
                     'args': None,
@@ -3555,19 +3632,20 @@ services = {
                 }
             },
             'ADCS_SET_POWER_CONTROL': {
+                'what': 'Control power to selected components (Table 185 F/W Ref. Manual).',
                 'subPort': 79,
                 'inoutInfo': {
-                    'args': { #TODO: better names
-                        "Arg1" : '>u1',
-                        "Arg2" : '>u1',
-                        "Arg3" : '>u1',
-                        "Arg4" : '>u1',
-                        "Arg5" : '>u1',
-                        "Arg6" : '>u1',
-                        "Arg7" : '>u1',
-                        "Arg8" : '>u1',
-                        "Arg9" : '>u1',
-                        "Arg10" : '>u1'
+                    'args': { 
+                        "CubeCtrl_Sig_Pwr_Sel" : '>u1',
+                        "CubeCtrl_Mtr_Pwr_Sel" : '>u1',
+                        "CubeSense1_Pwr_Sel" : '>u1',
+                        "CubeSense2_Pwr_Sel" : '>u1',
+                        "CubeStar_Pwr_Sel" : '>u1',
+                        "CubeWheel1_Pwr_Sel" : '>u1',
+                        "CubeWheel2_Pwr_Sel" : '>u1',
+                        "CubeWheel3_Pwr_Sel" : '>u1',
+                        "Mtr_Pwr" : '>u1',
+                        "GPS_Pwr" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -3575,6 +3653,7 @@ services = {
                 }
             },
             'ADCS_GET_POWER_CONTROL': {
+                'what': 'Returns component power [0 = OFF, 1 = ON, 2 = Kept same]',
                 'subPort': 80,
                 'inoutInfo': {
                     'args': None,
@@ -3594,13 +3673,13 @@ services = {
                 }
             },
             'ADCS_SET_ATTITUDE_ANGLE': {
-                "what" : "CHECK DATA SHEET BEFORE USE. xyz ORDER MAY BE WRONG",
+                'what' : "CHECK DATA SHEET BEFORE USE. xyz ORDER MAY BE WRONG",
                 'subPort': 81,
                 'inoutInfo': {
                     'args': {
-                        "x" : '>f4',
-                        "y" : '>f4',
-                        "z" : '>f4'
+                        'x' : '>f4',
+                        'y' : '>f4',
+                        'z' : '>f4'
                     },
                     'returns': {
                         'err': '>b'
@@ -3608,6 +3687,7 @@ services = {
                 }
             },
             'ADCS_GET_ATTITUDE_ANGLE': {
+                'what': 'Returns commanded attitude angles'
                 'subPort': 82,
                 'inoutInfo': {
                     'args': None,
@@ -3620,12 +3700,13 @@ services = {
                 }
             },
             'ADCS_SET_TRACK_CONTROLLER': {
+                'what': 'Sets target reference for tracking control mode (Table 186 F/W Ref. Manual).',
                 'subPort': 83,
                 'inoutInfo': {
                     'args': {
-                        "x" : '>f4',
-                        "y" : '>f4',
-                        "z" : '>f4'
+                        'Geocentric_Long' : '>f4',
+                        'Geocentric_Lat' : '>f4',
+                        'Geocentric_Alt' : '>f4'
                     },
                     'returns': {
                         'err': '>b'
@@ -3633,14 +3714,15 @@ services = {
                 }
             },
             'ADCS_GET_TRACK_CONTROLLER': {
+                'what': 'Returns target reference for tracking control mode (Table 186 F/W Ref. Manual).',
                 'subPort': 84,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'X': '>f4',
-                        'Y': '>f4',
-                        'Z': '>f4'
+                        'Geocentric_Long' : '>f4',
+                        'Geocentric_Lat' : '>f4',
+                        'Geocentric_Alt' : '>f4'
                     }
                 }
             },
@@ -3660,6 +3742,7 @@ services = {
                 }
             },
             'ADCS_GET_LOG_CONFIG': {
+                'what': 'Returns log config of selected log',
                 'subPort': 86,
                 'inoutInfo': {
                     'args': {
@@ -3675,6 +3758,7 @@ services = {
                 }
             },
             'ADCS_SET_INERTIAL_REF': {
+                'what': 'Set reference unit vector for inertial pointing control mode.',
                 'subPort': 87,
                 'inoutInfo': {
                     'args': {
@@ -3688,6 +3772,7 @@ services = {
                 }
             },
             'ADCS_GET_INERTIAL_REF': {
+                'what': 'Returns reference unit vector for interial pointing control mode.',
                 'subPort': 88,
                 'inoutInfo': {
                     'args': None,
@@ -3700,9 +3785,10 @@ services = {
                 }
             },
             'ADCS_SET_SGP4_ORBIT_PARAMS': {
+                'what': 'Set SGP4 orbit parameters. Use SAVE_ORBIT_PARAMS to save to flash.',
                 'subPort': 89,
                 'inoutInfo': {
-                    'args': { #TODO: Better names
+                    'args': {
                         "inclination" : '>f8',
                         "eccentricity" : '>f8',
                         "RAAN" : '>f8',
@@ -3718,6 +3804,7 @@ services = {
                 }
             },
             'ADCS_GET_SGP4_ORBIT_PARAMS': {
+                'what': 'Returns SGP4 orbit parameters saved on ADCS.',
                 'subPort': 90,
                 'inoutInfo': {
                     'args': None,
@@ -3735,15 +3822,86 @@ services = {
                 }
             },
             'ADCS_SET_SYSTEM_CONFIG': {
+                'what': 'Set ADCS system config -- DO NOT EXECUTE UNLESS CONSULTED WITH CUBESPACE',
                 'subPort': 91,
                 'inoutInfo': {
-                    'args': None, #TODO: finish args
+                    'args': {
+                        'Acp_Type': '>u1',
+                        'Special_Ctrl_Sel': '>u1',
+                        'CC_sig_ver': '>u1',
+                        'CC_motor_ver': '>u1',
+                        'CS1_ver': '>u1',
+                        'CS2_ver': '>u1',
+                        'CS1_cam': '>u1',
+                        'CS2_cam': '>u1',
+                        'CubeStar_Ver': '>u1',
+                        'GPS': '>u1',
+                        'Include_MTM2': '>?',
+                        'MTQ_max_dipole_X': '>f4',
+                        'MTQ_max_dipole_Y': '>f4',
+                        'MTQ_max_dipole_Z': '>f4',
+                        'MTQ_ontime_res': '>f4',
+                        'MTQ_max_ontime': '>f4',
+                        'RW_max_torque_X': '>f4',
+                        'RW_max_torque_Y': '>f4',
+                        'RW_max_torque_Z': '>f4',
+                        'RW_max_moment_X': '>f4',
+                        'RW_max_moment_Y': '>f4',
+                        'RW_max_moment_Z': '>f4',
+                        'RW_inertia_X': '>f4',
+                        'RW_inertia_Y': '>f4',
+                        'RW_inertia_Z': '>f4',
+                        'RW_torque_inc': '>f4',
+                        'MTM1_bias_d1_X': '>f4',
+                        'MTM1_bias_d1_Y': '>f4',
+                        'MTM1_bias_d1_Z': '>f4',
+                        'MTM1_bias_d2_X': '>f4',
+                        'MTM1_bias_d2_Y': '>f4',
+                        'MTM1_bias_d2_Z': '>f4',
+                        'MTM1_sens_s1_X': '>f4',
+                        'MTM1_sens_s1_Y': '>f4',
+                        'MTM1_sens_s1_Z': '>f4',
+                        'MTM1_sens_s2_X': '>f4',
+                        'MTM1_sens_s2_Y': '>f4',
+                        'MTM1_sens_s2_Z': '>f4',
+                        'MTM2_bias_d1_X': '>f4',
+                        'MTM2_bias_d1_Y': '>f4',
+                        'MTM2_bias_d1_Z': '>f4',
+                        'MTM2_bias_d2_X': '>f4',
+                        'MTM2_bias_d2_Y': '>f4',
+                        'MTM2_bias_d2_Z': '>f4',
+                        'MTM2_sens_s1_X': '>f4',
+                        'MTM2_sens_s1_Y': '>f4',
+                        'MTM2_sens_s1_Z': '>f4',
+                        'MTM2_sens_s2_X': '>f4',
+                        'MTM2_sens_s2_Y': '>f4',
+                        'MTM2_sens_s2_Z': '>f4',
+                        'CC_Signal_Port': '>u1',
+                        'CC_Signal_Pin': '>u1',
+                        'CC_Motor_Port': '>u1',
+                        'CC_Motor_Pin': '>u1',
+                        'CC_Common_Port': '>u1',
+                        'CC_Common_Pin': '>u1',
+                        'CS1_Port': '>u1',
+                        'CS1_Pin': '>u1',
+                        'CS2_Port': '>u1',
+                        'CS2_Pin': '>u1',
+                        'CubeStar_Port': '>u1',
+                        'CubeStar_Pin': '>u1',
+                        'CW1_Port': '>u1',
+                        'CW1_Pin': '>u1',
+                        'CW2_Port': '>u1',
+                        'CW2_Pin': '>u1',
+                        'CW3_Port': '>u1',
+                        'CW3_Pin': '>u1',
+                    }, 
                     'returns': {
                         'err': '>b'
                     }
                 }
             },
             'ADCS_GET_SYSTEM_CONFIG': {
+                'what': 'Returns the hard-coded system configuration (Tabbles 201-207 F/W Ref. Manual).'
                 'subPort': 92,
                 'inoutInfo': {
                     'args': None,
@@ -3821,6 +3979,7 @@ services = {
                 }
             },
             'ADCS_SET_MTQ_CONFIG': {
+                'what': 'Set magnetorquer axes. Keep default (values found in ADCS Flight Config sheet).',
                 'subPort': 93,
                 'inoutInfo': {
                     'args': {
@@ -3834,6 +3993,7 @@ services = {
                 }
             },
             'ADCS_SET_RW_CONFIG': {
+                'what': 'Sets wheel axes (Table 180 F/W Ref. Manual).',
                 'subPort': 94,
                 'inoutInfo': {
                     'args': {
@@ -3848,6 +4008,7 @@ services = {
                 }
             },
             'ADCS_SET_RATE_GYRO': {
+                'what': 'Set rate gyro config parameters. Keep default (values provided in ADCS Flight Config Sheet).',
                 'subPort': 95,
                 'inoutInfo': {
                     'args': {
@@ -3897,6 +4058,7 @@ services = {
                 }
             },
             'ADCS_SET_STAR_TRACK_CONFIG': {
+                'what': 'Star Tracker not used.',
                 'subPort': 97,
                 'inoutInfo': {
                     'args': { #TODO Better names
@@ -3933,6 +4095,7 @@ services = {
                 }
             },
             'ADCS_SET_CUBESENSE_CONFIG': {
+                'what': 'Set CubeSense config parameters (Table 189 F/W Ref. Manual). Cam1 parameters to be kept default -- Cam2 TBD in orbit.',
                 'subPort': 98,
                 'inoutInfo': {
                     'args': {
@@ -3970,13 +4133,14 @@ services = {
                 }
             },
             'ADCS_SET_DETUMBLE_CONFIG': {
+                'what': 'Set control parameters for Detumbling mode. Values TBD from sims and/or commissioning.',
                 'subPort': 100,
                 'inoutInfo': {
                     'args': {
-                        "Float1" : '>f4',
-                        "Float2" : '>f4',
-                        "Float3" : '>f4',
-                        "Float4" : '>f4',
+                        "Detumble_Spin_Gain" : '>f4',
+                        "Detumble_Damp_Gain" : '>f4',
+                        "Ref_Spin_Rate" : '>f4',
+                        "Fast_Bdot_Detumble_Gain" : '>f4',
                     },
                     'returns': {
                         'err': '>b',
@@ -3984,14 +4148,15 @@ services = {
                 }
             },
             'ADCS_SET_YWHEEL_CONFIG': {
+                'what': 'Set control parameters for Y-wheel control mode. Values TBD from sims and commissioning.',
                 'subPort': 101,
                 'inoutInfo': {
                     'args': {
-                        "Float1" : '>f4',
-                        "Float2" : '>f4',
-                        "Float3" : '>f4',
-                        "Float4" : '>f4',
-                        "Float5" : '>f4',
+                        "Ymoment_Ctrl_Gain" : '>f4',
+                        "Ymoment_Damp_Gain" : '>f4',
+                        "Ymoment_Prop_Gain" : '>f4',
+                        "Ymoment_Deriv_Gain" : '>f4',
+                        "Ref_Wheel_Moment" : '>f4',
                     },
                     'returns': {
                         'err': '>b',
@@ -3999,14 +4164,15 @@ services = {
                 }
             },
             'ADCS_SET_RWHEEL_CONFIG': {
+                'what': 'Set control parameters for reaction wheel mode. Values TBD from sims and/or commissioning.',
                 'subPort': 102,
                 'inoutInfo': {
                     'args': {
-                        "Float1" : '>f4',
-                        "Float2" : '>f4',
-                        "Float3" : '>f4',
-                        "Arg1" : '>B',
-                        "Arg2" : '>B'
+                        "RWheel_Prop_Gain" : '>f4',
+                        "RWheel_Deriv_Gain" : '>f4',
+                        "YWheel_Bias_Moment" : '>f4',
+                        "Sun_Point_Facet" : '>B',
+                        "Auto_Ctrl_Transit" : '>B'
                     },
                     'returns': {
                         'err': '>b',
@@ -4014,13 +4180,14 @@ services = {
                 }
             },
             'ADCS_SET_TRACKING_CONFIG': {
+                'what': 'Set control parameters for tracking mode. Values TBD from sims and/or commissioning.',
                 'subPort': 103,
                 'inoutInfo': {
                     'args': {
-                        "Float1" : '>f4',
-                        "Float2" : '>f4',
-                        "Float3" : '>f4',
-                        "Arg1" : '>B'
+                        "Track_Prop_Gain" : '>f4',
+                        "Track_Deriv_Gain" : '>f4',
+                        "Track_Intgrl_Gain" : '>f4',
+                        "Trgt_Track_Facet" : '>B'
                     },
                     'returns': {
                         'err': '>b',
@@ -4028,15 +4195,16 @@ services = {
                 }
             },
             'ADCS_SET_MOI_MAT': {
+                'what': 'Sets satellite moment of inertia matrix.',
                 'subPort': 104,
                 'inoutInfo': {
                     'args': {
-                        "Float1" : '>f4',
-                        "Float2" : '>f4',
-                        "Float3" : '>f4',
-                        "Float4" : '>f4',
-                        "Float5" : '>f4',
-                        "Float6" : '>f4',
+                        "Ixx" : '>f4',
+                        "Iyy" : '>f4',
+                        "Izz" : '>f4',
+                        "Ixy" : '>f4',
+                        "Ixz" : '>f4',
+                        "Iyz" : '>f4',
                     },
                     'returns': {
                         'err': '>b',
@@ -4044,27 +4212,28 @@ services = {
                 }
             },
             'ADCS_SET_ESTIMATION_CONFIG': {
+                'what': 'Sets estimation noise covariance and sensor mask (Table 200 F/W Ref. Manual). Consult with CubeSpace before executing.',
                 'subPort': 105,
                 'inoutInfo': {
                     'args': {
-                        "Float1" : '>f4',
-                        "Float2" : '>f4',
-                        "Float3" : '>f4',
-                        "Float4" : '>f4',
-                        "Float5" : '>f4',
-                        "Float6" : '>f4',
-                        "Float7" : '>f4',
-                        "Arg1" : '>u1',
-                        "Arg2" : '>u1',
-                        "Arg3" : '>u1',
-                        "Arg4" : '>u1',
-                        "Arg5" : '>u1',
-                        "Arg6" : '>u1',
-                        "Arg7" : '>u1',
-                        "Arg8" : '>u1',
-                        "Arg9" : '>u1',
-                        "Arg10" : '>u1',
-                        "Arg11" : '>u1',
+                        "Mtm_Rt_Fltr_Sys_Noise" : '>f4',
+                        "EKF_Sys_Noise" : '>f4',
+                        "CSS_Msrmnt_Noise" : '>f4',
+                        "Sun_Snsr_Msrmnt_Noise" : '>f4',
+                        "Ndr_Snsr_Msrmnt_Noise" : '>f4',
+                        "Mtm_Snsr_Msrmnt_Noise" : '>f4',
+                        "Strtrckr_Msrmnt_Noise" : '>f4',
+                        "Use_Sun_Sensor" : '>u1',
+                        "Use_Nadir_Sensor" : '>u1',
+                        "Use_CSS" : '>u1',
+                        "Use_Star_Tracker" : '>u1',
+                        "Ndr_Snsr_Trmntr_Tst" : '>u1',
+                        "Auto_Mtm_Rcvry" : '>u1',
+                        "Mtm_Sel1" : '>u1',
+                        "Mtm_Sel2" : '>u1', # MTM selection done by ORing with last two elements in select_arr
+                        "Mtm_Mode" : '>u1',
+                        "Auto_Est_Trans" : '>u1',
+                        "Cam_Sample_Period" : '>u1'
                     },
                     'returns': {
                         'err': '>b',
@@ -4072,11 +4241,12 @@ services = {
                 }
             },
             'ADCS_SET_USERCODED_SETTING': {
+                'what': 'Set user-coded estimation and control modes.',
                 'subPort': 106,
                 'inoutInfo': {
                     'args': {
-                        "Code1" : '>O20',
-                        "Code2" : '>020'
+                        "User_Ctrlr_Set" : '>O20',
+                        "User_Estim_Set" : '>020'
                     },
                     'returns': {
                         'err': '>b',
@@ -4084,6 +4254,7 @@ services = {
                 }
             },
             'ADCS_SET_ASGP4_SETTING': {
+                'what': 'Set ASGP4 settings (Not using GPS-augmented SGP4, use SGP4 commands instead!).',
                 'subPort': 107,
                 'inoutInfo': {
                     'args': {
@@ -4111,6 +4282,7 @@ services = {
                 }
             },
             'ADCS_GET_FULL_CONFIG': {
+                'what': 'Returns ADCS full config (Table 192 F/W Ref. Manual).',
                 'subPort': 108,
                 'inoutInfo': {
                     'args': None,
