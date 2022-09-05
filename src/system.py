@@ -4689,11 +4689,30 @@ services = {
                         'MAX_3V_power': '>u2',
                         'MIN_5V_voltage': '>u2',
                         'MIN_3V_voltage': '>u2',
-                        }
+                    }
+                }
+            },
+            'IRIS_DELIVER_LOG': {
+                'what': "Tell OBC to perform log transfer from Iris and store it into SD card",
+                'subPort': 9,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b'
+                    }
+                }
+            },
+            'IRIS_SET_TIME': {
+                'what': "Initialize Iris RTC from ground station via OBC",
+                'subPort': 10,
+                'inoutInfo': {
+                    'args': {"new_iris_time": '>u4'},
+                    'returns': {
+                        'err': '>b'
                     }
                 }
             }
         }
     }
-
+}
 
