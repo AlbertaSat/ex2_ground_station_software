@@ -2417,7 +2417,7 @@ services = {
         'port': 18,
         'subservice': {
             'ADCS_RESET': {
-                'what': 'Forces ADCS to perform a reset.'
+                'what': 'Forces ADCS to perform a reset.',
                 'subPort': 0,
                 'inoutInfo': {
                     'args': None,
@@ -2567,7 +2567,7 @@ services = {
                 }
             },
             'ADCS_INITIATE_DOWNLOAD_BURST': {
-                'what': 'Initiates download burst. ADCS begins to send 20-byte packets. Specify message length, and hole map polling. Executed after download block is ready.'
+                'what': 'Initiates download burst. ADCS begins to send 20-byte packets. Specify message length, and hole map polling. Executed after download block is ready.',
                 'subPort': 13,
                 'inoutInfo': {
                     'args': {
@@ -2916,7 +2916,7 @@ services = {
                 }
             },
             'ADCS_SET_BOOT_INDEX': {
-                'what': 'Selects which program to boot (Table 63 F/W Ref. Manual).'
+                'what': 'Selects which program to boot (Table 63 F/W Ref. Manual).',
                 'subPort': 40,
                 'inoutInfo': {
                     'args': {
@@ -2938,7 +2938,7 @@ services = {
                 }
             },
             'ADCS_READ_PROGRAM_INFO': {
-                'what': 'Requests program CRC and length, use ADCS_GET_PROGRAM_INFO to read.'
+                'what': 'Requests program CRC and length, use ADCS_GET_PROGRAM_INFO to read.',
                 'subPort': 42,
                 'inoutInfo': {
                     'args': {
@@ -2986,7 +2986,7 @@ services = {
                 }
             },
             'ADCS_GET_PROGRAM_INFO': {
-                'what': 'Returns program index, reading flag, file syze (bytes) and CRC16 checksum.'
+                'what': 'Returns program index, reading flag, file syze (bytes) and CRC16 checksum.',
                 'subPort': 45,
                 'inoutInfo': {
                     'args': None,
@@ -3000,7 +3000,7 @@ services = {
                 }
             },
             'ADCS_COPY_INTERNAL_FLASH_PROGRESS': {
-                'what': 'Progress of copy to internal flash operation -- returns busy and error flags.'
+                'what': 'Progress of copy to internal flash operation -- returns busy and error flags.',
                 'subPort': 46,
                 'inoutInfo': {
                     'args': None,
@@ -3062,7 +3062,7 @@ services = {
                 }
             },
             'ADCS_SET_ATTITUDE_ESTIMATE_MODE': {
-                'what': 'Sets estimation mode (Table 80 F/W Ref. Manual).'.
+                'what': 'Sets estimation mode (Table 80 F/W Ref. Manual).',
                 'subPort': 51,
                 'inoutInfo': {
                     'args': {
@@ -3204,7 +3204,7 @@ services = {
                 }
             },
             'ADCS_GET_CURRENT_STATE': {
-                'what': 'Gets full ADCS state (Table 149 F/W Ref. Manual).'
+                'what': 'Gets full ADCS state (Table 149 F/W Ref. Manual).',
                 'subPort': 63,
                 'inoutInfo': {
                     'args': None,
@@ -3483,7 +3483,7 @@ services = {
                 }
             },
             'ADCS_GET_RAW_SENSOR': {
-                'what': 'Returns raw sensor measurements (Table 153 F/W Ref. Manual).'
+                'what': 'Returns raw sensor measurements (Table 153 F/W Ref. Manual).',
                 'subPort': 74,
                 'inoutInfo': {
                     'args': None,
@@ -3687,7 +3687,7 @@ services = {
                 }
             },
             'ADCS_GET_ATTITUDE_ANGLE': {
-                'what': 'Returns commanded attitude angles'
+                'what': 'Returns commanded attitude angles',
                 'subPort': 82,
                 'inoutInfo': {
                     'args': None,
@@ -3901,7 +3901,7 @@ services = {
                 }
             },
             'ADCS_GET_SYSTEM_CONFIG': {
-                'what': 'Returns the hard-coded system configuration (Tabbles 201-207 F/W Ref. Manual).'
+                'what': 'Returns the hard-coded system configuration (Tabbles 201-207 F/W Ref. Manual).',
                 'subPort': 92,
                 'inoutInfo': {
                     'args': None,
