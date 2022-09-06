@@ -1009,6 +1009,85 @@ services = {
             },
         }
     },
+    'EPS_FILE' : {
+        'supports' : ("EPS"),
+        'port': 10,
+        'subservice' : {
+            "FILE_INFO": {
+                'What' : 'Get info about file ID',
+                'subPort': 0,
+                'inoutInfo': {
+                    'args': {
+                        'file_id' : '<b'
+                    },
+                    'returns' : {
+                        'file_id' : '<b',
+                        'err' : '<b',
+                        'file_status' : '<b',
+                        'last_entry_id': '<u4',
+                        'total_entries': '<u4',
+                        'cell_size': '<u4',
+                        'used_cells': '<u4',
+                        'max_cells': '<u4',
+                        'sector_qty': '<u4',
+                        'sector_sz': '<u4',
+                        'file_type': '<b',
+                        'file_name': 'S16'
+                    }
+                }
+            },
+            "DATA_UPLOAD_PACKET": {
+                'What': "pakcet containing upload data. Data field is expected to be filled by program",
+                'subPort': 3,
+                'inoutInfo': {
+                    'args': {
+                        "file_id": '<b',
+                        'first_entry_id': '<u4',
+                        'offset': "<u2",
+                        'len': '<b',
+                        'data': '<b' #Program fills beyond this point
+                    }
+                }
+            },
+            "FILE_FORMAT": {
+                'What' : 'Format a file',
+                'subPort': 4,
+                'inoutInfo': {
+                    'args': {
+                        'file_id' : '<b',
+                        'status' : '<b',
+                        'entries_qty' : '<u4',
+                        'entry_size' : '<u2'
+                    },
+                    'returns' : {
+                        'file_id': '<b',
+                        'err' : '<b'
+                    }
+                }
+            },
+            "FILE_CHECK": {
+                'What' : 'Verify a file or a range of files',
+                'subPort': 5,
+                'inoutInfo': {
+                    'args': {
+                        'file_id': '<b',
+                        'status': '<b',
+                        'aspect': '<b',
+                        'start_entry_id': '<u4',
+                        'end_entry_id': '<u4',
+                    },
+                    'returns' : {
+                        'file_id': '<b',
+                        'status': '<b',
+                        'aspect': '<b',
+                        'start_entry_id': '<u4',
+                        'end_entry_id': '<u4',
+                        'bitfield': 'var'
+                    }
+                }
+            },
+        }
+    },
     'COMMUNICATION': {
         'supports' : ("OBC",),
         'port': 10,
