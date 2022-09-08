@@ -1501,6 +1501,8 @@ services = {
                         'solar_panel_supply_curr': '>u2',
                         'cmds_received': '>u2',
                         'pckts_uncovered_by_FEC': '>u2',
+                        'heap_free' : '>u4',
+                        'lowest_heap_free': '>u4', 
 
                         #EPS
                         '###############################\r\n'
