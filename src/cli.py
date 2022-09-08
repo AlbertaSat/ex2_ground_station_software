@@ -28,8 +28,15 @@ class cli(GroundStation):
                 transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
                 ret = transactObj.execute()
                 print()
-                for key, value in ret.items():
-                    print("{} : {}".format(key, value))
+                if type(ret) == dict:
+                    for key, value in ret.items():
+                        print("{} : {}".format(key, value))
+                if type(ret) == list:
+                    for r in ret:
+                        for key, value in r.items():
+                            print("{} : {}".format(key, value))
+                else:
+                    print(repr(ret)) # last, try to find a representation
                 print()
             except Exception as e:
                 print(e)
