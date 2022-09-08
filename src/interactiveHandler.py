@@ -106,7 +106,7 @@ class schedulerTransaction(baseTransaction):
 class getHKTransaction(baseTransaction):
     def execute(self):
         self.send()
-        rxlist = list();
+        rxlist = list()
         rxData = dict()
         while True:
             try:
@@ -114,6 +114,7 @@ class getHKTransaction(baseTransaction):
             except:
                 return rxlist
             rxData = self.parseReturnValue(ret)
+            rxlist.append(rxData)
             if ret[2] != 1:
                 break
         return rxlist
