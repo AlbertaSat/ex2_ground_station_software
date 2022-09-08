@@ -31,7 +31,7 @@ class cli(GroundStation):
                 if type(ret) == dict:
                     for key, value in ret.items():
                         print("{} : {}".format(key, value))
-                if type(ret) == list:
+                elif type(ret) == list:
                     for r in ret:
                         for key, value in r.items():
                             print("{} : {}".format(key, value))
