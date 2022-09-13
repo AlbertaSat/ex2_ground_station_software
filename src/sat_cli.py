@@ -27,10 +27,10 @@ class sat_cli(GroundStation):
             commandStr = "{}.cli.send_cmd({},{})".format(self.satellite, len(inStr), inStr)
             try:
                 transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
+                print(transactObj.execute())
             except Exception as e:
                 print(e)
                 continue
-            print(transactObj.execute())
 
 
 if __name__ == "__main__":

@@ -43,7 +43,7 @@ class InteractiveHandler:
         tokens = self.inParser.lexer(command)
         if self.dummy:
             transactObj = self.getDummyTransactionObject(command, networkHandler)
-        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
+        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in ["GET_HK", "GET_INSTANT_HK"]:
             transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
@@ -51,6 +51,8 @@ class InteractiveHandler:
             transactObj = schedulerTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
             transactObj = setTimeTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "IRIS" and (tokens[self.subserviceIdx] in ["IRIS_SET_TIME"]):
+            transactObj = irisTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -59,7 +61,7 @@ class InteractiveHandler:
     def getDummyTransactionObject(self, command: str, networkHandler):
         transactObj = None
         tokens = self.inParser.lexer(command)
-        if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] == "GET_HK":
+        if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in ["GET_HK", "GET_INSTANT_HK"]:
             transactObj = dummyHKTransaction(command, networkHandler, self.fake_hk_id)
             self.fake_hk_id += 1
         elif tokens[self.serviceIdx] == "CLI":
@@ -145,15 +147,19 @@ class dummySchedulerTransaction(baseTransaction):
 
 class getHKTransaction(baseTransaction):
     def execute(self):
-        print("WARN: I have no idea how HK receive works, it may not at all")
         self.send()
+        rxlist = list()
         rxData = dict()
         while True:
-            ret = self.receive()
-            rxData = {**rxData, **self.parseReturnValue(ret)}
+            try:
+                ret = self.receive()
+            except:
+                return rxlist
+            rxData = self.parseReturnValue(ret)
+            rxlist.append(rxData)
             if ret[2] != 1:
                 break
-        return rxData
+        return rxlist
 
 class dummyHKTransaction(getHKTransaction):
     def __init__(self, command, networkHandler, fake_hk_id):
@@ -184,6 +190,23 @@ class satcliTransaction(baseTransaction):
             if (returnVal['status']) == 0:
                 break
         return response.strip()
+
+class irisTransaction(baseTransaction):
+    def execute(self):
+        tokens = self.inputParse.lexer(self.command)
+
+        if (tokens[4] == "IRIS_SET_TIME"): #tokens[4] refers to subservice
+            time_param = tokens[-2]
+            now = (int(time_param))
+            if (now == 0):
+                now = int(time.time())
+
+            tokens[-2] = str(now)
+            self.pkt = self.inputParse.parseInput("".join(tokens))
+            self.args = self.pkt['args']
+            self.send()
+
+        return self.parseReturnValue(self.receive())
 
 class dummySatCliTransaction(satcliTransaction):
     def execute(self):
