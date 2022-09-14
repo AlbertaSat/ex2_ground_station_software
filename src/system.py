@@ -71,7 +71,7 @@ Numpy types (> for BE)
 import numpy as np
 from enum import Enum
 
-SatelliteNodes = ("OBC", "EX2", 1), ("OBC", "YKS", 2), ("OBC", "ARS", 3), ("EPS", "EPS", 4)
+SatelliteNodes = ("OBC", "EX2", 1), ("OBC", "YKS", 2), ("OBC", "ARS", 3), ("EPS", "EX2_EPS", 4), ("EPS", "YKS_EPS", 6), ("EPS", "ARS_EPS", 5)
 
 class GroundNodes(Enum):
     GND = 16
