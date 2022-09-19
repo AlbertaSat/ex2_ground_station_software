@@ -140,12 +140,13 @@ class ftp(GroundStation):
 
     def _transaction(self, data):
         self.networkManager.send(self.satelliteAddr, self.destPort, data)
-        response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
+        response = self.networkManager.receive(self.satelliteAddr, self.destPort, 1000)
         return self.receiveParse.parseReturnValue(self.satelliteAddr, self.destPort, response)
 
 class ftpGetter(ftp):
     def __init__(self, opts):
         super().__init__(opts)
+        self.use_sband = opts.sband
         self.burst_size = opts.burst_size
         self.currentTransaction = None
         if opts.resume == 0:
@@ -237,7 +238,7 @@ class ftpGetter(ftp):
             out.extend(self.blocksize.to_bytes(4, byteorder='big'))
             out.extend(int(skip).to_bytes(4, byteorder='big'))
             out.extend(int(count).to_bytes(4, byteorder='big'))
-            out.extend(int(self.dest_addr).to_bytes(4, byteorder='big'))
+            out.extend(int(self.use_sband).to_bytes(4, byteorder='big'))
             out.extend(bytes(self.infile.encode("ascii")))
             out.extend(int(0).to_bytes(1, byteorder='big'))
             return out
