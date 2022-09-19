@@ -28,9 +28,11 @@ def optionsFactory(kind : str):
     elif (kind == "ftp"):
         return FTPOptions()
     elif (kind  == "sband"):
-        return SBANDOptions();
+        return SBANDOptions()
+    elif (kind == "EPSUpdater"):
+        return EPSUpdateOptions()
     else:
-        raise NotImplementedError("Options class type {} not implemented".format(type))
+        raise NotImplementedError("Options class type {} not implemented".format(kind))
 
 class Options(object):
     def __init__(self):
@@ -173,5 +175,17 @@ class SBANDOptions(Options):
             '--port',
             type=int,
             help="Port to send data to"
+        )
+        return super().getOptions()
+
+class EPSUpdateOptions(Options):
+    def __init__(self):
+        super().__init__()
+    def getOptions(self):
+        self.parser.add_argument(
+            '--file',
+            '-f',
+            type=str,
+            help='Binary to upload'
         )
         return super().getOptions()
