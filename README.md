@@ -70,6 +70,28 @@ In GNURadio, open and run `ex2_sdr/gnuradio/uhf/uhf_mode5_pfb_tuned_for_flatsat.
 ```
 yarn cli -I sdr -u
 ```
+Step 5: Gpredict install. This is only necessary when tracking a satellite that is in orbit.
+
+```
+sudo apt install gpredict
+gpredict
+```
+In Gpredict preferences, set your ground station location. Also, set TLE auto-update to daily, and have "If TLEs are too old:" set to "Perform automatic update in the background." Create a new module in the "File" tab with the satellites of interest selected.
+
+Step 6: Doppler shift correction install. This is only necessary when tracking a satellite that is in orbit. Ensure gnuradio-companion is closed before proceeding.
+
+```
+sudo apt install doxygen
+git clone https://github.com/gruffen/gr-gpredict-doppler-3.8.git
+cd gr-gpredict-doppler-3.8
+rm -r build
+```
+Follow all of the readme instructions in [gr-gpredict-doppler](https://github.com/wnagele/gr-gpredict-doppler), including "Setting up Gpredict". Gpredict can be started using the `gpredict` command. Type the following command.
+```
+cp ex2_sdr_install_path/gnuradio/utils/gpredict_doppler_doppler.block.yml /home/josh/miniconda3/envs/gnuradio-3.9.4/share/gnuradio/grc
+```
+Step 7: Run the ground station with doppler. This must be done every new session when talking to an in-orbit satellite.
+Like Step 4, activate the gnuradio environment, open GNURadio, and open Gpredict. Open Gpredict's Radio Control and set the target uplink and downlink frequencies to 437.875000 MHz. Set the target to the satellite you want to track. Set the Device to GNURadio. Set the Cycle field to 100 msec. Select Track and Engage. In GNURadio, run `ex2_sdr/gnuradio/uhf/uhf_mode5_pfb_with_doppler.grc`. In a terminal, run `yarn cli -I sdr -u`.
 
 ## Command Documentation
 Documentation for supported ground station commands can be found in [CommandDocs.txt](https://github.com/AlbertaSat/ex2_ground_station_software/blob/update-readme/CommandDocs.txt).
