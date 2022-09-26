@@ -43,7 +43,7 @@ class InteractiveHandler:
         tokens = self.inParser.lexer(command)
         if self.dummy:
             transactObj = self.getDummyTransactionObject(command, networkHandler)
-        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in ["GET_HK", "GET_INSTANT_HK"]:
+        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in ["GET_HK", "GET_INSTANT_HK", "GET_LATEST_HK"]:
             transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
