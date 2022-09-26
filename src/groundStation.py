@@ -38,7 +38,7 @@ class GroundStation:
             exit(1)
 
         keyfile.close()
-        self.interactive = InteractiveHandler()
+        self.interactive = InteractiveHandler(opts.interface == "dummy")
         self.inputHandler = InputHandler()
         self.setSatellite(opts.satellite)
 

@@ -58,9 +58,13 @@ class CSPHandler(object):
             self._uhf(device, libcsp.SDR_UHF_9600_BAUD)
         elif interface == 'sband':
             self._sband()
+        elif interface == 'dummy':
+            self.interfaceName = "dummy"
+            return # Skip libcsp initialization when using dummy responses
         else:
             raise ValueError("Interface {} does not exist".format(interface))
-    
+
+
         stringBuild = ""
         for node in SatelliteNodes:
             stringBuild = stringBuild + " {} {}, ".format(node[2], self.interfaceName)
@@ -114,7 +118,7 @@ class UHF_CSPHandler(CSPHandler):
             raise ValueError("UHF CSP handler works only with sdr interface")
         self.uTrns = uTransceiver()
         super().__init__(addr, interface, device, hmacKey, useFec)
-        
+
 
     def send(self, server, port, buf : bytearray):
         self.uTrns.handlePipeMode()
