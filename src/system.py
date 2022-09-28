@@ -1007,6 +1007,27 @@ services = {
                     }
                 }
             },
+            'GET_SOLAR_SWITCH_STATUS': {
+                'subPort': 17,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b', # err status
+                        'state': '>b'
+                    }
+                }
+            },
+            'SET_SOLAR_SWITCH': {
+                'subPort': 18,
+                'inoutInfo': {
+                    'args': {
+                        'state' : '>b'
+                    },
+                    'returns': {
+                        'err': '>b', # err status
+                    }
+                }
+            },
         }
     },
     'COMMUNICATION': {
