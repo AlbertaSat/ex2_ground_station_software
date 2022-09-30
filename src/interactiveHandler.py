@@ -53,6 +53,8 @@ class InteractiveHandler:
             transactObj = setTimeTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "IRIS" and (tokens[self.subserviceIdx] in ["IRIS_SET_TIME"]):
             transactObj = irisTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "NS_PAYLOAD":
+            transactObj = nspayloadTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -82,12 +84,13 @@ class baseTransaction:
         self.dst = self.pkt["dst"]
         self.dport = self.pkt['dport']
         self.args = self.pkt['args']
+        self.timeout = 10000;
 
     def send(self):
         self.networkHandler.send(self.dst, self.dport, self.args)
 
     def receive(self):
-        return self.networkHandler.receive(self.dst, self.dport, 10000)
+        return self.networkHandler.receive(self.dst, self.dport, self.timeout)
 
     def parseReturnValue(self, data):
         return self.returnParse.parseReturnValue(self.dst, self.dport, data)
@@ -104,6 +107,11 @@ class dummyTransaction(baseTransaction):
             'dport': self.dport,
             'args': self.args
         }
+
+class nspayloadTransaction(baseTransaction): 
+    def __init__(self, command, networkHandler):
+        super().__init__(command, networkHandler)
+        self.timeout = 40000
 
 class setTimeTransaction(baseTransaction):
     def execute(self):
