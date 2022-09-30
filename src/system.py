@@ -4768,6 +4768,16 @@ services = {
                     }
                 }
             },
+            'DOWNLOAD_IMAGE': {
+                'what': 'Download payload image to OBC',
+                'subPort': 8,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            }
         },
     },
     'IRIS': {
