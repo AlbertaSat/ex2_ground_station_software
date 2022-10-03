@@ -298,6 +298,22 @@ GENERAL.BEACON_TASK_GET_STATE:
 		port: 11		subport: 16
 
 
+GENERAL.GET_SOLAR_SWITCH_STATUS:
+		About: Gets the status of the switch connected to the power of the solar panel currentsense ICs
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b', 'state': '>b'}
+		port: 11		subport: 17
+
+
+GENERAL.SET_SOLAR_SWITCH:
+		About: Turn the solar panel currentsense ICs on or off
+		Supports: OBC
+		Arguments: {'state': '>b'}
+		return values: {'err': '>b'}
+		port: 11		subport: 18
+
+
 COMMUNICATION.S_GET_FREQ:
 		About: Gets the S-band frequency (Hz)
 		Supports: OBC

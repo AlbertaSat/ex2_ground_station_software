@@ -1007,6 +1007,29 @@ services = {
                     }
                 }
             },
+            'GET_SOLAR_SWITCH_STATUS': {
+                'what': "Gets the status of the switch connected to the power of the solar panel currentsense ICs",
+                'subPort': 17,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b', # err status
+                        'state': '>b'
+                    }
+                }
+            },
+            'SET_SOLAR_SWITCH': {
+                'what': "Turn the solar panel currentsense ICs on or off",
+                'subPort': 18,
+                'inoutInfo': {
+                    'args': {
+                        'state' : '>b'
+                    },
+                    'returns': {
+                        'err': '>b', # err status
+                    }
+                }
+            },
         }
     },
     'COMMUNICATION': {
