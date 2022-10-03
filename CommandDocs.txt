@@ -674,6 +674,14 @@ COMMUNICATION.UHF_GET_PLDSZ:
 		port: 10		subport: 47
 
 
+COMMUNICATION.UHF_SET_CRC16_ENABLE:
+		About: Set whether UHF frame CRC16s are enabled
+		Supports: OBC
+		Arguments: {'enabled': '>?'}
+		return values: {'err': '>b'}
+		port: 10		subport: 48
+
+
 CONFIGURATION.GET_ACTIVE_CONFIG:
 		About: Gets config values in active mode for a specific type
 		Supports: EPS
