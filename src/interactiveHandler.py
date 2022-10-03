@@ -25,6 +25,8 @@ from embedCSP import EmbedPacket
 import time
 import libcsp_py3 as libcsp
 
+hkCommands = ["GET_HK", "GET_INSTANT_HK", "GET_LATEST_HK"]; # List of HK commands that need a special handler
+
 class InteractiveHandler:
     def __init__(self, dummy=False):
         self.services = services
@@ -43,7 +45,7 @@ class InteractiveHandler:
         tokens = self.inParser.lexer(command)
         if self.dummy:
             transactObj = self.getDummyTransactionObject(command, networkHandler)
-        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in ["GET_HK", "GET_INSTANT_HK", "GET_LATEST_HK"]:
+        elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in hkCommands:
             transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
@@ -61,7 +63,7 @@ class InteractiveHandler:
     def getDummyTransactionObject(self, command: str, networkHandler):
         transactObj = None
         tokens = self.inParser.lexer(command)
-        if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in ["GET_HK", "GET_INSTANT_HK"]:
+        if tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in hkCommands:
             transactObj = dummyHKTransaction(command, networkHandler, self.fake_hk_id)
             self.fake_hk_id += 1
         elif tokens[self.serviceIdx] == "CLI":
