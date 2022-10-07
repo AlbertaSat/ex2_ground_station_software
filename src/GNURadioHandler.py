@@ -41,13 +41,4 @@ class GNURadioHandler:
 			setBaudRate(19200)
 			setFSKDev(19200)			
 		else:
-			print('Error: invalid UHF RF mode')
-
-
-
-
-
-
-
-
-
+			raise Exception('Error: invalid UHF RF mode')
