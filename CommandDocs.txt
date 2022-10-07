@@ -2082,6 +2082,14 @@ NS_PAYLOAD.GET_SW_VERSION:
 		port: 22		subport: 7
 
 
+NS_PAYLOAD.DOWNLOAD_IMAGE:
+		About: Download payload image to OBC
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 22		subport: 8
+
+
 IRIS.IRIS_POWER_ON:
 		About: Send command to OBC to tell EPS to turn on power
 		Supports: OBC
