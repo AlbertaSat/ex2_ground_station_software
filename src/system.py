@@ -1646,6 +1646,18 @@ services = {
                     }
                 }
             },
+            'UHF_SET_CRC16_ENABLE': {
+                'what': 'Set whether UHF frame CRC16s are enabled',
+                'subPort': 48,
+                'inoutInfo': {
+                    'args': {
+                        'enabled':'>?',
+                    },
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
         }
     },
 
