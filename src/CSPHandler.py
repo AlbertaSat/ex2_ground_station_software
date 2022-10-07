@@ -55,7 +55,7 @@ class CSPHandler(object):
         if interface == 'uart':
             self.ser = self._uart(device)
         elif interface == 'uhf' or interface == "sdr":
-            self._uhf(device, libcsp.SDR_UHF_9600_BAUD)
+            self._uhf(device, libcsp.SDR_UHF_GNURADIO_BAUD)
         elif interface == 'sband':
             self._sband()
         elif interface == 'dummy':
