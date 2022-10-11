@@ -1,12 +1,11 @@
 # Northern Images (NIM) Response Table
-The following two tables contains all of the possible responses and error codes from the NIM payload.
-git
+The following two tables contains all of the possible responses and error codes from the NIM payload. Note: All error codes recieved on the ground station will be negative.
 ## Error codes given by the OBC
 | Decimal | Hex | Error |
 |:-------:|:---:|:-----|
 | 0 | 0x00 | OK |
 | 1 | 0x01 | Fail |
-| 2 | 0x02 | Hanlder Busy |
+| 2 | 0x02 | Handler Busy |
 | 3 | 0x03 | UART Fail |
 | 4 | 0x04 | UART Busy |
 | 5 | 0x05 | Malloc Fail |
