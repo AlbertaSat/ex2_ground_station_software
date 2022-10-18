@@ -23,17 +23,17 @@ from connectionManager import ConnectionManager
 import serial
 from system import SatelliteNodes
 
-def getCSPHandler(addr, interface, device, hmacKey, protocol = None, useFec = False):
+def getCSPHandler(addr, interface, device, hmacKey, xteaKey, protocol = None, useFec = False):
     if protocol is None:
-        return CSPHandler(addr, interface, device, hmacKey, useFec)
+        return CSPHandler(addr, interface, device, hmacKey, xteaKey, useFec)
     elif protocol == "UHF":
-        return UHF_CSPHandler(addr, interface, device, hmacKey, useFec)
+        return UHF_CSPHandler(addr, interface, device, hmacKey, xteaKey, useFec)
     else:
         raise ValueError("Protocol {} does not exist for CSP handlers".format(protocol))
 
 class CSPHandler(object):
     __instance = None
-    def __new__(cls, addr, interface, device, hmacKey, useFec):
+    def __new__(cls, addr, interface, device, hmacKey, xteaKey, useFec):
         if cls.__instance is None:
             cls.__instance = super(CSPHandler, cls).__new__(cls)
         return cls.__instance
@@ -42,7 +42,7 @@ class CSPHandler(object):
     # 'interface' interface to use
     # 'device' device file interface is to write to
     # 'hmacKey' key to use for HMAC authentication
-    def __init__(self, addr, interface, device, hmacKey, useFec):
+    def __init__(self, addr, interface, device, hmacKey, xteaKey, useFec):
         self.connectionManager = ConnectionManager()
         self.usingFec = useFec
         self.myAddr = addr;
@@ -50,6 +50,7 @@ class CSPHandler(object):
         self.bufferSize = 1024 #This is max size of an incoming packet
         libcsp.init(self.myAddr, 'GroundStation', 'model', '1.2.3', self.numberOfBuffers, self.bufferSize)
         libcsp.hmac_set_key(hmacKey, len(hmacKey))
+        libcsp.xtea_set_key(xteaKey, len(xteaKey))
 
         self.interfaceName = ""
         if interface == 'uart':
@@ -110,14 +111,14 @@ class CSPHandler(object):
 
 
 class UHF_CSPHandler(CSPHandler):
-    def __init__(self, addr, interface, device, hmacKey, useFec):
+    def __init__(self, addr, interface, device, hmacKey, xteaKey, useFec):
         # This probably violates some essential law of programming
         # but this whole module is *different* so... Yeah
         from uTransceiver import uTransceiver
         if interface != "sdr":
             raise ValueError("UHF CSP handler works only with sdr interface")
         self.uTrns = uTransceiver()
-        super().__init__(addr, interface, device, hmacKey, useFec)
+        super().__init__(addr, interface, device, hmacKey, xteaKey, useFec)
 
 
     def send(self, server, port, buf : bytearray):

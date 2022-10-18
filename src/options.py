@@ -43,6 +43,11 @@ class Options(object):
             default="test_key.dat",
             help='Key to use for CSP HMAC')
         self.parser.add_argument(
+            '--xkeyfile',
+            type=str,
+            default="test_key.dat",
+            help='Key to use for CSP xtea')
+        self.parser.add_argument(
             '-I',
             '--interface',
             type=str,

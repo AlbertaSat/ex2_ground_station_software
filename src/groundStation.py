@@ -25,19 +25,20 @@ from system import SatelliteNodes
 
 class GroundStation:
     def __init__(self, opts):
-        keyfile = open(opts.hkeyfile, "r")
-        hkey = keyfile.read().strip()
+        hkeyfile = open(opts.hkeyfile, "r")
+        hkey = hkeyfile.read().strip()
+        xkeyfile = open(opts.xkeyfile, "r")
+        xkey = xkeyfile.read().strip()
         try:
             if opts.u:
-                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, "UHF", useFec = opts.fec)
+                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, xkey, "UHF", useFec = opts.fec)
             else:
-                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, useFec = opts.fec)
+                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, xkey, useFec = opts.fec)
         except Exception as e:
             raise
             print(e)
             exit(1)
 
-        keyfile.close()
         self.interactive = InteractiveHandler(opts.interface == "dummy")
         self.inputHandler = InputHandler()
         self.setSatellite(opts.satellite)
