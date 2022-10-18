@@ -2098,6 +2098,14 @@ NS_PAYLOAD.DOWNLOAD_IMAGE:
 		port: 22		subport: 8
 
 
+NS_PAYLOAD.CLEAR_SD_CARD:
+		About: Clear NIM's sd card
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 22		subport: 9
+
+
 IRIS.IRIS_POWER_ON:
 		About: Send command to OBC to tell EPS to turn on power
 		Supports: OBC
