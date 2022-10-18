@@ -4821,6 +4821,16 @@ services = {
                         'err': '>b',
                     }
                 }
+            }, 
+            'CLEAR_SD_CARD': {
+                'what': 'Clear NIM\'s sd card',
+                'subPort': 9,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
             }
         },
     },
