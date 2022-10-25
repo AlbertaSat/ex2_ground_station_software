@@ -73,7 +73,7 @@ from enum import Enum
 
 SatelliteNodes = ("OBC", "EX2", 1), ("OBC", "YKS", 2), ("OBC", "ARS", 3), ("EPS", "EX2_EPS", 4), ("EPS", "YKS_EPS", 6), ("EPS", "ARS_EPS", 5)
 
-GroundNodes = ("GND", "UHF", 16), ("GND", "SBAND", 17), ("GND", "PIPE", 24)
+GroundNodes = ("GND", "UHF", 16), ("GND", "SBAND", 17), ("GND", "PIPE", 24), ("GND", "BEACON", 99)
 
 varTypes = {
     0: '<u1',
@@ -4956,6 +4956,93 @@ services = {
                     'args': {"new_iris_time": '>u4'},
                     'returns': {
                         'err': '>b'
+                    }
+                }
+            }
+        },
+    },
+    'BEACON_RX': {
+        'supports' : ("GND",),
+        'port': 1,
+        'subservice': {
+            'BEACON_PCKT_1': {
+                'what': "Struct definition for beacon packet 1 decoding",
+                'subPort': 1,
+                'inoutInfo':{
+                    'args': None,
+                    'returns': {
+                        "time": '>u4',
+                        "packet_number": '>u1',
+                        "switch_stat": '>u1',
+                        "eps_mode": '>u1',
+                        "battery_voltage": '>u2',
+                        "battery_input_current": '>u2',
+                        "current_channel_1": '>u2',
+                        "current_channel_2": '>u2',
+                        "current_channel_3": '>u2',
+                        "current_channel_4": '>u2',
+                        "current_channel_5": '>u2',
+                        "current_channel_6": '>u2',
+                        "current_channel_7": '>u2',
+                        "current_channel_8": '>u2',
+                        "current_channel_9": '>u2',
+                        "current_channel_10": '>u2',
+                        "output_status": '>u2',
+                        "output_faults_1": '>u1',
+                        "output_faults_2": '>u1',
+                        "output_faults_3": '>u1',
+                        "output_faults_4": '>u1',
+                        "output_faults_5": '>u1',
+                        "output_faults_6": '>u1',
+                        "output_faults_7": '>u1',
+                        "output_faults_8": '>u1',
+                        "output_faults_9": '>u1',
+                        "output_faults_10": '>u1',
+                        "EPS_boot_count": '>u2',
+                        "eps_last_reset_reason": '>u1',
+                        "gs_wdt_time": '>u4',
+                        "gs_wdt_cnt": '>u1',
+                        "obc_wdt_toggles": '>u1',
+                        "obc_wdt_turnoffs": '>u1',
+                    },
+                },
+            },
+            'BEACON_PCKT_2': {
+                'what': "Struct definition for beacon packet 2 decoding",
+                'subPort': 2,
+                'inoutInfo':{
+                    'args': None,
+                    'returns': {
+                        "time": '>u4',
+                        "packet_number": '>u1',
+                        "temp_1": '>i1',
+                        "temp_2": '>i1',
+                        "temp_3": '>i1',
+                        "temp_4": '>i1',
+                        "temp_5": '>i1',
+                        "temp_6": '>i1',
+                        "temp_7": '>i1',
+                        "temp_8": '>i1',
+                        "temp_9": '>i1',
+                        "temp_10": '>i1',
+                        "temp_11": '>i1',
+                        "temp_12": '>i1',
+                        "temp_13": '>i1',
+                        "temp_14": '>i1',
+                        "temp_15": '>i1',
+                        "temp_16": '>i1',
+                        "temp_17": '>i1',
+                        "angular_rate_X": '>i1',
+                        "angular_rate_Y": '>i1',
+                        "angular_rate_Z": '>i1',
+                        "adcs_control_mode": '>i1',
+                        "uhf_uptime": '>u4',
+                        "obc_boot_count": '>u2',
+                        "obc_last_reset_reason": '>u1',
+                        "obc_uptime": '>u4',
+                        "solar_panel_supply_current": '>u1',
+                        "obc_software_version": '>u1',
+                        "cmds_received": '>u2',
                     }
                 }
             }
