@@ -4831,6 +4831,16 @@ services = {
                         'err': '>b',
                     }
                 }
+            },
+            'RESET_MCU': {
+                'what': 'Reset NIM\'s MCU',
+                'subPort': 10,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
             }
         },
     },
