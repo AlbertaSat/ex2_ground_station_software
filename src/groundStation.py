@@ -29,11 +29,17 @@ class GroundStation:
         hkey = hkeyfile.read().strip()
         xkeyfile = open(opts.xkeyfile, "r")
         xkey = xkeyfile.read().strip()
+        addr = 0
+        nodeType = "UHF"
+        for i in GroundNodes:
+            if i[1] == nodeType:
+                addr = i[2]
+                break;
         try:
             if opts.u:
-                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, xkey, "UHF", useFec = opts.fec)
+                self.networkManager = getCSPHandler(addr, opts.interface, opts.device, hkey, xkey, "UHF", useFec = opts.fec)
             else:
-                self.networkManager = getCSPHandler(GroundNodes.GND.value, opts.interface, opts.device, hkey, xkey, useFec = opts.fec)
+                self.networkManager = getCSPHandler(addr, opts.interface, opts.device, hkey, xkey, useFec = opts.fec)
         except Exception as e:
             raise
             print(e)
