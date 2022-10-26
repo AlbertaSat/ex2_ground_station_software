@@ -4850,7 +4850,29 @@ services = {
                         'err': '>b',
                     }
                 }
-            }
+            }, 
+            'NV_START': {
+                'what': 'Start transmitting voice data from filename',
+                'subPort': 11,
+                'inoutInfo': {
+                    'args': {
+                        "Filename" : '>S128'
+                    },
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
+            'NV_STOP': {
+                'what': 'Stop transmitting voice data',
+                'subPort': 12,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
         },
     },
     'IRIS': {
