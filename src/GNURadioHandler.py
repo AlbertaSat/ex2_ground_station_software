@@ -17,28 +17,28 @@ class GNURadioHandler:
 
 	def setUHF_RFMode(self, mode):
 		if mode == 0:
-			setBaudRate(1200)
-			setFSKDev(600)			
+			self.setBaudRate(1200)
+			self.setFSKDev(600)			
 		elif mode == 1:
-			setBaudRate(2400)
-			setFSKDev(600)			
+			self.setBaudRate(2400)
+			self.setFSKDev(600)			
 		elif mode == 2:
-			setBaudRate(4800)
-			setFSKDev(1200)			
+			self.setBaudRate(4800)
+			self.setFSKDev(1200)			
 		elif mode == 3:
-			setBaudRate(9600)
-			setFSKDev(2400)			
+			self.setBaudRate(9600)
+			self.setFSKDev(2400)			
 		elif mode == 4:
-			setBaudRate(9600)
-			setFSKDev(4800)			
+			self.setBaudRate(9600)
+			self.setFSKDev(4800)			
 		elif mode == 5:
-			setBaudRate(19200)
-			setFSKDev(4800)			
+			self.setBaudRate(19200)
+			self.setFSKDev(4800)			
 		elif mode == 6:
-			setBaudRate(19200)
-			setFSKDev(9600)			
+			self.setBaudRate(19200)
+			self.setFSKDev(9600)			
 		elif mode == 7:
-			setBaudRate(19200)
-			setFSKDev(19200)			
+			self.setBaudRate(19200)
+			self.setFSKDev(19200)			
 		else:
 			raise ValueError('Error: invalid UHF RF mode')
