@@ -135,7 +135,7 @@ class InputParser:
         i = 0
         for name, type in inoutInfo['args'].items():
             if type == 'var':
-                np.array([args[i]], dtype=varTypes[outArgs[-1]])
+                nparr = np.array([args[i]], dtype=varTypes[outArgs[-1]])
             else:
                 nparr = np.array([args[i]], dtype=type)
             outArgs.extend(nparr.tobytes())
