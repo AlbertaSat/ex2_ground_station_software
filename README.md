@@ -66,7 +66,7 @@ Step 4: Run the ground station. This must be done every new session.
 conda activate gnuradio-3.9.4
 gnuradio-companion
 ```
-In GNURadio, open and run `ex2_sdr/gnuradio/uhf/uhf_mode5_pfb_tuned_for_flatsat.grc`. Note: the first time this is run on a new machine, gnuradio will prompt you to run uhd_images_downloader.py from the proper directory path. Do that, and then try running the flow graph again.
+In GNURadio, open and run the relevant flow graph for your application in `ex2_sdr/gnuradio/uhf/` or  `ex2_sdr/gnuradio/sband/`. Note: the first time this is run on a new machine, gnuradio will prompt you to run uhd_images_downloader.py from the proper directory path. Do that, and then try running the flow graph again. Next, you can run the relevant ground station application (e.g. cli, sat_cli, ftp) using yarn, making sure to use the correct arguments for what you're doing.
 ```
 yarn cli -I sdr -u
 ```
@@ -91,7 +91,7 @@ Follow all of the readme instructions in [gr-gpredict-doppler](https://github.co
 cp ex2_sdr_install_path/gnuradio/utils/gpredict_doppler_doppler.block.yml /home/josh/miniconda3/envs/gnuradio-3.9.4/share/gnuradio/grc
 ```
 Step 7: Run the ground station with doppler. This must be done every new session when talking to an in-orbit satellite.
-Like Step 4, activate the gnuradio environment, open GNURadio, and open Gpredict. Open Gpredict's Radio Control and set the target uplink and downlink frequencies to 437.875000 MHz. Set the target to the satellite you want to track. Set the Device to GNURadio. Set the Cycle field to 100 msec. Select Track and Engage. In GNURadio, run `ex2_sdr/gnuradio/uhf/uhf_mode5_pfb_with_doppler.grc`. In a terminal, run `yarn cli -I sdr -u`.
+Like Step 4, activate the gnuradio environment, open GNURadio, and open Gpredict. Open Gpredict's Radio Control and set the target uplink and downlink frequencies to 437.875000 MHz. Set the target to the satellite you want to track. Set the Device to GNURadio. Set the Cycle field to 100 msec. Select Track and Engage. In GNURadio, open and run the relevant flow graph for your application in `ex2_sdr/gnuradio/uhf/` or  `ex2_sdr/gnuradio/sband/`, ensuring that the file name has "doppler" in it. Next, you can run the relevant ground station application (e.g. cli, sat_cli, ftp) using yarn, making sure to use the correct arguments for what you're doing.
 
 ## Command Documentation
 Documentation for supported ground station commands can be found in [CommandDocs.txt](https://github.com/AlbertaSat/ex2_ground_station_software/blob/update-readme/CommandDocs.txt).
