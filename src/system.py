@@ -1655,6 +1655,18 @@ services = {
                     }
                 }
             },
+            'UHF_SET_RF_MODE': {
+                'what': 'Set mode of uhf communications as defined in UHF user manual',
+                'subPort': 49,
+                'inoutInfo': {
+                    'args': {
+                        'mode':'>b',
+                    },
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
         }
     },
 
