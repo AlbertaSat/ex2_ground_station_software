@@ -18,7 +18,7 @@
 '''
 
 import numpy as np
-from system import SatelliteNodes, getServices
+from system import SatelliteNodes, GroundNodes, getServices
 
 class ReceiveParser:
     def __init__(self):
@@ -29,6 +29,10 @@ class ReceiveParser:
         for node in SatelliteNodes:
             if node[2] == src:
                 systemType = node[0]
+        if systemType is None:
+            for node in GroundNodes:
+                if node[2] == src:
+                    systemType = node[0]
         services = getServices(systemType)
 
         # TODO: Refactor this
