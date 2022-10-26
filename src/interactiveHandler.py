@@ -22,7 +22,7 @@ from dummyUtils import generateFakeHKDict
 from inputParser import InputParser
 from receiveParser import ReceiveParser
 from embedCSP import EmbedPacket
-import time
+import GNURadioHandler
 import libcsp_py3 as libcsp
 
 hkCommands = ["GET_HK", "GET_INSTANT_HK", "GET_LATEST_HK"]; # List of HK commands that need a special handler
@@ -57,6 +57,8 @@ class InteractiveHandler:
             transactObj = irisTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "NS_PAYLOAD":
             transactObj = nspayloadTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "COMMUNICATIONS" and (tokens[self.subserviceIdx] in ["UHF_SET_RF_MODE"]):
+            transactObj = setRFModeTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -217,6 +219,15 @@ class irisTransaction(baseTransaction):
             self.send()
 
         return self.parseReturnValue(self.receive())
+
+class setRFModeTransaction(baseTransaction):
+    def execute(self):
+        self.send()
+        ret = self.receive()
+        ret = self.parseReturnValue(ret)
+        if ret[0] == 0:
+            GNURadioHandler.setUHF_RFMode(self.args[0])
+        return ret
 
 class dummySatCliTransaction(satcliTransaction):
     def execute(self):
