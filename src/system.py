@@ -4856,6 +4856,7 @@ services = {
                 'subPort': 11,
                 'inoutInfo': {
                     'args': {
+                        "Repeats": '>u2',
                         "Filename" : '>S128'
                     },
                     'returns': {
