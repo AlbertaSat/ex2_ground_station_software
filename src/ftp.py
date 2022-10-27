@@ -118,11 +118,14 @@ class ftp(GroundStation):
             self.outfile = self.infile
 
         self.blocksize = 512 # There's really no reason to change it..
-
-        if (opts.sband):
-            self.dest_addr = GroundNodes.SBAND.value
-        else:
-            self.dest_addr = GroundNodes.GND.value
+        
+        addr = 0
+        nodeType = "UHF"
+        for i in GroundNodes:
+            if i[1] == nodeType:
+                addr = i[2]
+                break;
+        self.dest_addr = addr
 
         self.destPort = self.services.get("FTP_COMMAND").get("port")
 
