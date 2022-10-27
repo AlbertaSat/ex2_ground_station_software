@@ -105,7 +105,7 @@ class uTransceiver(object):
 
     def enterPipeMode(self):
             #current config is for RF mode 5, baudrate = 115200
-            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 5 0 0 1 0 0 0 1 1)')
+            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 4 0 0 1 0 0 0 1 1)')
 
     def UHFDIRCommand(self, string):
         print("sending UHFDIRcommand: " + string)

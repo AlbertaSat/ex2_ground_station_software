@@ -23,7 +23,7 @@ from connectionManager import ConnectionManager
 import serial
 from system import SatelliteNodes
 
-def getCSPHandler(addr, interface, device, hmacKey, xteaKey, protocol = None, useFec = False):
+def getCSPHandler(addr, interface, device, hmacKey, xteaKey, protocol = None, useFec = True):
     if protocol is None:
         return CSPHandler(addr, interface, device, hmacKey, xteaKey, useFec)
     elif protocol == "UHF":
