@@ -82,7 +82,7 @@ class Options(object):
         self.parser.add_argument(
             '--fec',
             action='store_true',
-            default=False,
+            default=True,
             help="Use forward error correction"
         )
         return self.parser.parse_args(sys.argv[1:])
