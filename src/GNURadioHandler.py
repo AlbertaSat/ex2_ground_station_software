@@ -29,8 +29,6 @@ class GNURadioHandler:
 
     def setUHF_RFMode(self, mode):
         if mode < 8:
-            #if mode < 3:#SDR fails at low sample rate
-                #self.setSamplesPerSymbol(48)
             self.setBaudRate((self.mode_dict[mode])[0])
             self.setFSKDevHz((self.mode_dict[mode])[1])
         else:
