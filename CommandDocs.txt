@@ -2106,6 +2106,14 @@ NS_PAYLOAD.CLEAR_SD_CARD:
 		port: 22		subport: 9
 
 
+NS_PAYLOAD.RESET_MCU:
+		About: Reset NIM's MCU
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 22		subport: 10
+
+
 IRIS.IRIS_POWER_ON:
 		About: Send command to OBC to tell EPS to turn on power
 		Supports: OBC
