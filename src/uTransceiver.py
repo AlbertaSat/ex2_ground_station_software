@@ -27,6 +27,7 @@ import socket
 import time
 from enum import Enum
 import os
+import GNURadioHandler
 
 # command format follows https://docs.google.com/spreadsheets/d/1zNhxhs0KJCp1187Vm3-zAzQHCY31f77l-0nlQmfXu1w/edit#gid=565953736
 # but with UHFDIR_ instead of UHF_ prefix. See document for examples
@@ -46,6 +47,8 @@ class UHF_return(Enum):
     IS_STUBBED_U = 0 # Used for stubbed UHF in hardware interface
     U_I2C_IN_PIPE = 4
 
+
+
 class uTransceiver(object):
 
     def __init__(self):
@@ -57,6 +60,7 @@ class uTransceiver(object):
         self.rxport = 4321
         os.environ['UTRANSCEIVER_LIB'] = './ex2_uhf_software/uTransceiver.so'
         self.uhf = cdll.LoadLibrary(os.environ.get('UTRANSCEIVER_LIB'))
+        self.gnuradio = GNURadioHandler.GNURadioHandler()
 
     def resetListenTimer(self):
         self.listen_en = False
@@ -105,7 +109,8 @@ class uTransceiver(object):
 
     def enterPipeMode(self):
             #current config is for RF mode 5, baudrate = 115200
-            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 4 0 0 1 0 0 0 1 1)')
+            rfmode = self.gnuradio.getUHF_RFMode()
+            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 '+str(rfmode)+' 0 0 1 0 0 0 1 1)')
 
     def UHFDIRCommand(self, string):
         print("sending UHFDIRcommand: " + string)
@@ -150,3 +155,7 @@ class uTransceiver(object):
         else:
             print('Error: Command not sent. Wait for pipe mode to expire')
             print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
+
+    def exper_UHFDIRCommand(string):
+        pass
+

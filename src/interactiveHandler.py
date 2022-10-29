@@ -22,8 +22,10 @@ from dummyUtils import generateFakeHKDict
 from inputParser import InputParser
 from receiveParser import ReceiveParser
 from embedCSP import EmbedPacket
-import time
+import GNURadioHandler
 import libcsp_py3 as libcsp
+from uTransceiver import uTransceiver
+import time
 
 hkCommands = ["GET_HK", "GET_INSTANT_HK", "GET_LATEST_HK"]; # List of HK commands that need a special handler
 
@@ -57,6 +59,8 @@ class InteractiveHandler:
             transactObj = irisTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "NS_PAYLOAD":
             transactObj = nspayloadTransaction(command, networkHandler)
+        elif tokens[self.serviceIdx] == "COMMUNICATION" and (tokens[self.subserviceIdx] in ["UHF_SET_RF_MODE"]):
+            transactObj = setRFModeTransaction(command, networkHandler)
         else:
             transactObj = baseTransaction(command, networkHandler)
 
@@ -217,6 +221,18 @@ class irisTransaction(baseTransaction):
             self.send()
 
         return self.parseReturnValue(self.receive())
+
+class setRFModeTransaction(baseTransaction):
+    def __init__(self, command, networkHandler):
+        super().__init__(command, networkHandler)
+        self.gnuradio = GNURadioHandler.GNURadioHandler()
+
+    def execute(self):
+        self.send()
+        print("Command does not give valid return upon success. Need to wait >20 seconds for Pipe mode to time out")
+        time.sleep(21)#TODO make coupled with uTransceiver pipemode time in case of change 
+        self.gnuradio.setUHF_RFMode(self.args[1])
+        return "Pipe timeout complete"
 
 class dummySatCliTransaction(satcliTransaction):
     def execute(self):

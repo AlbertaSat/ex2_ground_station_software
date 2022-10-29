@@ -682,6 +682,14 @@ COMMUNICATION.UHF_SET_CRC16_ENABLE:
 		port: 10		subport: 48
 
 
+COMMUNICATION.UHF_SET_RF_MODE:
+		About: Set mode of uhf communications as defined in UHF user manual
+		Supports: OBC
+		Arguments: {'mode': '>b'}
+		return values: {'err': '>b'}
+		port: 10		subport: 49
+
+
 CONFIGURATION.GET_ACTIVE_CONFIG:
 		About: Gets config values in active mode for a specific type
 		Supports: EPS
