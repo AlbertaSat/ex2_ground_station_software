@@ -110,7 +110,7 @@ class uTransceiver(object):
     def enterPipeMode(self):
             #current config is for RF mode 5, baudrate = 115200
             rfmode = self.gnuradio.getUHF_RFMode()
-            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 '+str(rfmode)+' 0 0 1 0 0 0 1 1)')
+            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 '+str(rfmode)+' 0 1 1 0 0 0 0 0)')
 
     def UHFDIRCommand(self, string):
         print("sending UHFDIRcommand: " + string)
@@ -155,7 +155,4 @@ class uTransceiver(object):
         else:
             print('Error: Command not sent. Wait for pipe mode to expire')
             print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
-
-    def exper_UHFDIRCommand(string):
-        pass
 
