@@ -181,10 +181,8 @@ obc_housekeeping = {
     'boot_cnt': '>u2',
     'boot_src': '>u2',
     'last_reset_reason': '<B',
-    'OBC_mode': '<B',
     'solar_panel_supply_curr': '>u2',
     'cmds_received': '>u2',
-    'pckts_uncovered_by_FEC': '>u2',
     'heap_free' : '>u4',
     'lowest_heap_free': '>u4', 
 
