@@ -4852,11 +4852,12 @@ services = {
                 }
             }, 
             'NV_START': {
-                'what': 'Start transmitting voice data from filename',
+                'what': 'Start transmitting voice data from filename. Blocksize should be a multiple of the blocksize of the codec and reasonably large (max 512)',
                 'subPort': 11,
                 'inoutInfo': {
                     'args': {
                         "Repeats": '>u2',
+                        "Blocksize": '>u2',
                         "Filename" : '>S128'
                     },
                     'returns': {
