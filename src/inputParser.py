@@ -105,6 +105,8 @@ class InputParser:
             for t in parametersPortion.split(","):
                 tokenList.append(t);
             tokenList.append(")")
+        for i in range(len(tokenList)):
+            tokenList[i] = tokenList[i].strip()
         return tokenList
 
     def __argCheck(self, args, inoutInfo, command, subservice=None):

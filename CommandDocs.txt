@@ -2122,6 +2122,22 @@ NS_PAYLOAD.RESET_MCU:
 		port: 22		subport: 10
 
 
+NS_PAYLOAD.NV_START:
+		About: Start transmitting voice data from filename. Blocksize should be a multiple of the blocksize of the codec and reasonably large (max 512)
+		Supports: OBC
+		Arguments: {'Repeats': '>u2', 'Blocksize': '>u2', 'Filename': '>S128'}
+		return values: {'err': '>b'}
+		port: 22		subport: 11
+
+
+NS_PAYLOAD.NV_STOP:
+		About: Stop transmitting voice data
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b'}
+		port: 22		subport: 12
+
+
 IRIS.IRIS_POWER_ON:
 		About: Send command to OBC to tell EPS to turn on power
 		Supports: OBC

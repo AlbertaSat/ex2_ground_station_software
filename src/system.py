@@ -4848,7 +4848,31 @@ services = {
                         'err': '>b',
                     }
                 }
-            }
+            }, 
+            'NV_START': {
+                'what': 'Start transmitting voice data from filename. Blocksize should be a multiple of the blocksize of the codec and reasonably large (max 512)',
+                'subPort': 11,
+                'inoutInfo': {
+                    'args': {
+                        "Repeats": '>u2',
+                        "Blocksize": '>u2',
+                        "Filename" : '>S128'
+                    },
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
+            'NV_STOP': {
+                'what': 'Stop transmitting voice data',
+                'subPort': 12,
+                'inoutInfo': {
+                    'args': None,
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
         },
     },
     'IRIS': {
