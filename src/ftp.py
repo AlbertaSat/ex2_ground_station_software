@@ -257,6 +257,7 @@ class ftpGetter(ftp):
 class ftpSender(ftp):
     def __init__(self,opts):
         super().__init__(opts)
+        self.skip = 0
 
     def run(self):
         self._do_post_request()
@@ -310,6 +311,7 @@ class ftpSender(ftp):
         out.extend(req_id.to_bytes(4, byteorder='big'))
         out.extend(filesize.to_bytes(8, byteorder='big'))
         out.extend(self.blocksize.to_bytes(4, byteorder='big'))
+        out.extend(self.skip.to_bytes(8, byteorder='big'))
         out.extend(bytes(self.outfile.encode("ascii")))
         out.extend(int(0).to_bytes(1, byteorder='big'))
         return out
