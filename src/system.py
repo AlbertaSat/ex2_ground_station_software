@@ -488,6 +488,7 @@ obc_housekeeping = {
     'eNIM0_lux': '>i2',
     'eNIM1_lux': '>i2',
     'eNIM2_lux': '>i2',
+    'eNIM3_lux': '>i2',
     'ram_avail': '>i2',
     'lowest_img_num': '>i2',
     'first_blank_img_num': '>i2',
