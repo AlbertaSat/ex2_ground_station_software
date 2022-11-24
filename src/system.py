@@ -4294,10 +4294,10 @@ services = {
                         "Use_Star_Tracker" : '>u1',
                         "Ndr_Snsr_Trmntr_Tst" : '>u1',
                         "Auto_Mtm_Rcvry" : '>u1',
-                        "Mtm_Sel1" : '>u1',
-                        "Mtm_Sel2" : '>u1', # MTM selection done by ORing with last two elements in select_arr
+                        "Zero" : '>u1',
+                        "Auto_Est_Trans" : '>u1', # MTM selection done by ORing with last two elements in select_arr
                         "Mtm_Mode" : '>u1',
-                        "Auto_Est_Trans" : '>u1',
+                        "MTM_Select" : '>u1',
                         "Cam_Sample_Period" : '>u1'
                     },
                     'returns': {
