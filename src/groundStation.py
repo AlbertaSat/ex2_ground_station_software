@@ -25,10 +25,10 @@ from system import SatelliteNodes
 
 class GroundStation:
     def __init__(self, opts):
-        hkeyfile = open(opts.hkeyfile, "r")
-        hkey = hkeyfile.read().strip()
-        xkeyfile = open(opts.xkeyfile, "r")
-        xkey = xkeyfile.read().strip()
+        hkeyfile = open(opts.hkeyfile, "rb")
+        hkey = hkeyfile.read()
+        xkeyfile = open(opts.xkeyfile, "rb")
+        xkey = xkeyfile.read()
         addr = 0
         nodeType = "UHF"
         for i in GroundNodes:
