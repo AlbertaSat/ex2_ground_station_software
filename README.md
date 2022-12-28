@@ -86,7 +86,7 @@ git clone https://github.com/gruffen/gr-gpredict-doppler-3.8.git
 cd gr-gpredict-doppler-3.8
 rm -r build
 ```
-Follow all of the readme instructions in [gr-gpredict-doppler](https://github.com/wnagele/gr-gpredict-doppler), including "Setting up Gpredict". Gpredict can be started using the `gpredict` command. Type the following command.
+Follow all of the readme instructions in [gr-gpredict-doppler](https://github.com/wnagele/gr-gpredict-doppler), including "Setting up Gpredict". Gpredict can be started using the `gpredict` command. Type the following command (or manually copy over the .yml file).
 ```
 cp ex2_sdr_install_path/gnuradio/utils/gpredict_doppler_doppler.block.yml /home/josh/miniconda3/envs/gnuradio-3.9.4/share/gnuradio/grc
 ```
