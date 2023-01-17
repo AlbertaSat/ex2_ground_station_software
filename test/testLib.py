@@ -23,13 +23,13 @@ import time
 import sys
 from os import path
 sys.path.append("./src")
-from groundStation import groundStation
+from groundStation import GroundStation
+from options import optionsFactory
 
 import numpy as np
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
-
+opts = optionsFactory("basic")
+gs = GroundStation(opts.getOptions())
 
 class testLib(object):
     def __init__(self):
@@ -39,7 +39,7 @@ class testLib(object):
         pass
 
     def sendAndExpect(self, send, expect):
-        server, port, toSend = gs.getInput(inVal = send)
+        server, port, toSend = gs.inputHandler.getInput(inVal = send)
         response = gs.transaction(server, port, toSend)
         if response == expect:
             testpassed = 'Pass'
@@ -56,8 +56,8 @@ class testLib(object):
         return response == expect
 
     def send(self, send):
-        server, port, toSend = gs.getInput(inVal = send)
-        response = gs.transaction(server, port, toSend)
+        transactObj = gs.interactive.getTransactionObject(send, gs.networkManager)
+        response = transactObj.execute()
         if response != {}:
             testpassed = 'Pass'
             colour = '\033[92m' #green
