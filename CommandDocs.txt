@@ -11,7 +11,10 @@ CSP.PING:
 
 
 SCHEDULER.SET_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		About: Uploads the schedule file and schedules the tasks to run.
+		Returns 0 and number of cmds left in the schedule on success.
+		Refer for schedule.h for calloc error code.
+		Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
 		Arguments: None
 		return values: {'err': '>b', 'count': '>b'}
