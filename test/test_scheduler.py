@@ -215,6 +215,7 @@ def test_set_periodic():
     # Upload the schedule file to the satellite
     cmd = "ex2.scheduler.set_schedule({})".format(schedFile)
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+
     # set the schedule
     response = transactObj.execute() 
     print("set_schedule response: {}".format(response))
