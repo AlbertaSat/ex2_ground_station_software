@@ -11,15 +11,18 @@ CSP.PING:
 
 
 SCHEDULER.SET_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		About: Uploads the schedule file and schedules the tasks to run.
+		Returns 0 and number of cmds left in the schedule on success.
+		Refer for schedule.h for calloc error code.
+		Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
-		Arguments: None
+		Arguments: { 'Schedule File': '<s128' }
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 25		subport: 0
 
 
 SCHEDULER.GET_SCHEDULE:
-		About: None
+		About: Returns 0 and number of cmds left in the schedule on success.
 		Supports: OBC
 		Arguments: None
 		return values: {'err': '>b'}
@@ -27,7 +30,9 @@ SCHEDULER.GET_SCHEDULE:
 
 
 SCHEDULER.REPLACE_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		About: Returns 0 and number of cmds left in the schedule on success.
+		Refer for schedule.h for calloc error code.
+		Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
 		Arguments: None
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
@@ -35,7 +40,10 @@ SCHEDULER.REPLACE_SCHEDULE:
 
 
 SCHEDULER.DELETE_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		About: Deletes the tasks in the given schedule.
+		Returns 0 and number of cmds left in the schedule on success.
+		Refer for schedule.h for calloc error code.
+		Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
 		Arguments: None
 		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
