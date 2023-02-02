@@ -20,7 +20,7 @@
 import ctypes
 from ctypes import cdll, c_int, c_char
 import sys
-import zmq
+#import zmq
 import threading
 import os.path
 import socket
