@@ -19,12 +19,15 @@
 
 import re
 from inputParser import InputParser
+from scheduleParser import ScheduleParser
 
 class EmbedPacket:
     def __init__(self, commandList, data):
         self.inputParse = InputParser()
+        self.schedParse = ScheduleParser()
         self.data = data
         self.cmdList = commandList
+        self.cmds = list()
         self.schedule = list()
 
     def embedCSP(self):
@@ -32,38 +35,39 @@ class EmbedPacket:
         self._buildEmbeddedPacket()
         return self.data
 
+
     def _buildCommandList(self):
         if len(self.cmdList) > 0:
             for i in range(0, len(self.cmdList)):
                 # parse the time and command, then embed the command as a CSP packet
-                cmdStart = re.search(r'[a-z]', self.cmdList[i], re.I)
-                if cmdStart is not None:
-                    cmdStart = cmdStart.start()
-                scheduledTime = self.cmdList[i][:cmdStart]
-                scheduledTime = " ".join(scheduledTime.strip().split())
-                scheduledTime += " " # must end with space!
-                ascii_values = [ord(character) for character in scheduledTime]
-                scheduledCmd = self.cmdList[i][cmdStart:].strip()
-
-                command = self.inputParse.parseInput(scheduledCmd)
-                command['time'] = ascii_values
+                cmd = self.schedParse.parseCmd(self.cmdList[i])
+                command = self.inputParse.parseInput(cmd['op'])
+                command['first'] = cmd['first']
+                command['repeat'] = cmd['repeat']
+                command['last'] = cmd['last']
                 # append the list
                 print("Command: {}".format(command))
                 self.schedule.append(command)
 
     def _buildEmbeddedPacket(self):
         for cmd in self.schedule:
-            # for each line of command, parse the packet
-            scheduledTime = cmd['time']
+            # for each line of command, place the fields into the CSP packet
+            # note that "to_bytes(4, byteorder='big')" == htonl() 
+            scheduledTime = cmd['first'].to_bytes(4, byteorder='big')
+            self.data.extend(scheduledTime)
+            scheduledTime = cmd['repeat'].to_bytes(4, byteorder='big')
+            self.data.extend(scheduledTime)
+            scheduledTime = cmd['last'].to_bytes(4, byteorder='big')
+            self.data.extend(scheduledTime)
             scheduledDst = cmd['dst']
             dst = (scheduledDst).to_bytes(1, byteorder='big')
+            self.data.extend(dst)
             scheduledDport = cmd['dport']
             dport = (scheduledDport).to_bytes(1, byteorder='big')
-            packetContent = cmd['args']
-            self.data.extend(scheduledTime)
-            self.data.extend(dst)
             self.data.extend(dport)
-            self.data.extend((len(packetContent)).to_bytes(2, byteorder='big'))
+            packetContent = cmd['args']
+            oplen = len(packetContent).to_bytes(2, byteorder='big')
+            self.data.extend(oplen)
             self.data.extend(packetContent)
 
 
