@@ -30,25 +30,26 @@ from testLib import testLib as test
 from testLib import gs
 
 import time
-import datetime
+from datetime import datetime
+from datetime import timezone
+from datetime import timedelta
 import calendar
 
 test = test() #call to initialize local test class
 
 class CronTime:
-    def __init__(self, dt : datetime.datetime):
+    def __init__(self, dt : datetime):
         self.dt = dt
         self.cron = {}
         self.cron["msec"] = int(dt.microsecond/1000.0)
         self.cron["sec"] = dt.second
         self.cron["min"] = dt.minute
         self.cron["hr"] = dt.hour
-        self.cron["weekday"] = 0
         self.cron["day"] = dt.day
         self.cron["mon"] = dt.month
         self.cron["yr"] = dt.year - 1970;
 
-    def _setCron(self, dt : datetime.datetime):
+    def _setCron(self, dt : datetime):
         if self.cron["msec"] != '*':
             self.cron["msec"] = int(dt.microsecond/1000.0)
         if self.cron["sec"] != '*':
@@ -62,9 +63,9 @@ class CronTime:
         if self.cron["mon"] != '*':
             self.cron["mon"] = dt.month
         if self.cron["yr"] != '*':
-            self.cron["yr"] = dt.year - 1970;
+            self.cron["yr"] = dt.year;
 
-    def inc(self, relTime : datetime.timedelta):
+    def inc(self, relTime : timedelta):
         self.dt = self.dt + relTime
         self._setCron(self.dt)    
 
@@ -74,8 +75,8 @@ class CronTime:
             fmt += "{} ".format(self.cron[key])
         return fmt                
 
-def test_scheduler_ping():
-    test.send('ex2.scheduler.ping_schedule')
+def test_scheduler_get():
+    test.send('ex2.scheduler.get_schedule')
 
 def test_time():
     # Get the current satellite time and adjust it if necessary. By updating
@@ -85,7 +86,7 @@ def test_time():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
 
     # get the current time as UTC
-    dt = datetime.datetime.utcnow()
+    dt = datetime.now(timezone.utc)
     now = calendar.timegm(dt.timetuple())
 
     response = transactObj.execute()
@@ -95,7 +96,7 @@ def test_time():
 
     print("now: {}, sat: {}".format(now, response))
     sat = int(response['timestamp'])
-    dt = datetime.datetime.fromtimestamp(sat)
+    dt = datetime.fromtimestamp(sat)
     # Arbitrarily decide that a 10 second diference is "close enough"
     if abs(sat - now) < 10:
         print("satellite time {} (delta {})".format(dt, sat - now))
@@ -110,7 +111,7 @@ def test_time():
     assert response != {}, "set_schedule - no response"
     assert response['err'] == 0
     
-def test_scheduler_set():
+def test_set_multiple():
     # Set a schedule on the satellite and check that it executes when it is
     # supposed to. This is achieved through several steps:
     # 1. create a schedule
@@ -118,23 +119,24 @@ def test_scheduler_set():
     # 3. wait until the scheduled task has executed
     # 4. get the satellite log to check that the task was executed
     
-    dt = datetime.datetime.utcnow()
+    dt = datetime.utcnow()
     now = calendar.timegm(dt.timetuple())
     ctime = CronTime(dt)
 
-    # schedule some task to execute sleep_time seconds in the future
+    # schedule some tasks to execute up to sleep_time seconds in the future
     sleep_time = 20
-    ctime.inc(datetime.timedelta(seconds = sleep_time))
-
-    # The dummy task is to work-around a current bug in the scheduler.
-    # Specifically, the scheduler crashes if there is no periodic task.
-    dummy = CronTime(dt)
-    dummy.cron['mon'] = '*'
 
     schedFile = "test-schedule.txt"
     with open(schedFile, "w") as f:
+        # Note that the tasks are specified out of chronological order
+        ctime.inc(timedelta(seconds = sleep_time))
         f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
-        f.write("{} {}\n".format(dummy, "ex2.time_management.get_time"))
+        ctime.inc(timedelta(seconds = sleep_time - 5))
+        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
+        ctime.inc(timedelta(seconds = sleep_time - 15))
+        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
+        ctime.inc(timedelta(seconds = sleep_time - 10))
+        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
 
     # Upload the schedule file to the satellite
     cmd = "ex2.scheduler.set_schedule({})".format(schedFile)
@@ -150,7 +152,7 @@ def test_scheduler_set():
     print("sleeping for {} seconds".format(sleep_time))
     time.sleep(sleep_time)
 
-    # The task should have executed now. There are a couple of ways to read
+    # Thes task should have executed now. There are a couple of ways to read
     # the log file, for example, using the cli or the logger. At this moment
     # the cli read command seems to be truncating some lines in the middle of
     # the ~10KB file.
@@ -192,7 +194,7 @@ def test_scheduler_delete():
     # 3. wait until the scheduled task has executed
     # 4. get the satellite log to check that the task was executed
     
-    dt = datetime.datetime.utcnow()
+    dt = datetime.now(timezone.utc)
     now = calendar.timegm(dt.timetuple())
     ctime = CronTime(dt)
 
@@ -236,8 +238,7 @@ def test_scheduler_delete():
     
     
 if __name__ == '__main__':
-    test_scheduler_ping()
+    test_scheduler_get()
     test_time()
     test_scheduler_set()
-    test_scheduler_delete()
     test.summary()
