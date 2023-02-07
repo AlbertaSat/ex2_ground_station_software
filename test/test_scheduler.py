@@ -47,7 +47,7 @@ class CronTime:
         self.cron["hr"] = dt.hour
         self.cron["day"] = dt.day
         self.cron["mon"] = dt.month
-        self.cron["yr"] = dt.year - 1970;
+        self.cron["yr"] = dt.year;
 
     def _setCron(self, dt : datetime):
         if self.cron["msec"] != '*':
@@ -119,24 +119,26 @@ def test_set_multiple():
     # 3. wait until the scheduled task has executed
     # 4. get the satellite log to check that the task was executed
     
-    dt = datetime.utcnow()
-    now = calendar.timegm(dt.timetuple())
-    ctime = CronTime(dt)
+    dt = datetime.now(timezone.utc)
+    task1 = CronTime(dt)
+    task2 = CronTime(dt)
+    task3 = CronTime(dt)
+    task4 = CronTime(dt)
 
     # schedule some tasks to execute up to sleep_time seconds in the future
-    sleep_time = 20
+    sleep_time = 40
 
     schedFile = "test-schedule.txt"
     with open(schedFile, "w") as f:
         # Note that the tasks are specified out of chronological order
-        ctime.inc(timedelta(seconds = sleep_time))
-        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
-        ctime.inc(timedelta(seconds = sleep_time - 5))
-        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
-        ctime.inc(timedelta(seconds = sleep_time - 15))
-        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
-        ctime.inc(timedelta(seconds = sleep_time - 10))
-        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
+        task1.inc(timedelta(seconds = sleep_time))
+        f.write("{} {}\n".format(task1, "ex2.time_management.get_time"))
+        task2.inc(timedelta(seconds = sleep_time - 10))
+        f.write("{} {}\n".format(task2, "ex2.time_management.get_time"))
+        task3.inc(timedelta(seconds = sleep_time - 30))
+        f.write("{} {}\n".format(task3, "ex2.time_management.get_time"))
+        task4.inc(timedelta(seconds = sleep_time - 20))
+        f.write("{} {}\n".format(task4, "ex2.time_management.get_time"))
 
     # Upload the schedule file to the satellite
     cmd = "ex2.scheduler.set_schedule({})".format(schedFile)
@@ -149,8 +151,14 @@ def test_set_multiple():
     assert response != {}, "set_schedule - no response"
     assert response['err'] == 0, "set_schedule error {}".format(response['err'])
 
+    cmds = get_schedule()
+    for c in cmds:
+        cmd_dt = datetime.fromtimestamp(c['next'], timezone.utc)
+        diff = cmd_dt - dt
+        print("next: {} ({}), diff {}".format(cmd_dt, c['next'], diff.total_seconds()))
+
     print("sleeping for {} seconds".format(sleep_time))
-    time.sleep(sleep_time)
+    time.sleep(sleep_time*2)
 
     # Thes task should have executed now. There are a couple of ways to read
     # the log file, for example, using the cli or the logger. At this moment
@@ -158,35 +166,26 @@ def test_set_multiple():
     # the ~10KB file.
     #cmd = "ex2.cli.send_cmd(15, read syslog.log)"
 
-    # The logger currently gets the first 500 bytes of the log file.
-    # Although we will probably change the logger to get the *last* 500 bytes
-    # of the file, the checks below are just FYI for now.
     cmd = "ex2.logger.get_file"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
 
-    # NB: the line length stuff is to help debug the truncation issues
-    longest_len = 0
     log = response['log'].decode()
     # Split the response into lines, then separate out the scheduler related
     # lines. Those lines can be checked to see that the schedule was accepted
-    # executed.
+    # and executed.
+    i = 0
     for line in log.split("\n"):
-        if len(line) > longest_len:
-            longest_len = len(line)
-            # print("new longest line {}: {}".format(longest_len, line))
-            if line.find("scheduler") != -1:
-                # print("line len {}, isprint {}".format(len(line), line.isprintable()))
-                print(line)
-            if line.find("executed") != -1:
-                for field in line.split(","):
-                    if field.find("unix") != -1:
-                        ut = field.split(" ")
-                        print("executed at {}".format(ut))
+        print(line)
+        if line.find("get_time") != -1:
+            fields = line.split(":")
+            timestamp = int(fields[1].strip())
+            print("executed at {} vs desired {}".format(timestamp, cmds[i]['next']))
+            i = i+1
     # print("longest_len {}".format(longest_len))
 
 
-def test_scheduler_delete():
+def test_set_periodic():
     # Set a schedule on the satellite and check that it executes when it is
     # supposed to. This is achieved through several steps:
     # 1. create a schedule
@@ -195,27 +194,27 @@ def test_scheduler_delete():
     # 4. get the satellite log to check that the task was executed
     
     dt = datetime.now(timezone.utc)
-    now = calendar.timegm(dt.timetuple())
-    ctime = CronTime(dt)
+    task1 = CronTime(dt)
+    task2 = CronTime(dt)
 
-    # schedule some task to execute sleep_time minutes in the future
-    sleep_time = 20
-    ctime.inc(datetime.timedelta(seconds = sleep_time))
+    task1.cron['sec'] = 0
+    task1.cron['min'] = "*"  # Should make task1 run every 60 seconds
+    task1.cron['hr'] = "*"
+    task2.cron['sec'] = "*/20"  # Should make task2 run every 20 seconds
+    task2.cron['min'] = "*"
+    task2.cron['hr'] = "*"
 
-    # The dummy task is to work-around a current bug in the scheduler.
-    # Specifically, the scheduler crashes if there is no periodic task.
-    dummy = CronTime(dt)
-    dummy.cron['mon'] = '*'
+    # schedule some tasks to execute up to sleep_time seconds in the future
+    sleep_time = 120
 
-    schedFile = "test-schedule.txt"
+    schedFile = "periodic-schedule.txt"
     with open(schedFile, "w") as f:
-        f.write("{} {}\n".format(ctime, "ex2.time_management.get_time"))
-        f.write("{} {}\n".format(dummy, "ex2.time_management.get_time"))
+        f.write("{} {}\n".format(task1, "ex2.time_management.get_time"))
+        f.write("{} {}\n".format(task2, "ex2.time_management.get_time"))
 
     # Upload the schedule file to the satellite
     cmd = "ex2.scheduler.set_schedule({})".format(schedFile)
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-
     # set the schedule
     response = transactObj.execute() 
     print("set_schedule response: {}".format(response))
@@ -223,22 +222,83 @@ def test_scheduler_delete():
     assert response != {}, "set_schedule - no response"
     assert response['err'] == 0, "set_schedule error {}".format(response['err'])
 
-    # Note that different things happen if you issue delete before or after the
-    # schedule executes.
-    sleep_time = 21
-    print("sleeping for {} seconds".format(sleep_time))
-    time.sleep(sleep_time)
+    cmds = get_schedule()
+    for c in cmds:
+        cmd_dt = datetime.fromtimestamp(c['next'], timezone.utc)
+        diff = cmd_dt - dt
+        print("next: {} ({}), diff {}".format(cmd_dt, c['next'], diff.total_seconds()))
 
-    # Upload the schedule file that is to be deleted to the satellite
-    cmd = "ex2.scheduler.delete_schedule({})".format(schedFile)
+    print("sleeping for {} seconds".format(sleep_time))
+    time.sleep(sleep_time*2)
+
+    cmd = "ex2.logger.get_file"
+    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+    response = transactObj.execute()
+
+    log = response['log'].decode()
+    i = 0
+    # Split the response into lines, then separate out the scheduler related
+    # lines. Those lines can be checked to see that the schedule was accepted
+    # and executed.
+    for line in log.split("\n"):
+        print(line)
+        if line.find("get_time") != -1:
+            fields = line.split(":")
+            timestamp = int(fields[1].strip())
+            print("{}: executed at {}".format(i, timestamp))
+            i = i+1
+
+def get_schedule():
+    # Retrieve the current schedule from the satellite.
+    # Return the parsed response as an array of scheduled commands
+    cmd = "ex2.scheduler.get_schedule"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
 
-    response = transactObj.execute() 
+    response = transactObj.execute()
+    assert(response['err'] == 0)
+
+    count = response['count']
+    # print("{} commands scheduled".format(count))
+
+    cmds = []
+    if count == 0:
+        return None
+
+    for i in range(count):
+        curr = {}
+        offset = i*10  # 10 bytes per cmd scheduled
+        curr['next'] = int.from_bytes(response['cmds'][offset:offset+4], byteorder='big')
+        offset += 4
+        curr['freq'] = int.from_bytes(response['cmds'][offset:offset+4], byteorder='big')
+        offset += 4
+        curr['dst'] = response['cmds'][offset]
+        curr['dport'] = response['cmds'][offset+1]
+        cmds.append(curr)
+
+    print(cmds)
+    return cmds
+
+
+def test_scheduler_delete():
+    # Send the delete schedule command. It shouldn't matter if there is a
+    # schedule present or not.
+    cmd = "ex2.scheduler.delete_schedule"
+    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+
+    response = transactObj.execute()
     print("delete_schedule response: {}".format(response))
-    
+
+    # Send the delete schedule command. It shouldn't matter if there is a
+    # schedule present or not.
+    cmd = "ex2.scheduler.get_schedule"
+    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+
+    response = transactObj.execute()
+    assert(response['err'] == 0)
+    assert(response['count'] == 0)
     
 if __name__ == '__main__':
-    test_scheduler_get()
     test_time()
-    test_scheduler_set()
-    test.summary()
+    test_set_multiple()
+    test_set_periodic()
+    test_scheduler_delete()
