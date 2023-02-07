@@ -71,21 +71,13 @@ def test_time():
     
 
 def test_nv_sdr_play():
-    time.sleep(60)
-    
-    # Note: first parameter is use_csp=0, i.e. use raw sdr
-    cmd = "ex2.ns_payload.nv_start(1, 1, 512, VOL0:/vid.mov)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/barks.mp3)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_start response: {}".format(response))
 
     libcsp.set_sdr_rx()
-    print("changed SDR RX")
-
-    cmd = input("Type anything to continue:")
-
-    libcsp.set_backup_rx()
-    print("restored CSP RX")
+    print("broadcast received");
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
@@ -93,12 +85,30 @@ def test_nv_sdr_play():
     print("nv_stop response: {}".format(response))
 
 def test_nv_csp_play():
-    cmd = "ex2.ns_payload.nv_start(1, 1, 512, VOL0:/vid.mov)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/robot.mp3)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print("nv_start response: {}".format(response))
 
-    cmd = input("Type anything to continue:")
+    socket = gs.networkManager.socket()
+    gs.networkManager.bind(socket, 24);
+    gs.networkManager.listen(socket, 5);
+    conn = gs.networkManager.accept(socket, 10000);
+
+    done = False
+    blksz = 0
+    while not done:
+        data = gs.networkManager.receive(16, 24, 100000);
+        print("NV data: {}".format(data))
+        word = data[0:1]
+        bs = int.from_bytes(word, "big");
+        word = data[2:3]
+        cnt = int.from_bytes(word, "big");
+        print("data bs {} cnt {}".format(bs, cnt))
+        if blksz == 0:
+            blksz = bs
+        if bs < blksz:
+            done = True
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
@@ -108,4 +118,4 @@ def test_nv_csp_play():
     
 if __name__ == '__main__':
     test_time()
-    test_nv_sdr_play()
+    test_nv_csp_play()
