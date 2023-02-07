@@ -23,12 +23,13 @@ import time
 import sys
 from os import path
 sys.path.append("./src")
-from groundStation import groundStation
+from groundStation import GroundStation
+from options import Options
 
 import numpy as np
 
-opts = groundStation.options()
-gs = groundStation.groundStation(opts.getOptions())
+opts = Options()
+gs = GroundStation(opts.getOptions())
 
 
 class testLib(object):
