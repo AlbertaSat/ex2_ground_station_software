@@ -21,41 +21,25 @@ SCHEDULER.SET_SCHEDULE:
 		port: 25		subport: 0
 
 
-SCHEDULER.GET_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success.
+SCHEDULER.DELETE_SCHEDULE:
+		About: Deletes all scheduled tasks
+		Returns 0 on success, SchedulerError_t on error.
+		Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
 		Arguments: None
 		return values: {'err': '>b'}
-		port: 25		subport: 1
-
-
-SCHEDULER.REPLACE_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success.
-		Refer for schedule.h for calloc error code.
-		Refer to rederrno.h for reliance edge error codes
-		Supports: OBC
-		Arguments: None
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 25		subport: 2
-
-
-SCHEDULER.DELETE_SCHEDULE:
-		About: Deletes the tasks in the given schedule.
-		Returns 0 and number of cmds left in the schedule on success.
-		Refer for schedule.h for calloc error code.
-		Refer to rederrno.h for reliance edge error codes
-		Supports: OBC
-		Arguments: None
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
 		port: 25		subport: 3
 
 
-SCHEDULER.PING_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+SCHEDULER.GET_SCHEDULE:
+		About: Retrieve the current schedule
+		On succes, Returns a count and summary of the scheduled commands
+		Returns SchedulerError_t on error.
+		Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
 		Arguments: None
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 25		subport: 4
+		return values: {'err': '>b, 'count': '>b', 'cmds': 'var'}
+		port: 25		subport: 1
 
 
 SET_PIPE.UHF_GS_PIPE:
