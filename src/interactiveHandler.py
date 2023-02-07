@@ -51,7 +51,7 @@ class InteractiveHandler:
             transactObj = getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = satcliTransaction(command, networkHandler)
-        elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
+        elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] == "SET_SCHEDULE"):
             transactObj = schedulerTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
             transactObj = setTimeTransaction(command, networkHandler)
@@ -74,7 +74,7 @@ class InteractiveHandler:
             self.fake_hk_id += 1
         elif tokens[self.serviceIdx] == "CLI":
             transactObj = dummySatCliTransaction(command, networkHandler)
-        elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE', 'REPLACE_SCHEDULE']):
+        elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] in ['SET_SCHEDULE', 'DELETE_SCHEDULE']):
             transactObj = dummySchedulerTransaction(command, networkHandler)
         else:
             transactObj = dummyTransaction(command, networkHandler)

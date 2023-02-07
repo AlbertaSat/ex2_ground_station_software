@@ -540,49 +540,30 @@ services = {
                     'args': None,  # All scheduled commands should be stored in schedule.txt
                     'returns': {
                         'err': '>b',
-                        'number of cmds scheduled': '>b'  # Returns -1 if an error occurred.
-                    }
-                }
-            },
-            'GET_SCHEDULE': {
-                'subPort': 1,
-                'inoutInfo': {
-                    'args': None,
-                    'returns': {
-                        'err': '>b'  # Refer to rederrno.h for reliance edge error codes
-                    }
-                }
-            },
-            'REPLACE_SCHEDULE': {
-                'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
-                'subPort': 2,
-                'inoutInfo': {
-                    'args': None,
-                    'returns': {
-                        'err': '>b',
-                        'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                        'count': '>b'  # Returns -1 if an error occurred.
                     }
                 }
             },
             'DELETE_SCHEDULE': {
-                'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
+                'what': 'Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
                 'subPort': 3,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
-                        'err': '>b', \
-                        'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                        'err': '>b',
+                        'red_errno': '>b'  # RED errno if I/O error occurred
                     }
                 }
             },
-            'PING_SCHEDULE': {
+            'GET_SCHEDULE': {
                 'what': 'Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes',
-                'subPort': 4,
+                'subPort': 1,
                 'inoutInfo': {
                     'args': None,
                     'returns': {
                         'err': '>b',
-                        'number of cmds scheduled': '>b'    # Returns -1 if an error occurred.
+                        'count': '>b',
+                        'cmds': 'var'
                     }
                 }
             },
@@ -4855,7 +4836,8 @@ services = {
                 'subPort': 11,
                 'inoutInfo': {
                     'args': {
-                        "Repeats": '>u2',
+                        "CSP": '>b',
+                        "Repeats": '>u1',
                         "Blocksize": '>u2',
                         "Filename" : '>S128'
                     },
