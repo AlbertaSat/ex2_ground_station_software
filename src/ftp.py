@@ -143,7 +143,7 @@ class ftp(GroundStation):
 
     def _transaction(self, data):
         self.networkManager.send(self.satelliteAddr, self.destPort, data)
-        response = self.networkManager.receive(self.satelliteAddr, self.destPort, 1000)
+        response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
         return self.receiveParse.parseReturnValue(self.satelliteAddr, self.destPort, response)
 
 class ftpGetter(ftp):
@@ -336,4 +336,4 @@ if __name__ == "__main__":
         ftpRunner.run()
     except Exception as e:
         print(e)
-        ftpRunner.shutdown(None, None)
+        ftpRunner.shutdown()
