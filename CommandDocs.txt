@@ -11,51 +11,27 @@ CSP.PING:
 
 
 SCHEDULER.SET_SCHEDULE:
-		About: Uploads the schedule file and schedules the tasks to run.
-		Returns 0 and number of cmds left in the schedule on success.
-		Refer for schedule.h for calloc error code.
-		Refer to rederrno.h for reliance edge error codes
-		Supports: OBC
-		Arguments: { 'Schedule File': '<s128' }
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 25		subport: 0
-
-
-SCHEDULER.GET_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success.
-		Supports: OBC
-		Arguments: None
-		return values: {'err': '>b'}
-		port: 25		subport: 1
-
-
-SCHEDULER.REPLACE_SCHEDULE:
-		About: Returns 0 and number of cmds left in the schedule on success.
-		Refer for schedule.h for calloc error code.
-		Refer to rederrno.h for reliance edge error codes
-		Supports: OBC
-		Arguments: None
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 25		subport: 2
-
-
-SCHEDULER.DELETE_SCHEDULE:
-		About: Deletes the tasks in the given schedule.
-		Returns 0 and number of cmds left in the schedule on success.
-		Refer for schedule.h for calloc error code.
-		Refer to rederrno.h for reliance edge error codes
-		Supports: OBC
-		Arguments: None
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 25		subport: 3
-
-
-SCHEDULER.PING_SCHEDULE:
 		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
 		Supports: OBC
 		Arguments: None
-		return values: {'err': '>b', 'number of cmds scheduled': '>b'}
-		port: 25		subport: 4
+		return values: {'err': '>b', 'count': '>b'}
+		port: 25		subport: 0
+
+
+SCHEDULER.DELETE_SCHEDULE:
+		About: Returns 0 on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b', 'red_errno': '>b'}
+		port: 25		subport: 3
+
+
+SCHEDULER.GET_SCHEDULE:
+		About: Returns 0 and number of cmds left in the schedule on success. Refer for schedule.h for calloc error code. Refer to rederrno.h for reliance edge error codes
+		Supports: OBC
+		Arguments: None
+		return values: {'err': '>b', 'count': '>b', 'cmds': 'var'}
+		port: 25		subport: 1
 
 
 SET_PIPE.UHF_GS_PIPE:
@@ -2133,7 +2109,7 @@ NS_PAYLOAD.RESET_MCU:
 NS_PAYLOAD.NV_START:
 		About: Start transmitting voice data from filename. Blocksize should be a multiple of the blocksize of the codec and reasonably large (max 512)
 		Supports: OBC
-		Arguments: {'Repeats': '>u2', 'Blocksize': '>u2', 'Filename': '>S128'}
+		Arguments: {'CSP': '>b', 'Repeats': '>u1', 'Blocksize': '>u2', 'Filename': '>S128'}
 		return values: {'err': '>b'}
 		port: 22		subport: 11
 
