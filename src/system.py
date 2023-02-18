@@ -4836,8 +4836,7 @@ services = {
                 'subPort': 11,
                 'inoutInfo': {
                     'args': {
-                        "CSP": '>b',
-                        "Repeats": '>u1',
+                        "Repeats": '>u2',
                         "Blocksize": '>u2',
                         "Filename" : '>S128'
                     },
