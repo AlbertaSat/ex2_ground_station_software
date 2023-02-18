@@ -25,7 +25,7 @@ from os import path
 print(sys.path)
 
 import libcsp_py3 as libcsp
-from src.receiveNVoices import ReceiveNorthernVoices
+#from receiveNVoices import ReceiveNorthernVoices
 
 from testLib import testLib as test
 from testLib import gs
@@ -67,14 +67,14 @@ def test_time():
     # set the satellite's time to this script's time
     response = transactObj.execute()
     assert response != {}, "set_schedule - no response"
-    assert response['err'] == 0
-    
+    assert response['err'] == 2
 
 def test_nv_sdr_play():
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/treaty-ack.c2)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_start response: {}".format(response))
+    assert response['err'] == 0
 
     print("changing SDR RX")
     gs.networkManager.set_sdr_rx()
@@ -88,7 +88,7 @@ def test_nv_sdr_play():
 def test_nv_csp_play():
     nv = ReceiveNorthernVoices(gs.networkManager)
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a.c2)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     assert response['err'] == 0
@@ -103,6 +103,6 @@ def test_nv_csp_play():
     
 if __name__ == '__main__':
     test_time()
-    test_nv_csp_play()
-#    test_nv_sdr_play()
+#    test_nv_csp_play()
+    test_nv_sdr_play()
 
