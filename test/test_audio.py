@@ -19,13 +19,13 @@
 
 '''  to run > yarn test_scheduler -I uart '''
 
-import libcsp_py3 as libcsp
-import numpy as np
-import os
-
 import sys
 from os import path
-sys.path.append("./test")
+
+print(sys.path)
+
+import libcsp_py3 as libcsp
+from src.receiveNVoices import ReceiveNorthernVoices
 
 from testLib import testLib as test
 from testLib import gs
@@ -71,13 +71,17 @@ def test_time():
     
 
 def test_nv_sdr_play():
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/barks.mp3)"
+    print("sleeping...")
+    time.sleep(60)
+
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_start response: {}".format(response))
 
-    libcsp.set_sdr_rx()
-    print("broadcast received");
+    print("changing SDR RX")
+    gs.networkManager.set_sdr_rx()
+    print("transmission complete")
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
@@ -85,37 +89,23 @@ def test_nv_sdr_play():
     print("nv_stop response: {}".format(response))
 
 def test_nv_csp_play():
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/robot.mp3)"
+    nv = ReceiveNorthernVoices(gs.networkManager)
+
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
-    print("nv_start response: {}".format(response))
+    assert response['err'] == 0
 
-    socket = gs.networkManager.socket()
-    gs.networkManager.bind(socket, 24);
-    gs.networkManager.listen(socket, 5);
-    conn = gs.networkManager.accept(socket, 10000);
-
-    done = False
-    blksz = 0
-    while not done:
-        data = gs.networkManager.receive(16, 24, 100000);
-        print("NV data: {}".format(data))
-        word = data[0:1]
-        bs = int.from_bytes(word, "big");
-        word = data[2:3]
-        cnt = int.from_bytes(word, "big");
-        print("data bs {} cnt {}".format(bs, cnt))
-        if blksz == 0:
-            blksz = bs
-        if bs < blksz:
-            done = True
+    amt = nv.receiveFile("nv.c2", 10000)
+    assert amt > 0
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-    response = transactObj.execute() 
-    print("nv_stop response: {}".format(response))
+    response = transactObj.execute()
+    assert response['err'] == 0
 
     
 if __name__ == '__main__':
     test_time()
     test_nv_csp_play()
+#    test_nv_sdr_play()
