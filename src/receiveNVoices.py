@@ -32,7 +32,7 @@ class ReceiveNorthernVoices:
         if self.conn is None:
             self.conn = self.csp.accept(self.sock, wait)
         if self.conn is None:
-            print("nothing received after {} seconds".format(wait))
+            print("no connection after {} seconds".format(wait))
             return 0
 
         bs = 512
@@ -40,15 +40,16 @@ class ReceiveNorthernVoices:
         while bs == 512:
             pkt = self.csp.read(self.conn, 10000)
             if pkt is None:
+                print("read timed out")
                 break
             data = bytearray(libcsp.packet_get_data(pkt))
             bs = int.from_bytes(data[0:2], byteorder='big')
-            cnt = int.from_bytes(data[2:4], byteorder='big')
+            cnt += bs
             print("bs {} cnt {}".format(bs, cnt))
             with open("nv.c2", 'ab+') as f:
                 f.write(data[4:])
 
-        print("received {} packets".format(cnt))
+        print("received {} bytes".format(cnt))
         return cnt
 
     def receiveStream(self, port, wait):
@@ -56,24 +57,24 @@ class ReceiveNorthernVoices:
         if self.conn is None:
             self.conn = self.csp.accept(self.sock, wait)
         if self.conn is None:
-            print("nothing received after {} seconds".format(wait))
+            print("no connection after {} seconds".format(wait))
             return 0
 
         # buffer the entire transmission into a single bytearray
         bs = 512
-        cnt = 0
         buf = bytearray()
         while bs == 512:
             pkt = self.csp.read(self.conn, 10000)
             if pkt is None:
+                print("read timed out");
                 break
             data = bytearray(libcsp.packet_get_data(pkt))
             bs = int.from_bytes(data[0:2], byteorder='big')
-            cnt = int.from_bytes(data[2:4], byteorder='big')
-            print("bs {} cnt {}".format(bs, cnt))
+            pktnum = int.from_bytes(data[2:4], byteorder='big')
+            print("bs {} pktnum {}".format(bs, pktnum))
             buf.extend(data[4:])
 
-        print("received {} packets".format(cnt))
+        print("received {} bytes".format(len(buf)))
 
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(("127.0.0.1", port))
@@ -85,7 +86,7 @@ class ReceiveNorthernVoices:
                 break
             sent = sent + rc
 
-        return cnt
+        return len(buf)
 
     def close(self):
         if self.conn:

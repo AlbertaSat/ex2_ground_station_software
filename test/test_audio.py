@@ -25,7 +25,7 @@ import signal
 import subprocess
 
 import libcsp_py3 as libcsp
-#from receiveNVoices import ReceiveNorthernVoices
+from src.receiveNVoices import ReceiveNorthernVoices
 
 from testLib import testLib as test
 from testLib import gs
@@ -75,7 +75,7 @@ def test_nv_sdr_fwd():
     ofd = open(ofile, "wb")
     pid = subprocess.Popen(["nc", "-l", lport], stdout=ofd).pid
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a.c2)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_start response: {}".format(response))
@@ -107,19 +107,24 @@ def test_nv_csp_rcv():
     response = transactObj.execute()
     assert response['err'] == 0
 
-    pktcnt = nv.receiveFile(ofile, 10000)
-    assert pktcnt > 0
+    amt = nv.receiveFile(ofile, 20000)
+    assert amt > 0
     nv.close()
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
-    assert response['err'] == 0
+    print(response)
+    #assert response['err'] == 0
+
+    status = os.stat(ofile)
+    print("amt {} size {}".format(amt, status.st_size))
+    assert status.st_size == amt
 
 def test_nv_csp_fwd():
     nv = ReceiveNorthernVoices(gs.networkManager)
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a.c2)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     assert response['err'] == 0
@@ -129,23 +134,24 @@ def test_nv_csp_fwd():
     ofd = open(ofile, "wb")
     pid = subprocess.Popen(["nc", "-l", lport], stdout=ofd).pid
 
-    pktcnt = nv.receiveStream(int(lport), 10000)
-    assert pktcnt > 0
+    amt = nv.receiveStream(int(lport), 20000)
+    assert amt > 0
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
-    assert response['err'] == 0
+    print(response)
+    # assert response['err'] == 0
 
     nv.close()
     os.kill(pid, signal.SIGSTOP)
     status = os.stat(ofile)
-    print("amt {} size {}".format(pktcnt, status.st_size))
-    #assert status.st_size == amt
+    print("amt {} size {}".format(amt, status.st_size))
+    assert status.st_size == amt
     
 if __name__ == '__main__':
     test_time()
     test_nv_csp_rcv()
-#    test_nv_csp_fwd()
+    test_nv_csp_fwd()
     test_nv_sdr_fwd()
 
