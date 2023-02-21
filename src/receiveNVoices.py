@@ -18,24 +18,27 @@
 '''
 
 import libcsp_py3 as libcsp
+import socket
 
 class ReceiveNorthernVoices:
     def __init__(self, networkManager):
         self.csp = networkManager
         # Note: NV broadcasts on port 24
         self.sock = self.csp.listen(24)
+        self.conn = None
 
     def receiveFile(self, name: str, wait):
         print("accepting transmission to file {}".format(name))
-        conn = self.csp.accept(self.sock, wait)
-        if conn is None:
+        if self.conn is None:
+            self.conn = self.csp.accept(self.sock, wait)
+        if self.conn is None:
             print("nothing received after {} seconds".format(wait))
             return 0
 
         bs = 512
         cnt = 0
         while bs == 512:
-            pkt = self.csp.read(conn, 10000)
+            pkt = self.csp.read(self.conn, 10000)
             if pkt is None:
                 break
             data = bytearray(libcsp.packet_get_data(pkt))
@@ -50,8 +53,9 @@ class ReceiveNorthernVoices:
 
     def receiveStream(self, port, wait):
         print("streaming transmission to tcp port {}".format(port))
-        conn = self.csp.accept(self.sock, wait)
-        if conn is None:
+        if self.conn is None:
+            self.conn = self.csp.accept(self.sock, wait)
+        if self.conn is None:
             print("nothing received after {} seconds".format(wait))
             return 0
 
@@ -60,12 +64,19 @@ class ReceiveNorthernVoices:
         cnt = 0
         buf = bytearray()
         while bs == 512:
-            data = _recv(conn)
+            pkt = self.csp.read(self.conn, 10000)
+            if pkt is None:
+                break
+            data = bytearray(libcsp.packet_get_data(pkt))
+            bs = int.from_bytes(data[0:2], byteorder='big')
+            cnt = int.from_bytes(data[2:4], byteorder='big')
+            print("bs {} cnt {}".format(bs, cnt))
             buf.extend(data[4:])
 
         print("received {} packets".format(cnt))
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect("127.0.0.1", port)
+        s.connect(("127.0.0.1", port))
         sent = 0
         while sent < len(buf):
             rc = s.send(buf[sent:])
@@ -76,4 +87,7 @@ class ReceiveNorthernVoices:
 
         return cnt
 
-    
+    def close(self):
+        if self.conn:
+            self.csp.close(self.conn)
+        self.conn = None
