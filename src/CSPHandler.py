@@ -101,8 +101,11 @@ class CSPHandler(object):
     def read(self, conn, timeout):
         return libcsp.read(conn, timeout)
 
-    def set_sdr_rx(self):
-        libcsp.set_sdr_rx()
+    def close(self, conn):
+        return libcsp.close(conn)
+
+    def set_sdr_rx(self, mode=0):
+        libcsp.set_sdr_rx(mode)
 
     def _uart(self, device):
         """ initialize uart interface """
