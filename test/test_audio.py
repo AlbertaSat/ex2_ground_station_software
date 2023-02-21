@@ -20,9 +20,9 @@
 '''  to run > yarn test_scheduler -I uart '''
 
 import sys
-from os import path
-
-print(sys.path)
+import os
+import signal
+import subprocess
 
 import libcsp_py3 as libcsp
 from src.receiveNVoices import ReceiveNorthernVoices
@@ -70,16 +70,17 @@ def test_time():
     assert response['err'] == 0
     
 
-def test_nv_sdr_play():
-    print("sleeping...")
-    time.sleep(60)
+def test_nv_sdr_fwd():
+    lport = "40000"
+    ofile = "nv.sdr.bin"
+    ofd = open(ofile, "wb")
+    pid = subprocess.Popen(["nc", "-l", lport], stdout=ofd).pid
 
     cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_start response: {}".format(response))
 
-    print("changing SDR RX")
     gs.networkManager.set_sdr_rx()
     print("transmission complete")
 
@@ -88,7 +89,17 @@ def test_nv_sdr_play():
     response = transactObj.execute() 
     print("nv_stop response: {}".format(response))
 
-def test_nv_csp_play():
+    os.kill(pid, signal.SIGSTOP)
+    status = os.stat(ofile)
+    assert status.st_size > 0
+    print(status)
+
+def test_nv_csp_rcv():
+    # Remove the output from the last run, if it exists
+    ofile = "nv.c2"
+    if os.path.isfile(ofile):
+        os.remove(ofile)
+
     nv = ReceiveNorthernVoices(gs.networkManager)
 
     cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
@@ -96,16 +107,44 @@ def test_nv_csp_play():
     response = transactObj.execute()
     assert response['err'] == 0
 
-    amt = nv.receiveFile("nv.c2", 10000)
-    assert amt > 0
+    pktcnt = nv.receiveFile(ofile, 10000)
+    assert pktcnt > 0
+    nv.close()
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     assert response['err'] == 0
 
+def test_nv_csp_fwd():
+    nv = ReceiveNorthernVoices(gs.networkManager)
+
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a_c2.bit)"
+    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+    response = transactObj.execute()
+    assert response['err'] == 0
+
+    lport = "41000"
+    ofile = "nv.csp.bin"
+    ofd = open(ofile, "wb")
+    pid = subprocess.Popen(["nc", "-l", lport], stdout=ofd).pid
+
+    pktcnt = nv.receiveStream(int(lport), 10000)
+    assert pktcnt > 0
+
+    cmd = "ex2.ns_payload.nv_stop"
+    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+    response = transactObj.execute()
+    assert response['err'] == 0
+
+    nv.close()
+    os.kill(pid, signal.SIGSTOP)
+    status = os.stat(ofile)
+    print("amt {} size {}".format(pktcnt, status.st_size))
+    #assert status.st_size == amt
     
 if __name__ == '__main__':
     test_time()
-    test_nv_csp_play()
-#    test_nv_sdr_play()
+#    test_nv_csp_rcv()
+#    test_nv_csp_fwd()
+    test_nv_sdr_fwd()
