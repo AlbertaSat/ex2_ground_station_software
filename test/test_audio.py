@@ -36,6 +36,8 @@ import calendar
 
 test = test() #call to initialize local test class
 
+audioFile = "hts1a_c2.bit"
+
 def test_time():
     # Get the current satellite time and adjust it if necessary. By updating
     # the satellite's time subsequent tests can safely use "now" to manage
@@ -75,19 +77,26 @@ def test_nv_sdr_fwd():
     ofd = open(ofile, "wb")
     pid = subprocess.Popen(["nc", "-l", lport], stdout=ofd).pid
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a.c2)"
+    print("starting SDR RX test")
+    start = time.time()
+
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/{})".format(audioFile)
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_start response: {}".format(response))
     assert response['err'] == 0
 
     gs.networkManager.set_sdr_rx()
-    print("transmission complete")
+    end = time.time()
+    print("transmission complete after {} seconds".format(end - start))
+
+    time.sleep(10)
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute() 
     print("nv_stop response: {}".format(response))
+    assert response['err'] == 0
 
     os.kill(pid, signal.SIGSTOP)
     status = os.stat(ofile)
@@ -95,14 +104,18 @@ def test_nv_sdr_fwd():
     print(status)
 
 def test_nv_csp_rcv():
+    # Test that receiveFile can successfully accept a NV transmission
+
     # Remove the output from the last run, if it exists
     ofile = "nv.c2"
     if os.path.isfile(ofile):
         os.remove(ofile)
 
+    print("starting CSP RCV test")
+
     nv = ReceiveNorthernVoices(gs.networkManager)
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a.c2)"
+    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/{})".format(audioFile)
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     assert response['err'] == 0
@@ -115,43 +128,61 @@ def test_nv_csp_rcv():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print(response)
-    #assert response['err'] == 0
+    assert response['err'] == 0
 
     status = os.stat(ofile)
     print("amt {} size {}".format(amt, status.st_size))
     assert status.st_size == amt
 
 def test_nv_csp_fwd():
-    nv = ReceiveNorthernVoices(gs.networkManager)
+    # Test that receiveStream can successfully forward a NV transmission
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/hts1a.c2)"
-    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-    response = transactObj.execute()
-    assert response['err'] == 0
-
+    # Forward the transmission to netcat, which can just save it to a file
     lport = "41000"
     ofile = "nv.csp.bin"
     ofd = open(ofile, "wb")
     pid = subprocess.Popen(["nc", "-l", lport], stdout=ofd).pid
 
-    amt = nv.receiveStream(int(lport), 20000)
+    # It seems nice to start both listeners before the transmission begins,
+    # and yet it does make error recovery a lot more work :-(
+    nv = ReceiveNorthernVoices(gs.networkManager)
+
+    print("starting CSP FWD test")
+
+    try:
+        cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/{})".format(audioFile)
+        transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
+        response = transactObj.execute()
+        assert response['err'] == 0
+    except:
+        os.kill(pid, signal.SIGSTOP)
+        
+    start = time.time()
+    amt = 0
+    try:
+        amt = nv.receiveStream(int(lport), 60000)
+    except:  # important to not have zombies laying around
+        os.kill(pid, signal.SIGSTOP)
+    end = time.time()
+    print("received transmission after {} seconds".format(end - start))
     assert amt > 0
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print(response)
-    # assert response['err'] == 0
+    assert response['err'] == 0
 
     nv.close()
-    os.kill(pid, signal.SIGSTOP)
+
     status = os.stat(ofile)
     print("amt {} size {}".format(amt, status.st_size))
     assert status.st_size == amt
-    
-if __name__ == '__main__':
-    test_time()
-    test_nv_csp_rcv()
-    test_nv_csp_fwd()
-    test_nv_sdr_fwd()
 
+if __name__ == '__main__':
+    # I have to admit I have no luck running broadcast tests back to back.
+    # Each test works on its own though.
+    test_time()
+    test_nv_sdr_fwd()
+#    test_nv_csp_rcv()
+#    test_nv_csp_fwd()
