@@ -45,7 +45,10 @@ class ReceiveNorthernVoices:
             data = bytearray(libcsp.packet_get_data(pkt))
             bs = int.from_bytes(data[0:2], byteorder='big')
             cnt += bs
-            print("bs {} cnt {}".format(bs, cnt))
+            print("bs {} packet number {}"
+                  .format(bs, int.from_bytes(data[2:4], byteorder='big')))
+            # Note: each packet is a separate open-append-close, because we
+            # never know how much we're going to get
             with open("nv.c2", 'ab+') as f:
                 f.write(data[4:])
 
@@ -53,12 +56,10 @@ class ReceiveNorthernVoices:
         return cnt
 
     def receiveStream(self, port, wait):
-        print("streaming transmission to tcp port {}".format(port))
         if self.conn is None:
             self.conn = self.csp.accept(self.sock, wait)
         if self.conn is None:
-            print("no connection after {} seconds".format(wait))
-            return 0
+            raise Exception("Accept timeout")
 
         # buffer the entire transmission into a single bytearray
         bs = 512
@@ -68,14 +69,17 @@ class ReceiveNorthernVoices:
             if pkt is None:
                 print("read timed out");
                 break
+            # Each packet begins with a 2-byte size field
             data = bytearray(libcsp.packet_get_data(pkt))
             bs = int.from_bytes(data[0:2], byteorder='big')
+            # and a 2-byte packet number, both in network endian-ness
             pktnum = int.from_bytes(data[2:4], byteorder='big')
             print("bs {} pktnum {}".format(bs, pktnum))
             buf.extend(data[4:])
 
-        print("received {} bytes".format(len(buf)))
+        print("streaming {} bytes to tcp port {}".format(len(buf), port))
 
+        # Always connect to localhost
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(("127.0.0.1", port))
         sent = 0
