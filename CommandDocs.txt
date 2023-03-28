@@ -2109,7 +2109,7 @@ NS_PAYLOAD.RESET_MCU:
 NS_PAYLOAD.NV_START:
 		About: Start transmitting voice data from filename. Blocksize should be a multiple of the blocksize of the codec and reasonably large (max 512)
 		Supports: OBC
-		Arguments: {'CSP': '>b', 'Repeats': '>u1', 'Blocksize': '>u2', 'Filename': '>S128'}
+		Arguments: {'Repeats': '>u2', 'Blocksize': '>u2', 'Filename': '>S128'}
 		return values: {'err': '>b'}
 		port: 22		subport: 11
 
