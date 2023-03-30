@@ -111,6 +111,7 @@ class ftp(GroundStation):
         self.operation = ''
         self.infile = opts.get if opts.get != '' else opts.post
         self.outfile = ''
+        self.skip = opts.skip
 
         if opts.outfile:
             self.outfile = opts.outfile
@@ -183,7 +184,7 @@ class ftpGetter(ftp):
         print("Requesting file {} from satellite".format(self.infile))
         self._do_get_request()
 
-    def shutdown(self, arg1, arg2):
+    def shutdown(self):
         if not os.path.exists(".ftpTransactions"):
             os.mkdir(".ftpTransactions")
         with open(".ftpTransactions/{}.pickle".format(self.currentTransaction.getReqID()), "wb") as dumpfile:
@@ -255,9 +256,8 @@ class ftpGetter(ftp):
         return out
 
 class ftpSender(ftp):
-    def __init__(self,opts):
+    def __init__(self, opts):
         super().__init__(opts)
-        self.skip = 0
 
     def run(self):
         self._do_post_request()
