@@ -89,6 +89,24 @@ class CSPHandler(object):
         libcsp.buffer_free(packet)
         return data
 
+    def listen(self, port):
+        sock = libcsp.socket()
+        libcsp.bind(sock, port)
+        libcsp.listen(sock)
+        return sock
+
+    def accept(self, sock, timeout):
+        return libcsp.accept(sock, timeout)
+
+    def read(self, conn, timeout):
+        return libcsp.read(conn, timeout)
+
+    def close(self, conn):
+        return libcsp.close(conn)
+
+    def set_sdr_rx(self, mode=0):
+        libcsp.set_sdr_rx(mode)
+
     def _uart(self, device):
         """ initialize uart interface """
         ser = serial.Serial(device,
