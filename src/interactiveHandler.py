@@ -114,6 +114,22 @@ class dummyTransaction(baseTransaction):
             'args': self.args
         }
 
+class setPowerChannelTransaction(baseTransaction):
+    def __init__(command, networkHandler):
+        # TODO: This is bad, make it good when fixing inputParser
+        self.appIdx = 0
+        self.serviceIdx = 2
+        self.subserviceIdx = 4
+        self.parenopenidx = 5
+        self.parameter1idx = 6
+        self.parameter2idx = 7
+        tokens = self.inputParse.lexer(command)
+        if (tokens[self.subserviceIdx] == "ALL_OUTPUT_CONTROL"):
+            pass
+        else if (tokens[self.subserviceIdx] == "ALL_OUTPUT_CONTROL"):
+            pass
+
+
 class nspayloadTransaction(baseTransaction): 
     def __init__(self, command, networkHandler):
         super().__init__(command, networkHandler)
