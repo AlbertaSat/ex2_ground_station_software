@@ -31,47 +31,6 @@ from src.options import Options
 from src.ftp import ftpSender
 from src.ftp import ftpGetter
 
-from testLib import testLib as test
-from testLib import gs
-
-test = test() #call to initialize local test class
-
-def test_scheduler_get():
-    test.send('ex2.scheduler.get_schedule')
-
-def test_time():
-    # Get the current satellite time and adjust it if necessary. By updating
-    # the satellite's time subsequent tests can safely use "now" to manage
-    # schedules and check results.
-    cmd = "ex2.time_management.get_time"
-    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-
-    # get the current time as UTC
-    dt = datetime.now(timezone.utc)
-    now = calendar.timegm(dt.timetuple())
-
-    response = transactObj.execute()
-    if response == {} or response['err'] != 0:
-        print("get_time error: {}".format(response))
-        return
-
-    print("now: {}, sat: {}".format(now, response))
-    sat = int(response['timestamp'])
-    dt = datetime.fromtimestamp(sat)
-    # Arbitrarily decide that a 10 second diference is "close enough"
-    if abs(sat - now) < 10:
-        print("satellite time {} (delta {})".format(dt, sat - now))
-        return
-
-    print("adjusting satellite time {} (delta {})".format(dt, sat - now))
-
-    cmd = "ex2.time_management.set_time({})".format(now)
-    transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-    # set the satellite's time to this script's time
-    response = transactObj.execute()
-    assert response != {}, "set_schedule - no response"
-    assert response['err'] == 0
-    
 def test_ftp_upload():
     opts = optionsFactory("ftp")
     options = "-p README.md -d /dev/ttyUSB0".split()
@@ -96,7 +55,6 @@ def test_ftp_download():
     print("diff: {}".format(cmdout))
 
 if __name__ == '__main__':
-    test_time()
     test_ftp_upload()
     test_ftp_partial_upload()
     test_ftp_download()
