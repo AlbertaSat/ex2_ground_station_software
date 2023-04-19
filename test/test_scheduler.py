@@ -17,17 +17,14 @@
  * @date
 '''
 
-'''  to run > yarn test_scheduler -I uart '''
+'''  to run > LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build:./:./src:./test python3 test/test_scheduler.py -I sdr -d /dev/ttyUSB0 '''
 
 import numpy as np
 import os
 
-import sys
-from os import path
-sys.path.append("./test")
-
-from testLib import testLib as test
-from testLib import gs
+from src.groundStation import GroundStation
+from src.options import optionsFactory
+from src.options import Options
 
 import time
 from datetime import datetime
@@ -35,7 +32,8 @@ from datetime import timezone
 from datetime import timedelta
 import calendar
 
-test = test() #call to initialize local test class
+opts = optionsFactory("basic")
+gs = GroundStation(opts.getOptions(argv="-I sdr".split()))
 
 class CronTime:
     def __init__(self, dt : datetime):
@@ -74,9 +72,6 @@ class CronTime:
         for key in self.cron:
             fmt += "{} ".format(self.cron[key])
         return fmt                
-
-def test_scheduler_get():
-    test.send('ex2.scheduler.get_schedule')
 
 def test_time():
     # Get the current satellite time and adjust it if necessary. By updating
