@@ -266,7 +266,16 @@ class ftpSender(ftp):
         with open(self.infile, "rb") as f:
             filesize = os.path.getsize(self.infile)
             req_id = randint(0, 1653514975);
-            print("Sending file {} to satellite".format(self.infile))
+            count = 0
+            if self.skip != 0:
+                # Note: // is the floor, or integer divide operator
+                skip_blks = self.skip // self.blocksize
+                count = skip_blks
+                self.skip = skip_blks * self.blocksize
+                f.seek(self.skip)  # skip is in bytes
+
+            print("Sending file {} size {} offset {} to satellite"
+                  .format(self.infile, filesize, self.skip))
             packet = self._get_start_upload_packet(req_id, filesize);
             data = self._transaction(packet)
             if (data is None):
@@ -275,7 +284,6 @@ class ftpSender(ftp):
             if data['err'] < 0:
                 print("error {} from upload start packet".format(data['err']))
             done = False
-            count = 0
             while not done:
                 print("Sending packet {}/{}".format(count, int(filesize/self.blocksize)))
                 data = f.read(self.blocksize)
