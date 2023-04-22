@@ -58,7 +58,9 @@ class InteractiveHandler:
         elif tokens[self.serviceIdx] == "IRIS" and (tokens[self.subserviceIdx] in ["IRIS_SET_TIME"]):
             transactObj = irisTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "NS_PAYLOAD":
-            transactObj = nspayloadTransaction(command, networkHandler)
+            transactObj = longTimeoutTransaction(command, networkHandler)
+        elif (tokens[self.serviceIdx] == "GENERAL") and (tokens[self.subserviceIdx == "DEPLOY_DEPLOYABLES"]):
+            transactObj = longTimeoutTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "COMMUNICATION" and (tokens[self.subserviceIdx] in ["UHF_SET_RF_MODE"]):
             transactObj = setRFModeTransaction(command, networkHandler)
         else:
@@ -114,7 +116,7 @@ class dummyTransaction(baseTransaction):
             'args': self.args
         }
 
-class nspayloadTransaction(baseTransaction): 
+class longTimeoutTransaction(baseTransaction): 
     def __init__(self, command, networkHandler):
         super().__init__(command, networkHandler)
         self.timeout = 40000
