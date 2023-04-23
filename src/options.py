@@ -36,7 +36,7 @@ class Options(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description='Parses command.')
 
-    def getOptions(self):
+    def getOptions(self, argv=None):
         self.parser.add_argument(
             '--hkeyfile',
             type=str,
@@ -85,7 +85,11 @@ class Options(object):
             default=True,
             help="Use forward error correction. Default is true"
         )
-        return self.parser.parse_args(sys.argv[1:])
+        if argv:
+            opts = self.parser.parse_args(argv)
+        else:
+            opts = self.parser.parse_args(sys.argv[1:])
+        return opts
 
 class UpdateOptions(Options):
     def __init__(self):
@@ -130,7 +134,7 @@ class FTPOptions(Options):
     def __init__(self):
         super().__init__();
 
-    def getOptions(self):
+    def getOptions(self, argv=None):
         self.parser.add_argument(
             '-g',
             '--get',
@@ -167,7 +171,13 @@ class FTPOptions(Options):
             default=0,
             help="Attempt to resume download with given ID from file in .ftptransactions"
         )
-        return super().getOptions();
+        self.parser.add_argument(
+            '--skip',
+            type=int,
+            default=0,
+            help="Number of bytes to skip"
+        )
+        return super().getOptions(argv);
 
 class SBANDOptions(Options):
     def __init__(self):
