@@ -25,9 +25,9 @@ import os
 from inputParser import InputParser
 from receiveParser import ReceiveParser
 from system import services
-from enum import Enum
+from enum import IntEnum
 
-class updater_failuretype(Enum): # Same values as updater program on satellite
+class updater_failuretype(IntEnum): # Same values as updater program on satellite
     UPDATE_NOFAIL = 0
     UPDATE_GENERICFAILURE = 1
     UPDATE_INVALIDADDR = 2
