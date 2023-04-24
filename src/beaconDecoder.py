@@ -30,17 +30,13 @@ class beaconDecoder:
             else:
                 return None
         except:
-            print("Invalid data received!")
             return None
 
 if __name__ == '__main__':
     decoder = beaconDecoder()
     while True:
         beacon = decoder.run() 
-        print("----------Beacon Received:----------")
         if beacon:
+            print("----------Beacon Received:----------")
             for key, value in beacon.items():
-                print("{} : {}".format(key, value))
-        else:
-            print('Received beacon with invalid packet number...')          
-        print("")
+                print("{} : {}".format(key, value))       
