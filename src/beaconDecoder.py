@@ -20,15 +20,18 @@ class beaconDecoder:
         packet_num_offset = 4
         decoded_data = base64.b64decode(self.rawdata)
         decoded_data = bytearray(decoded_data)
-        if decoded_data[packet_num_offset] == 1:
-            decoded_data[:0] = (1).to_bytes(1,'big')
-            return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
-        elif decoded_data[packet_num_offset] == 2:
-            decoded_data[:0] = (2).to_bytes(1,'big')
-            return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
-        else:
+        try:
+            if decoded_data[packet_num_offset] == 1:
+                decoded_data[:0] = (1).to_bytes(1,'big')
+                return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
+            elif decoded_data[packet_num_offset] == 2:
+                decoded_data[:0] = (2).to_bytes(1,'big')
+                return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
+            else:
+                return None
+        except:
+            print("Invalid data received!")
             return None
-
 
 if __name__ == '__main__':
     decoder = beaconDecoder()
