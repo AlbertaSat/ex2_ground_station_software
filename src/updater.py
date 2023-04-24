@@ -38,6 +38,7 @@ class updater_failuretype(IntEnum): # Same values as updater program on satellit
     UPDATE_CRCMISMATCH = 7
     UPDATE_VERIFYFAILED = 8
     UPDATE_NOSUBSERVICE = 9
+    UPDATE_NORESPONSE = 255
 
 class updater(GroundStation):
     #TODO: Better object orientation, maybe a common class with FTP?
@@ -129,8 +130,10 @@ class updater(GroundStation):
         self.current_block = self.skip // self.blocksize
     def _sendblock(self, data):
         update_packet = self._get_block_update_packet(data)
-        data = self._transaction(update_packet)
-        return data['err']
+        response = self._transaction(update_packet)
+        if (response == None):
+            return -updater_failuretype.UPDATE_NORESPONSE
+        return response['err']
 
     def _resync(self):
         self._setResume()
@@ -173,6 +176,9 @@ class updater(GroundStation):
                     continue # Keep trying until CRC is successful
                 elif err == -updater_failuretype.UPDATE_WRITEFAILED:
                     raise Exception("Satellite failed to write to flash")
+                elif err == -updater_failuretype.UPDATE_NORESPONSE:
+                    self._resync()
+                    continue
                 else:
                     raise Exception("Unknown block update error {}".format(err))
             self.current_block += 1;
