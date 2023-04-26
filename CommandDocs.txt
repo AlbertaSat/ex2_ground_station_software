@@ -674,6 +674,14 @@ COMMUNICATION.UHF_SET_RF_MODE:
 		port: 10		subport: 49
 
 
+COMMUNICATION.UHF_SET_FEC:
+		About: Enable/Disable FEC in the OBC UHF transmitter
+		Supports: OBC
+		Arguments: {'mode': '>b'}
+		return values: {'err': '>b'}
+		port: 10		subport: 50
+
+
 CONFIGURATION.GET_ACTIVE_CONFIG:
 		About: Gets config values in active mode for a specific type
 		Supports: EPS
