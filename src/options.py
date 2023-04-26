@@ -36,37 +36,37 @@ class Options(object):
     def __init__(self):
         self.parser = argparse.ArgumentParser(description='Parses command.')
 
-    def getOptions(self):
+    def getOptions(self, argv=None):
         self.parser.add_argument(
             '--hkeyfile',
             type=str,
             default="test_key.dat",
-            help='Key to use for CSP HMAC')
+            help='Key to use for CSP HMAC. Default is test_key.dat')
         self.parser.add_argument(
             '--xkeyfile',
             type=str,
             default="test_key.dat",
-            help='Key to use for CSP xtea')
+            help='Key to use for CSP xtea. Default is test_key.dat')
         self.parser.add_argument(
             '-I',
             '--interface',
             type=str,
             default='sdr',
-            help='CSP interface to use')
+            help='CSP interface to use. Default is sdr')
 
         self.parser.add_argument(
             '-d',
             '--device',
             type=str,
             default='/dev/ttyUSB0',
-            help='External device file')
+            help='External device file. Default is /dev/ttyUSB0')
 
         self.parser.add_argument(
             '-t',
             '--timeout',
             type=int,
             default='15000', # 15 seconds
-            help='RDP connection timeout')
+            help='RDP connection timeout. Default is 15000')
         
         self.parser.add_argument(
             '-u', 
@@ -78,14 +78,18 @@ class Options(object):
             '--satellite',
             type=str,
             default="EX2",
-            help='Satellite parameter for automatic programs (e.g FTP)')
+            help='Satellite parameter for automatic programs (e.g FTP): EX2, ARS, or YKS. Default is EX2')
         self.parser.add_argument(
             '--fec',
             action='store_true',
             default=True,
-            help="Use forward error correction"
+            help="Use forward error correction. Default is true"
         )
-        return self.parser.parse_args(sys.argv[1:])
+        if argv:
+            opts = self.parser.parse_args(argv)
+        else:
+            opts = self.parser.parse_args(sys.argv[1:])
+        return opts
 
 class UpdateOptions(Options):
     def __init__(self):
@@ -130,7 +134,7 @@ class FTPOptions(Options):
     def __init__(self):
         super().__init__();
 
-    def getOptions(self):
+    def getOptions(self, argv=None):
         self.parser.add_argument(
             '-g',
             '--get',
@@ -165,9 +169,15 @@ class FTPOptions(Options):
             '--resume',
             type=int,
             default=0,
-            help="Attempt to resume download with given ID"
+            help="Attempt to resume download with given ID from file in .ftptransactions"
         )
-        return super().getOptions();
+        self.parser.add_argument(
+            '--skip',
+            type=int,
+            default=0,
+            help="Number of bytes to skip"
+        )
+        return super().getOptions(argv);
 
 class SBANDOptions(Options):
     def __init__(self):

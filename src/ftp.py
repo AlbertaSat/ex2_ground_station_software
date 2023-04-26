@@ -111,6 +111,7 @@ class ftp(GroundStation):
         self.operation = ''
         self.infile = opts.get if opts.get != '' else opts.post
         self.outfile = ''
+        self.skip = opts.skip
 
         if opts.outfile:
             self.outfile = opts.outfile
@@ -183,7 +184,7 @@ class ftpGetter(ftp):
         print("Requesting file {} from satellite".format(self.infile))
         self._do_get_request()
 
-    def shutdown(self, arg1, arg2):
+    def shutdown(self):
         if not os.path.exists(".ftpTransactions"):
             os.mkdir(".ftpTransactions")
         with open(".ftpTransactions/{}.pickle".format(self.currentTransaction.getReqID()), "wb") as dumpfile:
@@ -255,9 +256,8 @@ class ftpGetter(ftp):
         return out
 
 class ftpSender(ftp):
-    def __init__(self,opts):
+    def __init__(self, opts):
         super().__init__(opts)
-        self.skip = 0
 
     def run(self):
         self._do_post_request()
@@ -266,7 +266,16 @@ class ftpSender(ftp):
         with open(self.infile, "rb") as f:
             filesize = os.path.getsize(self.infile)
             req_id = randint(0, 1653514975);
-            print("Sending file {} to satellite".format(self.infile))
+            count = 0
+            if self.skip != 0:
+                # Note: // is the floor, or integer divide operator
+                skip_blks = self.skip // self.blocksize
+                count = skip_blks
+                self.skip = skip_blks * self.blocksize
+                f.seek(self.skip)  # skip is in bytes
+
+            print("Sending file {} size {} offset {} to satellite"
+                  .format(self.infile, filesize, self.skip))
             packet = self._get_start_upload_packet(req_id, filesize);
             data = self._transaction(packet)
             if (data is None):
@@ -275,7 +284,6 @@ class ftpSender(ftp):
             if data['err'] < 0:
                 print("error {} from upload start packet".format(data['err']))
             done = False
-            count = 0
             while not done:
                 print("Sending packet {}/{}".format(count, int(filesize/self.blocksize)))
                 data = f.read(self.blocksize)

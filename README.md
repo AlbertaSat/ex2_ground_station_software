@@ -134,3 +134,25 @@ Using this description, a parser has been constructed that will allow us to add 
 #### Code Snippet 5: Command structure object
 Incoming TM responses are automatically parsed to the return types described in the command structure object. Note that all command responses shall have the first (signed) byte as the error code, which is ‘0’ upon success.
 
+
+## Example Commands for Operators
+
+Action: Open command line interface for Ex-Alta 2. Encryption key files are local to ground station.
+```
+yarn cli -u -s EX2 --hkeyfile test_key.dat --xkeyfile test_key.dat
+```
+
+Action: Upload local file tosat.txt to YukonSat, in adcs directory. Encryption key files are local to ground station.
+```
+yarn ftp -p tosat.txt -o adcs/onsat.txt -u --hkeyfile test_key.dat --xkeyfile test_key.dat -s YKS
+```
+
+Action: Open sat_cli terminal interface for AuroraSat.
+```
+yarn sat_cli -I sdr -u -s ARS --hkeyfile test_key.dat --xkeyfile test_key.dat
+```
+Action: Resume firmware update already in progress to Ex-Alta 2.
+```
+yarn sat_update -I sdr -u -f Exalta2.bin -r -s EX2
+```
+
