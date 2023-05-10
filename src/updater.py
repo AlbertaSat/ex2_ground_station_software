@@ -130,8 +130,9 @@ class updater(GroundStation):
         self.current_block = self.skip // self.blocksize
     def _sendblock(self, data):
         update_packet = self._get_block_update_packet(data)
-        response = self._transaction(update_packet)
-        if (response == None):
+        try:
+            response = self._transaction(update_packet)
+        except:
             return -updater_failuretype.UPDATE_NORESPONSE
         return response['err']
 
