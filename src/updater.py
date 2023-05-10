@@ -79,7 +79,7 @@ class updater(GroundStation):
         data = command['args']
         try:
             self.networkManager.send(dest, dport, data)
-            response = self.networkManager.receive(dest, dport, 10000)
+            response = self.networkManager.receive(dest, dport, 2000)
             return self.receiveParse.parseReturnValue(dest, dport, response)
         except Exception as e:
             print(e)
