@@ -30,6 +30,7 @@ class InputParser:
         self.subserviceIdx = 4
 
     def parseInput(self, input : str):
+        """Parses the input command and returns the requested sevice/subservice details."""
         tokens = self.lexer(input)
         command = {}
 
@@ -58,12 +59,12 @@ class InputParser:
             elif tokens[self.serviceIdx + 1] != '.':
                 # If there is a subservice, next token must be a '.'
                 raise ValueError('Bad format')
-
+            # else case handled below (what should happen when 'subservice' is in service)
         else:
             raise ValueError('No such service')
             return None
 
-        # TODO: what is going on here
+        # TODO: what is going on here           # A: who wrote these haha
         if tokens[self.subserviceIdx] in service['subservice']:
             subservice = service['subservice'][tokens[self.subserviceIdx]]
             command['subservice'] = subservice['subPort']
@@ -72,13 +73,14 @@ class InputParser:
                 raise ValueError('No in/out info for subservice')
             if not self.__argCheck(tokens[(
                     self.subserviceIdx + 1)::], subservice['inoutInfo'], command, subservice['subPort']):
-                return None
+                return None         # A: minor: two colons not required
         else:
             raise ValueError('No such subservice')
 
         return command
 
     def lexer(self, input):
+        """splits the input into individual tokens separated by '.()'"""
         tokenList = []
         splitInput = input.split("(")
         if len(splitInput) > 2 or len(splitInput) == 0:
@@ -89,7 +91,7 @@ class InputParser:
             parametersPortion = splitInput[1][0:-1]
         except:
             pass
-        
+
         commandSplit = commandPortion.split(".")
         if len(commandSplit) != 3:
             raise ValueError("Invalid command string format")
@@ -97,7 +99,7 @@ class InputParser:
         #TODO: get rid of these dots
         tokenList.append(".")
         tokenList.append(commandSplit[1].upper())
-        tokenList.append(".")        
+        tokenList.append(".")
         tokenList.append(commandSplit[2].upper())
 
         if (parametersPortion):
@@ -111,10 +113,12 @@ class InputParser:
 
     def __argCheck(self, args, inoutInfo, command, subservice=None):
         # TODO: wtf is this
+        """Returns True or a modified version of the 'command' dictionary
+        argument that includes the part in the brackets of the input."""
         outArgs = bytearray()
 
         if not inoutInfo['args']:
-            # Command has no arguments
+            # subservice has no arguments
             if subservice is not None:
                 # Commands has no args, but has subservice
                 outArgs.extend([subservice])
@@ -133,7 +137,7 @@ class InputParser:
             raise ValueError('Wrong # of args')
         if subservice is not None:
             outArgs.extend([subservice])
- 
+
         i = 0
         for name, type in inoutInfo['args'].items():
             if type == 'var':
@@ -141,7 +145,7 @@ class InputParser:
             else:
                 nparr = np.array([args[i]], dtype=type)
             outArgs.extend(nparr.tobytes())
-            i += 1
+            i += 1      # PEP: use enumerate instead
         command['args'] = outArgs
         return command
 

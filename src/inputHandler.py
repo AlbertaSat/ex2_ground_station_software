@@ -18,6 +18,7 @@
 '''
 
 class InputHandler():
+    """Logs every command that is entered and passes it on to the CLI."""
     def __init__(self):
         self.historyFile = open("command_history.log", "a")
     def getInput(self, prompt):

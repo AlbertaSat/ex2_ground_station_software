@@ -20,7 +20,7 @@
 import libcsp_py3 as libcsp
 import socket
 
-class ReceiveNorthernVoices:
+class ReceiveNorthernVoices:        # this class is currently only used in test_audio.py
     def __init__(self, networkManager):
         self.csp = networkManager
         # Note: NV broadcasts on port 24

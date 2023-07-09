@@ -24,6 +24,7 @@ def breakPacket(packet):
     return data
 
 def makePacket(data : bytearray):
+    """Creates a packet using libcsp_py3"""
     packet = libcsp.buffer_get(len(data))
     if len(data) > 0:
         libcsp.packet_set_data(packet, data)

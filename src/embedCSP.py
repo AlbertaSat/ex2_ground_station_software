@@ -22,6 +22,10 @@ from inputParser import InputParser
 from scheduleParser import ScheduleParser
 
 class EmbedPacket:
+    """
+    Creates a special packet that contains information to
+    create a recurring cron job (using ScheduleParser).
+    """
     def __init__(self, commandList, data):
         self.inputParse = InputParser()
         self.schedParse = ScheduleParser()
@@ -34,7 +38,6 @@ class EmbedPacket:
         self._buildCommandList()
         self._buildEmbeddedPacket()
         return self.data
-
 
     def _buildCommandList(self):
         if len(self.cmdList) > 0:
@@ -52,7 +55,7 @@ class EmbedPacket:
     def _buildEmbeddedPacket(self):
         for cmd in self.schedule:
             # for each line of command, place the fields into the CSP packet
-            # note that "to_bytes(4, byteorder='big')" == htonl() 
+            # note that "to_bytes(4, byteorder='big')" == htonl()
             scheduledTime = cmd['first'].to_bytes(4, byteorder='big')
             self.data.extend(scheduledTime)
             scheduledTime = cmd['repeat'].to_bytes(4, byteorder='big')

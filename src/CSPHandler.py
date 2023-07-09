@@ -23,15 +23,16 @@ from connectionManager import ConnectionManager
 import serial
 from system import SatelliteNodes
 
-def getCSPHandler(addr, interface, device, hmacKey, xteaKey, protocol = None, useFec = True):
+def getCSPHandler(addr, interface, device, hmacKey, xteaKey, protocol = None, useFec = True):   # A: minor: default values shouldn't be separated by spaces
     if protocol is None:
         return CSPHandler(addr, interface, device, hmacKey, xteaKey, useFec)
     elif protocol == "UHF":
         return UHF_CSPHandler(addr, interface, device, hmacKey, xteaKey, useFec)
     else:
-        raise ValueError("Protocol {} does not exist for CSP handlers".format(protocol))
+        raise ValueError("Protocol {} does not exist for CSP handlers".format(protocol))        # A: minor: use f-strings everywhere?
 
 class CSPHandler(object):
+    """Uses the CubeSat Protocol to create a network connection."""
     __instance = None
     def __new__(cls, addr, interface, device, hmacKey, xteaKey, useFec):
         if cls.__instance is None:

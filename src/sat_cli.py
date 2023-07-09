@@ -24,10 +24,10 @@ class sat_cli(GroundStation):
     def run(self):
         while(1):
             inStr = self.inputHandler.getInput("$ ")
-            commandStr = "{}.cli.send_cmd({},{})".format(self.satellite, len(inStr), inStr)
+            commandStr = "{}.cli.send_cmd({},{})".format(self.satellite, len(inStr), inStr)     # CLI is a particular service that isn't supposed to be used by operators (Q: is there a check for that, btw?)
             try:
                 transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
-                print(transactObj.execute())
+                print(transactObj.execute())    # Q: why is printing not consistent with cli.py?
             except Exception as e:
                 print(e)
                 continue

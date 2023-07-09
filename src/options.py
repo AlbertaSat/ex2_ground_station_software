@@ -21,14 +21,15 @@ import argparse
 import sys
 
 def optionsFactory(kind : str):
+    """Returns an argparser based on the kind requested"""
     if (kind == "basic"):
         return Options()
-    elif (kind == "updater"):
+    elif (kind == "updater"):       # A: minor: brackets unnecessary
         return UpdateOptions()
     elif (kind == "ftp"):
         return FTPOptions()
     elif (kind  == "sband"):
-        return SBANDOptions();
+        return SBANDOptions()
     else:
         raise NotImplementedError("Options class type {} not implemented".format(type))
 
@@ -42,11 +43,13 @@ class Options(object):
             type=str,
             default="test_key.dat",
             help='Key to use for CSP HMAC. Default is test_key.dat')
+
         self.parser.add_argument(
             '--xkeyfile',
             type=str,
             default="test_key.dat",
             help='Key to use for CSP xtea. Default is test_key.dat')
+
         self.parser.add_argument(
             '-I',
             '--interface',
@@ -67,9 +70,9 @@ class Options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout. Default is 15000')
-        
+
         self.parser.add_argument(
-            '-u', 
+            '-u',
             action='store_true',
             help='Enable UHF SDR functionality (e.g automatic pipe mode commands)')
 
@@ -79,14 +82,15 @@ class Options(object):
             type=str,
             default="EX2",
             help='Satellite parameter for automatic programs (e.g FTP): EX2, ARS, or YKS. Default is EX2')
+
         self.parser.add_argument(
             '--fec',
             action='store_true',
             default=True,
             help="Use forward error correction. Default is true"
         )
-        if argv:
-            opts = self.parser.parse_args(argv)
+        if argv:                                # A: as far as I can tell, this is only used for testing this code with command-line arguments
+            opts = self.parser.parse_args(argv) # if so, can instead use https://koen.vervloesem.eu/blog/how-to-test-a-python-program-with-command-line-arguments-in-pytest/
         else:
             opts = self.parser.parse_args(sys.argv[1:])
         return opts

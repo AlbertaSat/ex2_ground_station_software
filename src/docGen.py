@@ -19,6 +19,9 @@
 
 ''' to run > python3 docGen.py  '''
 
+# Creates a nice readable document (CommandDocs.txt)
+# from all the services in system.py
+
 from system import services
 
 f = open("CommandDocs.txt", "w")
