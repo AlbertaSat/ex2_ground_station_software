@@ -822,8 +822,7 @@ services = {
                         "Wire" : '>B'
                     },
                     'returns': {
-                        'err': '>b',  # switch status
-                        'current_mA': '>u2' # current consumed during burning
+                        'err': '>b',  # switch status 
                     }
                 }
             },
