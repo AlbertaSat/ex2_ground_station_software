@@ -119,7 +119,7 @@ class dummyTransaction(baseTransaction):
 class longTimeoutTransaction(baseTransaction): 
     def __init__(self, command, networkHandler):
         super().__init__(command, networkHandler)
-        self.timeout = 40000
+        self.timeout = 10000
 
 class setTimeTransaction(baseTransaction):
     def execute(self):
