@@ -134,6 +134,7 @@ Using this description, a parser has been constructed that will allow us to add 
 #### Code Snippet 5: Command structure object
 Incoming TM responses are automatically parsed to the return types described in the command structure object. Note that all command responses shall have the first (signed) byte as the error code, which is ‘0’ upon success.
 
+
 ## Example Commands for Operators
 
 Action: Open command line interface for Ex-Alta 2. Encryption key files are local to ground station.
@@ -155,18 +156,3 @@ Action: Resume firmware update already in progress to Ex-Alta 2.
 yarn sat_update -I sdr -u -f Exalta2.bin -r -s EX2
 ```
 
-## Docker Installation Method (deprecated and unstable)
-
-First, ensure that Docker is installed and running in the background. Once that is done, run the following to build the image that we will be using:
-
-```
-docker build --tag ground_station:latest .
-```
-
-The image will take a few minutes to build on the first go so feel free to grab a coffee while you wait! Once the image is built, we can run a container off of it using:
-
-```
-docker run --rm -it --network=host ground_station:latest
-```
-
-You are now good to go, enjoy!
