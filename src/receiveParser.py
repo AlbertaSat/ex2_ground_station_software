@@ -26,8 +26,8 @@ class ReceiveParser:
 
     def parseReturnValue(self, src, dport, data):
         systemType = None
-        for node in SatelliteNodes:
-            if node[2] == src:
+        for node in SatelliteNodes:     # A: Hmm, there is scope of improvement to do this.
+            if node[2] == src:          # Especially since this is done in several places.
                 systemType = node[0]
         if systemType is None:
             for node in GroundNodes:
@@ -37,8 +37,9 @@ class ReceiveParser:
 
         # TODO: Refactor this
         length = len(data)
+        # finds the first service whose port matches dport
         service = [
-            x for x in services if services[x]['port'] == dport][0]
+            x for x in services if services[x]['port'] == dport][0]     # why populate the whole list when only the first elements will be used
 
         idx = 0
         outputObj = {}
@@ -46,29 +47,32 @@ class ReceiveParser:
 
         if service and (
                 'subservice' in services[service]) and length > 0:
+            # finds the first subservice whose subport matches the first portion of data
             subservice = [services[service]['subservice'][x] for x in services[service]
                           ['subservice'] if services[service]['subservice'][x]['subPort'] == data[idx]][0]
             idx += 1
 
+        # some subservices do not have inoutInfo, in which case there's nothing to return
         if 'inoutInfo' not in subservice:
             # error: check system SystemValues
             return None
-        
+
         returns = subservice['inoutInfo']['returns']
-        args = subservice['inoutInfo']['args']
+        args = subservice['inoutInfo']['args']      # this is not used
         for retVal in returns:
             if returns[retVal] == 'var':
                 #Variable size config return
                 outputObj[retVal] = np.frombuffer( data, dtype = "b", count=-1, offset=idx)
                 return outputObj
             else:
-                try:
+                try:            # this only works when a subservice's inoutInfo's returns contains 'type'
                     outputObj[retVal] = np.frombuffer(
                         data, dtype=returns[retVal], count=1, offset=idx)[0]
                 except:
                     outputObj[retVal] = None
                 idx += np.dtype(returns[retVal]).itemsize
         return outputObj
+
 
 if __name__ == '__main__':
     parser = ReceiveParser()

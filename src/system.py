@@ -83,7 +83,12 @@ varTypes = {
     9: '<S16' #Empty means all zero or Use <V16
 }
 
+# A: this logic can be improved significantly
 def getServices(system):
+    """
+    For a system in ['OBC', 'EPS', 'GND'], returns a dictionary of
+    all services supported by that system.
+    """
     outDict = dict()
     for serv in services:
         if system in services[serv]['supports']:
@@ -184,7 +189,7 @@ obc_housekeeping = {
     'solar_panel_supply_curr': '>u2',
     'cmds_received': '>u2',
     'heap_free' : '>u4',
-    'lowest_heap_free': '>u4', 
+    'lowest_heap_free': '>u4',
 
     #EPS (when fetched via hk, these values are BE)
     '###############################\r\n'
@@ -511,6 +516,8 @@ obc_housekeeping = {
     'MIN_3V_voltage': '>u2',
 }
 
+# A dictionary of all the commands available to the ground-station operators.
+# CommandDocs.txt has a more readable version of this dictionary.
 services = {
     'CSP': {
         'supports' : ("EPS", "OBC"),
@@ -2870,8 +2877,8 @@ services = {
                 'what': 'Sets file upload hole map (up to 8 arrays of 16 bytes).',
                 'subPort': 32,
                 'inoutInfo': {
-                    'args': { 
-                        "Hole_Map" : '>u1', 
+                    'args': {
+                        "Hole_Map" : '>u1',
                         "Hole_Map_Num" : '>u1'
                     },
                     'returns': {
@@ -2883,7 +2890,7 @@ services = {
             'ADCS_SET_UNIX_T': {
                 'what': 'Sets the Unix Time.',
                 'subPort': 33,
-                'inoutInfo': { 
+                'inoutInfo': {
                     'args': {
                         "Unix_T" : '>u4',
                         "Count_Millis" : '>u2'
@@ -3178,7 +3185,7 @@ services = {
                 'what': 'Convert raw/bmp files to JPG',
                 'subPort': 57,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Src_File_Ctr" : '>u1',
                         "Qual_Factor" : '>u1',
                         "White_Bal" : '>u1'
@@ -3192,7 +3199,7 @@ services = {
                 'what': 'Save and capture image from CubeSense or CubeStar cameras to SD card with specified size (Tables 95 and 96 F/W Ref. Manual).',
                 'subPort': 58,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Cam_Select" : '>u1',
                         "Img_Size" : '>u1'
                     },
@@ -3206,7 +3213,7 @@ services = {
                 'what': 'Set X, Y, and Z magnetorquer duty cycles [0 - +/-800]. Only valid of Control Mode is None.',
                 'subPort': 59,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Mtq_X" : '>i2',
                         "Mtq_Y" : '>i2',
                         "Mtq_Z" : '>i2'
@@ -3217,10 +3224,10 @@ services = {
                 }
             },
             'ADCS_SET_WHEEL_SPEED': {
-                'what': 'Set wheel speed rpm [0 - +/-8000]. Only valid if Control Mode is None.', 
+                'what': 'Set wheel speed rpm [0 - +/-8000]. Only valid if Control Mode is None.',
                 'subPort': 60,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "Wheel_X" : '>i2',
                         "Wheel_Y" : '>i2',
                         "Wheel_Z" : '>i2'
@@ -3682,7 +3689,7 @@ services = {
                 'what': 'Control power to selected components (Table 185 F/W Ref. Manual).',
                 'subPort': 79,
                 'inoutInfo': {
-                    'args': { 
+                    'args': {
                         "CubeCtrl_Sig_Pwr_Sel" : '>u1',
                         "CubeCtrl_Mtr_Pwr_Sel" : '>u1',
                         "CubeSense1_Pwr_Sel" : '>u1',
@@ -3941,7 +3948,7 @@ services = {
                         'CW2_Pin': '>u1',
                         'CW3_Port': '>u1',
                         'CW3_Pin': '>u1',
-                    }, 
+                    },
                     'returns': {
                         'err': '>b'
                     }
@@ -4811,7 +4818,7 @@ services = {
                         'err': '>b',
                     }
                 }
-            }, 
+            },
             'CLEAR_SD_CARD': {
                 'what': 'Clear NIM\'s sd card',
                 'subPort': 9,
@@ -5076,4 +5083,3 @@ services = {
         }
     }
 }
-

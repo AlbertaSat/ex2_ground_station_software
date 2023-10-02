@@ -4,17 +4,19 @@ import base64
 from receiveParser import ReceiveParser
 
 class beaconDecoder:
-
+    """
+    Runs all the time to check if the incoming data is a beacon.
+    If so, decodes it.
+    """
     def __init__(self):
         self.rxport = 4322
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect(("127.0.0.1", self.rxport))
         self.parser = ReceiveParser()
 
-  
     def run(self):
         self.rawdata = self.s.recv(10000)
-        beacon_ID = 99
+        beacon_ID = 99      # A: why not make these attributes of the class?
         beacon_port = 1
         payload_offset = 16
         packet_num_offset = 4
@@ -22,7 +24,7 @@ class beaconDecoder:
         decoded_data = bytearray(decoded_data)
         try:
             if decoded_data[packet_num_offset] == 1:
-                decoded_data[:0] = (1).to_bytes(1,'big')
+                decoded_data[:0] = (1).to_bytes(1,'big')       # A: what syntax is this?
                 return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
             elif decoded_data[packet_num_offset] == 2:
                 decoded_data[:0] = (2).to_bytes(1,'big')
@@ -35,8 +37,8 @@ class beaconDecoder:
 if __name__ == '__main__':
     decoder = beaconDecoder()
     while True:
-        beacon = decoder.run() 
+        beacon = decoder.run()
         if beacon:
             print("----------Beacon Received:----------")
             for key, value in beacon.items():
-                print("{} : {}".format(key, value))       
+                print("{} : {}".format(key, value))

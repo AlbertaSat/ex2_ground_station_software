@@ -24,12 +24,15 @@ from receiveParser import ReceiveParser
 from embedCSP import EmbedPacket
 import GNURadioHandler
 import libcsp_py3 as libcsp
-from uTransceiver import uTransceiver
+from uTransceiver import uTransceiver       # isn't currently used in this file
 import time
 
 hkCommands = ["GET_HK", "GET_INSTANT_HK", "GET_LATEST_HK"]; # List of HK commands that need a special handler
 
 class InteractiveHandler:
+    """This class handles the interactive part of the CLI, that is,
+    makes sense of the keyboard input.
+    """
     def __init__(self, dummy=False):
         self.services = services
         self.inParser = InputParser()
@@ -55,7 +58,7 @@ class InteractiveHandler:
             transactObj = schedulerTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
             transactObj = setTimeTransaction(command, networkHandler)
-        elif tokens[self.serviceIdx] == "IRIS" and (tokens[self.subserviceIdx] in ["IRIS_SET_TIME"]):
+        elif tokens[self.serviceIdx] == "IRIS" and (tokens[self.subserviceIdx] in ["IRIS_SET_TIME"]):       # why not just == string?
             transactObj = irisTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "NS_PAYLOAD":
             transactObj = longTimeoutTransaction(command, networkHandler)
@@ -82,7 +85,7 @@ class InteractiveHandler:
             transactObj = dummyTransaction(command, networkHandler)
         return transactObj
 
-class baseTransaction:
+class baseTransaction:              # A: this needn't have all the attributes that the child classes *might* need
     def __init__(self, command, networkHandler):
         self.networkHandler = networkHandler
         self.inputParse = InputParser()
@@ -116,13 +119,14 @@ class dummyTransaction(baseTransaction):
             'args': self.args
         }
 
-class longTimeoutTransaction(baseTransaction): 
+class longTimeoutTransaction(baseTransaction):
     def __init__(self, command, networkHandler):
         super().__init__(command, networkHandler)
         self.timeout = 40000
 
 class setTimeTransaction(baseTransaction):
     def execute(self):
+        """If set_time is 0, then replace it with the current time."""
         tokens = self.inputParse.lexer(self.command)
         time_param = tokens[-2]
         now = (int(time_param))
@@ -130,8 +134,8 @@ class setTimeTransaction(baseTransaction):
             now = int(time.time())
 
         tokens[-2] = str(now)
-        self.pkt = self.inputParse.parseInput("".join(tokens))
-        self.args = self.pkt['args']
+        self.pkt = self.inputParse.parseInput("".join(tokens))      # A: why not just pass self.command to parseInput?
+        self.args = self.pkt['args']       # A: redundant since __init__ already has this.
         self.send()
         return self.parseReturnValue(self.receive())
 
@@ -209,7 +213,7 @@ class satcliTransaction(baseTransaction):
 
 class irisTransaction(baseTransaction):
     def execute(self):
-        tokens = self.inputParse.lexer(self.command)
+        tokens = self.inputParse.lexer(self.command)    # tokens have already been created before every transactionObject is created
 
         if (tokens[4] == "IRIS_SET_TIME"): #tokens[4] refers to subservice
             time_param = tokens[-2]
@@ -232,7 +236,7 @@ class setRFModeTransaction(baseTransaction):
     def execute(self):
         self.send()
         print("Command does not give valid return upon success. Need to wait >20 seconds for Pipe mode to time out")
-        time.sleep(21)#TODO make coupled with uTransceiver pipemode time in case of change 
+        time.sleep(21)#TODO make coupled with uTransceiver pipemode time in case of change
         self.gnuradio.setUHF_RFMode(self.args[1])
         return "Pipe timeout complete"
 

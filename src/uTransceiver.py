@@ -64,7 +64,7 @@ class uTransceiver(object):
 
     def resetListenTimer(self):
         self.listen_en = False
-    
+
     def listen_tcp(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(("127.0.0.1", self.rxport))
@@ -155,4 +155,3 @@ class uTransceiver(object):
         else:
             print('Error: Command not sent. Wait for pipe mode to expire')
             print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
-

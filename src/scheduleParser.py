@@ -27,7 +27,7 @@ class ScheduleParser:
     multiple commands, where each command is of the form "<cron spec> <task>".
     A <cron spec> has time fields of the form "msec sec min hr day mo yr", where
     each time field (except milliseonds) is allowed to contain a wildcard.
-    Wildcards can be '*', which means repeat every unit (sec, min, etc) or 
+    Wildcards can be '*', which means repeat every unit (sec, min, etc) or
     '*/<step>', which means repeat every <step> units. A <cron spec> is parsed
     into a (first, repeat, last) tuple, which effectively say "run this <task>
     at time <first>, and every <repeat> seconds until <last>. The three times

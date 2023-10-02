@@ -23,11 +23,14 @@ from collections import defaultdict
 
 class ConnectionManager:
     def __init__(self):
-        self.server_connection = defaultdict(dict)
+        self.server_connection = defaultdict(dict)      # this is empty to begin with
 
+    # Populates a dictionary with a set of connections, returns the one requested.
+    # Q: I know nothing about libscp, but couldn't a connection get stale? Shouldn't one be created everytime getConn is called?
     def getConn(self, server, port):
         if server not in self.server_connection or port not in self.server_connection[server]:
             try:
+                # these correspond to the EPS computer
                 if server == 4 or server == 5 or server == 6: # I hate this
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:

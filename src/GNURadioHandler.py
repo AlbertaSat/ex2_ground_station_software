@@ -2,8 +2,9 @@ from xmlrpc.client import ServerProxy
 
 
 class GNURadioHandler:
+    """Uses the xmlrpc package to get and set some server parameters"""
 
-    def __init__(self): 
+    def __init__(self):
         self.server = ServerProxy('http://localhost:8080')
         self.mode_dict = {0: [1200, 600],
                         1: [2400, 600],
@@ -14,10 +15,9 @@ class GNURadioHandler:
                         6: [19200, 9600],
                         7: [19200, 19200]}
 
-
     def setBaudRate(self, baud):
         self.server.set_baud_bit(baud)
-    
+
     def setFSKDevHz(self, fsk_dev):
         self.server.set_fsk_dev(fsk_dev)
 
