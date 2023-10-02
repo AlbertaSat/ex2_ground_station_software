@@ -166,7 +166,7 @@ GENERAL.DEPLOY_DEPLOYABLES:
 		About: Trigger burnwire. DFGM=0, UHF_P=1, UHF_Z=2, UHF_S=3, UHF_N=4. Solar panels: Port=5, Payload=6, Starboard=7. Returns instantaneous current consumption
 		Supports: OBC
 		Arguments: {'Wire': '>B'}
-		return values: {'err': '>b', 'current_mA': '>u2'}
+		return values: {'err': '>b'}
 		port: 11		subport: 1
 
 
