@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,16 +10,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
-"""
+'''
+'''
  * @file sat_cli.py
  * @author Robert Taylor
  * @date 2022-07-21
-"""
+'''
 
 from groundStation import GroundStation
 from options import optionsFactory
-
 
 class sat_cli(GroundStation):
     def run(self):
@@ -27,9 +26,7 @@ class sat_cli(GroundStation):
             inStr = self.inputHandler.getInput("$ ")
             commandStr = f"{self.satellite}.cli.send_cmd({len(inStr)},{inStr})"
             try:
-                transactObj = self.interactive.getTransactionObject(
-                    commandStr, self.networkManager
-                )
+                transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
                 print(transactObj.execute())
             except Exception as e:
                 print(e)
@@ -38,5 +35,5 @@ class sat_cli(GroundStation):
 
 if __name__ == "__main__":
     opts = optionsFactory("basic")
-    cliRunner = sat_cli(opts.getOptions())
+    cliRunner =  sat_cli(opts.getOptions())
     cliRunner.run()

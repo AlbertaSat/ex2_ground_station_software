@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2023  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,16 +10,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
-"""
+'''
+'''
  * @file receiveNVoices.py
  * @author Ron Unrau
  * @date 2023-02-23
-"""
+'''
 
 import libcsp_py3 as libcsp
 import socket
-
 
 class ReceiveNorthernVoices:
     def __init__(self, networkManager):
@@ -44,16 +43,13 @@ class ReceiveNorthernVoices:
                 print("read timed out")
                 break
             data = bytearray(libcsp.packet_get_data(pkt))
-            bs = int.from_bytes(data[:2], byteorder="big")
+            bs = int.from_bytes(data[:2], byteorder='big')
             cnt += bs
-            print(
-                "bs {} packet number {}".format(
-                    bs, int.from_bytes(data[2:4], byteorder="big")
-                )
-            )
+            print("bs {} packet number {}"
+                  .format(bs, int.from_bytes(data[2:4], byteorder='big')))
             # Note: each packet is a separate open-append-close, because we
             # never know how much we're going to get
-            with open("nv.c2", "ab+") as f:
+            with open("nv.c2", 'ab+') as f:
                 f.write(data[4:])
 
         print(f"received {cnt} bytes")
@@ -71,13 +67,13 @@ class ReceiveNorthernVoices:
         while bs == 512:
             pkt = self.csp.read(self.conn, 10000)
             if pkt is None:
-                print("read timed out")
+                print("read timed out");
                 break
             # Each packet begins with a 2-byte size field
             data = bytearray(libcsp.packet_get_data(pkt))
-            bs = int.from_bytes(data[0:2], byteorder="big")
+            bs = int.from_bytes(data[0:2], byteorder='big')
             # and a 2-byte packet number, both in network endian-ness
-            pktnum = int.from_bytes(data[2:4], byteorder="big")
+            pktnum = int.from_bytes(data[2:4], byteorder='big')
             print("bs {} pktnum {}".format(bs, pktnum))
             buf.extend(data[4:])
 

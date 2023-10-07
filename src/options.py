@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,89 +10,80 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
-"""
+'''
+'''
  * @file options.py
  * @author Robert Taylor
  * @date 2022-07-21
-"""
+'''
 
 import argparse
 import sys
 
-
-def optionsFactory(kind: str):
-    if kind == "basic":
+def optionsFactory(kind : str):
+    if (kind == "basic"):
         return Options()
-    elif kind == "updater":
+    elif (kind == "updater"):
         return UpdateOptions()
-    elif kind == "ftp":
+    elif (kind == "ftp"):
         return FTPOptions()
-    elif kind == "sband":
-        return SBANDOptions()
+    elif (kind  == "sband"):
+        return SBANDOptions();
     else:
         raise NotImplementedError("Options class type {} not implemented".format(type))
 
-
 class Options(object):
     def __init__(self):
-        self.parser = argparse.ArgumentParser(description="Parses command.")
+        self.parser = argparse.ArgumentParser(description='Parses command.')
 
     def getOptions(self, argv=None):
         self.parser.add_argument(
-            "--hkeyfile",
+            '--hkeyfile',
             type=str,
             default="test_key.dat",
-            help="Key to use for CSP HMAC. Default is test_key.dat",
-        )
+            help='Key to use for CSP HMAC. Default is test_key.dat')
         self.parser.add_argument(
-            "--xkeyfile",
+            '--xkeyfile',
             type=str,
             default="test_key.dat",
-            help="Key to use for CSP xtea. Default is test_key.dat",
-        )
+            help='Key to use for CSP xtea. Default is test_key.dat')
         self.parser.add_argument(
-            "-I",
-            "--interface",
+            '-I',
+            '--interface',
             type=str,
-            default="sdr",
-            help="CSP interface to use. Default is sdr",
-        )
+            default='sdr',
+            help='CSP interface to use. Default is sdr')
 
         self.parser.add_argument(
-            "-d",
-            "--device",
+            '-d',
+            '--device',
             type=str,
-            default="/dev/ttyUSB0",
-            help="External device file. Default is /dev/ttyUSB0",
-        )
+            default='/dev/ttyUSB0',
+            help='External device file. Default is /dev/ttyUSB0')
 
         self.parser.add_argument(
-            "-t",
-            "--timeout",
+            '-t',
+            '--timeout',
             type=int,
-            default="15000",  # 15 seconds
-            help="RDP connection timeout. Default is 15000",
-        )
+            default='15000', # 15 seconds
+            help='RDP connection timeout. Default is 15000')
 
         self.parser.add_argument(
-            "-u",
-            action="store_true",
-            help="Enable UHF SDR functionality (e.g automatic pipe mode commands)",
-        )
+            '-u', 
+            action='store_true',
+            help='Enable UHF SDR functionality (e.g automatic pipe mode commands)')
 
         self.parser.add_argument(
-            "-s",
-            "--satellite",
+            '-s',
+            '--satellite',
             type=str,
             default="EX2",
-            help="Satellite parameter for automatic programs (e.g FTP): EX2, ARS, or YKS. Default is EX2",
-        )
+            help='Satellite parameter for automatic programs (e.g FTP): EX2, ARS, or YKS. Default is EX2')
         self.parser.add_argument(
-            "--fec",
-            action="store_true",
+            '--fec',
+            action='store_true',
             default=True,
-            help="Use forward error correction. Default is true",
+            help="Use forward error correction. Default is true"
         )
         return (
             self.parser.parse_args(argv)
@@ -100,39 +91,40 @@ class Options(object):
             else self.parser.parse_args(sys.argv[1:])
         )
 
-
 class UpdateOptions(Options):
     def __init__(self):
         super().__init__()
 
     def getOptions(self):
-        self.parser.add_argument("-f", "--file", type=str, help="Binary to upload")
         self.parser.add_argument(
-            "-b",
-            "--blocksize",
+            '-f',
+            '--file',
+            type=str,
+            help='Binary to upload')
+        self.parser.add_argument(
+            '-b',
+            '--blocksize',
             type=int,
-            default="512",
-            help="Number of bytes to send at a time",
+            default='512',
+            help='Number of bytes to send at a time')
+        self.parser.add_argument(
+            '-a',
+            '--address',
+            type=lambda x: int(x,0),
+            default='0x00200000',
+            help='address to flash update on OBC')
+        self.parser.add_argument(
+            '-r',
+            '--resume',
+            action='store_true',
+            help="Attempt to resume update if possible"
         )
         self.parser.add_argument(
-            "-a",
-            "--address",
-            type=lambda x: int(x, 0),
-            default="0x00200000",
-            help="address to flash update on OBC",
-        )
-        self.parser.add_argument(
-            "-r",
-            "--resume",
-            action="store_true",
-            help="Attempt to resume update if possible",
-        )
-        self.parser.add_argument(
-            "-c",
-            "--crc",
-            type=lambda x: int(x, 0),
+            '-c',
+            '--crc',
+            type=lambda x: int(x,0),
             default=None,
-            help="Provide file CRC. Can be hex or decimal",
+            help="Provide file CRC. Can be hex or decimal"
         )
 
         return super().getOptions()
@@ -144,45 +136,57 @@ class FTPOptions(Options):
 
     def getOptions(self, argv=None):
         self.parser.add_argument(
-            "-g", "--get", type=str, default="", help="File to download from satellite"
-        )
-        self.parser.add_argument(
-            "-p", "--post", type=str, default="", help="File to upload to satellite"
-        )
-        self.parser.add_argument(
-            "-o",
-            "--outfile",
+            '-g',
+            '--get',
             type=str,
-            default="",
-            help="Filename to save on target (satellite or ground). Defaults is get or post filename",
-        )
+            default='',
+            help='File to download from satellite')
         self.parser.add_argument(
-            "-b",
-            "--burst-size",
+            '-p',
+            '--post',
+            type=str,
+            default='',
+            help='File to upload to satellite')
+        self.parser.add_argument(
+            '-o',
+            '--outfile',
+            type=str,
+            default='',
+            help='Filename to save on target (satellite or ground). Defaults is get or post filename')
+        self.parser.add_argument(
+            '-b',
+            '--burst-size',
             type=int,
-            default="100",
-            help="Number of packets to receive in a single burst download",
+            default='100',
+            help='Number of packets to receive in a single burst download')
+        self.parser.add_argument(
+            '--sband',
+            action='store_true',
+            help="Download over sband instead of UHF"
         )
         self.parser.add_argument(
-            "--sband", action="store_true", help="Download over sband instead of UHF"
-        )
-        self.parser.add_argument(
-            "-r",
-            "--resume",
+            '-r',
+            '--resume',
             type=int,
             default=0,
-            help="Attempt to resume download with given ID from file in .ftptransactions",
+            help="Attempt to resume download with given ID from file in .ftptransactions"
         )
         self.parser.add_argument(
-            "--skip", type=int, default=0, help="Number of bytes to skip"
+            '--skip',
+            type=int,
+            default=0,
+            help="Number of bytes to skip"
         )
         return super().getOptions(argv)
-
 
 class SBANDOptions(Options):
     def __init__(self):
         super().__init__()
 
     def getOptions(self):
-        self.parser.add_argument("--port", type=int, help="Port to send data to")
+        self.parser.add_argument(
+            '--port',
+            type=int,
+            help="Port to send data to"
+        )
         return super().getOptions()

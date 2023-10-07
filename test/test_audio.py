@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2023  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,14 +10,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
-"""
+'''
+'''
  * @file test_audio.py
  * @author Ron Unrau
  * @date
-"""
+'''
 
-"""  to run > test_audio.py -I sdr -u """
+'''  to run > test_audio.py -I sdr -u '''
 
 import sys
 import os
@@ -34,10 +34,9 @@ import time
 from datetime import tzinfo, timedelta, datetime
 import calendar
 
-test = test()  # call to initialize local test class
+test = test() #call to initialize local test class
 
 audioFile = "hts1a_c2.bit"
-
 
 def test_time():
     # Get the current satellite time and adjust it if necessary. By updating
@@ -51,12 +50,12 @@ def test_time():
     now = calendar.timegm(dt.timetuple())
 
     response = transactObj.execute()
-    if response == {} or response["err"] != 0:
+    if response == {} or response['err'] != 0:
         print(f"get_time error: {response}")
         return
 
     print(f"now: {now}, sat: {response}")
-    sat = int(response["timestamp"])
+    sat = int(response['timestamp'])
     dt = datetime.fromtimestamp(sat)
     # Arbitrarily decide that a 10 second diference is "close enough"
     if abs(sat - now) < 10:
@@ -70,8 +69,7 @@ def test_time():
     # set the satellite's time to this script's time
     response = transactObj.execute()
     assert response != {}, "set_schedule - no response"
-    assert response["err"] == 2
-
+    assert response['err'] == 2
 
 def test_nv_sdr_fwd():
     lport = "40000"
@@ -86,7 +84,7 @@ def test_nv_sdr_fwd():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print(f"nv_start response: {response}")
-    assert response["err"] == 0
+    assert response['err'] == 0
 
     gs.networkManager.set_sdr_rx()
     end = time.time()
@@ -98,13 +96,12 @@ def test_nv_sdr_fwd():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print(f"nv_stop response: {response}")
-    assert response["err"] == 0
+    assert response['err'] == 0
 
     os.kill(pid, signal.SIGSTOP)
     status = os.stat(ofile)
     assert status.st_size > 0
     print(status)
-
 
 def test_nv_csp_rcv():
     # Test that receiveFile can successfully accept a NV transmission
@@ -121,7 +118,7 @@ def test_nv_csp_rcv():
     cmd = f"ex2.ns_payload.nv_start(1, 512, VOL0:/{audioFile})"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
-    assert response["err"] == 0
+    assert response['err'] == 0
 
     amt = nv.receiveFile(ofile, 20000)
     assert amt > 0
@@ -131,12 +128,11 @@ def test_nv_csp_rcv():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print(response)
-    assert response["err"] == 0
+    assert response['err'] == 0
 
     status = os.stat(ofile)
     print(f"amt {amt} size {status.st_size}")
     assert status.st_size == amt
-
 
 def test_nv_csp_fwd():
     # Test that receiveStream can successfully forward a NV transmission
@@ -157,7 +153,7 @@ def test_nv_csp_fwd():
         cmd = f"ex2.ns_payload.nv_start(1, 512, VOL0:/{audioFile})"
         transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
         response = transactObj.execute()
-        assert response["err"] == 0
+        assert response['err'] == 0
     except:
         os.kill(pid, signal.SIGSTOP)
 
@@ -175,7 +171,7 @@ def test_nv_csp_fwd():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     print(response)
-    assert response["err"] == 0
+    assert response['err'] == 0
 
     nv.close()
 
@@ -183,8 +179,7 @@ def test_nv_csp_fwd():
     print(f"amt {amt} size {status.st_size}")
     assert status.st_size == amt
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     # I have to admit I have no luck running broadcast tests back to back.
     # Each test works on its own though.
     test_time()

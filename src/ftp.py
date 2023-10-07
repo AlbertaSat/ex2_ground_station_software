@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,12 +10,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
-"""
+'''
+'''
  * @file ftp.py
  * @author Robert Taylor
  * @date 2022-07-22
-"""
+'''
 
 from groundStation import GroundStation
 from options import optionsFactory
@@ -27,10 +27,9 @@ from system import services
 import signal
 import pickle
 
-
-class FTPData:
+class FTPData():
     # Stores a single data transaction
-    def __init__(self, reqId: int, blocknum: int, data: bytearray):
+    def __init__(self, reqId : int, blocknum : int, data : bytearray):
         self.reqId = reqId
         self.blocknum = blocknum
         self.data = data
@@ -65,24 +64,23 @@ class FTPData:
     def __ne__(self, other):
         return self.blocknum != other.blocknum
 
-
-class ftpTransaction:
-    def __init__(self, reqID, totalBlocks: int, inFileName, outFileName):
+class ftpTransaction():
+    def __init__(self, reqID, totalBlocks : int, inFileName, outFileName):
         self.reqID = reqID
         self.received = []
         self.totalBlocks = totalBlocks
         self.inputFileName = inFileName
         self.outputFileName = outFileName
 
-    def receiveData(self, data: FTPData):
-        if data.getReqId() != self.reqID:
+    def receiveData(self, data : FTPData):
+        if (data.getReqId() != self.reqID):
             raise ValueError("Block given does not match my ID!")
         if data not in self.received:
             self.received.append(data)
             self.received.sort()
 
     def isDone(self):
-        return len(self.received) == self.totalBlocks  # true if finished
+        return len(self.received) == self.totalBlocks # true if finished
 
     def end(self):
         out = bytearray()
@@ -97,23 +95,22 @@ class ftpTransaction:
     def listMissing(self):
         blocksReceived = [x.getBlockNum() for x in self.received]
         return [i for i in range(self.totalBlocks) if i not in blocksReceived]
-
+    
     def getTotalBlocks(self):
         return self.totalBlocks
-
 
 class ftp(GroundStation):
     def __init__(self, opts):
         super(ftp, self).__init__(opts)
         self.services = services
         self.receiveParse = ReceiveParser()
-        self.operation = ""
-        self.infile = opts.get if opts.get != "" else opts.post
-        self.outfile = ""
+        self.operation = ''
+        self.infile = opts.get if opts.get != '' else opts.post
+        self.outfile = ''
         self.skip = opts.skip
 
-        self.outfile = opts.outfile or self.infile  # if no outfile is given, use infile
-        self.blocksize = 512  # There's really no reason to change it..
+        self.outfile = opts.outfile or self.infile # if no outfile is given, use infile
+        self.blocksize = 512 # There's really no reason to change it..
 
         nodeType = "UHF"
         # finds first instance of UHF node in GroundNodes and gets its address
@@ -137,10 +134,7 @@ class ftp(GroundStation):
     def _transaction(self, data):
         self.networkManager.send(self.satelliteAddr, self.destPort, data)
         response = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
-        return self.receiveParse.parseReturnValue(
-            self.satelliteAddr, self.destPort, response
-        )
-
+        return self.receiveParse.parseReturnValue(self.satelliteAddr, self.destPort, response)
 
 class ftpGetter(ftp):
     def __init__(self, opts):
@@ -149,13 +143,11 @@ class ftpGetter(ftp):
         self.burst_size = opts.burst_size
         self.currentTransaction = None
         if opts.resume == 0:
-            self.currentTransaction = self.makeNewDownloadTransaction(
-                self.infile, self.outfile
-            )
-        else:
+            self.currentTransaction = self.makeNewDownloadTransaction(self.infile, self.outfile)
+        else :
             self.currentTransaction = self.resumeDownloadTransaction(opts.resume)
 
-    def resumeDownloadTransaction(self, reqID: int):
+    def resumeDownloadTransaction(self, reqID : int):
         with open(f".ftpTransactions/{reqID}.pickle", "rb") as f:
             return pickle.loads(f.read())
 
@@ -166,11 +158,11 @@ class ftpGetter(ftp):
         except:
             raise ValueError("No response from file size packet")
 
-        if data["err"] < 0:
+        if data['err'] < 0:
             raise ValueError(f"error {data['err']} from file size packet")
 
-        filesize = int(data["size"])
-        req_id = randint(1, 1652982075)
+        filesize = int(data['size'])
+        req_id = randint(1,1652982075)
         total_blocks = filesize // self.blocksize
         if total_blocks % self.blocksize > 0:
             total_blocks += 1
@@ -184,9 +176,7 @@ class ftpGetter(ftp):
     def shutdown(self):
         if not os.path.exists(".ftpTransactions"):
             os.mkdir(".ftpTransactions")
-        with open(
-            f".ftpTransactions/{self.currentTransaction.getReqID()}.pickle", "wb"
-        ) as dumpfile:
+        with open(f".ftpTransactions/{self.currentTransaction.getReqID()}.pickle", "wb") as dumpfile:
             pickle.dump(self.currentTransaction, dumpfile)
         super().shutdown()
 
@@ -201,14 +191,12 @@ class ftpGetter(ftp):
             numToSearch = min(self.burst_size, len(missingBlocks))
 
             for i in range(1, numToSearch):
-                if missingBlocks[i] == missingBlocks[i - 1] + 1:
+                if (missingBlocks[i] == missingBlocks[i - 1] + 1):
                     numToRequest += 1
                 else:
                     break
 
-            download_packet = self._get_burst_download_packet(
-                req_id, skip, numToRequest
-            )
+            download_packet = self._get_burst_download_packet(req_id, skip, numToRequest)
             self.networkManager.send(self.satelliteAddr, self.destPort, download_packet)
             self._receive_burst()
         self.currentTransaction.end()
@@ -219,18 +207,14 @@ class ftpGetter(ftp):
     def _receive_burst(self):
         received = 0
         while True:
-            packet = self.networkManager.receive(
-                self.satelliteAddr, self.destPort, 10000
-            )
-            data = self.receiveParse.parseReturnValue(
-                self.satelliteAddr, self.destPort, packet
-            )
-            if packet[0] != self.services.get("FTP_COMMAND").get("subservice").get(
-                "FTP_DATA_PACKET"
-            ).get("subPort"):
+            packet = self.networkManager.receive(self.satelliteAddr, self.destPort, 10000)
+            data = self.receiveParse.parseReturnValue(self.satelliteAddr, self.destPort, packet)
+            if packet[0] != self.services.get("FTP_COMMAND").get('subservice').get(
+                'FTP_DATA_PACKET'
+            ).get('subPort'):
                 # Received service reply (final packet of burst download)
                 return data
-            ftpData = FTPData(data["req_id"], data["blocknum"], data["data"])
+            ftpData = FTPData(data['req_id'], data['blocknum'], data['data'])
             try:
                 self.currentTransaction.receiveData(ftpData)
                 print(
@@ -239,37 +223,26 @@ class ftpGetter(ftp):
             except Exception as e:
                 print(e)
 
-    def _get_burst_download_packet(self, req_id, skip, count):
-        subservice = (
-            self.services.get("FTP_COMMAND")
-            .get("subservice")
-            .get("REQUEST_BURST_DOWNLOAD")
-            .get("subPort")
-        )
-        out = bytearray()
-        out.extend(subservice.to_bytes(1, byteorder="big"))
-        out.extend(req_id.to_bytes(4, byteorder="big"))
-        out.extend(self.blocksize.to_bytes(4, byteorder="big"))
-        out.extend(int(skip).to_bytes(4, byteorder="big"))
-        out.extend(int(count).to_bytes(4, byteorder="big"))
-        out.extend(int(self.use_sband).to_bytes(4, byteorder="big"))
-        out.extend(bytes(self.infile.encode("ascii")))
-        out.extend(int(0).to_bytes(1, byteorder="big"))
-        return out
+    def _get_burst_download_packet(self, req_id, skip, count):     
+            subservice = self.services.get('FTP_COMMAND').get('subservice').get('REQUEST_BURST_DOWNLOAD').get('subPort')
+            out = bytearray()
+            out.extend(subservice.to_bytes(1, byteorder='big'))
+            out.extend(req_id.to_bytes(4, byteorder='big'))
+            out.extend(self.blocksize.to_bytes(4, byteorder='big'))
+            out.extend(int(skip).to_bytes(4, byteorder='big'))
+            out.extend(int(count).to_bytes(4, byteorder='big'))
+            out.extend(int(self.use_sband).to_bytes(4, byteorder='big'))
+            out.extend(bytes(self.infile.encode("ascii")))
+            out.extend(int(0).to_bytes(1, byteorder='big'))
+            return out
 
     def _get_file_size_packet(self):
-        subservice = (
-            self.services.get("FTP_COMMAND")
-            .get("subservice")
-            .get("GET_FILE_SIZE")
-            .get("subPort")
-        )
+        subservice = self.services.get('FTP_COMMAND').get('subservice').get('GET_FILE_SIZE').get('subPort')
         out = bytearray()
-        out.extend(subservice.to_bytes(1, byteorder="big"))
+        out.extend(subservice.to_bytes(1, byteorder='big'))
         out.extend(bytes(self.infile.encode("ascii")))
-        out.extend(int(0).to_bytes(1, byteorder="big"))
+        out.extend(int(0).to_bytes(1, byteorder='big'))
         return out
-
 
 class ftpSender(ftp):
     def __init__(self, opts):
@@ -281,9 +254,7 @@ class ftpSender(ftp):
     def _do_post_request(self):
         with open(self.infile, "rb") as f:
             filesize = os.path.getsize(self.infile)
-            req_id = randint(
-                0, 1653514975
-            )  # 1653514975 is the max value of a 32 bit int
+            req_id = randint(0, 1653514975) # 1653514975 is the max value of a 32 bit int
             count = 0
             if self.skip != 0:
                 # Note: // is the floor, or integer divide operator
@@ -292,15 +263,13 @@ class ftpSender(ftp):
                 self.skip = skip_blks * self.blocksize
                 f.seek(self.skip)  # skip is in bytes
 
-            print(
-                f"Sending file {self.infile} size {filesize} offset {self.skip} to satellite"
-            )
+            print(f"Sending file {self.infile} size {filesize} offset {self.skip} to satellite")
             packet = self._get_start_upload_packet(req_id, filesize)
             data = self._transaction(packet)
-            if data is None:
+            if (data is None):
                 print("Did not receive response from upload start packet")
                 return
-            if data["err"] < 0:
+            if data['err'] < 0:
                 print(f"error {data['err']} from upload start packet")
             done = False
             while not done:
@@ -309,11 +278,11 @@ class ftpSender(ftp):
                 packet = self._get_data_upload_packet(req_id, data, count)
                 count += 1
                 resp = self._transaction(packet)
-                if resp is None:
+                if (resp is None):
                     print("Did not receive response from upload data packet")
                     done = True
                     continue
-                if resp["err"] != 0:
+                if resp['err'] != 0:
                     print("error from upload data packet")
                     done = True
                     continue
@@ -322,35 +291,25 @@ class ftpSender(ftp):
                     done = True
 
     def _get_data_upload_packet(self, req_id, data, count):
-        subservice = (
-            self.services.get("FTP_COMMAND")
-            .get("subservice")
-            .get("FTP_UPLOAD_PACKET")
-            .get("subPort")
-        )
+        subservice = self.services.get('FTP_COMMAND').get('subservice').get('FTP_UPLOAD_PACKET').get('subPort')
         out = bytearray()
-        out.extend(subservice.to_bytes(1, byteorder="big"))
-        out.extend(req_id.to_bytes(4, byteorder="big"))
-        out.extend(count.to_bytes(4, byteorder="big"))
-        out.extend(len(data).to_bytes(4, byteorder="big"))
+        out.extend(subservice.to_bytes(1, byteorder='big'))
+        out.extend(req_id.to_bytes(4, byteorder='big'))
+        out.extend(count.to_bytes(4, byteorder='big'))
+        out.extend(len(data).to_bytes(4, byteorder='big'))
         out.extend(bytearray(data))
         return out
 
     def _get_start_upload_packet(self, req_id, filesize):
-        subservice = (
-            self.services.get("FTP_COMMAND")
-            .get("subservice")
-            .get("FTP_START_UPLOAD")
-            .get("subPort")
-        )
+        subservice = self.services.get('FTP_COMMAND').get('subservice').get('FTP_START_UPLOAD').get('subPort')
         out = bytearray()
-        out.extend(subservice.to_bytes(1, byteorder="big"))
-        out.extend(req_id.to_bytes(4, byteorder="big"))
-        out.extend(filesize.to_bytes(8, byteorder="big"))
-        out.extend(self.blocksize.to_bytes(4, byteorder="big"))
-        out.extend(self.skip.to_bytes(8, byteorder="big"))
+        out.extend(subservice.to_bytes(1, byteorder='big'))
+        out.extend(req_id.to_bytes(4, byteorder='big'))
+        out.extend(filesize.to_bytes(8, byteorder='big'))
+        out.extend(self.blocksize.to_bytes(4, byteorder='big'))
+        out.extend(self.skip.to_bytes(8, byteorder='big'))
         out.extend(bytes(self.outfile.encode("ascii")))
-        out.extend(int(0).to_bytes(1, byteorder="big"))
+        out.extend(int(0).to_bytes(1, byteorder='big'))
         return out
 
 
@@ -362,10 +321,9 @@ def ftpFactory(opts):
     else:
         raise ValueError("Must get or post a file")
 
-
 if __name__ == "__main__":
     opts = optionsFactory("ftp")
-    ftpRunner = ftpFactory(opts.getOptions())
+    ftpRunner =  ftpFactory(opts.getOptions())
     signal.signal(signal.SIGINT, ftpRunner.shutdown)
     try:
         ftpRunner.run()

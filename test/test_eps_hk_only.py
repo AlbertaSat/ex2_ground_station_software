@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2021  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,30 +10,30 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
-"""
+'''
+'''
  * @file test_eps_hk_only.py
  * @author Josh Lazaruk
  * @date 2022-02-15
-"""
+'''
 
-"""  to run > yarn run:test_eps_hk_only -I uart -d /dev/ttyUSB0 """
+'''  to run > yarn run:test_eps_hk_only -I uart -d /dev/ttyUSB0 '''
 
 
 import time
 import numpy as np
 from testLib import testLib as test
-
 test = test()  # call to initialize local test class
 
 
 def testAllCommandsToOBC():
+
     for _ in range(9):
-        test.send("eps.time_management.get_eps_time")
-        test.send("eps.cli.general_telemetry")
+        test.send('eps.time_management.get_eps_time')
+        test.send('eps.cli.general_telemetry')
         time.sleep(1800)
     test.summary()  # call when done to print summary of tests
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     testAllCommandsToOBC()

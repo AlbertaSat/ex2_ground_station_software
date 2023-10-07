@@ -1,4 +1,4 @@
-"""
+'''
  * Copyright (C) 2020  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,46 +10,41 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-"""
+'''
 
 
-"""
+'''
  * @file docGen.py
  * @author Andrew Rooney
  * @date 2020-11-20
-"""
+'''
 
-""" to run > python3 docGen.py  """
+''' to run > python3 docGen.py  '''
 
 from system import services
 
 f = open("CommandDocs.txt", "w")
 
-f.write(
-    "\t\t\t\t-- Ex-Alta 2 Ground Station Commands --\n"
-    + "Note: arguments and return types are given as numpy types\n\n\n"
-)
+f.write('\t\t\t\t-- Ex-Alta 2 Ground Station Commands --\n' +
+'Note: arguments and return types are given as numpy types\n\n\n')
 
 for serv in services:
-    subservice = services[serv]["subservice"]
-    supported = services[serv]["supports"]
+    subservice = services[serv]['subservice']
+    supported = services[serv]['supports']
     for subName in subservice.keys():
-        f.write(f"{serv}.{subName}" + ":\n")
+        f.write(f'{serv}.{subName}' + ':\n')
 
         sub = subservice[subName]
-        subport = sub["subPort"] if "subPort" in sub else None
-        inoutInfo = sub["inoutInfo"]
+        subport = sub['subPort'] if 'subPort' in sub else None
+        inoutInfo = sub['inoutInfo']
 
-        args = "None" if inoutInfo["args"] is None else repr(inoutInfo["args"])
-        returns = "None" if inoutInfo["returns"] is None else repr(inoutInfo["returns"])
-        info = "None" if "what" not in sub else sub["what"]
+        args = 'None' if inoutInfo['args'] is None else repr(inoutInfo['args'])
+        returns = 'None' if inoutInfo['returns'] is None else repr(inoutInfo['returns'])
+        info = 'None' if 'what' not in sub else sub['what']
         f.write(
-            "\t\tAbout: " + info + "\n"
-            "\t\tSupports: " + ", ".join(supported) + "\n"
-            "\t\tArguments: " + args + "\n" + "\t\treturn values: " + returns + "\n"
-            "\t\tport: "
-            + str(services[serv]["port"])
-            + "\t\tsubport: "
-            + str(subport)
-            + "\n\n\n"
-        )
+        '\t\tAbout: ' + info + '\n'
+        '\t\tSupports: ' + ', '.join(supported) + '\n'
+        '\t\tArguments: ' + args + '\n' +
+        '\t\treturn values: ' + returns + '\n'
+        '\t\tport: ' + str(services[serv]['port']) +
+        '\t\tsubport: ' + str(subport) + '\n\n\n')
