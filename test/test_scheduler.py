@@ -1,4 +1,4 @@
-'''
+"""
  * Copyright (C) 2023  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,14 +10,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-'''
-'''
+"""
+"""
  * @file test_scheduler.py
  * @author Ron Unrau
  * @date
-'''
+"""
 
-'''  to run > LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build:./:./src:./test python3 test/test_scheduler.py -I sdr -d /dev/ttyUSB0 '''
+"""  to run > LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build:./:./src:./test python3 test/test_scheduler.py -I sdr -d /dev/ttyUSB0 """
 
 import numpy as np
 import os
@@ -35,11 +35,12 @@ import calendar
 opts = optionsFactory("basic")
 gs = GroundStation(opts.getOptions(argv="-I sdr".split()))
 
+
 class CronTime:
-    def __init__(self, dt : datetime):
+    def __init__(self, dt: datetime):
         self.dt = dt
         self.cron = {}
-        self.cron["msec"] = int(dt.microsecond/1000.0)
+        self.cron["msec"] = int(dt.microsecond / 1000.0)
         self.cron["sec"] = dt.second
         self.cron["min"] = dt.minute
         self.cron["hr"] = dt.hour
@@ -47,28 +48,29 @@ class CronTime:
         self.cron["mon"] = dt.month
         self.cron["yr"] = dt.year
 
-    def _setCron(self, dt : datetime):
-        if self.cron["msec"] != '*':
-            self.cron["msec"] = int(dt.microsecond/1000.0)
-        if self.cron["sec"] != '*':
+    def _setCron(self, dt: datetime):
+        if self.cron["msec"] != "*":
+            self.cron["msec"] = int(dt.microsecond / 1000.0)
+        if self.cron["sec"] != "*":
             self.cron["sec"] = dt.second
-        if self.cron["min"] != '*':
+        if self.cron["min"] != "*":
             self.cron["min"] = dt.minute
-        if self.cron["hr"] != '*':
+        if self.cron["hr"] != "*":
             self.cron["hr"] = dt.hour
-        if self.cron["day"] != '*':
+        if self.cron["day"] != "*":
             self.cron["day"] = dt.day
-        if self.cron["mon"] != '*':
+        if self.cron["mon"] != "*":
             self.cron["mon"] = dt.month
-        if self.cron["yr"] != '*':
+        if self.cron["yr"] != "*":
             self.cron["yr"] = dt.year
 
-    def inc(self, relTime : timedelta):
+    def inc(self, relTime: timedelta):
         self.dt = self.dt + relTime
-        self._setCron(self.dt)    
+        self._setCron(self.dt)
 
     def __str__(self):
-        return "".join(f"{self.cron[key]} " for key in self.cron)                
+        return "".join(f"{self.cron[key]} " for key in self.cron)
+
 
 def test_time():
     # Get the current satellite time and adjust it if necessary. By updating
@@ -82,12 +84,12 @@ def test_time():
     now = calendar.timegm(dt.timetuple())
 
     response = transactObj.execute()
-    if response == {} or response['err'] != 0:
+    if response == {} or response["err"] != 0:
         print(f"get_time error: {response}")
         return
 
     print(f"now: {now}, sat: {response}")
-    sat = int(response['timestamp'])
+    sat = int(response["timestamp"])
     dt = datetime.fromtimestamp(sat)
     # Arbitrarily decide that a 10 second diference is "close enough"
     if abs(sat - now) < 10:
@@ -101,8 +103,9 @@ def test_time():
     # set the satellite's time to this script's time
     response = transactObj.execute()
     assert response != {}, "set_schedule - no response"
-    assert response['err'] == 0
-    
+    assert response["err"] == 0
+
+
 def test_set_multiple():
     # Set a schedule on the satellite and check that it executes when it is
     # supposed to. This is achieved through several steps:
@@ -123,13 +126,13 @@ def test_set_multiple():
     schedFile = "test-schedule.txt"
     with open(schedFile, "w") as f:
         # Note that the tasks are specified out of chronological order
-        task1.inc(timedelta(seconds = sleep_time))
+        task1.inc(timedelta(seconds=sleep_time))
         f.write(f"{task1} ex2.time_management.get_time\n")
-        task2.inc(timedelta(seconds = sleep_time - 10))
+        task2.inc(timedelta(seconds=sleep_time - 10))
         f.write(f"{task2} ex2.time_management.get_time\n")
-        task3.inc(timedelta(seconds = sleep_time - 30))
+        task3.inc(timedelta(seconds=sleep_time - 30))
         f.write(f"{task3} ex2.time_management.get_time\n")
-        task4.inc(timedelta(seconds = sleep_time - 20))
+        task4.inc(timedelta(seconds=sleep_time - 20))
         f.write(f"{task4} ex2.time_management.get_time\n")
 
     # Upload the schedule file to the satellite
@@ -141,28 +144,28 @@ def test_set_multiple():
     print(f"set_schedule response: {response}")
 
     assert response != {}, "set_schedule - no response"
-    assert response['err'] == 0, f"set_schedule error {response['err']}"
+    assert response["err"] == 0, f"set_schedule error {response['err']}"
 
     cmds = get_schedule()
     for c in cmds:
-        cmd_dt = datetime.fromtimestamp(c['next'], timezone.utc)
+        cmd_dt = datetime.fromtimestamp(c["next"], timezone.utc)
         diff = cmd_dt - dt
         print(f"next: {cmd_dt} ({c['next']}), diff {diff.total_seconds()}")
 
     print(f"sleeping for {sleep_time} seconds")
-    time.sleep(sleep_time*2)
+    time.sleep(sleep_time * 2)
 
     # Thes task should have executed now. There are a couple of ways to read
     # the log file, for example, using the cli or the logger. At this moment
     # the cli read command seems to be truncating some lines in the middle of
     # the ~10KB file.
-    #cmd = "ex2.cli.send_cmd(15, read syslog.log)"
+    # cmd = "ex2.cli.send_cmd(15, read syslog.log)"
 
     cmd = "ex2.logger.get_file"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
 
-    log = response['log'].decode()
+    log = response["log"].decode()
     # Split the response into lines, then separate out the scheduler related
     # lines. Those lines can be checked to see that the schedule was accepted
     # and executed.
@@ -173,7 +176,7 @@ def test_set_multiple():
             fields = line.split(":")
             timestamp = int(fields[1].strip())
             print(f"executed at {timestamp} vs desired {cmds[i]['next']}")
-            i = i+1
+            i = i + 1
     # print("longest_len {}".format(longest_len))
 
 
@@ -189,12 +192,12 @@ def test_set_periodic():
     task1 = CronTime(dt)
     task2 = CronTime(dt)
 
-    task1.cron['sec'] = 0
-    task1.cron['min'] = "*"  # Should make task1 run every 60 seconds
-    task1.cron['hr'] = "*"
-    task2.cron['sec'] = "*/20"  # Should make task2 run every 20 seconds
-    task2.cron['min'] = "*"
-    task2.cron['hr'] = "*"
+    task1.cron["sec"] = 0
+    task1.cron["min"] = "*"  # Should make task1 run every 60 seconds
+    task1.cron["hr"] = "*"
+    task2.cron["sec"] = "*/20"  # Should make task2 run every 20 seconds
+    task2.cron["min"] = "*"
+    task2.cron["hr"] = "*"
 
     # schedule some tasks to execute up to sleep_time seconds in the future
     sleep_time = 120
@@ -212,22 +215,22 @@ def test_set_periodic():
     print(f"set_schedule response: {response}")
 
     assert response != {}, "set_schedule - no response"
-    assert response['err'] == 0, f"set_schedule error {response['err']}"
+    assert response["err"] == 0, f"set_schedule error {response['err']}"
 
     cmds = get_schedule()
     for c in cmds:
-        cmd_dt = datetime.fromtimestamp(c['next'], timezone.utc)
+        cmd_dt = datetime.fromtimestamp(c["next"], timezone.utc)
         diff = cmd_dt - dt
         print(f"next: {cmd_dt} ({c['next']}), diff {diff.total_seconds()}")
 
     print(f"sleeping for {sleep_time} seconds")
-    time.sleep(sleep_time*2)
+    time.sleep(sleep_time * 2)
 
     cmd = "ex2.logger.get_file"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
 
-    log = response['log'].decode()
+    log = response["log"].decode()
     i = 0
     # Split the response into lines, then separate out the scheduler related
     # lines. Those lines can be checked to see that the schedule was accepted
@@ -238,7 +241,8 @@ def test_set_periodic():
             fields = line.split(":")
             timestamp = int(fields[1].strip())
             print(f"{i}: executed at {timestamp}")
-            i = i+1
+            i = i + 1
+
 
 def get_schedule():
     # Retrieve the current schedule from the satellite.
@@ -247,9 +251,9 @@ def get_schedule():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
 
     response = transactObj.execute()
-    assert(response['err'] == 0)
+    assert response["err"] == 0
 
-    count = response['count']
+    count = response["count"]
     # print("{} commands scheduled".format(count))
 
     cmds = []
@@ -258,13 +262,17 @@ def get_schedule():
 
     for i in range(count):
         curr = {}
-        offset = i*10  # 10 bytes per cmd scheduled
-        curr['next'] = int.from_bytes(response['cmds'][offset:offset+4], byteorder='big')
+        offset = i * 10  # 10 bytes per cmd scheduled
+        curr["next"] = int.from_bytes(
+            response["cmds"][offset : offset + 4], byteorder="big"
+        )
         offset += 4
-        curr['freq'] = int.from_bytes(response['cmds'][offset:offset+4], byteorder='big')
+        curr["freq"] = int.from_bytes(
+            response["cmds"][offset : offset + 4], byteorder="big"
+        )
         offset += 4
-        curr['dst'] = response['cmds'][offset]
-        curr['dport'] = response['cmds'][offset+1]
+        curr["dst"] = response["cmds"][offset]
+        curr["dport"] = response["cmds"][offset + 1]
         cmds.append(curr)
 
     print(cmds)
@@ -286,10 +294,11 @@ def test_scheduler_delete():
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
 
     response = transactObj.execute()
-    assert(response['err'] == 0)
-    assert(response['count'] == 0)
-    
-if __name__ == '__main__':
+    assert response["err"] == 0
+    assert response["count"] == 0
+
+
+if __name__ == "__main__":
     test_time()
     test_set_multiple()
     test_set_periodic()

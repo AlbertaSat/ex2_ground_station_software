@@ -1,4 +1,4 @@
-'''
+"""
  * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,19 +10,21 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-'''
-'''
+"""
+"""
  * @file packetBreaker.py
  * @author Robert Taylor
  * @date 2022-07-21
-'''
+"""
 
 import libcsp_py3 as libcsp
+
 
 def breakPacket(packet):
     return bytearray(libcsp.packet_get_data(packet))
 
-def makePacket(data : bytearray):
+
+def makePacket(data: bytearray):
     packet = libcsp.buffer_get(len(data))
     if len(data) > 0:
         libcsp.packet_set_data(packet, data)

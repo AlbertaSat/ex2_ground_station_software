@@ -1,4 +1,4 @@
-'''
+"""
  * Copyright (C) 2022  University of Alberta
  *
  * This program is free software; you can redistribute it and/or
@@ -10,17 +10,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-'''
-'''
+"""
+"""
  * @file inputHandler.py
  * @author Robert Taylor
  * @date 2022-07-21
-'''
+"""
 
-class InputHandler():
+
+class InputHandler:
     def __init__(self):
         self.historyFile = open("command_history.log", "a")
+
     def getInput(self, prompt):
         inStr = input(prompt)
-        self.historyFile.write(inStr + '\n')
+        self.historyFile.write(inStr + "\n")
         return inStr
