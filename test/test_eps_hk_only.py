@@ -28,13 +28,10 @@ test = test()  # call to initialize local test class
 
 def testAllCommandsToOBC():
 
-    i = 0
-    while i < 9:
+    for _ in range(9):
         test.send('eps.time_management.get_eps_time')
         test.send('eps.cli.general_telemetry')
         time.sleep(1800)
-        i += 1
-    
     test.summary()  # call when done to print summary of tests
 
 
