@@ -17,16 +17,10 @@ class beaconDecoder:
         beacon_port = 1
         payload_offset = 16
         packet_num_offset = 4
-        decoded_data = base64.b64decode(self.rawdata)
-        decoded_data = bytearray(decoded_data)
+        decoded_data = bytearray(base64.b64decode(self.rawdata))
         try:
-            if decoded_data[packet_num_offset] == 1:
-                decoded_data[:0] = (1).to_bytes(1, "big")
-                return self.parser.parseReturnValue(
-                    beacon_ID, beacon_port, decoded_data
-                )
-            elif decoded_data[packet_num_offset] == 2:
-                decoded_data[:0] = (2).to_bytes(1, "big")
+            if packet_num_offset in {1, 2}:
+                decoded_data[:0] = (packet_num_offset).to_bytes(1, "big")
                 return self.parser.parseReturnValue(
                     beacon_ID, beacon_port, decoded_data
                 )
