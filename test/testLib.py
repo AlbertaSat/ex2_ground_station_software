@@ -36,7 +36,6 @@ class testLib(object):
         self.start = time.time()
         self.failed = 0
         self.passed = 0
-        pass
 
     def sendAndExpect(self, send, expect):
         server, port, toSend = gs.inputHandler.getInput(inVal = send)

@@ -31,4 +31,4 @@ def testUpdaterCommandsToOBC():
     test.sendAndExpect('obc.updater.get_app_info()', {'err' : 0, 'exists' : 0, 'size' : 387424, 'addr' : 2097152, 'crc' : 1234})
 
 if __name__ == '__main__':
-    testUpdaterCommandsToOBC();
+    testUpdaterCommandsToOBC()
