@@ -4,7 +4,10 @@ Note: this repository uses yarn for run and build scripts. Scripts can be create
 
 ## Prerequisites
 
-If you're installing for the first time on a given machine, run `bash install.sh` before continuing.
+If you're installing for the first time on a given machine, run the following before continuing:
+```
+bash install.sh
+```
 
 Also, you will need to make sure that you have yarn.
 
@@ -14,7 +17,7 @@ sudo npm install --global yarn
 
 ## Basic Functionality
 
-Step 1: install dependencies and run the ground station. In order to run as a user process your user may need to be in the `dialout` group
+Step 1: Install dependencies and run the ground station.
 
 ```
 yarn install_dependencies
@@ -29,7 +32,7 @@ Or if you intend to run the ground station with the Software Defined Radio (SDR)
 ```
 yarn build:gnuradio
 ```
-Step 3: before and after development, the existing tests should be run:
+Step 3: Run the existing tests, before and after development:
 
 ```
 yarn test_uhf <options>
@@ -40,9 +43,11 @@ yarn test_sband <options>
 
 If using this repository with the satellites or the flatsat, follow these instructions. Hardware setup steps are excluded.
 
-Step 4: Install conda (if not already present) by following the [conda installation instructions](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages). We use a conda environment to run GNURadio, because there are additional GNURadio dependencies (out-of-tree modules) that we use in the ground station.
+Step 4: Install conda (if not already present) by following the [conda installation instructions](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html#installing-conda-on-a-system-that-has-other-python-installations-or-packages). 
+We use a conda environment to run GNURadio, because there are additional GNURadio dependencies (out-of-tree modules) that we use in the ground station.
 
-Step 5: Set up the AlbertaSat GNURadio Ground Station, which uses [radioconda](https://github.com/ryanvolz/radioconda). This will install our environment and all blocks needed, so there is no need to manually install other dependencies.
+Step 5: Set up the AlbertaSat GNURadio Ground Station, which uses [radioconda](https://github.com/ryanvolz/radioconda). 
+This will install our environment and all blocks needed, so there is no need to manually install other dependencies.
 ```
 conda create -n radioconda -c conda-forge -c ryanvolz --only-deps radioconda
 conda activate radioconda
