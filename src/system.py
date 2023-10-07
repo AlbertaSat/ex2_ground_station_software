@@ -84,11 +84,11 @@ varTypes = {
 }
 
 def getServices(system):
-    outDict = dict()
-    for serv in services:
-        if system in services[serv]['supports']:
-            outDict[serv] = services[serv]
-    return outDict
+    return {
+        serv: services[serv]
+        for serv in services
+        if system in services[serv]['supports']
+    }
 
 obc_housekeeping = {
     'err': '>b',

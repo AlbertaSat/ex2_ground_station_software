@@ -5,14 +5,16 @@ class GNURadioHandler:
 
     def __init__(self): 
         self.server = ServerProxy('http://localhost:8080')
-        self.mode_dict = {0: [1200, 600],
-                        1: [2400, 600],
-                        2: [4800, 1200],
-                        3: [9600, 2400],
-                        4: [9600, 4800],
-                        5: [19200, 4800],
-                        6: [19200, 9600],
-                        7: [19200, 19200]}
+        self.mode_dict = {
+                            0: [1200, 600],
+                            1: [2400, 600],
+                            2: [4800, 1200],
+                            3: [9600, 2400],
+                            4: [9600, 4800],
+                            5: [19200, 4800],
+                            6: [19200, 9600],
+                            7: [19200, 19200]
+                        }
 
 
     def setBaudRate(self, baud):
@@ -41,9 +43,7 @@ class GNURadioHandler:
         return self.server.get_fsk_dev()
 
     def getUHF_RFMode(self):
-        current_rf_config = []
-        current_rf_config.append(self.getBaudRate())
-        current_rf_config.append(self.getFSKDevHz())
+        current_rf_config = [self.getBaudRate(), self.getFSKDevHz()]
         for key, value in self.mode_dict.items():
             if value == current_rf_config:
                 return key

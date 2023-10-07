@@ -29,21 +29,16 @@ class GroundStation:
         hkey = hkeyfile.read()
         xkeyfile = open(opts.xkeyfile, "rb")
         xkey = xkeyfile.read()
-        addr = 0
         nodeType = "UHF"
-        for i in GroundNodes:
-            if i[1] == nodeType:
-                addr = i[2]
-                break;
+        # finds the first node of type "UHF" in GroundNodes and returns the address
+        addr = next((i[2] for i in GroundNodes if i[1] == nodeType), 0)
         try:
             if opts.u:
                 self.networkManager = getCSPHandler(addr, opts.interface, opts.device, hkey, xkey, "UHF", useFec = opts.fec)
             else:
                 self.networkManager = getCSPHandler(addr, opts.interface, opts.device, hkey, xkey, useFec = opts.fec)
         except Exception as e:
-            raise
-            print(e)
-            exit(1)
+            raise Exception(f"Error creating CSPHandler: {e}") from e
 
         self.interactive = InteractiveHandler(opts.interface == "dummy")
         self.inputHandler = InputHandler()
@@ -60,6 +55,6 @@ class GroundStation:
                 satelliteAddr = i[2]
                 satelliteName = i[1]
         if satelliteAddr == 0:
-            raise Exception("Invalid satellite {}".format(name))
+            raise Exception(f"Invalid satellite {name}")
         self.satelliteAddr = satelliteAddr
         self.satellite = satelliteName

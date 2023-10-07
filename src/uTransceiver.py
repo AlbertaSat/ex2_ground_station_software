@@ -82,7 +82,7 @@ class uTransceiver(object):
     def listen_zmq(self):
         context = zmq.Context()
         socket = context.socket(zmq.SUB)
-        socket.connect("tcp://localhost:%s" % self.rxport)
+        socket.connect(f"tcp://localhost:{self.rxport}")
         socket.setsockopt(zmq.SUBSCRIBE, b"")
 
         # Initialize poll set
@@ -97,7 +97,7 @@ class uTransceiver(object):
             if dict(poller.poll())[socket] == zmq.POLLIN:
                 print(socket.recv(zmq.DONTWAIT))
 
-        socket.disconnect("tcp://localhost:%s" % self.rxport)
+        socket.disconnect(f"tcp://localhost:{self.rxport}")
 
     def handlePipeMode(self):
         if (time.time() - self.last_tx_time) > self.pipetimeout_s:
@@ -108,12 +108,14 @@ class uTransceiver(object):
         return False
 
     def enterPipeMode(self):
-            #current config is for RF mode 5, baudrate = 115200
-            rfmode = self.gnuradio.getUHF_RFMode()
-            self.UHFDIRCommand('UHFDIR_genericWrite(0, 0 3 0 '+str(rfmode)+' 0 1 1 0 0 0 0 0)')
+        #current config is for RF mode 5, baudrate = 115200
+        rfmode = self.gnuradio.getUHF_RFMode()
+        self.UHFDIRCommand(
+            f'UHFDIR_genericWrite(0, 0 3 0 {str(rfmode)} 0 1 1 0 0 0 0 0)'
+        )
 
     def UHFDIRCommand(self, string):
-        print("sending UHFDIRcommand: " + string)
+        print(f"sending UHFDIRcommand: {string}")
         cmd = (string.split('_')[1]).split('(')[0]
         cmdcode = string.split(',')[0]
         cmdcode = int(cmdcode.split('(')[1])
@@ -126,13 +128,13 @@ class uTransceiver(object):
             paramlist = param.split()
             paramlist = list(map(int, paramlist))
             arg = (ctypes.c_ubyte * len(paramlist))(*paramlist)
-        if cmdcode == 6:
+        elif cmdcode == 6:
             param = ctypes.c_uint16(param) #TODO check that this works with space after comma in command
             arg = ctypes.cast(param, ctypes.POINTER(ctypes.c_uint16))
-        if cmdcode == 253:
+        elif cmdcode == 253:
             pass
             #TODO implement someday if desired (FRAM usage)
-
+            
         #check command and call relevant functions with args
         if (time.time() - self.last_tx_time) > self.pipetimeout_s:
             retval = 0
@@ -145,14 +147,14 @@ class uTransceiver(object):
                 pass
                 #TODO implement someday
                 #retval = uhf.UHF_genericI2C(cmd, ...)
-
+                
             #This should be a catch-all for any syntax errors as-is
             #TODO: make more robust handler for incorrect inputs to prevent erronious commands being sent?
             if retval != 0:
-                print('UHF Equipment Handler error ' + UHF_return(retval).name)
+                print(f'UHF Equipment Handler error {UHF_return(retval).name}')
             time.sleep(0.2)#to prevent csp packet transmission interrupting UHFDIR command transmission (sleeping length not yet optimized)
 
         else:
             print('Error: Command not sent. Wait for pipe mode to expire')
-            print('Pipe mode timer set to ' + str(self.pipetimeout_s) + 's')
+            print(f'Pipe mode timer set to {str(self.pipetimeout_s)}s')
 

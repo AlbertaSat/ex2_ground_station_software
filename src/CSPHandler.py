@@ -29,7 +29,7 @@ def getCSPHandler(addr, interface, device, hmacKey, xteaKey, protocol = None, us
     elif protocol == "UHF":
         return UHF_CSPHandler(addr, interface, device, hmacKey, xteaKey, useFec)
     else:
-        raise ValueError("Protocol {} does not exist for CSP handlers".format(protocol))
+        raise ValueError(f"Protocol {protocol} does not exist for CSP handlers")
 
 class CSPHandler(object):
     __instance = None
@@ -45,7 +45,7 @@ class CSPHandler(object):
     def __init__(self, addr, interface, device, hmacKey, xteaKey, useFec):
         self.connectionManager = ConnectionManager()
         self.usingFec = useFec
-        self.myAddr = addr;
+        self.myAddr = addr
         self.numberOfBuffers = 100
         self.bufferSize = 1024 #This is max size of an incoming packet
         libcsp.init(self.myAddr, 'GroundStation', 'model', '1.2.3', self.numberOfBuffers, self.bufferSize)
@@ -55,7 +55,7 @@ class CSPHandler(object):
         self.interfaceName = ""
         if interface == 'uart':
             self.ser = self._uart(device)
-        elif interface == 'uhf' or interface == "sdr":
+        elif interface in ('uhf', "sdr"):
             self._uhf(device, libcsp.SDR_UHF_GNURADIO_BAUD)
         elif interface == 'sband':
             self._sband()
@@ -63,12 +63,12 @@ class CSPHandler(object):
             self.interfaceName = "dummy"
             return # Skip libcsp initialization when using dummy responses
         else:
-            raise ValueError("Interface {} does not exist".format(interface))
+            raise ValueError(f"Interface {interface} does not exist")
 
 
         stringBuild = ""
         for node in SatelliteNodes:
-            stringBuild = stringBuild + " {} {}, ".format(node[2], self.interfaceName)
+            stringBuild = f"{stringBuild} {node[2]} {self.interfaceName}, "
         libcsp.rtable_load(stringBuild)
 
         libcsp.route_start_task()
@@ -84,7 +84,7 @@ class CSPHandler(object):
         packet = libcsp.read(conn, timeout)
         data = None
         if packet is None:
-            raise Exception("No packet received after {} seconds".format(timeout // 1000))
+            raise Exception(f"No packet received after {timeout // 1000} seconds")
         data = packetUtils.breakPacket(packet)
         libcsp.buffer_free(packet)
         return data

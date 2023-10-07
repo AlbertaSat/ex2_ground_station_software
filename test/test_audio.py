@@ -51,20 +51,20 @@ def test_time():
 
     response = transactObj.execute()
     if response == {} or response['err'] != 0:
-        print("get_time error: {}".format(response))
+        print(f"get_time error: {response}")
         return
 
-    print("now: {}, sat: {}".format(now, response))
+    print(f"now: {now}, sat: {response}")
     sat = int(response['timestamp'])
     dt = datetime.fromtimestamp(sat)
     # Arbitrarily decide that a 10 second diference is "close enough"
     if abs(sat - now) < 10:
-        print("satellite time {} (delta {})".format(dt, sat - now))
+        print(f"satellite time {dt} (delta {sat - now})")
         return
 
-    print("adjusting satellite time {} (delta {})".format(dt, sat - now))
+    print(f"adjusting satellite time {dt} (delta {sat - now})")
 
-    cmd = "ex2.time_management.set_time({})".format(now)
+    cmd = f"ex2.time_management.set_time({now})"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     # set the satellite's time to this script's time
     response = transactObj.execute()
@@ -80,22 +80,22 @@ def test_nv_sdr_fwd():
     print("starting SDR RX test")
     start = time.time()
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/{})".format(audioFile)
+    cmd = f"ex2.ns_payload.nv_start(1, 512, VOL0:/{audioFile})"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-    response = transactObj.execute() 
-    print("nv_start response: {}".format(response))
+    response = transactObj.execute()
+    print(f"nv_start response: {response}")
     assert response['err'] == 0
 
     gs.networkManager.set_sdr_rx()
     end = time.time()
-    print("transmission complete after {} seconds".format(end - start))
+    print(f"transmission complete after {end - start} seconds")
 
     time.sleep(10)
 
     cmd = "ex2.ns_payload.nv_stop"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
-    response = transactObj.execute() 
-    print("nv_stop response: {}".format(response))
+    response = transactObj.execute()
+    print(f"nv_stop response: {response}")
     assert response['err'] == 0
 
     os.kill(pid, signal.SIGSTOP)
@@ -115,7 +115,7 @@ def test_nv_csp_rcv():
 
     nv = ReceiveNorthernVoices(gs.networkManager)
 
-    cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/{})".format(audioFile)
+    cmd = f"ex2.ns_payload.nv_start(1, 512, VOL0:/{audioFile})"
     transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
     response = transactObj.execute()
     assert response['err'] == 0
@@ -131,7 +131,7 @@ def test_nv_csp_rcv():
     assert response['err'] == 0
 
     status = os.stat(ofile)
-    print("amt {} size {}".format(amt, status.st_size))
+    print(f"amt {amt} size {status.st_size}")
     assert status.st_size == amt
 
 def test_nv_csp_fwd():
@@ -150,13 +150,13 @@ def test_nv_csp_fwd():
     print("starting CSP FWD test")
 
     try:
-        cmd = "ex2.ns_payload.nv_start(1, 512, VOL0:/{})".format(audioFile)
+        cmd = f"ex2.ns_payload.nv_start(1, 512, VOL0:/{audioFile})"
         transactObj = gs.interactive.getTransactionObject(cmd, gs.networkManager)
         response = transactObj.execute()
         assert response['err'] == 0
     except:
         os.kill(pid, signal.SIGSTOP)
-        
+
     start = time.time()
     amt = 0
     try:
@@ -164,7 +164,7 @@ def test_nv_csp_fwd():
     except:  # important to not have zombies laying around
         os.kill(pid, signal.SIGSTOP)
     end = time.time()
-    print("received transmission after {} seconds".format(end - start))
+    print(f"received transmission after {end - start} seconds")
     assert amt > 0
 
     cmd = "ex2.ns_payload.nv_stop"
@@ -176,7 +176,7 @@ def test_nv_csp_fwd():
     nv.close()
 
     status = os.stat(ofile)
-    print("amt {} size {}".format(amt, status.st_size))
+    print(f"amt {amt} size {status.st_size}")
     assert status.st_size == amt
 
 if __name__ == '__main__':

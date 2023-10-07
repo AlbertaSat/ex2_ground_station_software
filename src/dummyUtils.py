@@ -25,12 +25,12 @@ def generateFakeHKDict():
     """
     fake_hk = services['HOUSEKEEPING']['subservice']['GET_HK']['inoutInfo']['returns'].copy()
 
+    fake_string = 'Test String!'
     # Replace data types with values
     for key in fake_hk:
         fake_uint = random.randint(0, 255)
         fake_int = random.randint(-128, 127)
         fake_float = random.uniform(-128.0, 127.0)
-        fake_string = 'Test String!'
         if 'B' in fake_hk[key] or 'u' in fake_hk[key] or 'V' in fake_hk[key]:
             fake_hk[key] = fake_uint
         elif 'b' in fake_hk[key] or 'i' in fake_hk[key]:

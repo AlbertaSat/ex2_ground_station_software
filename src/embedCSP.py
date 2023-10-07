@@ -27,8 +27,8 @@ class EmbedPacket:
         self.schedParse = ScheduleParser()
         self.data = data
         self.cmdList = commandList
-        self.cmds = list()
-        self.schedule = list()
+        self.cmds = []
+        self.schedule = []
 
     def embedCSP(self):
         self._buildCommandList()
@@ -38,7 +38,7 @@ class EmbedPacket:
 
     def _buildCommandList(self):
         if len(self.cmdList) > 0:
-            for i in range(0, len(self.cmdList)):
+            for i in range(len(self.cmdList)):
                 # parse the time and command, then embed the command as a CSP packet
                 cmd = self.schedParse.parseCmd(self.cmdList[i])
                 command = self.inputParse.parseInput(cmd['op'])
@@ -46,7 +46,7 @@ class EmbedPacket:
                 command['repeat'] = cmd['repeat']
                 command['last'] = cmd['last']
                 # append the list
-                print("Command: {}".format(command))
+                print(f"Command: {command}")
                 self.schedule.append(command)
 
     def _buildEmbeddedPacket(self):

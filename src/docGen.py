@@ -11,6 +11,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 '''
+
+
 '''
  * @file docGen.py
  * @author Andrew Rooney
@@ -30,7 +32,7 @@ for serv in services:
     subservice = services[serv]['subservice']
     supported = services[serv]['supports']
     for subName in subservice.keys():
-        f.write(serv + '.' + subName + ':\n')
+        f.write(f'{serv}.{subName}' + ':\n')
 
         sub = subservice[subName]
         subport = sub['subPort'] if 'subPort' in sub else None
@@ -38,7 +40,7 @@ for serv in services:
 
         args = 'None' if inoutInfo['args'] is None else repr(inoutInfo['args'])
         returns = 'None' if inoutInfo['returns'] is None else repr(inoutInfo['returns'])
-        info = 'None' if not 'what' in sub else sub['what']
+        info = 'None' if 'what' not in sub else sub['what']
         f.write(
         '\t\tAbout: ' + info + '\n'
         '\t\tSupports: ' + ', '.join(supported) + '\n'

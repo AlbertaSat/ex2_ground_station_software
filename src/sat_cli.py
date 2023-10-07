@@ -22,9 +22,9 @@ from options import optionsFactory
 
 class sat_cli(GroundStation):
     def run(self):
-        while(1):
+        while 1:
             inStr = self.inputHandler.getInput("$ ")
-            commandStr = "{}.cli.send_cmd({},{})".format(self.satellite, len(inStr), inStr)
+            commandStr = f"{self.satellite}.cli.send_cmd({len(inStr)},{inStr})"
             try:
                 transactObj = self.interactive.getTransactionObject(commandStr, self.networkManager)
                 print(transactObj.execute())

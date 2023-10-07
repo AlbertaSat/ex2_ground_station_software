@@ -49,15 +49,15 @@ class ScheduleParser:
         use milliseconds and (optionally) abbreviated years.
         """
 
-        listdt = []
-        listdt.append(dt.microsecond)
-        listdt.append(dt.second)
-        listdt.append(dt.minute)
-        listdt.append(dt.hour)
-        listdt.append(dt.day)
-        listdt.append(dt.month)
-        listdt.append(dt.year)
-        return listdt
+        return [
+            dt.microsecond,
+            dt.second,
+            dt.minute,
+            dt.hour,
+            dt.day,
+            dt.month,
+            dt.year,
+        ]
 
     def parseCmdList(self, cmdList = None):
         """Parse all the commands in the list provided.
@@ -68,7 +68,7 @@ class ScheduleParser:
         if cmdList:
            self.cmdList = cmdList
         for cron in self.cmdList:
-            print("cmd: <{}>".format(cron))
+            print(f"cmd: <{cron}>")
             self.repeat = 0
             self.cmds.append(self._parseCmd(cron))
 
@@ -86,7 +86,7 @@ class ScheduleParser:
         if slash == -1:
             self.repeat = periods[index]
         else:
-            print("step in index {}: {}".format(index, field))
+            print(f"step in index {index}: {field}")
             step = int(field[slash+1:])
             self.repeat = step*periods[index]
             # To calculate first, move to the next step multiple.
@@ -102,7 +102,7 @@ class ScheduleParser:
                     # need to wrap and overflow to the next field. And then
                     # the next field could overflow, etc. The most obvious
                     # example is incrementing the seconds field at 23:59:59.
-                    print("overflow {}, at index {}".format(first, index))
+                    print(f"overflow {first}, at index {index}")
                     self.listnow[index] = first
                     for i in range(index,6):
                         if self.listnow[i] > maxs[i]:
@@ -110,10 +110,9 @@ class ScheduleParser:
                             self.listnow[i] -= maxs[i] + 1
                             self.listnow[i+1] += 1
                             if i >= 3:
-                                print("Warning: overflow into day/month {}".format(field))
+                                print(f"Warning: overflow into day/month {field}")
                     first = self.listnow[index]
         return first
-
     def parseCmd(self, cronspec: str):
         self.now = datetime.now(timezone.utc)
         self.listnow = self._splitdt(self.now)
@@ -128,7 +127,7 @@ class ScheduleParser:
             elif cmdfields[i].find('*') != -1:
                 timefields.append(self._parseWildcard(i, cmdfields[i]))
             else:
-                print("illegal cron specifier: {}".format(cmdfields[i]))
+                print(f"illegal cron specifier: {cmdfields[i]}")
                 timefields.append(0)
 
         if timefields[6] < 2000:  # support years as 2023 or 23
@@ -149,15 +148,16 @@ class ScheduleParser:
             # already passed. For example, for "0 0 */5 * * *" it's possible we
             # calculated first to be 11:05:00, and it's already 11:07:00. Just
             # add the period and we should get 11:10:00.
-            print("Warning: cron spec {} < now {}".format(nextdt, self.now))
+            print(f"Warning: cron spec {nextdt} < now {self.now}")
             if self.repeat > 0:
-               cmd['first'] += self.repeat
-               print("Adjusting first by {} sec to {}".format(self.repeat,
-                             datetime.fromtimestamp(cmd['first'], timezone.utc)))
+                cmd['first'] += self.repeat
+                print(
+                    f"Adjusting first by {self.repeat} sec to {datetime.fromtimestamp(cmd['first'], timezone.utc)}"
+                )
 
         cmd['repeat'] = self.repeat
         cmd['last'] = 0
         cmd['op'] = " ".join(cmdfields[7:])
 
-        print("cmd: {}".format(cmd))
+        print(f"cmd: {cmd}")
         return cmd

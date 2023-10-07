@@ -20,8 +20,7 @@
 import libcsp_py3 as libcsp
 
 def breakPacket(packet):
-    data = bytearray(libcsp.packet_get_data(packet))
-    return data
+    return bytearray(libcsp.packet_get_data(packet))
 
 def makePacket(data : bytearray):
     packet = libcsp.buffer_get(len(data))

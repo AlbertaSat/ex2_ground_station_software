@@ -35,8 +35,7 @@ class beaconDecoder:
 if __name__ == '__main__':
     decoder = beaconDecoder()
     while True:
-        beacon = decoder.run() 
-        if beacon:
+        if beacon := decoder.run():
             print("----------Beacon Received:----------")
             for key, value in beacon.items():
-                print("{} : {}".format(key, value))       
+                print(f"{key} : {value}")       
