@@ -21,53 +21,58 @@ class beaconDecoder:
         self.parser = ReceiveParser()
 
   
-    def run(self):
+    def beaconRunDecoder(self):
         self.rawdata = self.s.recv(10000)
-        beacon_ID = 99
-        beacon_port = 1
-        payload_offset = 16
-        packet_num_offset = 4
-
-        # Check if socket is still open
-        try:
-            self.s.send(bytes("You good bro?", 'utf-8'))
-        except:
-            print("Socket connection to GNURadio closed")
-            exit()
-
-        if bytes("Hello, world!", 'utf-8') in self.rawdata:
-            print("Default EnduroSat Beacon Received")
-            return
         
         if args.debug:
             print(self.rawdata)
 
+        # Check if socket is still open
+        if self.rawdata == b'':
+            exit()
+
+        # Check for default EnduroSat beacon
+        if bytes("Hello, world!", 'utf-8') in self.rawdata:
+            print("Default EnduroSat Beacon Received")
+            return False
+        
+        self.beaconBase64Decode()
+        return self.beaconParseData()
+        
+    
+    def beaconBase64Decode(self):
+        payload_offset = 16
+
         try:
-            decoded_data = base64.b64decode(self.rawdata[payload_offset:])
-            decoded_data = bytearray(decoded_data)
+            self.decoded_data = base64.b64decode(self.rawdata[payload_offset:])
+            self.decoded_data = bytearray(self.decoded_data)
             print("Base 64 beacon decode success!")
         except:
             print("Base 64 beacon decode failed :(")
-            return
-        
+        return None
+
+    def beaconParseData(self):
+        packet_num_offset = 4
+        beacon_ID = 99
+        beacon_port = 1
+
         try:
-            if decoded_data[packet_num_offset] == 1:
-                decoded_data[:0] = (1).to_bytes(1,'big')
-                return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
-            elif decoded_data[packet_num_offset] == 2:
-                decoded_data[:0] = (2).to_bytes(1,'big')
-                return self.parser.parseReturnValue(beacon_ID, beacon_port, decoded_data)
+            if self.decoded_data[packet_num_offset] == 1:
+                self.decoded_data[:0] = (1).to_bytes(1,'big')
+                return self.parser.parseReturnValue(beacon_ID, beacon_port, self.decoded_data)
+            elif self.decoded_data[packet_num_offset] == 2:
+                self.decoded_data[:0] = (2).to_bytes(1,'big')
+                return self.parser.parseReturnValue(beacon_ID, beacon_port, self.decoded_data)
             else:
                 print("Invalid beacon packet number")
-                return None
         except:
             print("Unable to parse packet data")
-            return None
+        return None
 
 if __name__ == '__main__':
     decoder = beaconDecoder()
     while True:
-        beacon = decoder.run() 
+        beacon = decoder.beaconRunDecoder() 
         if beacon:
             print("----------Beacon Received:----------")
             for key, value in beacon.items():
