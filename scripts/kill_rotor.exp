@@ -1,0 +1,21 @@
+#!/usr/bin/expect
+
+set timeout 2
+
+set user "absat\r"
+set pword "Cubes@t\r"
+set kill "off 1\r"
+set confirm "y\r"
+
+spawn telnet 192.168.1.187
+
+sleep 0.5
+send "$user"
+sleep 0.2
+send "$pword"
+sleep 0.3
+send "$kill"
+sleep 0.1
+send "$confirm"
+
+interact
