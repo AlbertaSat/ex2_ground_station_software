@@ -1,0 +1,2 @@
+#!/bin/bash
+rotctld -m 903 -r /dev/ttyUSB0 -s 9600 -t 4533 -vvvvv 
