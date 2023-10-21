@@ -54,18 +54,15 @@ class beaconDecoder:
     def beaconParseData(self):
         packet_num_offset = 4
         beacon_ID = 99
-        beacon_port = 1
+        beacon_port = 1 
 
         try:
-            if self.decoded_data[packet_num_offset] == 1:
-                self.decoded_data[:0] = (1).to_bytes(1,'big')
-                return self.parser.parseReturnValue(beacon_ID, beacon_port, self.decoded_data)
-            elif self.decoded_data[packet_num_offset] == 2:
-                self.decoded_data[:0] = (2).to_bytes(1,'big')
+            if self.decoded_data[packet_num_offset] in {1, 2}:
+                self.decoded_data[:0] = self.decoded_data[packet_num_offset].to_bytes(1,'big')
                 return self.parser.parseReturnValue(beacon_ID, beacon_port, self.decoded_data)
             else:
                 print("Invalid beacon packet number")
-        except:
+        except Exception:
             print("Unable to parse packet data")
         return None
 
