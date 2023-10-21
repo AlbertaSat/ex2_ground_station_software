@@ -28,11 +28,11 @@ class ReceiveNorthernVoices:
         self.conn = None
 
     def receiveFile(self, name: str, wait):
-        print("accepting transmission to file {}".format(name))
+        print(f"accepting transmission to file {name}")
         if self.conn is None:
             self.conn = self.csp.accept(self.sock, wait)
         if self.conn is None:
-            print("no connection after {} seconds".format(wait))
+            print(f"no connection after {wait} seconds")
             return 0
 
         bs = 512
@@ -43,7 +43,7 @@ class ReceiveNorthernVoices:
                 print("read timed out")
                 break
             data = bytearray(libcsp.packet_get_data(pkt))
-            bs = int.from_bytes(data[0:2], byteorder='big')
+            bs = int.from_bytes(data[:2], byteorder='big')
             cnt += bs
             print("bs {} packet number {}"
                   .format(bs, int.from_bytes(data[2:4], byteorder='big')))
@@ -52,7 +52,7 @@ class ReceiveNorthernVoices:
             with open("nv.c2", 'ab+') as f:
                 f.write(data[4:])
 
-        print("received {} bytes".format(cnt))
+        print(f"received {cnt} bytes")
         return cnt
 
     def receiveStream(self, port, wait):

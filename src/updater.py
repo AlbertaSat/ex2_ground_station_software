@@ -85,17 +85,15 @@ class updater(GroundStation):
             exit(1)
 
     def _crc(self, data):
-        if data is None:
-            return 0
-        return binascii.crc_hqx(data, 0)
+        return 0 if data is None else binascii.crc_hqx(data, 0)
 
     def _get_resume_packet(self):
-        command = self.inParse.parseInput("{}.updater.GET_PROGRESS()".format(self.satellite))
-        return command
+        return self.inParse.parseInput(f"{self.satellite}.updater.GET_PROGRESS()")
 
     def _get_init_packet(self):
-        command = self.inParse.parseInput("{}.updater.INITIALIZE_UPDATE({},{},{})".format(self.satellite, self.address, self.filesize, self.file_crc))
-        return command
+        return self.inParse.parseInput(
+            f"{self.satellite}.updater.INITIALIZE_UPDATE({self.address},{self.filesize},{self.file_crc})"
+        )
 
     def _get_block_update_packet(self, data):
         #TODO: Simplify this
@@ -107,7 +105,9 @@ class updater(GroundStation):
         out.extend(self._crc(data).to_bytes(2, byteorder='big'))
         out.extend(data)
 
-        command = self.inParse.parseInput("{}.updater.PROGRAM_BLOCK({},{})".format(self.satellite, self.address, len(data)))
+        command = self.inParse.parseInput(
+            f"{self.satellite}.updater.PROGRAM_BLOCK({self.address},{len(data)})"
+        )
         command['args'] = out
         return command
 
@@ -124,7 +124,7 @@ class updater(GroundStation):
                 elif err == -updater_failuretype.UPDATE_ERASEFAILED:
                     raise Exception("Satellite failed to erase flash")
                 else:
-                    raise Exception("Unknown init error {}".format(err))
+                    raise Exception(f"Unknown init error {err}")
         self.total_blocks = self.filesize // self.blocksize
         self.current_block = self.skip // self.blocksize
     def _sendblock(self, data):
@@ -139,19 +139,19 @@ class updater(GroundStation):
 
     def _setResume(self):
         resume_packet = self._get_resume_packet()
-        data = self._transaction(resume_packet);
+        data = self._transaction(resume_packet)
         if data['err'] < 0:
             err = data['err']
             if err == -updater_failuretype.UPDATE_NOINIT:
                 raise Exception("Cannot resume, no update in progress")
             else:
-                raise Exception("Unknown resume error {}".format(err))
+                raise Exception(f"Unknown resume error {err}")
         d = data
         if self.file_crc != d['crc'] :
             raise Exception("Crc of input file differs from CRC of file the satellite is expecting")
         self.address = int(d['next_addr'])
         self.skip = int(d['next_addr'] - d['start_addr']);
-        print("Skip: {}".format(self.skip))
+        print(f"Skip: {self.skip}")
         self.file.seek(self.skip) # move the filepointer ahead by the size already sent
 
     def _send_update(self):
@@ -160,7 +160,7 @@ class updater(GroundStation):
             b = self.file.read(self.blocksize)
             if len(b) == 0:
                 break
-            print("Sending block {}/{}".format(self.current_block, self.total_blocks));
+            print(f"Sending block {self.current_block}/{self.total_blocks}");
             err = self._sendblock(b)
             if err < 0:
                 if err == -updater_failuretype.UPDATE_NOINIT:
@@ -174,8 +174,8 @@ class updater(GroundStation):
                 elif err == -updater_failuretype.UPDATE_WRITEFAILED:
                     raise Exception("Satellite failed to write to flash")
                 else:
-                    raise Exception("Unknown block update error {}".format(err))
-            self.current_block += 1;
+                    raise Exception(f"Unknown block update error {err}")
+            self.current_block += 1
             self.address += len(b)
         return True
     

@@ -67,7 +67,7 @@ class Options(object):
             type=int,
             default='15000', # 15 seconds
             help='RDP connection timeout. Default is 15000')
-        
+
         self.parser.add_argument(
             '-u', 
             action='store_true',
@@ -85,15 +85,15 @@ class Options(object):
             default=True,
             help="Use forward error correction. Default is true"
         )
-        if argv:
-            opts = self.parser.parse_args(argv)
-        else:
-            opts = self.parser.parse_args(sys.argv[1:])
-        return opts
+        return (
+            self.parser.parse_args(argv)
+            if argv
+            else self.parser.parse_args(sys.argv[1:])
+        )
 
 class UpdateOptions(Options):
     def __init__(self):
-        super().__init__();
+        super().__init__()
 
     def getOptions(self):
         self.parser.add_argument(
@@ -127,12 +127,12 @@ class UpdateOptions(Options):
             help="Provide file CRC. Can be hex or decimal"
         )
 
-        return super().getOptions();
+        return super().getOptions()
 
 
 class FTPOptions(Options):
     def __init__(self):
-        super().__init__();
+        super().__init__()
 
     def getOptions(self, argv=None):
         self.parser.add_argument(
@@ -177,7 +177,7 @@ class FTPOptions(Options):
             default=0,
             help="Number of bytes to skip"
         )
-        return super().getOptions(argv);
+        return super().getOptions(argv)
 
 class SBANDOptions(Options):
     def __init__(self):

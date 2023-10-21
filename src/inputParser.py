@@ -11,6 +11,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 '''
+
+import contextlib
 '''
  * @file inputParser.py
  * @author Robert Taylor
@@ -31,79 +33,69 @@ class InputParser:
 
     def parseInput(self, input : str):
         tokens = self.lexer(input)
-        command = {}
-
-        remote = None
-
-        for node in SatelliteNodes:
-            if node[1] == tokens[self.appIdx]:
-                remote = node
-                break
+        remote = next(
+            (node for node in SatelliteNodes if node[1] == tokens[self.appIdx]),
+            None,
+        )
         if remote is None:
             raise ValueError("No such remote or bad format")
-        command['dst'] = remote[2]
+        command = {'dst': remote[2]}
         services = getServices(remote[0])
 
-        if tokens[self.serviceIdx] in services:
-            # Matches <service>
-            service = services[tokens[self.serviceIdx]]
-            command['dport'] = service['port']
-            if 'subservice' not in service:
-                # Then there is no subservice, skip to arg check
-                if 'inoutInfo' not in service:
-                    raise ValueError('No in/out info for service')
-                if not self.__argCheck(
-                        tokens[(self.serviceIdx + 1)::], service['inoutInfo'], command):
-                    return None
-            elif tokens[self.serviceIdx + 1] != '.':
-                # If there is a subservice, next token must be a '.'
-                raise ValueError('Bad format')
-
-        else:
+        if tokens[self.serviceIdx] not in services:
             raise ValueError('No such service')
-            return None
-
-        # TODO: what is going on here
-        if tokens[self.subserviceIdx] in service['subservice']:
-            subservice = service['subservice'][tokens[self.subserviceIdx]]
-            command['subservice'] = subservice['subPort']
-
-            if 'inoutInfo' not in subservice:
-                raise ValueError('No in/out info for subservice')
-            if not self.__argCheck(tokens[(
-                    self.subserviceIdx + 1)::], subservice['inoutInfo'], command, subservice['subPort']):
+        # Matches <service>
+        service = services[tokens[self.serviceIdx]]
+        command['dport'] = service['port']
+        if 'subservice' not in service:
+            # Then there is no subservice, skip to arg check
+            if 'inoutInfo' not in service:
+                raise ValueError('No in/out info for service')
+            if not self.__argCheck(
+                    tokens[(self.serviceIdx + 1)::], service['inoutInfo'], command):
                 return None
-        else:
+        elif tokens[self.serviceIdx + 1] != '.':
+            # If there is a subservice, next token must be a '.'
+            raise ValueError('Bad format')
+
+        if tokens[self.subserviceIdx] not in service['subservice']:
             raise ValueError('No such subservice')
 
+        subservice = service['subservice'][tokens[self.subserviceIdx]]
+        command['subservice'] = subservice['subPort']
+
+        if 'inoutInfo' not in subservice:
+            raise ValueError('No in/out info for subservice')
+        if not self.__argCheck(tokens[(
+                self.subserviceIdx + 1)::], subservice['inoutInfo'], command, subservice['subPort']):
+            return None
         return command
 
     def lexer(self, input):
-        tokenList = []
         splitInput = input.split("(")
         if len(splitInput) > 2 or len(splitInput) == 0:
             raise ValueError("Invalid command string format")
         commandPortion = splitInput[0]
         parametersPortion = None
-        try:
-            parametersPortion = splitInput[1][0:-1]
-        except:
-            pass
         
+        # suppress exception if there are no input
+        with contextlib.suppress(Exception):
+            parametersPortion = splitInput[1][:-1] # remove trailing ')'
+            
         commandSplit = commandPortion.split(".")
         if len(commandSplit) != 3:
             raise ValueError("Invalid command string format")
-        tokenList.append(commandSplit[0].upper())
         #TODO: get rid of these dots
-        tokenList.append(".")
-        tokenList.append(commandSplit[1].upper())
-        tokenList.append(".")        
-        tokenList.append(commandSplit[2].upper())
-
-        if (parametersPortion):
+        tokenList = [
+            commandSplit[0].upper(),
+            ".",
+            commandSplit[1].upper(),
+            ".",
+            commandSplit[2].upper(),
+        ]
+        if parametersPortion:
             tokenList.append("(")
-            for t in parametersPortion.split(","):
-                tokenList.append(t);
+            tokenList.extend(iter(parametersPortion.split(",")))
             tokenList.append(")")
         for i in range(len(tokenList)):
             tokenList[i] = tokenList[i].strip()
@@ -133,15 +125,14 @@ class InputParser:
             raise ValueError('Wrong # of args')
         if subservice is not None:
             outArgs.extend([subservice])
- 
-        i = 0
-        for name, type in inoutInfo['args'].items():
-            if type == 'var':
-                nparr = np.array([args[i]], dtype=varTypes[outArgs[-1]])
-            else:
-                nparr = np.array([args[i]], dtype=type)
+
+        for i, (name, type) in enumerate(inoutInfo['args'].items()):
+            nparr = (
+                np.array([args[i]], dtype=varTypes[outArgs[-1]])
+                if type == 'var'
+                else np.array([args[i]], dtype=type)
+            )
             outArgs.extend(nparr.tobytes())
-            i += 1
         command['args'] = outArgs
         return command
 

@@ -52,7 +52,7 @@ def test_ftp_download():
     ftpRunner.run()
 
     cmdout = subprocess.check_output(["diff", "README.md", "readme.tst"])
-    print("diff: {}".format(cmdout))
+    print(f"diff: {cmdout}")
 
 if __name__ == '__main__':
     test_ftp_upload()

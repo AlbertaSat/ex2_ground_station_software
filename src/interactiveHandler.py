@@ -46,27 +46,25 @@ class InteractiveHandler:
         # TODO: Make this less bad after fixing inputParser badness
         tokens = self.inParser.lexer(command)
         if self.dummy:
-            transactObj = self.getDummyTransactionObject(command, networkHandler)
+            return self.getDummyTransactionObject(command, networkHandler)
         elif tokens[self.serviceIdx] == "HOUSEKEEPING" and tokens[self.subserviceIdx] in hkCommands:
-            transactObj = getHKTransaction(command, networkHandler)
+            return getHKTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "CLI":
-            transactObj = satcliTransaction(command, networkHandler)
+            return satcliTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "SCHEDULER" and (tokens[self.subserviceIdx] == "SET_SCHEDULE"):
-            transactObj = schedulerTransaction(command, networkHandler)
+            return schedulerTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "TIME_MANAGEMENT" and tokens[self.subserviceIdx] == "SET_TIME":
-            transactObj = setTimeTransaction(command, networkHandler)
+            return setTimeTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "IRIS" and (tokens[self.subserviceIdx] in ["IRIS_SET_TIME"]):
-            transactObj = irisTransaction(command, networkHandler)
+            return irisTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "NS_PAYLOAD":
-            transactObj = longTimeoutTransaction(command, networkHandler)
+            return longTimeoutTransaction(command, networkHandler)
         elif (tokens[self.serviceIdx] == "GENERAL") and (tokens[self.subserviceIdx == "DEPLOY_DEPLOYABLES"]):
-            transactObj = longTimeoutTransaction(command, networkHandler)
+            return longTimeoutTransaction(command, networkHandler)
         elif tokens[self.serviceIdx] == "COMMUNICATION" and (tokens[self.subserviceIdx] in ["UHF_SET_RF_MODE"]):
-            transactObj = setRFModeTransaction(command, networkHandler)
+            return setRFModeTransaction(command, networkHandler)
         else:
-            transactObj = baseTransaction(command, networkHandler)
-
-        return transactObj
+            return baseTransaction(command, networkHandler)
 
     def getDummyTransactionObject(self, command: str, networkHandler):
         transactObj = None
@@ -92,7 +90,7 @@ class baseTransaction:
         self.dst = self.pkt["dst"]
         self.dport = self.pkt['dport']
         self.args = self.pkt['args']
-        self.timeout = 10000;
+        self.timeout = 10000
 
     def send(self):
         self.networkHandler.send(self.dst, self.dport, self.args)
@@ -164,8 +162,8 @@ class dummySchedulerTransaction(baseTransaction):
 class getHKTransaction(baseTransaction):
     def execute(self):
         self.send()
-        rxlist = list()
-        rxData = dict()
+        rxlist = []
+        rxData = {}
         while True:
             try:
                 ret = self.receive()
@@ -183,17 +181,13 @@ class dummyHKTransaction(getHKTransaction):
         self.fake_hk_id = fake_hk_id
 
     def execute(self):
-        hk_list = []
-
         # TODO: Figure out how to fake multipacket transmission using args
         fake_hk = generateFakeHKDict()
         fake_hk['err'] = 0
         fake_hk['###############################\r\npacket meta\r\n###############################\r\nfinal'] = 0
         fake_hk['UNIXtimestamp'] = int(time.time())
         fake_hk['dataPosition'] = self.fake_hk_id
-        hk_list.append(fake_hk)
-
-        return hk_list
+        return [fake_hk]
 
 class satcliTransaction(baseTransaction):
     def execute(self):
@@ -202,7 +196,7 @@ class satcliTransaction(baseTransaction):
         while True:
             ret = self.receive()
             returnVal = self.parseReturnValue(ret)
-            response += "{}\n".format(returnVal['resp'].decode("ascii").rstrip())
+            response += f"""{returnVal['resp'].decode("ascii").rstrip()}\n"""
             if (returnVal['status']) == 0:
                 break
         return response.strip()
@@ -238,10 +232,9 @@ class setRFModeTransaction(baseTransaction):
 
 class dummySatCliTransaction(satcliTransaction):
     def execute(self):
-        response = """Running as SatCli command \
+        return """Running as SatCli command \
             | dst: {} \
             | dport: {} \
             | args: {}""".format(
             self.dst, self.dport, self.args
         )
-        return response

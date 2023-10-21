@@ -22,7 +22,7 @@ from options import optionsFactory
 
 class cli(GroundStation):
     def run(self):
-        while(1):
+        while 1:
             inStr = self.inputHandler.getInput("to send: ")
             try:
                 transactObj = self.interactive.getTransactionObject(inStr, self.networkManager)
@@ -30,11 +30,11 @@ class cli(GroundStation):
                 print()
                 if type(ret) == dict:
                     for key, value in ret.items():
-                        print("{} : {}".format(key, value))
+                        print(f"{key} : {value}")
                 elif type(ret) == list:
                     for r in ret:
                         for key, value in r.items():
-                            print("{} : {}".format(key, value))
+                            print(f"{key} : {value}")
                 else:
                     print(repr(ret)) # last, try to find a representation
                 print()

@@ -28,7 +28,7 @@ class ConnectionManager:
     def getConn(self, server, port):
         if server not in self.server_connection or port not in self.server_connection[server]:
             try:
-                if server == 4 or server == 5 or server == 6: # I hate this
+                if server in (4, 5, 6):
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000, libcsp.CSP_O_CRC32)
                 else:
                     conn = libcsp.connect(libcsp.CSP_PRIO_NORM, server, port, 1000000000, libcsp.CSP_SO_HMACREQ | libcsp.CSP_SO_CRC32REQ | libcsp.CSP_SO_XTEAREQ)
