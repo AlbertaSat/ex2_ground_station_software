@@ -33,6 +33,7 @@
     "test_iris": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_iris.py",
     "test_audio": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build python3 test/test_audio.py",
     "pytest": "LD_LIBRARY_PATH=./libcsp/build PYTHONPATH=./libcsp/build:.:./src pytest",
-    "beacon_decoder": "python3 src/beaconDecoder.py"
+    "beacon_decoder": "python3 src/beaconDecoder.py",
+    "unstick_uhf_from_mode0": "python3 src/uhfUnsticker.py"
   }
 }
