@@ -25,9 +25,9 @@ import os
 from inputParser import InputParser
 from receiveParser import ReceiveParser
 from system import services
-from enum import Enum
+from enum import IntEnum
 
-class updater_failuretype(Enum): # Same values as updater program on satellite
+class updater_failuretype(IntEnum): # Same values as updater program on satellite
     UPDATE_NOFAIL = 0
     UPDATE_GENERICFAILURE = 1
     UPDATE_INVALIDADDR = 2
@@ -38,6 +38,7 @@ class updater_failuretype(Enum): # Same values as updater program on satellite
     UPDATE_CRCMISMATCH = 7
     UPDATE_VERIFYFAILED = 8
     UPDATE_NOSUBSERVICE = 9
+    UPDATE_NORESPONSE = 255
 
 class updater(GroundStation):
     #TODO: Better object orientation, maybe a common class with FTP?
@@ -78,7 +79,7 @@ class updater(GroundStation):
         data = command['args']
         try:
             self.networkManager.send(dest, dport, data)
-            response = self.networkManager.receive(dest, dport, 10000)
+            response = self.networkManager.receive(dest, dport, 2000)
             return self.receiveParse.parseReturnValue(dest, dport, response)
         except Exception as e:
             print(e)
@@ -129,8 +130,11 @@ class updater(GroundStation):
         self.current_block = self.skip // self.blocksize
     def _sendblock(self, data):
         update_packet = self._get_block_update_packet(data)
-        data = self._transaction(update_packet)
-        return data['err']
+        try:
+            response = self._transaction(update_packet)
+        except:
+            return -updater_failuretype.UPDATE_NORESPONSE
+        return response['err']
 
     def _resync(self):
         self._setResume()
@@ -173,6 +177,9 @@ class updater(GroundStation):
                     continue # Keep trying until CRC is successful
                 elif err == -updater_failuretype.UPDATE_WRITEFAILED:
                     raise Exception("Satellite failed to write to flash")
+                elif err == -updater_failuretype.UPDATE_NORESPONSE:
+                    self._resync()
+                    continue
                 else:
                     raise Exception("Unknown block update error {}".format(err))
             self.current_block += 1;
