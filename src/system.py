@@ -1646,6 +1646,18 @@ services = {
                     }
                 }
             },
+            'UHF_SET_FEC': {
+                'what': 'Enable/Disable FEC in the OBC UHF transmitter',
+                'subPort': 50,
+                'inoutInfo': {
+                    'args': {
+                        'mode':'>b',
+                    },
+                    'returns': {
+                        'err': '>b',
+                    }
+                }
+            },
         }
     },
 

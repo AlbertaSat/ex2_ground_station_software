@@ -107,6 +107,9 @@ class CSPHandler(object):
     def set_sdr_rx(self, mode=0):
         libcsp.set_sdr_rx(mode)
 
+    def set_uhf_fec(self, use_fec=True):
+        libcsp.uhf_fec_ctl(use_fec)
+
     def _uart(self, device):
         """ initialize uart interface """
         ser = serial.Serial(device,
